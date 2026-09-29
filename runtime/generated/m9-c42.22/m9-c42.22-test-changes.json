@@ -1,0 +1,53 @@
+{
+  "title": "M9-C42.22 — Test Changes Summary",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "phase": "Discovery Repair + Behavioral Strengthening Preparation",
+  "files_modified": [
+    {
+      "file": "backend/tests/unit/engines/behaviour/test_core.py",
+      "changes": [
+        "Added import for _parse_date utility function",
+        "Added test_parse_date test case covering valid and invalid date formats"
+      ],
+      "tests_added": 1,
+      "purpose": "Cover internal helper function to reduce no_tests mutants"
+    },
+    {
+      "file": "backend/tests/unit/engines/financial_events/test_financial_events.py",
+      "changes": [
+        "Extended imports to include all internal helper functions: _parse_date_iso, _date_difference_days, _is_liability_event, _is_repayment_event, _is_transfer_event, _is_revocable_event, _merge_lifecycle_update, detect_revocations",
+        "Added TestInternalHelpers class with 7 test methods covering all internal helpers"
+      ],
+      "tests_added": 7,
+      "purpose": "Eliminate 29 no_tests mutants in lineage_walker helpers"
+    },
+    {
+      "file": "backend/pyproject.toml",
+      "changes": [
+        "Updated mutmut test_selection for behaviour_engine to include test_metrics.py, test_integration.py, capability/pattern_analysis",
+        "Verified financial_events test_selection already includes all test paths"
+      ],
+      "tests_added": 0,
+      "purpose": "Fix test discovery for mutation testing"
+    }
+  ],
+  "tests_added_total": 8,
+  "tests_modified": 0,
+  "behaviour_engine_impact": {
+    "no_tests_before": 2835,
+    "estimated_reduction_via_discovery_repair": 1842,
+    "estimated_remaining_after_repair": 993,
+    "new_unit_tests_for_internal_helpers": 1
+  },
+  "financial_events_impact": {
+    "no_tests_before": 29,
+    "expected_no_tests_after": 0,
+    "new_unit_tests_for_internal_helpers": 7
+  },
+  "mutation_effectiveness_check": {
+    "behaviour_engine": "Targeted mutation smoke needed to validate no_tests reduction",
+    "financial_events": "Targeted mutation smoke needed to validate no_tests = 0",
+    "next_step": "Run bounded mutation campaigns on repaired components"
+  }
+}

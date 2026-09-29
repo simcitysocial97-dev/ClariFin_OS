@@ -1,0 +1,21 @@
+{
+  "run_id": "5a8129ea76173bdc",
+  "timestamp": "2026-09-25T14:51:42.965499+00:00",
+  "repository_sha": "779a4628951b2edb3e15fb8a89f441087caf3e67",
+  "scenario": "cache_reuse",
+  "changed_files": [
+    "test_file.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "cache_reused",
+  "failures": [],
+  "reused_evidence": [
+    "cache entry for commit_X"
+  ],
+  "invalidated_evidence": []
+}

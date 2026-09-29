@@ -1,0 +1,370 @@
+{
+  "schema": "m9-c43-baseline/v1",
+  "generated_at": "2026-08-26T23:36:30.116013+00:00",
+  "phase": "M9-C43.0",
+  "status": "IMMUTABLE",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "branch": "m9c9-merge-authorization-resolution",
+  "c42_38_certification": {
+    "status": "FINAL_VERIFICATION_SYSTEM_CERTIFIED",
+    "file": "runtime/generated/m9-c42.38/final-certification.json",
+    "verified": true,
+    "sha_match": true,
+    "dod": "27/27 PASS",
+    "c42_tests": "144/144 passing"
+  },
+  "environment": {
+    "canonical_venv": ".venv/bin/python",
+    "env_check": "CONSISTENT",
+    "mutmut": "3.7.0 (pinned)",
+    "python": "3.12.3"
+  },
+  "module_fingerprints_c43_0": {
+    "runtime/foundation/verification/graph_model.py": "f615000c7e0a8772",
+    "runtime/foundation/verification/evidence_planner.py": "c5341bbe64956046",
+    "runtime/foundation/verification/executor_pipeline.py": "16ec30701e6a21a4",
+    "runtime/foundation/verification/evidence_reuse.py": "deda917aa81bd348",
+    "runtime/foundation/verification/cache.py": "685f6ea77db23dd4",
+    "runtime/foundation/verification/correlation.py": "b7373d9693a120b9",
+    "runtime/foundation/verification/orchestrator.py": "3753b0876b22f66c",
+    "runtime/foundation/verification/diagnostic_agent.py": "7bb1bc0f3179b9c8",
+    "runtime/foundation/verification/strengthening.py": "d978ba25647c9b5a",
+    "runtime/foundation/verification/forensic_cli.py": "7b62621e0e70f11c",
+    "runtime/foundation/verification/ci_evidence.py": "96158aaf86eca69a",
+    "runtime/verify.py": "70ddfa54bc84542b",
+    "runtime/foundation/verification/profiles.py": "d52fa4a0efe437e8",
+    "runtime/foundation/verification/mutation_inventory.py": "289f0b9398e7a14d",
+    "runtime/foundation/verification/mutation_runner.py": "1f3b1126b2a2e3d0",
+    "runtime/foundation/verification/mutation_contract.py": "caf44e6ee563d781",
+    "runtime/foundation/verification/reconciliation.py": "964574b11508d9e2",
+    "runtime/foundation/verification/totals.py": "b3b4bbb17d80ad7f"
+  },
+  "module_fingerprint_drift_vs_c42_38": {
+    "runtime/foundation/verification/graph_model.py": {
+      "c42_38": "4bd704594b346207",
+      "c43_0": "f615000c7e0a8772",
+      "changed": true
+    },
+    "runtime/foundation/verification/evidence_planner.py": {
+      "c42_38": "18245fbb90306e1e",
+      "c43_0": "c5341bbe64956046",
+      "changed": true
+    },
+    "runtime/foundation/verification/executor_pipeline.py": {
+      "c42_38": "5576411d77a27208",
+      "c43_0": "16ec30701e6a21a4",
+      "changed": true
+    },
+    "runtime/foundation/verification/evidence_reuse.py": {
+      "c42_38": "03d5939893079e28",
+      "c43_0": "deda917aa81bd348",
+      "changed": true
+    },
+    "runtime/foundation/verification/cache.py": {
+      "c42_38": "685f6ea77db23dd4",
+      "c43_0": "685f6ea77db23dd4",
+      "changed": false
+    },
+    "runtime/foundation/verification/correlation.py": {
+      "c42_38": "25af9ddf0b4856eb",
+      "c43_0": "b7373d9693a120b9",
+      "changed": true
+    },
+    "runtime/foundation/verification/orchestrator.py": {
+      "c42_38": "3753b0876b22f66c",
+      "c43_0": "3753b0876b22f66c",
+      "changed": false
+    },
+    "runtime/foundation/verification/diagnostic_agent.py": {
+      "c42_38": "857b5b0d2ea1f061",
+      "c43_0": "7bb1bc0f3179b9c8",
+      "changed": true
+    },
+    "runtime/foundation/verification/strengthening.py": {
+      "c42_38": "ebf4e7d6d06f5b46",
+      "c43_0": "d978ba25647c9b5a",
+      "changed": true
+    },
+    "runtime/foundation/verification/forensic_cli.py": {
+      "c42_38": "9a3c094f713af842",
+      "c43_0": "7b62621e0e70f11c",
+      "changed": true
+    },
+    "runtime/foundation/verification/ci_evidence.py": {
+      "c42_38": "94ec3a6a00805a2d",
+      "c43_0": "96158aaf86eca69a",
+      "changed": true
+    },
+    "runtime/verify.py": {
+      "c42_38": "ff4c552064f183d8",
+      "c43_0": "70ddfa54bc84542b",
+      "changed": true
+    },
+    "runtime/foundation/verification/profiles.py": {
+      "c42_38": "d52fa4a0efe437e8",
+      "c43_0": "d52fa4a0efe437e8",
+      "changed": false
+    },
+    "runtime/foundation/verification/mutation_inventory.py": {
+      "c42_38": "fa4dd0c2dc330414",
+      "c43_0": "289f0b9398e7a14d",
+      "changed": true
+    },
+    "runtime/foundation/verification/mutation_runner.py": {
+      "c42_38": "1f5dc9c71a4c6a0d",
+      "c43_0": "1f3b1126b2a2e3d0",
+      "changed": true
+    },
+    "runtime/foundation/verification/mutation_contract.py": {
+      "c42_38": "caf44e6ee563d781",
+      "c43_0": "caf44e6ee563d781",
+      "changed": false
+    },
+    "runtime/foundation/verification/reconciliation.py": {
+      "c42_38": "964574b11508d9e2",
+      "c43_0": "964574b11508d9e2",
+      "changed": false
+    },
+    "runtime/foundation/verification/totals.py": {
+      "c42_38": "b3b4bbb17d80ad7f",
+      "c43_0": "b3b4bbb17d80ad7f",
+      "changed": false
+    }
+  },
+  "drift_explanation": {
+    "cause": "M9-C43.1-W1: black format-only remediation of live runtime sources (behavior-preserving; validated by full runtime suite)",
+    "classification": "FORMAT_ONLY_DRIFT",
+    "behavior_validation": "runtime suite + backend unit revalidated green post-format",
+    "impact_on_c42_evidence_reuse": "NONE \u2014 mutation components live under backend/src, untouched"
+  },
+  "mutation_population_reused": {
+    "status": "REUSED",
+    "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+    "population_id": "pop-14-c42.26",
+    "components": 14,
+    "scored": 14951,
+    "killed": 9015,
+    "aggregate_pct": 60.297,
+    "evidence_class": "MATHEMATICALLY_RECONCILED",
+    "component_matrix": [
+      {
+        "component": "account_engine",
+        "scored": 183,
+        "killed": 163,
+        "mutation_score_pct": 89.1,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "balance_engine",
+        "scored": 285,
+        "killed": 270,
+        "mutation_score_pct": 94.7,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "behaviour_engine",
+        "scored": 5258,
+        "killed": 1875,
+        "mutation_score_pct": 35.7,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "cashflow_engine",
+        "scored": 172,
+        "killed": 128,
+        "mutation_score_pct": 74.4,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "common_calculations",
+        "scored": 377,
+        "killed": 213,
+        "mutation_score_pct": 56.4,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "core_domain_money",
+        "scored": 102,
+        "killed": 84,
+        "mutation_score_pct": 82.4,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "credit_card_engine",
+        "scored": 582,
+        "killed": 440,
+        "mutation_score_pct": 75.6,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": "C42.38 AUTHORITATIVE_TARGETED 75.6% (582 mutants)"
+      },
+      {
+        "component": "financial_events",
+        "scored": 704,
+        "killed": 454,
+        "mutation_score_pct": 64.5,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "ledger_audit_engine",
+        "scored": 190,
+        "killed": 108,
+        "mutation_score_pct": 56.8,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "loan_engine",
+        "scored": 1273,
+        "killed": 1066,
+        "mutation_score_pct": 84.0,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "recommendation_engine",
+        "scored": 282,
+        "killed": 179,
+        "mutation_score_pct": 63.5,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "reconciliation_engine",
+        "scored": 368,
+        "killed": 297,
+        "mutation_score_pct": 80.7,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "transaction_intelligence",
+        "scored": 1465,
+        "killed": 1028,
+        "mutation_score_pct": 70.2,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      },
+      {
+        "component": "financial_intelligence",
+        "scored": 3710,
+        "killed": 2710,
+        "mutation_score_pct": 73.0,
+        "evidence_status": "REUSED (C42.26 ledger)",
+        "source": "runtime/generated/m9-c42.26/m9-c42.26-component-matrix.json",
+        "latest_targeted": null
+      }
+    ]
+  },
+  "test_baseline": {
+    "backend_unit": {
+      "tests": 1639,
+      "passed": 1639,
+      "failed": 0,
+      "evidence_class": "MEASURED (2026-08-27)"
+    },
+    "backend_full_coverage_run": {
+      "tests": 2319,
+      "passed": 2318,
+      "failed": 1,
+      "xfailed": 1,
+      "failure": "tests/properties/loan_engine/test_amortization_properties.py::test_balance_strictly_decreasing (parallel-run contamination; passes isolated)",
+      "evidence_class": "MEASURED (2026-08-27, overlapped run \u2014 superseded at 43.8)"
+    },
+    "runtime_suite": {
+      "tests": 785,
+      "passed": 785,
+      "failed": 0,
+      "note": "after 43.1 remediations W1-W5",
+      "evidence_class": "MEASURED (2026-08-27, post-remediation for 3 drift tests + exit-contract; final revalidation at 43.10)"
+    }
+  },
+  "coverage_baseline": {
+    "statement_plus_branch_pct": 77.71,
+    "num_statements": 10238,
+    "covered_lines": 8164,
+    "config": "backend/.coveragerc (branch=True, source=src, documented omissions)",
+    "evidence_class": "MEASURED (2026-08-27, authoritative scope; clean sequential remeasurement at 43.8)",
+    "artifact": "backend/tests/generated/coverage.json"
+  },
+  "workflow_inventory": {
+    "total_workflows": 13,
+    "workflows": [
+      "api-contracts.yml",
+      "backend-verify.yml",
+      "dependency-update.yml",
+      "frontend-verify.yml",
+      "golden.yml",
+      "m9-forensic-diagnostic-lab.yml",
+      "mutation.yml",
+      "playwright.yml",
+      "quality.yml",
+      "release.yml",
+      "security-codeql.yml",
+      "verification-reconcile.yml",
+      "verification-runtime.yml"
+    ]
+  },
+  "known_failures_at_start": {
+    "remediated_in_43_1": [
+      "W1 black drift",
+      "W2 gate-topology stale test",
+      "W3 m81 stale test",
+      "W4 R2 config-drift test",
+      "W5 M4 exit-contract norecursedirs drift"
+    ],
+    "flaky_under_parallelism": [
+      "test_balance_strictly_decreasing (hypothesis DB contention)"
+    ],
+    "remaining": []
+  },
+  "autogen_capability_inventory": {
+    "strengthening_contract": "runtime/foundation/verification/strengthening.py (SurvivorEvidence, classify_survivor, StrengtheningProposal, generate_proposal, ApprovalDecision, evaluate_auto_approval_eligibility, RevalidationOutcome, targeted_revalidation, FullCampaignJustification, CampaignGateDecision, gate_full_campaign)",
+    "mutation_inventory": "runtime/foundation/verification/mutation_inventory.py (Class A-E classification, survivor inventory)",
+    "diagnostic_agent": "runtime/foundation/verification/diagnostic_agent.py",
+    "proposal_contract": "m9-strengthening-proposal/v1",
+    "human_authorization_boundary": "evaluate_auto_approval_eligibility \u2014 auto-approval eligibility only; acceptance remains human-authorized",
+    "status": "PRESENT \u2014 to be operationalized by evidence-driven generator in 43.5"
+  },
+  "c42_reuse_eligibility": {
+    "population_ledger": true,
+    "component_matrix": true,
+    "evidence_contracts": true,
+    "planner": true,
+    "executor": true,
+    "diagnostic_agent": true,
+    "strengthening_contract": true,
+    "human_authorization_boundary": true,
+    "aggregate_60_297": "REUSED as starting point only; final score requires fresh authoritative campaign at 43.9"
+  },
+  "preserved": {
+    "c42_population": true,
+    "c42_component_matrix": true,
+    "c42_evidence_contracts": true,
+    "c42_planner": true,
+    "c42_executor": true,
+    "c42_diagnostic_agent": true,
+    "c42_strengthening_contract": true,
+    "c42_human_authorization_boundary": true,
+    "production_capability": "NO capability code modified or deleted"
+  }
+}

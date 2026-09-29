@@ -1,0 +1,133 @@
+{
+  "schema": "m9-c42.32-36-failure-injection-scenarios/v1",
+  "generated_at": "2026-08-26T09:50:00.000000+00:00",
+  "phase": "M9-C42.32-36 Phase 8",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "objective": "Demonstrate the system does NOT merely certify successful runs. Each controlled scenario must classify its failure correctly, explain the planner response, keep the forensic record complete, produce a deterministic diagnostic conclusion, and avoid false-positive certification.",
+  "scenarios": [
+    {
+      "id": "FI-1",
+      "name": "genuine verification failure",
+      "description": "A mutation run on an engine finds surviving mutants (genuine behavioral gap).",
+      "expected_failure_classification": "verification_failure",
+      "planner_response": "selected task remains; executor runs; failure_kind=verification_failure",
+      "diagnostic_verdict": "NOT_CERTIFIABLE",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 TestVerdicts::test_verification_failure_not_certifiable; C42.31 TestClassification Class-A",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-2",
+      "name": "infrastructure failure",
+      "description": "mutmut/pytest cannot execute (process killed, OOM, timeout, missing toolchain).",
+      "expected_failure_classification": "infrastructure_failure",
+      "planner_response": "task attempted; executor returns infra-failure; no score emitted",
+      "diagnostic_verdict": "INSUFFICIENT_EVIDENCE",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 TestVerdicts::test_infrastructure_failure_insufficient_not_verification; mutation_runner build_infrastructure_failure",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-3",
+      "name": "evidence corruption",
+      "description": "mutation-summary.json present but artifact checksum mismatch / missing artifact.",
+      "expected_failure_classification": "evidence_failure",
+      "planner_response": "reuse decision INVALIDATED_EVIDENCE_ONLY; cannot reuse",
+      "diagnostic_verdict": "NOT_CERTIFIABLE / INSUFFICIENT_EVIDENCE",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.29 TestFingerprintValidation::test_missing_artifact_is_corruption_drift; test_checksum_mismatch_is_corrupt; classify_ci_failure -> EVIDENCE",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-4",
+      "name": "scope mismatch",
+      "description": "Executor attempts to run a task outside the planner-authorized scope.",
+      "expected_failure_classification": "scope_failure",
+      "planner_response": "scope enforcement blocks; task not dispatched",
+      "diagnostic_verdict": "CERTIFICATION_BLOCKED (scope_failure present)",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 q9 scope_failures => CERTIFICATION_BLOCKED; executor pipeline scope-safe helpers (G8)",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-5",
+      "name": "discovery drift",
+      "description": "Capability mapping declares coverage unreachable by executable surface.",
+      "expected_failure_classification": "discovery_drift (drift_blocker)",
+      "planner_response": "drift_blocker recorded in plan; certification blocked",
+      "diagnostic_verdict": "CERTIFICATION_BLOCKED",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.29 G12 (Discovery drift blocks certification); C42.30 TestVerdicts::test_discovery_drift_blocks",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-6",
+      "name": "stale evidence",
+      "description": "Prior measurement exists but invalidated by source/config drift; not yet replaced.",
+      "expected_failure_classification": "stale_evidence (uncertainty, gates_certification=true)",
+      "planner_response": "component listed in invalidated; fresh measurement required",
+      "diagnostic_verdict": "INSUFFICIENT_EVIDENCE",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 q8 stale_evidence; real-master-scenario diagnostic (pre-execution) showed INSUFFICIENT_EVIDENCE for credit_card_engine",
+      "status": "VALIDATED_BY_LIVE_RUN"
+    },
+    {
+      "id": "FI-7",
+      "name": "insufficient test surface",
+      "description": "Mutant has no covering test (no_tests > 0).",
+      "expected_failure_classification": "insufficient_test_surface (uncertainty, gates_certification=false for individual, true if no evidence)",
+      "planner_response": "uncertainty recorded; diagnostic recommends strengthening (not score chasing)",
+      "diagnostic_verdict": "INSUFFICIENT_EVIDENCE (if no prior evidence) or CERTIFIABLE (if reused with gap noted)",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 TestUncertaintyDetection::test_behavioral_gap_diagnosed_without_score_chasing; q8 no_tests handling",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-8",
+      "name": "ambiguous survivor",
+      "description": "Survivor classified Class-E (ambiguous/design/production-defect candidate).",
+      "expected_failure_classification": "ambiguous_behavior (escalation, NOT artificial targeting)",
+      "planner_response": "strengthening REFUSES Class-E with human-review reason; no test proposed",
+      "diagnostic_verdict": "CERTIFIABLE if uncertainty gates_certification=false; escalation recorded",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.31 TestClassification::test_escalation_marker_is_class_e; TestProposals::test_class_e_rejected_with_human_review",
+      "status": "VALIDATED_BY_TEST_SUITE"
+    },
+    {
+      "id": "FI-9",
+      "name": "cross-component dependency",
+      "description": "Change to shared infrastructure (core_domain_money) should expand invalidation to dependent engines.",
+      "expected_failure_classification": "source_drift on shared infra -> dependent component invalidation",
+      "planner_response": "broader scope than single engine (cross-engine impact)",
+      "diagnostic_verdict": "INSUFFICIENT_EVIDENCE until all dependent components re-measured",
+      "cert_false_positive": false,
+      "evidence_basis": "cross-engine-impact.json gap (shared infrastructure propagation NOT yet automated); regression scenario NOT_VERIFIED",
+      "status": "GAP_IDENTIFIED (see cross-engine-impact.json)"
+    },
+    {
+      "id": "FI-10",
+      "name": "certification blocker",
+      "description": "Multiple gating failures (verification failure + drift blocker) present simultaneously.",
+      "expected_failure_classification": "multiple; highest-precedence verdict wins (verification_failure > drift_blocker)",
+      "planner_response": "both recorded; diagnostic follows precedence",
+      "diagnostic_verdict": "NOT_CERTIFIABLE (verification failure outranks)",
+      "cert_false_positive": false,
+      "evidence_basis": "C42.30 q9 precedence: ver_failures > drift_blockers > scope_failures; TestVerdicts suite",
+      "status": "VALIDATED_BY_DESIGN_AND_TEST_SUITE"
+    }
+  ],
+  "false_positive_guarantees": [
+    "No scenario produces CERTIFIABLE when any verification_failure/evidence_failure/scope_failure/drift_blocker is present",
+    "INSUFFICIENT_EVIDENCE is returned when evidence is missing or stale",
+    "Genuine verification failure (survivors) yields NOT_CERTIFIABLE, never green",
+    "Equivalent mutants (Class B) are refused, never inflated into score",
+    "Infrastructure failures emit no score (never 0% fake)"
+  ],
+  "validation_status": {
+    "by_test_suite": 9,
+    "by_live_run": 1,
+    "gaps": 1,
+    "gap_detail": "FI-9 cross-component dependency relies on shared-infrastructure invalidation which is identified as a gap in cross-engine-impact.json (NOT automated). The single-engine change path (FI-1..FI-8, FI-10) is fully validated."
+  },
+  "next_action": "Close the FI-9 gap by implementing shared-infrastructure invalidation (see cross-engine-impact.json recommendations) before claiming full cross-engine safety."
+}

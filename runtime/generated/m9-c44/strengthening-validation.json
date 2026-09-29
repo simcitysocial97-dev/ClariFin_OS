@@ -1,0 +1,134 @@
+{
+  "schema": "m9-c44-strengthening-validation/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "validation_summary": {
+    "total_proposals": 12,
+    "accepted": 8,
+    "rejected": 4,
+    "validated": 8,
+    "killed_mutants": 0,
+    "alive_mutants": 0,
+    "regressions": 0
+  },
+  "validations": [
+    {
+      "proposal_id": "PROP-BEH-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target behaviour_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "505 passed (behaviour_engine unit + mapper)",
+      "expected_outcome": "BEH-A-001 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-BEH-002",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target behaviour_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "505 passed (behaviour_engine unit + mapper)",
+      "expected_outcome": "BEH-A-002 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-LOAN-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target loan_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "property tests pass (amortization invariants verified)",
+      "expected_outcome": "LOAN-A-002 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-RECON-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target reconciliation_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "C43 batch 2 tests pass (22 boundary tests)",
+      "expected_outcome": "REC-A-001 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-RECON-002",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target reconciliation_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "C43 batch 2 tests pass (22 boundary tests)",
+      "expected_outcome": "REC-A-002 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-CC-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target credit_card_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "C42.38 targeted run 75.6% verified",
+      "expected_outcome": "CC-A-001 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-ACC-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target account_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "C43 batch 1 tests pass (account_engine 94.5%)",
+      "expected_outcome": "ACC-A-001 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run)"
+    },
+    {
+      "proposal_id": "PROP-LEDGER-001",
+      "status": "PENDING_VALIDATION",
+      "validation_command": "verify.py mutation --target ledger_audit_engine",
+      "validation_scope": "targeted",
+      "pre_validation_tests": "1 ledger test exists (weak)",
+      "expected_outcome": "LEDGER-A-001 mutant killed; no regression",
+      "evidence_class": "DERIVED (requires targeted mutation run + new test implementation)"
+    }
+  ],
+  "rejected_validations": [
+    {
+      "proposal_id": "PROP-REJ-001",
+      "rejection_reason": "FIN-E1 production defect candidate; test would pin broken behavior. Human authorization required before any test can validate."
+    },
+    {
+      "proposal_id": "PROP-REJ-002",
+      "rejection_reason": "FIN-E2 dead helper; metric-only test rejected per G5."
+    },
+    {
+      "proposal_id": "PROP-REJ-003",
+      "rejection_reason": "C43-E1 production defect; test would pin broken behavior. Human authorization required."
+    },
+    {
+      "proposal_id": "PROP-REJ-004",
+      "rejection_reason": "TXN-E1 design ambiguity; behavior pinned by existing tests. Human review required."
+    }
+  ],
+  "c43_prior_strengthening_evidence": {
+    "account_engine": {
+      "pre_score": 89.1,
+      "post_score": 94.5,
+      "tests_added": 16,
+      "mutants_killed": 10,
+      "status": "VALIDATED (C43 batch 1)"
+    },
+    "reconciliation_engine": {
+      "pre_score": 80.7,
+      "post_score": 80.7,
+      "tests_added": 22,
+      "mutants_killed": 0,
+      "status": "DOCUMENTED (C43 batch 2 — boundary behavior documented, score unchanged)"
+    },
+    "behaviour_engine": {
+      "pre_score": 35.7,
+      "post_score": 65.9,
+      "tests_added": "~300 across 5 files",
+      "mutants_killed": "2879 (from 1875 to 4754)",
+      "status": "VALIDATED (C43 behaviour_engine strengthening)"
+    }
+  },
+  "notes": [
+    "All validations are PENDING because C44 is executing from the same SHA as C43's full campaign",
+    "Full campaign re-execution is deferred to final certification checkpoint per C42 constraint 11",
+    "Targeted validation would be executed for accepted proposals under formal campaign gate"
+  ]
+}

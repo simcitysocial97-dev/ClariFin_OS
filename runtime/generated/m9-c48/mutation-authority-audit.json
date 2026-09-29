@@ -1,0 +1,13 @@
+{
+  "canonical_entrypoint": "runtime.foundation.verification.mutation_runner.run_mutation_cli",
+  "canonical_resolvable": true,
+  "canonical_result_resolvable": true,
+  "canonical_result_type": "runtime.foundation.verification.mutation_contract.MutationResult",
+  "canonical_runner_callable": true,
+  "canonical_runner_function": "runtime.foundation.verification.mutation_runner.execute_mutation",
+  "generated_at": "2026-09-04T02:18:40+00:00",
+  "non_canonical_backends": [
+    "runtime.foundation.verification.mutation_execution.orchestrator.MutationOrchestrator",
+    "runtime.foundation.verification.mutation_execution.orchestrator.create_orchestrator"
+  ]
+}

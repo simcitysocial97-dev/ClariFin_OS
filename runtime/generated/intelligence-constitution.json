@@ -1,0 +1,86 @@
+{
+  "schema": "intelligence-constitution/v1",
+  "generated_at": "2026-08-06T15:11:31.341135+00:00",
+  "all_checks_pass": true,
+  "legacy_modules_present": [],
+  "filename_inference_hits": [],
+  "capability_homes": {
+    "change_intelligence": [
+      "runtime/foundation/intelligence/platform/change.py"
+    ],
+    "blast_radius": [
+      "runtime/foundation/intelligence/platform/blast.py"
+    ],
+    "dependency_traversal": [
+      "runtime/foundation/intelligence/platform/blast.py"
+    ],
+    "affected_tests": [
+      "runtime/foundation/intelligence/platform/optimizer.py"
+    ],
+    "repair_planning": [
+      "runtime/foundation/intelligence/platform/repair.py"
+    ],
+    "verification_planning": [
+      "runtime/foundation/intelligence/platform/optimizer.py"
+    ],
+    "entity_resolution": [
+      "runtime/foundation/intelligence/platform/resolver.py"
+    ],
+    "test_resolution": [
+      "runtime/foundation/intelligence/platform/api.py (test_resolution)"
+    ],
+    "engineering_risk": [
+      "runtime/foundation/intelligence/platform/risk.py"
+    ],
+    "runtime_api": [
+      "runtime/foundation/intelligence/platform/api.py"
+    ]
+  },
+  "checks": [
+    {
+      "id": "C-001",
+      "name": "Exactly one change-intelligence implementation",
+      "pass": true
+    },
+    {
+      "id": "C-002",
+      "name": "Exactly one blast-radius implementation",
+      "pass": true
+    },
+    {
+      "id": "C-003",
+      "name": "Exactly one dependency-traversal implementation",
+      "pass": true
+    },
+    {
+      "id": "C-004",
+      "name": "Exactly one repair-planning implementation",
+      "pass": true
+    },
+    {
+      "id": "C-005",
+      "name": "Exactly one verification-planning implementation",
+      "pass": true
+    },
+    {
+      "id": "C-006",
+      "name": "Exactly one entity-resolution implementation",
+      "pass": true
+    },
+    {
+      "id": "C-007",
+      "name": "Exactly one test-resolution implementation",
+      "pass": true
+    },
+    {
+      "id": "C-008",
+      "name": "No filename-based test inference remains",
+      "pass": true
+    },
+    {
+      "id": "C-009",
+      "name": "Each capability has a single canonical home",
+      "pass": true
+    }
+  ]
+}

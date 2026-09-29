@@ -1,0 +1,41 @@
+{
+  "plan_id": "exec-plan::e3b0c44298fc",
+  "generated_at": "2026-08-26T04:26:34.509478+00:00",
+  "plan_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_plan_id": "e3b0c44298fc",
+  "tasks": [],
+  "not_executable": [
+    {
+      "task_id": "exec::task::mutation::new_engine",
+      "component": "new_engine",
+      "capability": "new-engine",
+      "verification_kind": "mutation",
+      "source_task_id": "task::mutation::new_engine",
+      "execution_command": "",
+      "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+      "required_environment": [
+        ".venv",
+        "mutmut==3.7.0"
+      ],
+      "evidence_kind": "mutation-summary",
+      "expected_artifact": "backend/tests/generated/mutation/mutation-summary.json",
+      "timeout_policy": 600,
+      "fingerprints": {
+        "source": "",
+        "test": "",
+        "config": "29b283dad76f8949",
+        "toolchain": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6"
+      },
+      "reason": "newly admitted component new_engine; no prior measurement exists",
+      "executable": "not_executable_yet",
+      "executable_meta": {
+        "blocker": "component 'new_engine' is not in ENGINE_SELECTION"
+      }
+    }
+  ],
+  "rationale": "Expanded 1 selected planner task(s) into 0 executable task(s); 1 marked not_executable_yet. Plan fingerprint covers command + four fingerprints for every executable task.",
+  "counts": {
+    "tasks": 0,
+    "not_executable": 1
+  }
+}

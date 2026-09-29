@@ -1,0 +1,98 @@
+{
+  "schema": "run-manifest/v1",
+  "commit": "8e94dd996085b2a7255079b6b88e00231301d414",
+  "branch": "m9-stabilize-platform-routing-cache",
+  "generated_at": "2026-09-29T04:42:31.544480+00:00",
+  "profile": "runtime",
+  "steps": [
+    {
+      "step_id": "step-0001",
+      "unit_id": "runtime-self-test",
+      "contributing_units": [
+        "runtime-self-test"
+      ],
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "exit_code": 1,
+      "status": "failed",
+      "duration_seconds": 0.5,
+      "stdout_path": "/tmp/stdout.log",
+      "stderr_path": "/tmp/stderr.log",
+      "workflow": "runtime",
+      "script": "run_runtime_verification",
+      "provenance": {
+        "capabilities": [
+          "runtime-verification"
+        ],
+        "impact_kinds": [
+          "architectural"
+        ],
+        "source": "registry-workflow-mapping",
+        "contributing_units": [
+          "runtime-self-test"
+        ],
+        "workflow": "runtime"
+      }
+    },
+    {
+      "step_id": "step-0002",
+      "unit_id": "backend-unit",
+      "contributing_units": [
+        "backend-unit",
+        "unit-targeted"
+      ],
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "exit_code": 1,
+      "status": "failed",
+      "duration_seconds": 0.5,
+      "stdout_path": "/tmp/stdout.log",
+      "stderr_path": "/tmp/stderr.log",
+      "workflow": "backend",
+      "script": "run_contract_tests",
+      "provenance": {
+        "capabilities": [
+          "loan-engine"
+        ],
+        "impact_kinds": [
+          "contract"
+        ],
+        "source": "registry-workflow-mapping",
+        "contributing_units": [
+          "backend-unit",
+          "unit-targeted"
+        ],
+        "workflow": "backend"
+      }
+    },
+    {
+      "step_id": "step-0003",
+      "unit_id": "frontend-typecheck-build",
+      "contributing_units": [
+        "frontend-typecheck-build",
+        "frontend-unit"
+      ],
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "exit_code": 1,
+      "status": "failed",
+      "duration_seconds": 0.5,
+      "stdout_path": "/tmp/stdout.log",
+      "stderr_path": "/tmp/stderr.log",
+      "workflow": "frontend",
+      "script": "run_frontend_verification",
+      "provenance": {
+        "capabilities": [
+          "api-contracts"
+        ],
+        "impact_kinds": [
+          "contract_frontend"
+        ],
+        "source": "registry-workflow-mapping",
+        "contributing_units": [
+          "frontend-typecheck-build",
+          "frontend-unit"
+        ],
+        "workflow": "frontend"
+      }
+    }
+  ],
+  "unmapped": []
+}

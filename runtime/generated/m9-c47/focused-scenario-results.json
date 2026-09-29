@@ -1,0 +1,150 @@
+{
+  "focused_scenarios": "M9-C47 Phase 7 Regression Protection Results",
+  "commit": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "timestamp": "2026-08-31T06:35:00Z",
+  "test_file": "runtime/tests/test_measurement_truth.py",
+  "test_count": 23,
+  "all_passed": true,
+  "scenarios": [
+    {
+      "scenario": "incomplete/partial campaign cannot certify",
+      "tests": [
+        "test_partial_campaign_cannot_certify",
+        "test_interrupted_run_is_not_complete"
+      ],
+      "status": "PASSED",
+      "details": "PARTIAL completion status when processed < requested; INTERRUPTED -> INFRASTRUCTURE_FAILURE"
+    },
+    {
+      "scenario": "timeout cannot certify",
+      "tests": [
+        "test_timeout_cannot_certify",
+        "test_timeout_via_completion_status_cannot_certify"
+      ],
+      "status": "PASSED",
+      "details": "TIMEOUT completion status blocks certification"
+    },
+    {
+      "scenario": "corrupt artifact cannot certify",
+      "tests": [
+        "test_corrupt_artifact_missing_fingerprint_cannot_certify",
+        "test_zero_population_evidence_failure"
+      ],
+      "status": "PASSED",
+      "details": "Missing evidence_fingerprint -> EVIDENCE_FAILURE; zero population -> EVIDENCE_FAILURE"
+    },
+    {
+      "scenario": "wrong SHA invalidates evidence",
+      "tests": [
+        "test_wrong_sha_invalidates_evidence"
+      ],
+      "status": "PASSED",
+      "details": "ComponentMeasurement.fingerprint() includes repository_sha; different SHA -> different fingerprint"
+    },
+    {
+      "scenario": "wrong configuration invalidates evidence",
+      "tests": [
+        "test_wrong_configuration_invalidates_evidence"
+      ],
+      "status": "PASSED",
+      "details": "evidence_reuse R-CFG-001 fires for config_change scoped to component -> INVALIDATES_TASK"
+    },
+    {
+      "scenario": "wrong toolchain invalidates evidence",
+      "tests": [
+        "test_wrong_toolchain_invalidates_evidence"
+      ],
+      "status": "PASSED",
+      "details": "evidence_reuse R-CFG-002 fires for toolchain_change -> INVALIDATES_COMPONENT"
+    },
+    {
+      "scenario": "partial population cannot masquerade as full population",
+      "tests": [
+        "test_partial_population_cannot_masquerade_as_full",
+        "test_full_population_is_authoritative"
+      ],
+      "status": "PASSED",
+      "details": "processed < requested -> PARTIAL; full population with valid evidence -> AUTHORITATIVE_COMPLETE"
+    },
+    {
+      "scenario": "native mutmut results are preserved",
+      "tests": [
+        "test_native_mutmut_results_preserved"
+      ],
+      "status": "PASSED",
+      "details": "parse_mutmut_results and collect_mutant_results work; missing meta dir -> empty report, not crash"
+    },
+    {
+      "scenario": "survivor evidence survives workspace cleanup",
+      "tests": [
+        "test_survivor_evidence_durable_outside_temp_folders",
+        "test_survivor_evidence_survives_workspace_cleanup_via_reference"
+      ],
+      "status": "PASSED",
+      "details": "Durable paths under backend/tests/generated/mutation/ (not backend/mutants/); truth record references them"
+    },
+    {
+      "scenario": "derived evidence cannot be labelled authoritative",
+      "tests": [
+        "test_derived_evidence_cannot_be_authoritative",
+        "test_derived_label_machine_readable"
+      ],
+      "status": "PASSED",
+      "details": "EvidenceClassification.DERIVED -> DERIVED_ONLY completion; classification field is machine-readable enum"
+    },
+    {
+      "scenario": "valid evidence remains reusable under C42 invalidation rules",
+      "tests": [
+        "test_valid_evidence_reusable_when_no_invalidation",
+        "test_mutation_scores_against_invalidated_measurement_are_not_authoritative"
+      ],
+      "status": "PASSED",
+      "details": "Source change to different component -> DOES_NOT_INVALIDATE; authoritative evidence passes certification_gate"
+    },
+    {
+      "scenario": "cache cannot replay stale measurement as current truth",
+      "tests": [
+        "test_cache_cannot_replay_stale_pass_as_truth_on_sha_change",
+        "test_content_bound_cache_invalidates_on_tree_change"
+      ],
+      "status": "PASSED",
+      "details": "SHA drift invalidates even content-blind cache; content-bound cache invalidates on file content change; FAIL never replayed as exit 0"
+    },
+    {
+      "scenario": "coverage and mutation are explicitly separated",
+      "tests": [
+        "test_coverage_and_mutation_separate_kinds"
+      ],
+      "status": "PASSED",
+      "details": "MeasurementKind enum: COVERAGE vs MUTATION; separate truth records; separate commands"
+    },
+    {
+      "scenario": "CLI measurement-truth inspection",
+      "tests": [
+        "test_measurement_truth_cli_reports_certifiable",
+        "test_measurement_truth_cli_rejects_partial"
+      ],
+      "status": "PASSED",
+      "details": "verify.py measurement-truth answers 6 operator questions; returns 0 for certifiable, 1 for non-certifiable"
+    }
+  ],
+  "runtime_validation": {
+    "mutation_smoke": {
+      "command": "verify.py mutation --smoke",
+      "status": "PASSED",
+      "completion": "DERIVED_ONLY (smoke is infra validation only)",
+      "truth_record": "backend/tests/generated/mutation/local-smoke/measurement-truth.json",
+      "population": 6,
+      "killed": 2,
+      "survived": 2,
+      "no_tests": 2
+    },
+    "coverage_measurement": {
+      "command": "verify.py measurement coverage tests/unit/engines/credit_card",
+      "status": "INFRASTRUCTURE_FAILURE",
+      "completion": "INFRASTRUCTURE_FAILURE (pytest scope returned non-zero)",
+      "truth_record": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+      "note": "Correctly classified; not a false pass"
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "phase": 0,
+  "capture_timestamp": "2026-08-24T05:10:01.309200+00:00",
+  "repository": {
+    "sha": "d6d3624ba033a0d089bca6bbf046d46eb9739411",
+    "tree_sha": "80f7d60cee7fe592c19bc7dfb92b1de422e3ed13",
+    "branch": "m9c9-merge-authorization-resolution",
+    "status": "clean (no uncommitted changes)",
+    "head_expected": "d6d3624b",
+    "head_actual": "d6d3624b",
+    "head_match": true
+  },
+  "environment": {
+    "env_check_consistent": true,
+    "fingerprint": {
+      "python_version": "Python 3.12.3",
+      "python_source": "venv",
+      "pytest_version": "pytest 9.1.1",
+      "pytest_source": "venv",
+      "mutmut_version": "mutmut, version 3.7.0",
+      "mutmut_source": "venv",
+      "pinned_mutmut": "3.7.0",
+      "forbidden_venvs": [],
+      "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin"
+    },
+    "python": {
+      "name": "python3",
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+      "version": "Python 3.12.3",
+      "source": "venv"
+    },
+    "pytest": {
+      "name": "pytest",
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/pytest",
+      "version": "pytest 9.1.1",
+      "source": "venv"
+    },
+    "mutmut": {
+      "name": "mutmut",
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/mutmut",
+      "version": "mutmut, version 3.7.0",
+      "source": "venv"
+    },
+    "ruff": null,
+    "black": null,
+    "mypy": null
+  },
+  "mutation_infrastructure": {
+    "smoke_gate_a_execution_integrity": "PASS",
+    "smoke_gate_b_evidence_integrity": "PASS",
+    "smoke_mutants_generated": 6,
+    "smoke_killed": 2,
+    "smoke_survived": 2,
+    "smoke_no_tests": 2,
+    "mutation_config_source": "runtime/foundation/verification/mutation_contract.py ENGINE_SELECTION",
+    "pinned_mutmut": "3.7.0"
+  },
+  "current_credit_card_pilot": {
+    "mutants_generated": 582,
+    "killed": 406,
+    "survived": 176,
+    "mutation_score": 69.8,
+    "threshold_percent": 80,
+    "duration_seconds": 93,
+    "mutmut_rc": 0,
+    "reproducible_vs_c42_16": true,
+    "discrepancies": "None \u2014 exact reproduction of M9-C42.16 (582/406/176/69.8%)."
+  },
+  "test_counts": {
+    "credit_card_selection": 126,
+    "backend_total": 1537
+  },
+  "mutation_config": {
+    "target": "credit_card_engine",
+    "source_scope": "src/engines/credit_card_engine",
+    "test_selection": [
+      "tests/unit/engines/credit_card",
+      "tests/properties/credit_card_engine",
+      "tests/capability/credit_cards"
+    ],
+    "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection)",
+    "runner": "python3 -m pytest"
+  },
+  "gate_g0": {
+    "environment_deterministic": true,
+    "mutation_smoke_pass": true,
+    "mutation_safety_intact": true,
+    "baseline_reproducible": true,
+    "credit_card_result_reproduced": true,
+    "verdict": "PASS"
+  }
+}

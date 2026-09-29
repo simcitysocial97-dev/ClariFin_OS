@@ -1,0 +1,494 @@
+{
+  "certification": "M9-C31.3",
+  "title": "Recovery Manifest \u2014 Complete Work Recovery, Reconciliation & Canonical Commit",
+  "timestamp": "2026-08-18T23:00:00Z",
+  "recovery_source": {
+    "lost_wip_commit": "06230db00d1c92eb69d60ad79a32915de868e1ff",
+    "recovery_branch": "recovery/m9-c31-loss-06230db0",
+    "original_loss_time": "2026-08-18T16:05:12Z",
+    "wip_creation_time": "2026-08-18T16:05:11Z"
+  },
+  "pre_recovery_state": {
+    "head_sha": "8fc2cd9ecf6939517246a695bd043318dc8f9184",
+    "tree_sha": "28bf5dc45305674ed9e1cb2acd96172a8d9c633c",
+    "branch": "m9c9-merge-authorization-resolution"
+  },
+  "validation": {
+    "api_contracts_gate": "PASS (5/5 dimensions)",
+    "backend_tests": "1346 passed, 0 failed",
+    "c30_governance": "CERTIFIED"
+  },
+  "staged_files": [
+    {
+      "path": ".github/scripts/run_api_contracts.sh",
+      "sha256": "a11b732559e892d6d96e3cbad5471cd0240352983cd17d158da4f584bbcbc48e",
+      "size": 1691
+    },
+    {
+      "path": ".github/workflows/api-contracts.yml",
+      "sha256": "d53700951e3e06a843861796f03355332d65187aea73eda5bf73a30f3f83eb40",
+      "size": 2085
+    },
+    {
+      "path": "activeContext.md",
+      "sha256": "2a4554ed515fa58c109b8dacb4aff18b36fe78e6e9dbedc46d6edf6d47265522",
+      "size": 3546
+    },
+    {
+      "path": "backend/src/api.py",
+      "sha256": "c9f2f6fd846904944f925e16fdb6f60933377716138f83e19d54571107b5032d",
+      "size": 3651
+    },
+    {
+      "path": "backend/src/core/dtos/dashboard_dto.py",
+      "sha256": "84e79b5143fd2f7a84a6bc1e94108b91abf36e6a03a8e1f34ecedd2a5572e1a5",
+      "size": 4021
+    },
+    {
+      "path": "backend/src/core/dtos/reconciliation_dto.py",
+      "sha256": "f99874dd4524c4b6ac98d9c9074231bea02f6cbee634b92a1dc25a4e7a875e43",
+      "size": 11500
+    },
+    {
+      "path": "backend/src/core/dtos/transaction_dto.py",
+      "sha256": "43dccffb13bb0edb4c92869462b0719ae65b31a3343f2bcc17072cb2e620a3f6",
+      "size": 3538
+    },
+    {
+      "path": "backend/src/core/mappers/transaction_mapper.py",
+      "sha256": "e913ecf785a44ada3585102418eaa6dac9eb62e81a8eb757108baa5a06d833c6",
+      "size": 5083
+    },
+    {
+      "path": "backend/src/routers/reconciliation.py",
+      "sha256": "1ed2fb9d53e057def46459be3e73dda0ad47907b3b7fe5e6a696e95ea08d30c3",
+      "size": 7758
+    },
+    {
+      "path": "backend/src/routers/transactions.py",
+      "sha256": "edff99dffc1968ad8c664e929ee9e9c0651981e32e8c06683e8ccb7d5ff22053",
+      "size": 2537
+    },
+    {
+      "path": "backend/src/services/behaviour_service.py",
+      "sha256": "bd49526645314ae85f5174c6b1cacb7a74bd9c9dbd1e52fc6263992a0562eb54",
+      "size": 42990
+    },
+    {
+      "path": "backend/src/services/dashboard_service.py",
+      "sha256": "8d0465eeab399e00b506381353823668b263a68bb27175ccfc21f0fc14d82a21",
+      "size": 3783
+    },
+    {
+      "path": "backend/src/services/transaction_service.py",
+      "sha256": "e590551073bfb6e7db9c0d8aa830cd6279752f251fe0f2d4e08f72ab97bd726b",
+      "size": 15939
+    },
+    {
+      "path": "backend/src/startup.py",
+      "sha256": "fb851d56898ad4a82aca43695659a8d9dac504a6a254fd0bc04cbb59a5032c85",
+      "size": 3550
+    },
+    {
+      "path": "backend/tests/generated/openapi-current.json",
+      "sha256": "495cc05c32249c8aa4490d4cae91caf5ede16e168559739e68c760e1f7142489",
+      "size": 299438
+    },
+    {
+      "path": "backend/tests/unit/services/test_behaviour_service.py",
+      "sha256": "a70a392771be031851ec28b38c29552ecbaf529051d30b9e23e7d5fff817d16c",
+      "size": 16223
+    },
+    {
+      "path": "docs/M9-C10-forensic-report.md",
+      "sha256": "cfffee4a0181900012e5fc17d2f8a5c42d6299088904c4455142d31c5b643f06",
+      "size": 28436
+    },
+    {
+      "path": "frontend/__tests__/api-contracts/behavior.contract.test.ts",
+      "sha256": "055cf0ffc5bdc85d85fc4670ca2a8ce2d32a663e016371a955f5b2c2f00e8aae",
+      "size": 1652
+    },
+    {
+      "path": "frontend/__tests__/api-contracts/transactions.contract.test.ts",
+      "sha256": "275a4d4b95ec2e39aa543fb4412aa599bf127cfc09260b8e3019e19713a0aa72",
+      "size": 1455
+    },
+    {
+      "path": "frontend/app/dashboard/page.tsx",
+      "sha256": "cbd14981a660b8746ecb07f6b47e0067465c773438bcb178c14e561e0924e4b6",
+      "size": 12153
+    },
+    {
+      "path": "frontend/generated/openapi-current.json",
+      "sha256": "495cc05c32249c8aa4490d4cae91caf5ede16e168559739e68c760e1f7142489",
+      "size": 299438
+    },
+    {
+      "path": "frontend/lib/api/client.ts",
+      "sha256": "01bcf371e20e5881fa82857237546a6aeb083185d4c447fadf721fe27888b987",
+      "size": 8511
+    },
+    {
+      "path": "frontend/lib/capabilities/use-reconciliation-capability.ts",
+      "sha256": "0b10eb5a8f42b93ecd108be32205fe5145a0820a5cffd4e11444ad721f0f22d4",
+      "size": 6516
+    },
+    {
+      "path": "frontend/lib/config/navigation.ts",
+      "sha256": "bf4dd6c333ab6169ca74c36d8a600f673b4dc68817862eb72cdd43e2f74cbfba",
+      "size": 2157
+    },
+    {
+      "path": "frontend/lib/hooks/use-accounts.ts",
+      "sha256": "56425a1795bd423ea72560fc1cbdbefddb49a174d0997fee7bb791ac80fa6c6f",
+      "size": 3343
+    },
+    {
+      "path": "frontend/lib/hooks/use-analytics.ts",
+      "sha256": "f420d323997d552efcbf9edd915a853f2e53495ce25d1e8ec964a2551db2fbac",
+      "size": 1144
+    },
+    {
+      "path": "frontend/lib/hooks/use-behavior-score.ts",
+      "sha256": "fa5a3670cfd4e380dd8754c5bf373e0c40db2d401a87a7f7043bbdba64ba951a",
+      "size": 1213
+    },
+    {
+      "path": "frontend/lib/hooks/use-cards.ts",
+      "sha256": "d18f92201b93b1f37f51bf9246dddf063e53e432bf64a6146be68ba2392ad444",
+      "size": 1239
+    },
+    {
+      "path": "frontend/lib/hooks/use-cashflow.ts",
+      "sha256": "564caa1571c321098d2073414072e42f8e1b332ed02051ba74a74858de33c281",
+      "size": 1382
+    },
+    {
+      "path": "frontend/lib/hooks/use-investments.ts",
+      "sha256": "d5137ad2a73c577f6a0e9a9b887da62855f318c90360e332b22d2c8083035529",
+      "size": 3947
+    },
+    {
+      "path": "frontend/lib/hooks/use-loans.ts",
+      "sha256": "cafd2219ee0d41f73bc0d947574a4faa01d5d3b5d07be6221d02435b4341ff7c",
+      "size": 5064
+    },
+    {
+      "path": "frontend/lib/hooks/use-networth.ts",
+      "sha256": "360f03906b51e079984b5944d4288225f5d5cf15ac0db104421ffd70fc26d845",
+      "size": 1567
+    },
+    {
+      "path": "frontend/lib/hooks/use-overview.ts",
+      "sha256": "7fc12871e3cb2aadc639e190b303ecd83c8c6d1644e63ed8186df6d815dacc2f",
+      "size": 1127
+    },
+    {
+      "path": "frontend/lib/hooks/use-reconciliation.ts",
+      "sha256": "4612d7047f4ea0f25293ecad728c7d73fa63e4ee31a8af169103b561622b9ef7",
+      "size": 4002
+    },
+    {
+      "path": "frontend/lib/schemas/behavior-score.ts",
+      "sha256": "9ca39fe5e40eaed3bb7143b2911d072ab7db03a97fa76cb2e6e4655b0bcee42e",
+      "size": 698
+    },
+    {
+      "path": "frontend/lib/schemas/dashboard-metrics.ts",
+      "sha256": "e4a220191d86527f26d071b61c417e1d4f1a7c15992cb4534f5cfe945c22e6a2",
+      "size": 842
+    },
+    {
+      "path": "frontend/lib/schemas/transaction.ts",
+      "sha256": "8b3e981009d01b7cef0f730aac855057df8dd1a5ffdad122000de5d3ab7c2661",
+      "size": 1103
+    },
+    {
+      "path": "frontend/mocks/fixtures/behavior.ts",
+      "sha256": "4e63e4d4bdaf3c806227b5df6633cf4c0e891ff727da9bf84fd86c19a3060705",
+      "size": 1503
+    },
+    {
+      "path": "frontend/mocks/fixtures/dashboard.ts",
+      "sha256": "8794ae0a6f1e64bd686c7b52f959e3a9ac520a32a5691ab17aca5a4bb546090c",
+      "size": 549
+    },
+    {
+      "path": "frontend/mocks/fixtures/transactions.ts",
+      "sha256": "21e697d2335072d792ca9e632dc2a2a5bb844dd7533ccef2f827e5ec39505420",
+      "size": 1058
+    },
+    {
+      "path": "frontend/mocks/handlers/behavior.ts",
+      "sha256": "69d62e7e1bbcbf465d6cb303b5e63063375904c4ef13edbba6bf96740a7b738d",
+      "size": 266
+    },
+    {
+      "path": "frontend/tests/e2e/fixtures/css-helpers.ts",
+      "sha256": "febcc299620484e2900186bcfe3a4860fc4eb6255ca2fd4a4cf28091172e3ff9",
+      "size": 10690
+    },
+    {
+      "path": "frontend/tests/e2e/specs/behavior-scoring.spec.ts",
+      "sha256": "a8bc4367cc17ca2739897c74f18163cb966ef41d735ee8c4b23abdb52e6e86e2",
+      "size": 16407
+    },
+    {
+      "path": "frontend/tests/e2e/specs/behavior.spec.ts",
+      "sha256": "2c3146ef4d228fd321304d12d3f92421184bf7f353cca3fa8ef69061e87e40a7",
+      "size": 12141
+    },
+    {
+      "path": "frontend/tests/e2e/specs/dashboard.spec.ts",
+      "sha256": "facc73b35e67b164ab92c7a74c941bfef13f25b3ba13d43bfb5d12b07f614607",
+      "size": 12186
+    },
+    {
+      "path": "frontend/tests/e2e/specs/e2e-financial-logic.spec.ts",
+      "sha256": "f068c0d1341b482325e72e6f742d7cc52bc84c835e4f071d1758f1c9a980a231",
+      "size": 15357
+    },
+    {
+      "path": "frontend/tests/e2e/specs/edge-cases.spec.ts",
+      "sha256": "0656a5f7f0c9208c3b937baf47a2c745082f8d849344ad32791c07c6a32ef215",
+      "size": 13916
+    },
+    {
+      "path": "frontend/tests/e2e/specs/health-check.spec.ts",
+      "sha256": "31ce0b27d5923714cb5dc1d580ee0957f2b475e1b7fe074fb8946301d3465777",
+      "size": 9141
+    },
+    {
+      "path": "frontend/tests/e2e/specs/navigation.spec.ts",
+      "sha256": "fdf2a6f1d001a01d5c97a395bc8b3df44f9e09f9db0949326ae3cbe461fba0c2",
+      "size": 9390
+    },
+    {
+      "path": "frontend/tests/e2e/specs/reconciliation.spec.ts",
+      "sha256": "21e5f3591fea95c410a689d1b2bde28a37a6455a29f9e555fb0eb2ecdf313fec",
+      "size": 8707
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts",
+      "sha256": "beec153f6c5cf3fc13747e7ef95688b065b1b80772d203c2343d751842f5ed5b",
+      "size": 8530
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png",
+      "sha256": "9b2d83d6c7850d781f9b64951d0c96a7b03780986ba9ba269dd20334186ad399",
+      "size": 13092
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png",
+      "sha256": "b26017ca56e045e94f952a3851e10174f0c0ff645e6a9c0eeb5e405b01356379",
+      "size": 15555
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-chromium-linux.png",
+      "sha256": "3909d703de340f45ef843bb12520fefeb03a1db510570cc6885c72e1e470f08d",
+      "size": 53634
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-chromium-linux.png",
+      "sha256": "7662ff2b8b219413db3708dc91b115538940bd0ac49cdf43637cb6fd81f2995b",
+      "size": 53629
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-chromium-linux.png",
+      "sha256": "9b2d83d6c7850d781f9b64951d0c96a7b03780986ba9ba269dd20334186ad399",
+      "size": 13092
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-chromium-linux.png",
+      "sha256": "b26017ca56e045e94f952a3851e10174f0c0ff645e6a9c0eeb5e405b01356379",
+      "size": 15555
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-chromium-linux.png",
+      "sha256": "a24394e7f237ea2e0daea1076b1ccc14bdf9e48003fc3b2095d93d24d760ca03",
+      "size": 56958
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-chromium-linux.png",
+      "sha256": "4198d376fab15eb7b733af07c9b6890edda72c3a0c5abee7530d9d08885c1a36",
+      "size": 43659
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-chromium-linux.png",
+      "sha256": "46c5e34ff19123d2d5cf377ee5444d15fecd37b8d8a6c8704174eb6a17fc2bf0",
+      "size": 56962
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-chromium-linux.png",
+      "sha256": "46c5e34ff19123d2d5cf377ee5444d15fecd37b8d8a6c8704174eb6a17fc2bf0",
+      "size": 56962
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-chromium-linux.png",
+      "sha256": "a592dd439b28a49c678a0df8de452f807288ac3387675121f0a00b53bcbff3d6",
+      "size": 923
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-chromium-linux.png",
+      "sha256": "2bbd178efab496ed78fd1b0aceb4ebd4588762353e2150a7dfcec1ebe975cfca",
+      "size": 43653
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-chromium-linux.png",
+      "sha256": "a24394e7f237ea2e0daea1076b1ccc14bdf9e48003fc3b2095d93d24d760ca03",
+      "size": 56958
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-chromium-linux.png",
+      "sha256": "b26017ca56e045e94f952a3851e10174f0c0ff645e6a9c0eeb5e405b01356379",
+      "size": 15555
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-chromium-linux.png",
+      "sha256": "46c5e34ff19123d2d5cf377ee5444d15fecd37b8d8a6c8704174eb6a17fc2bf0",
+      "size": 56962
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-chromium-linux.png",
+      "sha256": "eff1ce19229c12270a3bd7c91e865679bc973b358e318b508f26457ae23ff858",
+      "size": 53627
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-chromium-linux.png",
+      "sha256": "5a2e15fbdfa2925b54dc1448ce5c50778361d648f1f9a6d7b030afa838a5e8dc",
+      "size": 60219
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-chromium-linux.png",
+      "sha256": "53d67752ebbb815e220b1bd08347dc33a9af77920f3bf6925625828ce00b1c81",
+      "size": 22094
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-chromium-linux.png",
+      "sha256": "795e5b890238c14fac3c0527c9c4704f871875e378119579519f5bb0dd72cf7d",
+      "size": 43699
+    },
+    {
+      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-chromium-linux.png",
+      "sha256": "faf8bf17e15f2d59327e01f80c8337b8bc429cc2d5ba5278fb51fad4f3ec4aab",
+      "size": 54382
+    },
+    {
+      "path": "frontend/tests/global-setup.ts",
+      "sha256": "6c754a2777e90a978c09c0901c94db0c07a01fef0de96101b6ce1e4222a869d0",
+      "size": 7328
+    },
+    {
+      "path": "frontend/types/api-generated.ts",
+      "sha256": "b47d7e386b6dbd61cdfb2cd91842737dc5bbd94fe8006bf1cb571ec7f79c0231",
+      "size": 259892
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/__init__.py",
+      "sha256": "b9e1d74911646806b11a4fd6e528dc40b5f9b0dc97a3e59d6694a900805bd40c",
+      "size": 931
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/c30_certification.py",
+      "sha256": "56b06bd8a482b63462f2866ef66a483e8fbb20354a14da0316f727747035c8a1",
+      "size": 43773
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/fixture.py",
+      "sha256": "bfb28b7f714666dab509c9fc32f0178651d8e1bf559dfc03cbc9bbec9a0b9c69",
+      "size": 3087
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/gate.py",
+      "sha256": "bf789f834a99005a8aeb487508495d90dc05c6947247ce6796d0225ce6b76908",
+      "size": 33991
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/inventory.py",
+      "sha256": "4c89399754b7d4d8dcc2f93d87e237b7007a3ec4ff30135c0f04caf9e879e2a2",
+      "size": 11990
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/mutations.py",
+      "sha256": "dfa13a936200fce5d9b82510af27b687e9dfd2ed69e8f5c111a573b041fe9f91",
+      "size": 8783
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/normalize.py",
+      "sha256": "ea4ab1e720d8b979e0c9925b43202e2d269cc80714935d469a1717b2cb66657e",
+      "size": 3513
+    },
+    {
+      "path": "runtime/foundation/verification/api_contracts/taxonomy.py",
+      "sha256": "4298958f990875af882f42998c353df06b90ce63cdec0429821c1c3eaade481f",
+      "size": 6946
+    },
+    {
+      "path": "runtime/generated/api-contract-evidence.json",
+      "sha256": "b7711b097ec8a3460241e2441fcb94a02ae3d9d492f7b195108b4aac20d3950a",
+      "size": 12926
+    },
+    {
+      "path": "runtime/generated/c30-certification.json",
+      "sha256": "8316a313adbb46572b209cd1632a4aba773f2afd1ed8d44cce3c536748ee1254",
+      "size": 12580
+    },
+    {
+      "path": "runtime/generated/c31-certification.json",
+      "sha256": "3665f8668ba2cf34d429d0731bae0a7017f30f37e96d2bd9497cd831859a976a",
+      "size": 13082
+    },
+    {
+      "path": "runtime/generated/c31-certification.md",
+      "sha256": "1ce16b3fc665344333defde0a5ea3ae71abb10592d1a23f5f364656bdc3deb1a",
+      "size": 10345
+    },
+    {
+      "path": "runtime/generated/c31.1-provenance.json",
+      "sha256": "507b0a4f7d8792ebf562eb2beb6819a64101546621214c30e310ae808dd680a9",
+      "size": 24366
+    },
+    {
+      "path": "runtime/generated/c31.1-provenance.md",
+      "sha256": "7f0ebf1078faf77d52bb0b6d09c9dff182d4ae8a21c69e5500145b7270b6bb34",
+      "size": 12410
+    },
+    {
+      "path": "runtime/generated/c31.2-change-preservation.json",
+      "sha256": "522d4d740b4e3a096724833a111e5d19986e3e5350a38a6f7008882acd37e370",
+      "size": 20618
+    },
+    {
+      "path": "runtime/generated/c31.2-change-preservation.md",
+      "sha256": "2b66f08ced2566525aae74ca6aa9158dc1331bfb4ea521cbf658ce89702c5e2e",
+      "size": 11653
+    },
+    {
+      "path": "runtime/generated/c31.3-pre-recovery-manifest.json",
+      "sha256": "5a18a5f6348f7be44b1b63e7b2a3009b1cccb3f0022bf26a51201cf981b79b48",
+      "size": 4532
+    },
+    {
+      "path": "runtime/generated/knowledge-index.json",
+      "sha256": "01f9890b95879f4d41f629b4793a19ddc6920f3d3913d496c4ac792d1d7a29e6",
+      "size": 526808
+    },
+    {
+      "path": "runtime/tests/test_backend_evidence.py",
+      "sha256": "ec8b3f7653f8c66710b9bfe0e6ef8c632ff97fc321702a1f440e97b5e3ac6e31",
+      "size": 17604
+    },
+    {
+      "path": "runtime/verify.py",
+      "sha256": "0c83b04695402377ef01e4ca4944c73c146cbef859d5a0e53bb609af08b1e856",
+      "size": 52987
+    },
+    {
+      "path": "test-results/.last-run.json",
+      "sha256": "e22df5d0991eb28c09093b1e678b3fa8cd1fab48185d38e67cf79fb6e63ad5ea",
+      "size": 45
+    }
+  ],
+  "preserved_untracked": []
+}

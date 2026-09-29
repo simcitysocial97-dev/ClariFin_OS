@@ -1,0 +1,1892 @@
+{
+  "schema": "real-defect-validation/v1",
+  "generated_at": "2026-08-06T15:05:12.541644+00:00",
+  "validation_scope": "verification_infrastructure_defects",
+  "total_issues": 4,
+  "issues_analyzed": 4,
+  "platform_diagnostic_capability": "full",
+  "defects": [
+    {
+      "issue_id": "verification-defect-run_contract_tests",
+      "issue_type": "verification_failure",
+      "file": ".github/scripts/run_contract_tests.sh",
+      "root_cause": {
+        "determined": true,
+        "cause": "Verification script execution failure detected in CI pipeline",
+        "confidence": 0.85,
+        "evidence": [
+          ".github/scripts/run_contract_tests.sh"
+        ]
+      },
+      "ownership": {
+        "determined": true,
+        "owners": [
+          {
+            "ref": ".github/scripts/run_contract_tests.sh",
+            "kind": "artifact",
+            "key": ".github/scripts/run_contract_tests.sh",
+            "owner": "runtime/foundation/verification"
+          }
+        ],
+        "confidence": 1.0
+      },
+      "blast_radius": {
+        "direct": [],
+        "indirect": [],
+        "confidence": 0.9
+      },
+      "repair_order": {
+        "steps": [
+          {
+            "defect_id": "normalized-issue-308",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-309",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-310",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-18",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-343",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-359",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-360",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-361",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-362",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-363",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-364",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-365",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-366",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-367",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-368",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-369",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-370",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-371",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-372",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-373",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-374",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-375",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-376",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-377",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-378",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          }
+        ],
+        "confidence": 0.8
+      },
+      "verification_plan": {
+        "selected": [],
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "runtime-self-test",
+            "category": "runtime",
+            "reason": "runtime unchanged",
+            "justification": "no directly changed entity has a runtime/ path"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "estimated_seconds": 0,
+        "confidence": 0.75
+      },
+      "overall_confidence": 0.85,
+      "platform_capable": true,
+      "requires_manual_exploration": false
+    },
+    {
+      "issue_id": "verification-defect-run_migration_verification",
+      "issue_type": "verification_failure",
+      "file": ".github/scripts/run_migration_verification.sh",
+      "root_cause": {
+        "determined": true,
+        "cause": "Verification script execution failure detected in CI pipeline",
+        "confidence": 0.85,
+        "evidence": [
+          ".github/scripts/run_migration_verification.sh"
+        ]
+      },
+      "ownership": {
+        "determined": true,
+        "owners": [
+          {
+            "ref": ".github/scripts/run_migration_verification.sh",
+            "kind": "artifact",
+            "key": ".github/scripts/run_migration_verification.sh",
+            "owner": "runtime/foundation/verification"
+          }
+        ],
+        "confidence": 1.0
+      },
+      "blast_radius": {
+        "direct": [],
+        "indirect": [],
+        "confidence": 0.9
+      },
+      "repair_order": {
+        "steps": [
+          {
+            "defect_id": "normalized-issue-308",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-309",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-310",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-18",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-343",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-359",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-360",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-361",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-362",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-363",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-364",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-365",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-366",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-367",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-368",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-369",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-370",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-371",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-372",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-373",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-374",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-375",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-376",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-377",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-378",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          }
+        ],
+        "confidence": 0.8
+      },
+      "verification_plan": {
+        "selected": [],
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "runtime-self-test",
+            "category": "runtime",
+            "reason": "runtime unchanged",
+            "justification": "no directly changed entity has a runtime/ path"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "estimated_seconds": 0,
+        "confidence": 0.75
+      },
+      "overall_confidence": 0.85,
+      "platform_capable": true,
+      "requires_manual_exploration": false
+    },
+    {
+      "issue_id": "verification-defect-run_fast_checks",
+      "issue_type": "verification_failure",
+      "file": ".github/scripts/run_fast_checks.sh",
+      "root_cause": {
+        "determined": true,
+        "cause": "Verification script execution failure detected in CI pipeline",
+        "confidence": 0.85,
+        "evidence": [
+          ".github/scripts/run_fast_checks.sh"
+        ]
+      },
+      "ownership": {
+        "determined": true,
+        "owners": [
+          {
+            "ref": ".github/scripts/run_fast_checks.sh",
+            "kind": "artifact",
+            "key": ".github/scripts/run_fast_checks.sh",
+            "owner": "runtime/foundation/verification"
+          }
+        ],
+        "confidence": 1.0
+      },
+      "blast_radius": {
+        "direct": [],
+        "indirect": [],
+        "confidence": 0.9
+      },
+      "repair_order": {
+        "steps": [
+          {
+            "defect_id": "normalized-issue-308",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-309",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-310",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-18",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-343",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-359",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-360",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-361",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-362",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-363",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-364",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-365",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-366",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-367",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-368",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-369",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-370",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-371",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-372",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-373",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-374",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-375",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-376",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-377",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-378",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          }
+        ],
+        "confidence": 0.8
+      },
+      "verification_plan": {
+        "selected": [],
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "runtime-self-test",
+            "category": "runtime",
+            "reason": "runtime unchanged",
+            "justification": "no directly changed entity has a runtime/ path"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "estimated_seconds": 0,
+        "confidence": 0.75
+      },
+      "overall_confidence": 0.85,
+      "platform_capable": true,
+      "requires_manual_exploration": false
+    },
+    {
+      "issue_id": "verification-defect-run_runtime_verification",
+      "issue_type": "verification_failure",
+      "file": ".github/scripts/run_runtime_verification.sh",
+      "root_cause": {
+        "determined": true,
+        "cause": "Verification script execution failure detected in CI pipeline",
+        "confidence": 0.85,
+        "evidence": [
+          ".github/scripts/run_runtime_verification.sh"
+        ]
+      },
+      "ownership": {
+        "determined": true,
+        "owners": [
+          {
+            "ref": ".github/scripts/run_runtime_verification.sh",
+            "kind": "artifact",
+            "key": ".github/scripts/run_runtime_verification.sh",
+            "owner": "runtime/foundation/verification"
+          }
+        ],
+        "confidence": 1.0
+      },
+      "blast_radius": {
+        "direct": [],
+        "indirect": [],
+        "confidence": 0.9
+      },
+      "repair_order": {
+        "steps": [
+          {
+            "defect_id": "normalized-issue-308",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-309",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-310",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-18",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-343",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-359",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-360",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-361",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-362",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-363",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-364",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-365",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-366",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-367",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-368",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-369",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-370",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-371",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-372",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-373",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-374",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-375",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-376",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-377",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          },
+          {
+            "defect_id": "normalized-issue-378",
+            "root_cause": {
+              "entities": [],
+              "basis": "directly changed surface (defect had no path evidence)",
+              "summary": "issue"
+            },
+            "affected_owners": [],
+            "affected_capabilities": [],
+            "affected_tests": [],
+            "affected_workflows": [],
+            "repair_order": [],
+            "verification_order": [],
+            "confidence": 0.4
+          }
+        ],
+        "confidence": 0.8
+      },
+      "verification_plan": {
+        "selected": [],
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "runtime-self-test",
+            "category": "runtime",
+            "reason": "runtime unchanged",
+            "justification": "no directly changed entity has a runtime/ path"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "estimated_seconds": 0,
+        "confidence": 0.75
+      },
+      "overall_confidence": 0.85,
+      "platform_capable": true,
+      "requires_manual_exploration": false
+    }
+  ],
+  "summary": {
+    "total_defects": 4,
+    "root_cause_determined": 4,
+    "ownership_determined": 4,
+    "blast_radius_determined": 4,
+    "repair_order_determined": 4,
+    "verification_plan_determined": 4,
+    "avg_confidence": 0.85,
+    "manual_exploration_required": 0
+  }
+}

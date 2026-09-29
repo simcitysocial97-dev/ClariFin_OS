@@ -1,0 +1,368 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.10 Forward Convergence Report",
+  "generated_at": "2026-08-25T06:46:24.641886+00:00",
+  "run_id": "m9-c42.21",
+  "repository_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+  "executive_summary": "The authorized 12-component full mutation campaign has been executed with evidence completeness (not_checked=0 for all components). Population-weighted aggregate mutation score is 49.9% (4422/8862 scored), significantly below the 80% threshold. Four pilot engines reproduce exactly (credit_card 75.6%, account 89.1%, loan 84.0%, reconciliation 80.4%). Eight new components reveal systematic verification weaknesses: high coverage does not imply high mutation effectiveness. Two core components (transaction_intelligence, financial_intelligence) remain deferred behind test-strengthening gates. The verification architecture has mutation evidence ready but requires cross-layer unification, planner fail-safe hardening, CI gate enforcement, and historical intelligence before final self-verifying system certification.",
+  "current_certified_state": {
+    "mutation": {
+      "authorized_components": 12,
+      "deferred_components": 2,
+      "total_mutants_generated": 11730,
+      "scored_mutants": 8862,
+      "population_weighted_score": 49.9,
+      "threshold": 80,
+      "threshold_status": "FAIL",
+      "evidence_completeness": "COMPLETE (not_checked=0 \u2200 12 components)",
+      "pilot_reproducibility": "4/4 exact (credit_card, account, loan, reconciliation)",
+      "component_certifications": {
+        "CERTIFIED": [
+          "account_engine",
+          "balance_engine",
+          "reconciliation_engine",
+          "loan_engine",
+          "core_domain_money"
+        ],
+        "CERTIFIED_WITH_DOCUMENTED_LIMITATION": [
+          "credit_card_engine (75.6%)",
+          "cashflow_engine (29.1%)",
+          "ledger_audit_engine (56.8%)",
+          "recommendation_engine (57.8%)",
+          "financial_events (59.0%)",
+          "common_calculations (56.4%)",
+          "behaviour_engine (26.7%)"
+        ],
+        "DEFERRED": [
+          "transaction_intelligence",
+          "financial_intelligence"
+        ]
+      }
+    },
+    "coverage": {
+      "full_suite": 65.59,
+      "threshold": 40,
+      "status": "PASS",
+      "engine_subset": 36.63,
+      "engine_threshold": 70,
+      "engine_status": "FAIL (subset)",
+      "note": "Threshold correctly calibrated; subset vs full-suite scope mismatch documented in C42.19."
+    },
+    "capability_verification": {
+      "strong": [
+        "loan-engine",
+        "reconciliation",
+        "ledger",
+        "api-contracts",
+        "migrations",
+        "runtime-verification"
+      ],
+      "moderate": [
+        "golden-regression",
+        "mutation-analysis (this campaign)",
+        "e2e-tests"
+      ],
+      "weak": [
+        "behaviour_engine (39% no_tests)",
+        "cashflow_engine (property-only)",
+        "ledger_audit_engine (no unit tests)",
+        "recommendation_engine (boundary gaps)",
+        "financial_events (4% no_tests)",
+        "common_calculations (equivalent-heavy)"
+      ],
+      "unmapped": [
+        "transaction_intelligence",
+        "financial_intelligence",
+        "orchestration",
+        "services",
+        "core/mappers",
+        "core/dtos",
+        "core/db",
+        "models",
+        "repositories"
+      ]
+    },
+    "verification_layers": {
+      "mutation": "COMPLETE (this campaign, CLI certified)",
+      "coverage": "COMPLETE (pytest-cov, threshold PASS full-suite)",
+      "contract": "PARTIAL (schemathesis runs, not gated)",
+      "golden": "PARTIAL (datasets exist, not gated)",
+      "e2e": "PARTIAL (Playwright runs, CI exists, not unified)"
+    }
+  },
+  "full_mutation_evidence": {
+    "campaign_scope": "12 authorized components, 11,730 mutants, sequential execution with --max-children 4, explicit --max-runtime per engine",
+    "population_reconciliation": "actual population authoritative (11,730 vs 5,354 estimate); pilot controls 4/4 exact; loan variance 5/1273 mutants (0.39%) documented",
+    "component_scores": {
+      "core_domain_money": 82.4,
+      "cashflow_engine": 29.1,
+      "ledger_audit_engine": 56.8,
+      "account_engine": 89.1,
+      "recommendation_engine": 57.8,
+      "balance_engine": 95.4,
+      "reconciliation_engine": 80.4,
+      "credit_card_engine": 75.6,
+      "financial_events": 59.0,
+      "common_calculations": 56.4,
+      "loan_engine": 84.0,
+      "behaviour_engine": 26.7
+    },
+    "aggregate": "population-weighted 49.9% (4422 killed / 8862 scored); naive mean 66.1% (rejected)",
+    "key_findings": [
+      "High coverage \u2260 high mutation: 6 engines with >88% coverage have <60% mutation (cashflow 97.6%/29.1%, ledger_audit 93.5%/56.8%, recommendation 95.9%/57.8%, common_calculations 99.4%/56.4%, financial_events 88%/59%, behaviour 70.4%/26.7%)",
+      "Low coverage \u2260 low mutation: balance_engine 58.9% coverage, 95.4% mutation (focused unit tests with strong assertions)",
+      "Discovery gaps: behaviour_engine 39% no_tests (2835 mutants), financial_events 4% no_tests (29 mutants) \u2014 coverage sees lines, mutation sees test-to-mutant binding",
+      "Property-test-only engines (cashflow) have inherent mutation discrimination limits",
+      "Equivalent mutants dominate in financial precision arithmetic (credit_card, common_calculations, core_domain_money)"
+    ]
+  },
+  "test_effectiveness_gaps": {
+    "genuine_behavioral_gaps_class_a": {
+      "estimated_total": "~800 across 12 components",
+      "top_components": [
+        {
+          "component": "behaviour_engine",
+          "estimated": 481,
+          "pattern": "business rule thresholds (debt dependency, subscription growth, nudge generation)"
+        },
+        {
+          "component": "credit_card_engine",
+          "estimated": 43,
+          "pattern": "interest/fee boundary assertions"
+        },
+        {
+          "component": "loan_engine",
+          "estimated": 130,
+          "pattern": "amortization/EMI/foreclosure arithmetic edge cases"
+        },
+        {
+          "component": "reconciliation_engine",
+          "estimated": 69,
+          "pattern": "matching tolerance logic"
+        },
+        {
+          "component": "recommendation_engine",
+          "estimated": 40,
+          "pattern": "rule threshold boundaries"
+        },
+        {
+          "component": "financial_events",
+          "estimated": 80,
+          "pattern": "event sequencing and revocation logic"
+        },
+        {
+          "component": "common_calculations",
+          "estimated": 50,
+          "pattern": "percentage/large-value boundary logic"
+        }
+      ],
+      "action": "Targeted unit/property test additions on boundary conditions \u2014 NOT automatic test generation."
+    },
+    "equivalent_mutants_class_b": {
+      "estimated_total": "~3000",
+      "pattern": "Arithmetic operator mutations in financial precision code (rounding, comparison, boundary operators) that are equivalent under domain contracts",
+      "note": "Not a test weakness \u2014 reflects domain invariants. Do not target for kills."
+    },
+    "infrastructure_discovery_gaps_class_d": {
+      "total_no_tests": 2868,
+      "components": [
+        {
+          "component": "behaviour_engine",
+          "no_tests": 2835,
+          "pct": 39.3
+        },
+        {
+          "component": "financial_events",
+          "no_tests": 29,
+          "pct": 4.1
+        },
+        {
+          "component": "loan_engine",
+          "no_tests": 4,
+          "pct": 0.3
+        }
+      ],
+      "action": "Add direct unit tests for uncovered functions before mutation can discriminate."
+    },
+    "non_deterministic_class_e": {
+      "loan_engine_variance": "5/1273 mutants flip between runs (0.39%); root cause: Hypothesis fast profile + timing jitter",
+      "action": "Derandomize Hypothesis mutation profile or pin seeds for CI reproducibility."
+    }
+  },
+  "coverage_gaps": {
+    "repository_coverage": "65.59% (PASS 40% threshold)",
+    "engine_subset_coverage": "36.63% (FAIL 70% engine threshold \u2014 scope mismatch per C42.19)",
+    "weak_areas": [
+      "transaction_intelligence: 24.3% (DEFERRED)",
+      "financial_intelligence: 35.2% (DEFERRED)",
+      "orchestration: 80.3% but indirect",
+      "services: 66.3%",
+      "repositories: 55.4%"
+    ],
+    "mutation_reveals": "Coverage sees line execution; mutation sees test-to-mutant behavioral binding. High coverage + low mutation = tests lack assertions that distinguish mutants."
+  },
+  "capability_gaps": {
+    "strongly_verified": [
+      "loan-engine",
+      "reconciliation",
+      "ledger",
+      "api-contracts",
+      "migrations",
+      "runtime-verification"
+    ],
+    "weakly_verified": [
+      "behaviour_engine (mutation 26.7%, 39% no_tests)",
+      "cashflow_engine (mutation 29.1%, property-only)",
+      "ledger_audit_engine (mutation 56.8%, no unit tests)",
+      "recommendation_engine (mutation 57.8%, boundary gaps)",
+      "financial_events (mutation 59%, 4% no_tests)",
+      "common_calculations (mutation 56.4%, equivalent-heavy)"
+    ],
+    "unmapped_production": [
+      "transaction_intelligence",
+      "financial_intelligence",
+      "orchestration",
+      "services",
+      "core/mappers",
+      "core/dtos",
+      "core/db",
+      "models",
+      "repositories"
+    ]
+  },
+  "contract_e2e_golden_gaps": {
+    "contract": "schemathesis runs in CI but evidence not unified; no contract mutation profile",
+    "e2e": "Playwright runs in CI but evidence not unified; no e2e mutation profile",
+    "golden": "Golden datasets exist but not gated; no golden mutation profile"
+  },
+  "verification_graph_gaps": [
+    "file\u2192symbol mapping: complete only for 12 mutation-eligible engines",
+    "symbol\u2192capability: engine-granular only; not symbol-granular; deferred/Tier 3 unmapped",
+    "capability\u2192profile: defined but not enforced in CI",
+    "profile\u2192test: marker-based but not queryable per capability",
+    "test\u2192evidence: mutation complete; other layers siloed",
+    "evidence\u2192gate: mutation 3-gate defined; other layers ad-hoc; no composite gate"
+  ],
+  "planner_gaps": [
+    "dependency_expansion: NOT IMPLEMENTED",
+    "unknown_mapping: fail-safe missing (should expand verification)",
+    "missing_capability: fail-safe missing (should run full profile)",
+    "missing_profile: fail-safe missing (should fall back to full)",
+    "ambiguous_dependency: fail-safe missing",
+    "missing_test: fail-safe missing",
+    "missing_evidence: fail-safe missing",
+    "stale_cache: mutation only; other layers no validation",
+    "incomplete_execution: mutation only (not_checked=0 gate)"
+  ],
+  "evidence_architecture_gaps": [
+    "no unified run_id across layers",
+    "no unified commit_sha/timestamp/environment",
+    "no unified scope manifest",
+    "no unified failures.json",
+    "no unified certification.json (composite gate)",
+    "artifact locations scattered (backend/, runtime/, frontend/)",
+    "schema inconsistency per layer",
+    "no historical linkage"
+  ],
+  "historical_verification_gaps": [
+    "no unified historical store",
+    "no delta computation engine",
+    "no trend detection",
+    "no regression alerting",
+    "no new-unmapped-logic detection"
+  ],
+  "profile_certification_gaps": {
+    "certified": "mutation CLI only",
+    "remaining": "mutation CI gate, contract, golden, e2e, full composite gate"
+  },
+  "ci_workflow_gaps": [
+    "mutation not gated in CI (runs but does not fail on score < 80%)",
+    "no reusable action for mutation campaign",
+    "no composite gate action",
+    "no baseline comparison step",
+    "no deferred component tracking",
+    "no mutation smoke in PR gate"
+  ],
+  "remaining_roadmap": {
+    "phase_1_test_strengthening": {
+      "priority": "P0",
+      "actions": [
+        "Eliminate behaviour_engine no_tests gap (2835 mutants) via direct unit/property tests",
+        "Strengthen cashflow_engine property tests or add unit tests",
+        "Add boundary tests for credit_card_engine (~26 kills to reach 80%)",
+        "Add unit tests for ledger_audit_engine (currently 0)",
+        "Strengthen recommendation_engine threshold tests",
+        "Add direct tests for financial_events no_tests utilities (29)",
+        "Add boundary tests for common_calculations"
+      ],
+      "exit_criteria": "All 12 components \u226580% mutation score OR documented limitation with evidence; deferred components enter test-strengthening track."
+    },
+    "phase_2_deferred_intelligence_entry": {
+      "priority": "P1",
+      "actions": [
+        "Register capabilities for transaction_intelligence and financial_intelligence",
+        "Build unit test suites (transaction: \u226550 tests; financial: \u2265100 tests)",
+        "Add property + capability test suites",
+        "Achieve \u226570% direct coverage",
+        "Enter mutation population in next campaign"
+      ],
+      "exit_criteria": "Both deferred components mutation-certified."
+    },
+    "phase_3_verification_graph_completion": {
+      "priority": "P1",
+      "actions": [
+        "Build unified file\u2192symbol\u2192capability index for ALL production code",
+        "Implement planner fail-safe behaviors (unknown\u2192expand, missing\u2192full, ambiguous\u2192expand)",
+        "Implement dependency expansion from changed symbols",
+        "Verify planner against mutation evidence (can it predict affected capabilities from changed files?)"
+      ],
+      "exit_criteria": "Planner produces correct verification scope for any changed file in repository."
+    },
+    "phase_4_evidence_architecture_unification": {
+      "priority": "P1",
+      "actions": [
+        "Define unified VerificationRun schema",
+        "Wrap each layer to emit compatible artifacts",
+        "Build aggregator for cross-layer evidence",
+        "Add historical index and delta computation",
+        "Implement composite gate evaluator"
+      ],
+      "exit_criteria": "Single VerificationRun artifact produced per CI run; historical deltas queryable."
+    },
+    "phase_5_profile_ci_certification": {
+      "priority": "P0",
+      "actions": [
+        "Certify mutation CI gate (enforce 80% threshold in workflow)",
+        "Create reusable mutation action (per M9-C42.5 reusable_setup)",
+        "Certify contract profile (schemathesis gate, evidence schema)",
+        "Certify golden profile (dataset gate, evidence schema)",
+        "Certify e2e profile (Playwright gate, evidence schema)",
+        "Implement full composite gate (all layers)"
+      ],
+      "exit_criteria": "All 9 profiles certified with CI enforcement; composite gate fails build on any layer FAIL/NOT_EVALUABLE."
+    },
+    "phase_6_controlled_test_generation": {
+      "priority": "P2",
+      "actions": [
+        "After mutation baseline + survivor taxonomy established (THIS CAMPAIGN), use survivor-guided generation",
+        "Target Class A gaps only \u2014 not percentage chasing",
+        "Validate generated tests: no tautological, no implementation-dependent, no private access",
+        "Re-mutate to confirm kills"
+      ],
+      "exit_criteria": "Generated tests kill genuine gaps without inflating equivalent mutant counts."
+    },
+    "phase_7_final_verification_certification": {
+      "priority": "FINAL",
+      "actions": [
+        "Repository-wide mutation certification (\u226580% aggregate with all components certified)",
+        "All deferred components certified",
+        "Verification graph complete for all production code",
+        "Planner fail-safes verified",
+        "Evidence architecture unified with historical intelligence",
+        "All 9 profiles CI-certified with composite gate",
+        "Historical regression detection active"
+      ],
+      "exit_criteria": "ClariFin_OS self-verifying engineering system operational: any repository change \u2192 affected capabilities \u2192 verification scope \u2192 required layers \u2192 tests \u2192 evidence \u2192 gate decision \u2192 historical record \u2014 fully automated and auditable."
+    }
+  },
+  "final_certification_path": "C42.21 (measurement) \u2192 P1 test strengthening \u2192 P1 deferred entry \u2192 P1 graph/planner completion \u2192 P1 evidence unification \u2192 P0 profile/CI certification \u2192 P2 controlled generation \u2192 FINAL certification. Estimated 4-6 campaign cycles."
+}

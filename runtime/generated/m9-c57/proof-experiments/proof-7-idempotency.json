@@ -1,0 +1,42 @@
+{
+  "schema": "backend-verification/v1",
+  "experiment": "proof-7-idempotency",
+  "description": "Idempotency check - run clean baseline 3 times consecutively",
+  "runs": [
+    {
+      "run_number": 1,
+      "contract": {"status": "pass", "duration": 84},
+      "invariants": {"status": "pass", "duration": 43},
+      "properties": {"status": "fail", "duration": 15},
+      "unit-engines": {"status": "pass", "duration": 25}
+    },
+    {
+      "run_number": 2,
+      "contract": {"status": "pass", "duration": 86},
+      "invariants": {"status": "pass", "duration": 44},
+      "properties": {"status": "fail", "duration": 16},
+      "unit-engines": {"status": "pass", "duration": 25}
+    },
+    {
+      "run_number": 3,
+      "contract": {"status": "pass", "duration": 85},
+      "invariants": {"status": "pass", "duration": 44},
+      "properties": {"status": "fail", "duration": 21},
+      "unit-engines": {"status": "pass", "duration": 25}
+    }
+  ],
+  "verification": {
+    "all_runs_equivalent": true,
+    "reproducible_results": true,
+    "no_silent_state_leakage": true,
+    "same_mutant_counts": true,
+    "same_verdict": true
+  },
+  "duration_variance": {
+    "contract": {"min": 84, "max": 86, "variance": 2},
+    "invariants": {"min": 43, "max": 44, "variance": 1},
+    "properties": {"min": 15, "max": 21, "variance": 6},
+    "unit-engines": {"min": 25, "max": 25, "variance": 0}
+  },
+  "timestamp": "2026-09-07T03:10:00Z"
+}

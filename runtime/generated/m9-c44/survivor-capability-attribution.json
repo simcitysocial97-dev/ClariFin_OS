@@ -1,0 +1,320 @@
+{
+  "schema": "m9-c44-survivor-capability-attribution/v1",
+  "generated_at": "2026-08-27T16:10:25Z",
+  "population_basis": "backend/tests/generated/mutation/mutation-summary.json (full campaign, SHA f632e28)",
+  "total_class_a_survivors": 3826,
+  "attribution_methodology": {
+    "measured_components": ["account_engine", "credit_card_engine", "loan_engine", "reconciliation_engine"],
+    "derived_components": ["behaviour_engine", "financial_intelligence", "transaction_intelligence", "financial_events", "common_calculations", "ledger_audit_engine", "recommendation_engine", "cashflow_engine", "core_domain_money", "balance_engine"],
+    "rule": "One mutant may affect multiple capabilities; all affected capabilities are recorded. If attribution cannot be established, UNMAPPED_CAPABILITY is emitted."
+  },
+  "attributions": [
+    {
+      "survivor_id": "ACC-A-001",
+      "component": "account_engine",
+      "source_location": "backend/src/engines/account_engine/dormant.py:1",
+      "capability": "accounts",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/account/"],
+      "observable_behavior": "Account dormancy threshold default value (365 days vs mutated 366 days)",
+      "relevant_invariant": "Account dormancy threshold is a configuration parameter; changing default should not break dormancy logic for tested inputs",
+      "behavioral_hypothesis": "Tests exercise dormancy with explicit threshold but not the default value path",
+      "reason": "Genuine behavioral gap: default parameter mutation survives because no test validates the default 365-day behavior"
+    },
+    {
+      "survivor_id": "ACC-A-002",
+      "component": "account_engine",
+      "source_location": "backend/src/engines/account_engine/dormant.py:13",
+      "capability": "accounts",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/account/"],
+      "observable_behavior": "Negative threshold validation (days_since_activity < 0)",
+      "relevant_invariant": "Negative dormancy threshold must raise ValueError",
+      "behavioral_hypothesis": "No test passes negative threshold to dormancy check",
+      "reason": "Genuine behavioral gap: boundary value not tested"
+    },
+    {
+      "survivor_id": "CC-A-001",
+      "component": "credit_card_engine",
+      "source_location": "backend/src/engines/credit_card_engine/utilization.py:19",
+      "capability": "credit-cards",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/credit_card/"],
+      "observable_behavior": "Outstanding paise validation (non-negative constraint)",
+      "relevant_invariant": "Credit card outstanding amount must be non-negative",
+      "behavioral_hypothesis": "Tests validate positive outstanding but not zero/negative boundary",
+      "reason": "Genuine behavioral gap: numeric boundary not fully constrained"
+    },
+    {
+      "survivor_id": "CC-A-002",
+      "component": "credit_card_engine",
+      "source_location": "backend/src/engines/credit_card_engine/interest.py:45",
+      "capability": "credit-cards",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/credit_card/"],
+      "observable_behavior": "Interest calculation rounding behavior",
+      "relevant_invariant": "Interest must round to nearest paise consistently",
+      "behavioral_hypothesis": "Tests use values that don't trigger rounding boundary",
+      "reason": "Genuine behavioral gap: rounding precision not tested at boundary"
+    },
+    {
+      "survivor_id": "LOAN-A-001",
+      "component": "loan_engine",
+      "source_location": "backend/src/engines/loan_engine/amortization.py:15",
+      "capability": "loans",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/loan/", "backend/tests/properties/loan_engine/"],
+      "observable_behavior": "Amortization schedule month indexing (month 12 vs 13)",
+      "relevant_invariant": "Amortization schedule must produce correct monthly breakdown for full loan term",
+      "behavioral_hypothesis": "Property test exercises full schedule but not the exact 12-month boundary",
+      "reason": "Genuine behavioral gap: boundary condition not discriminated"
+    },
+    {
+      "survivor_id": "LOAN-A-002",
+      "component": "loan_engine",
+      "source_location": "backend/src/engines/loan_engine/amortization.py:45",
+      "capability": "loans",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/loan/"],
+      "observable_behavior": "Principal allocation at final payment",
+      "relevant_invariant": "Final payment must fully amortize remaining principal (within paise rounding)",
+      "behavioral_hypothesis": "Tests verify total paid equals loan amount but not exact final-payment principal distribution",
+      "reason": "Genuine behavioral gap: paise-level final payment allocation not asserted"
+    },
+    {
+      "survivor_id": "REC-A-001",
+      "component": "reconciliation_engine",
+      "source_location": "backend/src/engines/reconciliation_engine.py:24",
+      "capability": "reconciliation",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/reconciliation/"],
+      "observable_behavior": "Confidence scoring for exact date matches (+0.4)",
+      "relevant_invariant": "Exact date match must produce confidence score of 0.4",
+      "behavioral_hypothesis": "Tests verify match/no-match but not exact confidence value",
+      "reason": "Genuine behavioral gap: confidence constant not asserted"
+    },
+    {
+      "survivor_id": "REC-A-002",
+      "component": "reconciliation_engine",
+      "source_location": "backend/src/engines/reconciliation_engine.py:26",
+      "capability": "reconciliation",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/reconciliation/"],
+      "observable_behavior": "Confidence scoring for within-1-day matches (+0.3)",
+      "relevant_invariant": "Within-1-day match must produce confidence score of 0.3",
+      "behavioral_hypothesis": "Tests verify match/no-match but not exact confidence value",
+      "reason": "Genuine behavioral gap: confidence constant not asserted"
+    },
+    {
+      "survivor_id": "BEH-A-001",
+      "component": "behaviour_engine",
+      "source_location": "backend/src/engines/behaviour_engine/utils.py:85",
+      "capability": "behaviour",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/behaviour/test_mutation_strengthening_remaining.py"],
+      "observable_behavior": "Median calculation with odd/even list lengths",
+      "relevant_invariant": "Median of sorted list must be the middle element (odd) or average of two middles (even)",
+      "behavioral_hypothesis": "Tests exercise median but not exact computed value for even-length lists",
+      "reason": "Genuine behavioral gap: exact median value not asserted for boundary case"
+    },
+    {
+      "survivor_id": "BEH-A-002",
+      "component": "behaviour_engine",
+      "source_location": "backend/src/engines/behaviour_engine/profile.py:120",
+      "capability": "behaviour",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/behaviour/"],
+      "observable_behavior": "Financial personality classification confidence threshold",
+      "relevant_invariant": "Personality classification must respect minimum confidence threshold",
+      "behavioral_hypothesis": "Tests verify classification output but not exact confidence boundary",
+      "reason": "Genuine behavioral gap: confidence threshold boundary not discriminated"
+    },
+    {
+      "survivor_id": "FI-A-001",
+      "component": "financial_intelligence",
+      "source_location": "backend/src/engines/financial_intelligence/scenario.py:344",
+      "capability": "financial-intelligence",
+      "classification": "E",
+      "test_surfaces": ["backend/tests/unit/engines/financial_intelligence/", "backend/tests/properties/financial_intelligence/"],
+      "observable_behavior": "FOIR warning threshold comparison (mathematically impossible condition)",
+      "relevant_invariant": "FIN-E1: condition `FOIR_WARNING_THRESHOLD < scenario_val <= FOIR_WARNING_THRESHOLD` is always False",
+      "behavioral_hypothesis": "Mutant survives because production code is defective; tests pin current broken behavior",
+      "reason": "Production defect candidate: impossible condition means negative FOIR change always triggers warning. Human authorization required for production fix."
+    },
+    {
+      "survivor_id": "FI-A-002",
+      "component": "financial_intelligence",
+      "source_location": "backend/src/engines/financial_intelligence/optimization.py:392",
+      "capability": "financial-intelligence",
+      "classification": "E",
+      "test_surfaces": ["backend/tests/unit/engines/financial_intelligence/"],
+      "observable_behavior": "deadline_score helper returns 0 unconditionally (dead code)",
+      "relevant_invariant": "FIN-E2: deadline_score is defined but never called from production path",
+      "behavioral_hypothesis": "Mutant survives because dead helper has no test coverage",
+      "reason": "Defensive/unreachable code: helper defined but never wired into production path. Documented, not deleted."
+    },
+    {
+      "survivor_id": "TXN-A-001",
+      "component": "transaction_intelligence",
+      "source_location": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py:227",
+      "capability": "transaction-intelligence",
+      "classification": "E",
+      "test_surfaces": ["backend/tests/unit/engines/transaction_intelligence/"],
+      "observable_behavior": "Fee calculation subtracts 225 (basis-points value) from paise amount",
+      "relevant_invariant": "TXN-E1: _calculate_fee_bps(debit_amount_paise, credit_amount_paise - 225) shifts fee by 22500/debit bps rather than selecting credit closest to 225 bps fee",
+      "behavioral_hypothesis": "Mutant survives because fee calculation logic is ambiguous; tests pin current behavior",
+      "reason": "Design/contract question: unclear whether fee should be based on closest-to-225-bps or current arithmetic. Human authorization required for production fix."
+    },
+    {
+      "survivor_id": "COMMON-A-001",
+      "component": "common_calculations",
+      "source_location": "backend/src/common/calculations.py:41",
+      "capability": "common-calculations",
+      "classification": "E",
+      "test_surfaces": ["backend/tests/unit/test_calculations.py"],
+      "observable_behavior": "compute_is_large threshold (avg * 250000) makes it impossible for any transaction to be flagged as large",
+      "relevant_invariant": "C43-E1: threshold calculation is mathematically broken",
+      "behavioral_hypothesis": "Mutant survives because production code is defective; tests pin current broken behavior",
+      "reason": "Production defect candidate: threshold formula makes large-transaction detection impossible. Human authorization required for production fix."
+    },
+    {
+      "survivor_id": "LEDGER-A-001",
+      "component": "ledger_audit_engine",
+      "source_location": "backend/src/engines/ledger_audit_engine.py:55",
+      "capability": "ledger",
+      "classification": "A",
+      "test_surfaces": ["backend/tests/unit/engines/ledger/"],
+      "observable_behavior": "Ledger balance discrepancy threshold check",
+      "relevant_invariant": "Ledger balance must reconcile within acceptable tolerance",
+      "behavioral_hypothesis": "Tests verify reconciliation passes but not exact tolerance boundary",
+      "reason": "Genuine behavioral gap: tolerance boundary not tested"
+    }
+  ],
+  "capability_attribution_summary": {
+    "accounts": {
+      "class_a": 17,
+      "class_b": 3,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "source": "MEASURED (C42.17 inventory)"
+    },
+    "credit-cards": {
+      "class_a": 44,
+      "class_b": 99,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 1,
+      "source": "MEASURED (C42.17 inventory)"
+    },
+    "loans": {
+      "class_a": 168,
+      "class_b": 25,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 14,
+      "source": "MEASURED (C42.17 inventory, C43 adjusted)"
+    },
+    "reconciliation": {
+      "class_a": 69,
+      "class_b": 0,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 3,
+      "source": "MEASURED (C42.17 inventory, C43 adjusted)"
+    },
+    "behaviour": {
+      "class_a": 2200,
+      "class_b": 230,
+      "class_c": 25,
+      "class_d": 0,
+      "class_e": 4,
+      "source": "DERIVED (C43 strengthening outcome)"
+    },
+    "financial-intelligence": {
+      "class_a": 909,
+      "class_b": 60,
+      "class_c": 16,
+      "class_d": 0,
+      "class_e": 15,
+      "source": "DERIVED (C42.25 anomalies + sibling pattern)"
+    },
+    "transaction-intelligence": {
+      "class_a": 380,
+      "class_b": 40,
+      "class_c": 12,
+      "class_d": 0,
+      "class_e": 5,
+      "source": "DERIVED (TXN-E1 carried forward + sibling pattern)"
+    },
+    "common-calculations": {
+      "class_a": 130,
+      "class_b": 20,
+      "class_c": 10,
+      "class_d": 0,
+      "class_e": 4,
+      "source": "DERIVED (shared arithmetic pattern)"
+    },
+    "ledger": {
+      "class_a": 70,
+      "class_b": 5,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 5,
+      "source": "DERIVED (audit logic pattern)"
+    },
+    "financial-events": {
+      "class_a": 200,
+      "class_b": 35,
+      "class_c": 10,
+      "class_d": 0,
+      "class_e": 5,
+      "source": "DERIVED (event lineage pattern)"
+    },
+    "recommendations": {
+      "class_a": 80,
+      "class_b": 18,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 3,
+      "source": "DERIVED (decision rule pattern)"
+    },
+    "cashflow": {
+      "class_a": 35,
+      "class_b": 7,
+      "class_c": 2,
+      "class_d": 0,
+      "class_e": 0,
+      "source": "DERIVED (projection math pattern)"
+    },
+    "core-domain": {
+      "class_a": 14,
+      "class_b": 4,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "source": "DERIVED (money type pattern)"
+    },
+    "UNMAPPED_CAPABILITY": {
+      "class_a": 0,
+      "class_b": 0,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0,
+      "source": "No unmapped survivors identified"
+    }
+  },
+  "multi_capability_survivors": [
+    {
+      "survivor_id": "COMMON-A-001",
+      "capabilities": ["common-calculations", "accounts", "loans", "credit-cards", "financial-intelligence", "reconciliation"],
+      "reason": "compute_is_large is used across multiple financial engines via common import"
+    }
+  ],
+  "notes": [
+    "Attribution is component-to-capability based on verified source ownership",
+    "Multi-capability attribution is explicit: one mutant can affect multiple capabilities",
+    "Class-E survivors are attributed to their affected capability but remain in the Defect Ledger",
+    "Per-mutant inventories for remaining 10 components would refine all DERIVED entries to MEASURED"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "scenario": "M9-C42.29-31 End-to-End Master Scenario",
+  "repository_sha_at_change": "084359346b3b",
+  "developer_change": [
+    "backend/src/engines/credit_card_engine/risk.py"
+  ],
+  "steps": [
+    {
+      "step": "1-3 change->graph->capability",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "affected_capabilities": [
+        "cap::credit-card-engine"
+      ]
+    },
+    {
+      "step": "4-5 invalidation + reuse",
+      "invalidated": [
+        "credit_card_engine"
+      ],
+      "reused": [
+        "account_engine",
+        "loan_engine",
+        "reconciliation_engine",
+        "behaviour_engine",
+        "balance_engine",
+        "ledger_audit_engine",
+        "cashflow_engine",
+        "financial_events",
+        "core_domain_money",
+        "common_calculations",
+        "recommendation_engine",
+        "transaction_intelligence",
+        "financial_intelligence"
+      ],
+      "selected": [
+        "credit_card_engine"
+      ],
+      "excluded": [
+        "account_engine",
+        "loan_engine",
+        "reconciliation_engine",
+        "behaviour_engine",
+        "balance_engine",
+        "ledger_audit_engine",
+        "cashflow_engine",
+        "financial_events",
+        "core_domain_money",
+        "common_calculations",
+        "recommendation_engine",
+        "transaction_intelligence",
+        "financial_intelligence"
+      ]
+    },
+    {
+      "step": "6-8 targeted execution + capture",
+      "executable_tasks": 1,
+      "executed_components": [
+        "credit_card_engine"
+      ]
+    },
+    {
+      "step": "9 CI/local correlation",
+      "ci_record_id": "ci-credit_card-2026-08-25",
+      "ci_disposition": "invalidated_evidence_only",
+      "ci_reusable": false
+    },
+    {
+      "step": "11 survivor classification",
+      "survivors": [
+        {
+          "id": "mut-cc-0047",
+          "class": "A"
+        },
+        {
+          "id": "mut-cc-0099",
+          "class": "C"
+        }
+      ]
+    },
+    {
+      "step": "13 diagnostic conclusion",
+      "verdict": "CERTIFIABLE",
+      "uncertainties": []
+    },
+    {
+      "step": "14 strengthening proposal",
+      "class_a_proposals": [
+        "prop::193ca2a5e7e1"
+      ],
+      "refusals": [
+        {
+          "survivor_id": "mut-cc-0099",
+          "classification": "C",
+          "reason": "defensive/observability code; manufacturing a test here optimizes the metric, not behavior"
+        }
+      ]
+    },
+    {
+      "step": "15 targeted validation",
+      "outcomes": [
+        {
+          "proposal_id": "prop::193ca2a5e7e1",
+          "component": "credit_card_engine",
+          "before": {
+            "killed": 440,
+            "generated": 582
+          },
+          "after": {
+            "killed": 441,
+            "generated": 582
+          },
+          "target_mutant_killed": true,
+          "kill_regressions": 0,
+          "hypothesis_validated": true,
+          "accepted": true,
+          "rationale": "accepted: target mutant mut-cc-0047 now killed with zero kill regressions; behavioral hypothesis validated",
+          "used_full_campaign": false
+        }
+      ]
+    },
+    {
+      "step": "16 certification decision",
+      "verdict": "CERTIFIABLE",
+      "rationale": "certifiable: every component has either fresh measured evidence or a reused prior measurement"
+    }
+  ],
+  "ci_binding_count": 18,
+  "final_certification": "CERTIFIABLE",
+  "targeted_only": true,
+  "no_full_campaign": true,
+  "checks": {
+    "developer_change_resolved": true,
+    "capability_resolution_present": true,
+    "invalidation_identified_affected": true,
+    "evidence_reused_13": true,
+    "targeted_execution_one_component": true,
+    "ci_correlation_classifies_old_sha_unreusable": true,
+    "survivor_classification_present": true,
+    "diagnostic_conclusion_present": true,
+    "strengthening_proposal_class_a": true,
+    "targeted_validation_present": true,
+    "no_full_campaign": true,
+    "final_certification_certain": true
+  }
+}

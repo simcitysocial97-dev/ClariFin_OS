@@ -1,0 +1,205 @@
+{
+  "title": "M9-C42.26 — Cross-Dimension Reconciliation & Capability Matrix",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-cross-dimension",
+  "milestone": "M26.9",
+  "question_now": "Which production capabilities remain insufficiently discriminated by the verification system? (Not: how do we get mutation score above 80%?)",
+
+  "capability_matrix": [
+    {
+      "capability": "account-management",
+      "component": "account_engine",
+      "coverage_pct": 98.9,
+      "mutation_pct": 89.1,
+      "discovery": "verified",
+      "test_strength": "strong (183 mutants, 0 no_tests)",
+      "capability_test": "tests/capability/account_management",
+      "status": "CERTIFIED",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (migrations)"
+    },
+    {
+      "capability": "runtime-verification",
+      "component": "balance_engine",
+      "coverage_pct": 49.1,
+      "mutation_pct": 94.7,
+      "discovery": "verified",
+      "test_strength": "strong (285 mutants, 0 no_tests, but 0% generation 1959/0 still focused on critical paths)",
+      "capability_test": "none",
+      "status": "CERTIFIED",
+      "note": "Low coverage but exceptional mutation discrimination — tests target critical paths.",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (runtime-verification)"
+    },
+    {
+      "capability": "loan-engine",
+      "component": "loan_engine",
+      "coverage_pct": 98.7,
+      "mutation_pct": 84.0,
+      "discovery": "verified",
+      "test_strength": "strong (1273 mutants, 4 no_tests)",
+      "capability_test": "none",
+      "status": "CERTIFIED",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (loan-engine)"
+    },
+    {
+      "capability": "reconciliation",
+      "component": "reconciliation_engine",
+      "coverage_pct": 85.1,
+      "mutation_pct": 80.7,
+      "discovery": "verified",
+      "test_strength": "strong (368 mutants, 0 no_tests, multi-layer tests)",
+      "capability_test": "tests/capability/reconciliation",
+      "status": "CERTIFIED",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (reconciliation)"
+    },
+    {
+      "capability": "ledger",
+      "component": "ledger_audit_engine",
+      "coverage_pct": 93.5,
+      "mutation_pct": 56.8,
+      "discovery": "verified",
+      "test_strength": "moderate (190 mutants, 0 no_tests, but 82 survivors classified C/B)",
+      "capability_test": "none",
+      "status": "MONITOR",
+      "note": "High coverage but weak mutation — tests exercise code but lack strict assertions.",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (ledger)"
+    },
+    {
+      "capability": "api-contracts",
+      "component": "credit_card_engine",
+      "coverage_pct": 72.5,
+      "mutation_pct": 75.6,
+      "discovery": "verified",
+      "test_strength": "strong (582 mutants, 0 no_tests, comprehensive)",
+      "capability_test": "tests/capability/credit_cards",
+      "status": "CERTIFIED",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (api-contracts)"
+    },
+    {
+      "capability": "golden-regression",
+      "component": "cashflow_engine",
+      "coverage_pct": 100.0,
+      "mutation_pct": 74.4,
+      "discovery": "verified",
+      "test_strength": "strengthened (172 mutants, 0 no_tests, C42.23 added 78 kills; 44 equivalent/unreachable remain)",
+      "capability_test": "none",
+      "status": "MONITOR",
+      "note": "Post-C42.23 strengthening: 78 genuine mutants killed.",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (golden-regression)"
+    },
+    {
+      "capability": "behaviour-analysis",
+      "component": "behaviour_engine",
+      "coverage_pct": 73.7,
+      "mutation_pct": 35.7,
+      "discovery": "REPAIRED (1955 no_tests remain in partially-covered modules; was 2835 pre-C42.24-B)",
+      "test_strength": "STRENGTHENING-PRIORITY (5258 evaluated mutants, 1875 killed; 3383 survivors + 1955 no_tests remaining)",
+      "capability_test": "tests/capability/pattern_analysis",
+      "status": "PRIORITY",
+      "note": "Largest remaining gap. C42.24-B credit_dependency.py + temporal.py direct test suites reduced no_tests 2835 -> 1955. Remaining 1955 are in partially-covered modules (genuine behavioral gaps).",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (behaviour-analysis)"
+    },
+    {
+      "capability": "mutation-analysis",
+      "component": "financial_events",
+      "coverage_pct": 87.7,
+      "mutation_pct": 64.5,
+      "discovery": "verified (C42.22 discovery repair: no_tests 29->0)",
+      "test_strength": "moderate (704 mutants, 0 no_tests, 250 survivors include genuine gaps A)",
+      "capability_test": "tests/capability/financial_events",
+      "status": "MONITOR",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (mutation-analysis)"
+    },
+    {
+      "capability": "e2e-tests",
+      "component": "recommendation_engine",
+      "coverage_pct": 95.9,
+      "mutation_pct": 63.5,
+      "discovery": "verified",
+      "test_strength": "moderate (282 mutants, 0 no_tests, 103 survivors; ~20 genuine gaps A)",
+      "capability_test": "tests/capability/recommendations",
+      "status": "MONITOR",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (e2e-tests)"
+    },
+    {
+      "capability": "financial-calculations",
+      "component": "common_calculations",
+      "coverage_pct": 98.8,
+      "mutation_pct": 56.4,
+      "discovery": "verified",
+      "test_strength": "moderate (377 mutants, 0 no_tests, survivors equivalent/intentional)",
+      "capability_test": "none",
+      "status": "MONITOR",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (financial-calculations)"
+    },
+    {
+      "capability": "money-domain",
+      "component": "core_domain_money",
+      "coverage_pct": 100.0,
+      "mutation_pct": 82.4,
+      "discovery": "verified",
+      "test_strength": "strong (102 mutants, 0 no_tests, comprehensive invariants)",
+      "capability_test": "none",
+      "status": "CERTIFIED",
+      "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-capability-reconciliation.json (money-domain)"
+    },
+    {
+      "capability": "transaction-intelligence",
+      "component": "transaction_intelligence",
+      "coverage_pct": 98.6,
+      "mutation_pct": 70.2,
+      "discovery": "verified",
+      "test_strength": "strong (1465 mutants, 0 no_tests, 157 unit + 23 property + 6 capability)",
+      "capability_test": "tests/capability/transaction_intelligence",
+      "status": "NEWLY CERTIFIED",
+      "note": "Three production anomalies recorded (TXN-E1, TXN-C1, TXN-C2) — preserved as findings.",
+      "source_artifact": "runtime/generated/m9-c42.25/transaction/* + this run's m9-c42.26-intelligence-certification.json"
+    },
+    {
+      "capability": "financial-intelligence",
+      "component": "financial_intelligence",
+      "coverage_pct": 94.4,
+      "mutation_pct": 73.0,
+      "discovery": "verified",
+      "test_strength": "strong (3710 mutants, 0 no_tests, 245 unit + 22 property + 8 capability)",
+      "capability_test": "tests/capability/financial_intelligence",
+      "status": "NEWLY CERTIFIED",
+      "note": "Five production anomalies recorded (FIN-E1, FIN-E2, FIN-E3, FIN-E4, FIN-E5) — preserved as findings.",
+      "source_artifact": "runtime/generated/m9-c42.25/financial/* + this run's m9-c42.26-intelligence-certification.json"
+    }
+  ],
+
+  "summary_by_status": {
+    "CERTIFIED":         ["account-management", "runtime-verification", "loan-engine", "reconciliation", "api-contracts", "money-domain"],
+    "MONITOR":           ["ledger", "golden-regression", "mutation-analysis", "e2e-tests", "financial-calculations"],
+    "PRIORITY":          ["behaviour-analysis"],
+    "NEWLY CERTIFIED":   ["transaction-intelligence", "financial-intelligence"]
+  },
+
+  "remediation_priority": [
+    {
+      "rank": 1,
+      "capability": "behaviour-analysis",
+      "rationale": "Lowest mutation score (35.7%); largest survivor + no_tests population; capability is core to the product. C42.24-B closed the worst discovery gap; remaining 1955 no_tests are in partially-covered modules and need direct test coverage work.",
+      "next_action": "C42.27+ bounded behaviour_engine strengthening (NOT C42.26 — this is forward convergence work, not population expansion work).",
+      "scope": "Test strengthening, not mutation re-measurement."
+    },
+    {
+      "rank": 2,
+      "capability": "ledger / financial-calculations",
+      "rationale": "High coverage but weak mutation — suggests tests exercise code but lack strict assertions. Survivors are largely equivalent or intentional. Useful future work: convert surviving-assertion patterns to value-strict assertions where behavior is discriminating.",
+      "next_action": "Optional C42.27+ behavioural assertion strengthening. Not required."
+    },
+    {
+      "rank": 3,
+      "capability": "transaction-intelligence / financial-intelligence",
+      "rationale": "NEWLY CERTIFIED. Three + five production anomalies recorded but not fixed. These are forward defect-verification work, not mutation-system work.",
+      "next_action": "Defect-verification gate (separate phase) to establish reproducibility / intended behavior / impact / fix / regression test / ownership for each anomaly."
+    },
+    {
+      "rank": 4,
+      "capability": "verification-architecture",
+      "rationale": "Forward dependency. The current mutation evidence model cannot formally establish evidence reuse (M26.12). This is the next architectural gap.",
+      "next_action": "Verification architecture convergence work (EvidenceReuse, ComponentMeasurement, PopulationSnapshot, DerivedAggregate, MeasurementInvalidation). Not a mutation workstream."
+    }
+  ]
+}

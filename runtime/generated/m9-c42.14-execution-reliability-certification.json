@@ -1,0 +1,64 @@
+{
+  "certification": "M9-C42.14-execution-reliability-certification",
+  "timestamp": "2026-08-23T19:30:00+00:00",
+  "repository": {
+    "root": "/home/vasantha/AI-Projects/ClariFin_OS",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_commit": "255ffdde",
+    "head_message": "M9-C42.5: Mutation infrastructure hardening"
+  },
+  "based_on": "M9-C42.13-enterprise-execution-certification",
+  "architecture_status": "CERTIFIED",
+  "environment_status": "CERTIFIED",
+  "configuration_status": "CERTIFIED",
+  "dependency_status": "CERTIFIED",
+  "path_import_status": "CERTIFIED",
+  "toolchain_status": "CERTIFIED",
+  "mutation_safety_status": "CERTIFIED",
+  "ci_parity_status": "CERTIFIED",
+  "frontend_backend_process_status": "CERTIFIED",
+  "cache_status": "CERTIFIED",
+  "capability_preservation_status": "CERTIFIED",
+  "process_group_ownership_status": "CERTIFIED",
+  "signal_propagation_status": "CERTIFIED",
+  "timeout_handling_status": "CERTIFIED",
+  "mutation_cleanup_status": "CERTIFIED",
+  "ci_cancellation_status": "CERTIFIED",
+  "lifecycle_evidence_status": "CERTIFIED",
+  "known_limitations": [
+    "Signal handlers only work in main thread (Python limitation) — mutation runner signals work when invoked directly",
+    "Process group killing requires Linux/Unix — CI is Linux",
+    "start_new_session=True requires Python 3.3+ — satisfied (3.12)",
+    "2 pre-existing runtime test failures (uncommitted developer changes)",
+    "13 files need black reformatting (uncommitted changes)",
+    "Multiple I001 import sorting issues (now honestly reported by consolidated ruff)"
+  ],
+  "remaining_risks": [
+    "Editable install absolute-path coupling (F09, MED) — documented reinstall contract",
+    "Playwright browser cache local vs CI (ED6, LOW-MED)",
+    "Locale/TZ uncontrolled (ED7, LOW) — no known sensitive assertions",
+    "Git fetch silent failure tolerance (F26, LOW)"
+  ],
+  "phase_gates": {
+    "G1_subprocesses_owned_process_group": "PASSED",
+    "G2_sigterm_reaches_complete_tree": "PASSED",
+    "G3_sigint_reaches_complete_tree": "PASSED",
+    "G4_timeout_leaves_no_descendants": "PASSED",
+    "G5_mutation_restoration_after_interrupt": "PASSED",
+    "G6_normal_execution_unchanged": "PASSED",
+    "G7_linux_ci_deterministic": "PASSED",
+    "G8_lifecycle_evidence_recorded": "PASSED"
+  },
+  "files_modified": [
+    "runtime/foundation/verification/executor.py",
+    "runtime/foundation/verification/mutation_runner.py"
+  ],
+  "evidence": {
+    "baseline": "runtime/generated/m9-c42.14-baseline.py",
+    "executor_test": "runtime/generated/m9-c42.14-executor-test.py",
+    "mutation_test": "runtime/generated/m9-c42.14-mutation-test.py",
+    "executor_lifecycle": "runtime/generated/execution/lifecycle-events.jsonl",
+    "mutation_lifecycle": "backend/tests/generated/mutation/mutation-lifecycle-events.jsonl",
+    "progress": "progress.md"
+  }
+}

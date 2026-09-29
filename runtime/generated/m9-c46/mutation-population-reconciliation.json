@@ -1,0 +1,113 @@
+{
+  "schema": "m9-c46-mutation-population-reconciliation/v1",
+  "milestone": "M46.10",
+  "objective": "Build defensible reconciliation between expected mutation opportunities, backend-discovered candidates, executed candidates, and scored candidates.",
+  "generated_at": "2026-09-03T12:55:00Z",
+  "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+  "branch": "m9c9-merge-authorization-resolution",
+  "canonical_population_taxonomy": {
+    "source": "runtime/foundation/verification/mutation_contract.py:39 (MutationCounts) and :373 (reconcile_counts)",
+    "discovered": "mutmut backend population",
+    "scored_statuses": ["killed", "survived", "timeout"],
+    "structural_statuses": ["no_tests", "suspicious", "not_checked"],
+    "arithmetic_invariant": "generated == killed + survived + no_tests + timeout + suspicious + not_checked",
+    "score_formula": "killed / (killed + survived + timeout); score=None when denominator=0"
+  },
+  "reconciliation_ladder": [
+    {
+      "level": "expected_opportunities",
+      "description": "Static expectation: number of mutation sites derivable from source AST (every replaceable expression, comparison, boolean operator, return value, etc.)",
+      "value": "NOT SEPARATELY MEASURED in this M46 session. mutmut does not emit a 'static expectation' count; it generates mutants as it parses."
+    },
+    {
+      "level": "backend_discovered",
+      "description": "Number of mutants mutmut 3.7.0 successfully generated from the source AST (excluding syntax-unsupported constructs)",
+      "value_account_engine": 183,
+      "evidence": "backend/tests/generated/mutation/measurement-truth-account_engine.json: population.generated=183",
+      "method": "verify.py mutation --target account_engine (real run 2026-09-03)"
+    },
+    {
+      "level": "executed",
+      "description": "Number of mutants that had tests run against them (killed + survived + timeout)",
+      "value_account_engine": 183,
+      "evidence": "same file: actually_processed=183 == generated",
+      "fully_exhausted": true
+    },
+    {
+      "level": "scored",
+      "description": "Number of mutants contributing to the score denominator (killed + survived + timeout)",
+      "value_account_engine": 183,
+      "evidence": "same file: actually_scored=183"
+    },
+    {
+      "level": "killed",
+      "description": "Number of mutants detected by at least one test",
+      "value_account_engine": 173,
+      "evidence": "same file"
+    },
+    {
+      "level": "survived",
+      "description": "Number of mutants no test detected",
+      "value_account_engine": 10,
+      "evidence": "same file + mutation-survivors-account_engine.json (catalog)",
+      "forensic_status": "10 survivors all in account_engine; 9 control_flow + 1 arithmetic; survivor-intel persisted with test enrichment"
+    }
+  ],
+  "discrepancy_classification": {
+    "account_engine_classification": {
+      "expected_vs_discovered": "UNKNOWN — static expectation not separately computed",
+      "discovered_vs_executed": "0 gap (all 183 discovered were executed)",
+      "executed_vs_scored": "0 gap (no no_tests/suspicious/not_checked in this campaign)",
+      "no_tests": 0,
+      "timeout": 0,
+      "suspicious": 0,
+      "not_checked": 0,
+      "verdict": "POPULATION EXHAUSTED — full arithmetic invariant holds. Score is meaningful."
+    },
+    "classifications_per_milestone_22": {
+      "unsupported": "0 — M45.14 confirmed mutmut 3.7.0 handles all syntax features used in production (PEP 604 union annotations). PEP 634/654/695 not used.",
+      "excluded_by_policy": "0 for account_engine — explicitly selected via ENGINE_SELECTION",
+      "equivalent": "unknown per survivor — would require per-survivor forensic (survivor-intel.json provides this)",
+      "no_test": 0,
+      "execution_failure": 0,
+      "timeout": 0,
+      "tool_limitation": 0,
+      "syntax_limitation": 0,
+      "discovery_limitation": "candidate — not measured separately",
+      "genuine_gap": "10 survived mutants classified as control_flow (9) + arithmetic (1). These are GENUINE gaps for account_engine test surface."
+    }
+  },
+  "full_engines_scope_reconciliation": {
+    "scope": "backend/src/engines/*",
+    "estimated_total_mutants": "Per C44 historical: ~3000-4000 mutants across all engines",
+    "per_engine_last_measured": {
+      "account_engine": {"generated": 183, "killed": 173, "survived": 10, "score": 94.5, "measured_this_session": true},
+      "credit_card_engine": "Not re-measured in this session; per C45/STATE A 77.1%",
+      "balance_engine": "Not re-measured in this session; per C45/STATE A scope",
+      "reconciliation_engine": "Not re-measured in this session; per C45/STATE A 81.0%",
+      "loan_engine": "Not re-measured in this session; per C45/STATE A 83.8%",
+      "behaviour_engine": "Not re-measured in this session; per C45/STATE A 83.5%",
+      "financial_intelligence": "Not re-measured in this session; per C45/STATE A 73.9%",
+      "transaction_intelligence": "Not re-measured in this session; per C45/STATE A 73.6%",
+      "financial_events": "Not re-measured in this session; per C45/STATE A 65.2% (timeout-prone locally)",
+      "recommendation_engine": "Not in ENGINE_SELECTION"
+    },
+    "last_aggregate_score": "83.6% (STATE A derived from 9 components)",
+    "current_aggregate_validity": "STATE A score is correct as of 2026-08-30. account_engine re-measured 2026-09-03 = 94.5% (consistent with prior STATE A 94.5%)."
+  },
+  "authoritativeness_assessment": {
+    "scope_authoritativeness": "HIGH — engines/* scope is well-defined and stable",
+    "denominator_clarity": "MEDIUM — actual mutmut 'generated' is observed; 'expected opportunities' is not separately measured. Mutation score is HONEST in that mutmut is the authoritative mutator for this codebase, but the denominator is not independently validated against a static AST mutator.",
+    "honest_limitations": [
+      "Per-mutation forensic for equivalent mutants is not performed for every survivor; survivor-intel.json provides this for those that survive",
+      "Full engines campaign (all 8-9 engines) takes ~27 min and was not re-executed in this session; aggregate score is from STATE A derived measurement",
+      "Some engines (financial_events, loan_engine per C45) time out locally and require CI"
+    ]
+  },
+  "verdict": "M46.10 COMPLETE. Mutation population reconciliation performed against real campaign data (account_engine re-measured 2026-09-03: 183 generated, 173 killed, 10 survived, 94.5% score; arithmetic invariant holds; 0 in no_tests/timeout/suspicious/not_checked). The honest mutation population is: for each engine, mutmut 3.7.0 discovers N mutants, all of which are executed and scored (0 structural gaps in account_engine). The full engines aggregate 83.6% is from STATE A derived measurement (2026-08-30); consistent with this-session's account_engine re-measurement. The denominator is mutmut-discovered, not independently validated against a static AST mutator — documented as limitation.",
+  "evidence_files": [
+    "backend/tests/generated/mutation/measurement-truth-account_engine.json",
+    "backend/tests/generated/mutation/mutation-survivors-account_engine.json",
+    "backend/tests/generated/mutation/mutation-survivor-intel-account_engine.json"
+  ]
+}

@@ -1,0 +1,455 @@
+{
+  "overall_status": "pass",
+  "findings": [
+    {
+      "name": "backend-verify.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "backend-verify.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact backend-report retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'backend-report' has retention-days=14"
+    },
+    {
+      "name": "backend-verify.yml/verify: artifact backend-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'backend-evidence' has retention-days=30"
+    },
+    {
+      "name": "backend-verify.yml/verify: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "dependency-update.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "dependency-update.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "dependency-update.yml/dependency-health: artifact python-dependencies retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'python-dependencies' has retention-days=30"
+    },
+    {
+      "name": "dependency-update.yml/dependency-health: artifact npm-dependencies retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'npm-dependencies' has retention-days=30"
+    },
+    {
+      "name": "dependency-update.yml/dependency-health: artifact dependency-health retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'dependency-health' has retention-days=30"
+    },
+    {
+      "name": "dependency-update.yml/dependency-health: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "frontend-verify.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "frontend-verify.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact frontend-report retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'frontend-report' has retention-days=14"
+    },
+    {
+      "name": "frontend-verify.yml/verify: artifact frontend-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'frontend-evidence' has retention-days=30"
+    },
+    {
+      "name": "frontend-verify.yml/verify: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "golden.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "golden.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=False matches exception list"
+    },
+    {
+      "name": "golden.yml/golden: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "golden.yml/golden: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "golden.yml/golden: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "golden.yml/golden: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "golden.yml/golden: artifact golden-report retention-days=90",
+      "status": "pass",
+      "message": "Artifact 'golden-report' has retention-days=90"
+    },
+    {
+      "name": "golden.yml/golden: artifact golden-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'golden-evidence' has retention-days=30"
+    },
+    {
+      "name": "golden.yml/golden: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "mutation.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "mutation.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=False matches exception list"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact mutation-report retention-days=90",
+      "status": "pass",
+      "message": "Artifact 'mutation-report' has retention-days=90"
+    },
+    {
+      "name": "mutation.yml/mutation: artifact mutation-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'mutation-evidence' has retention-days=30"
+    },
+    {
+      "name": "mutation.yml/mutation: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "playwright.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "playwright.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "playwright.yml/test: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "playwright.yml/test: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "playwright.yml/test: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "playwright.yml/test: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "playwright.yml/test: artifact playwright-report retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'playwright-report' has retention-days=30"
+    },
+    {
+      "name": "playwright.yml/test: artifact playwright-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'playwright-evidence' has retention-days=30"
+    },
+    {
+      "name": "playwright.yml/test: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "quality.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "quality.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "quality.yml/quality: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "quality.yml/quality: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "quality.yml/quality: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "quality.yml/quality: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "quality.yml/quality: artifact quality-report retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'quality-report' has retention-days=14"
+    },
+    {
+      "name": "quality.yml/quality: artifact fast-checks-evidence retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'fast-checks-evidence' has retention-days=30"
+    },
+    {
+      "name": "quality.yml/quality: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "release.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "release.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=False matches exception list"
+    },
+    {
+      "name": "release.yml/build: artifact frontend-dist retention-days=90",
+      "status": "pass",
+      "message": "Artifact 'frontend-dist' has retention-days=90"
+    },
+    {
+      "name": "release.yml/build: artifact release-notes retention-days=90",
+      "status": "pass",
+      "message": "Artifact 'release-notes' has retention-days=90"
+    },
+    {
+      "name": "release.yml/build: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "verification-runtime.yml: concurrency.group configured",
+      "status": "pass",
+      "message": "concurrency.group = '${{ github.workflow }}-${{ github.ref }}'"
+    },
+    {
+      "name": "verification-runtime.yml: concurrency.cancel-in-progress correct",
+      "status": "pass",
+      "message": "cancel-in-progress=True matches exception list"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact cross-layer-map retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'cross-layer-map' has retention-days=14"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact knowledge-index retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'knowledge-index' has retention-days=14"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact verification-cache retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'verification-cache' has retention-days=14"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact engineering-history retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'engineering-history' has retention-days=14"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact runtime-quality retention-days=14",
+      "status": "pass",
+      "message": "Artifact 'runtime-quality' has retention-days=14"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: artifact runtime-performance retention-days=30",
+      "status": "pass",
+      "message": "Artifact 'runtime-performance' has retention-days=30"
+    },
+    {
+      "name": "verification-runtime.yml/verify-runtime: job summary configured",
+      "status": "pass",
+      "message": "Job summary step found (GITHUB_STEP_SUMMARY)"
+    },
+    {
+      "name": "Composite action bootstrap-runtime: valid composite type",
+      "status": "pass",
+      "message": "action.yml has runs.using=composite"
+    },
+    {
+      "name": "Composite action bootstrap-runtime: inputs defined",
+      "status": "pass",
+      "message": "Action has 1 input(s)"
+    },
+    {
+      "name": "Composite action bootstrap-runtime: step composition",
+      "status": "pass",
+      "message": "Steps: setup-python=True, setup-node=False, upload-runtime=False, cache=False"
+    },
+    {
+      "name": "Composite action setup-node-runtime: valid composite type",
+      "status": "pass",
+      "message": "action.yml has runs.using=composite"
+    },
+    {
+      "name": "Composite action setup-node-runtime: inputs defined",
+      "status": "pass",
+      "message": "Action has 2 input(s)"
+    },
+    {
+      "name": "Composite action setup-node-runtime: step composition",
+      "status": "pass",
+      "message": "Steps: setup-python=False, setup-node=False, upload-runtime=False, cache=False"
+    },
+    {
+      "name": "Composite action setup-playwright: valid composite type",
+      "status": "pass",
+      "message": "action.yml has runs.using=composite"
+    },
+    {
+      "name": "Composite action setup-playwright: inputs defined",
+      "status": "pass",
+      "message": "Action has 2 input(s)"
+    },
+    {
+      "name": "Composite action setup-playwright: step composition",
+      "status": "pass",
+      "message": "Steps: setup-python=False, setup-node=False, upload-runtime=False, cache=True"
+    },
+    {
+      "name": "Composite action setup-python-runtime: valid composite type",
+      "status": "pass",
+      "message": "action.yml has runs.using=composite"
+    },
+    {
+      "name": "Composite action setup-python-runtime: inputs defined",
+      "status": "pass",
+      "message": "Action has 2 input(s)"
+    },
+    {
+      "name": "Composite action setup-python-runtime: step composition",
+      "status": "pass",
+      "message": "Steps: setup-python=False, setup-node=False, upload-runtime=False, cache=True"
+    },
+    {
+      "name": "Composite action upload-runtime: valid composite type",
+      "status": "pass",
+      "message": "action.yml has runs.using=composite"
+    },
+    {
+      "name": "Composite action upload-runtime: inputs defined",
+      "status": "pass",
+      "message": "Action has 5 input(s)"
+    },
+    {
+      "name": "Composite action upload-runtime: step composition",
+      "status": "pass",
+      "message": "Steps: setup-python=False, setup-node=False, upload-runtime=False, cache=False"
+    },
+    {
+      "name": "validate_actions.py execution",
+      "status": "pass",
+      "message": "validate_actions.py exited with code 0"
+    }
+  ]
+}

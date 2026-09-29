@@ -1,0 +1,13 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________________________ test_should_fail _______________________________
+
+    def test_should_fail():
+>       assert 1 == 2, "controlled failure for M9-C3"
+E       AssertionError: controlled failure for M9-C3
+E       assert 1 == 2
+
+/tmp/m9c3_probe_test.py:2: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../tmp/m9c3_probe_test.py::test_should_fail - AssertionError:...
+1 failed in 3.75s

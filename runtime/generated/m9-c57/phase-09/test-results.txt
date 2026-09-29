@@ -1,0 +1,132 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/vasantha/AI-Projects/ClariFin_OS
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, schemathesis-4.25.2, hypothesis-6.167.1, cov-7.1.0, anyio-4.14.2, xdist-3.8.0, timeout-2.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 38 items
+
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_current_list PASSED [  2%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_recent_list PASSED [  5%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_recurring_list PASSED [  7%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_frequency_envelope PASSED [ 10%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_detail_for_known_error PASSED [ 13%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_detail_for_unknown_returns_none PASSED [ 15%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_current_items_have_required_fields PASSED [ 18%]
+runtime/tests/test_platform_api_phase9.py::TestErrorObservatory::test_error_detail_round_trips_through_contract PASSED [ 21%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_authorities_list PASSED [ 23%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_authority_detail_for_known_name PASSED [ 26%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_authority_detail_for_unknown_returns_none PASSED [ 28%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_boundaries PASSED [ 31%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_duplicates PASSED [ 34%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_bypasses PASSED [ 36%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_deprecations PASSED [ 39%]
+runtime/tests/test_platform_api_phase9.py::TestArchitectureSafetyCenter::test_unmapped PASSED [ 42%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_list_nonempty PASSED [ 44%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_list_item_shape PASSED [ 47%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_detail_for_known_id PASSED [ 50%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_detail_for_unknown_returns_none PASSED [ 52%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_graph_for_known_id PASSED [ 55%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_graph_for_unknown_returns_none PASSED [ 57%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_capability_round_trips_through_contract PASSED [ 60%]
+runtime/tests/test_platform_api_phase9.py::TestCapabilityExplorer::test_catalog_contains_expected_capabilities PASSED [ 63%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered PASSED [ 65%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_architecture_endpoints_registered PASSED [ 68%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_capabilities_endpoints_registered PASSED [ 71%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_detail_returns_404_for_unknown PASSED [ 73%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_architecture_authority_detail_returns_404_for_unknown PASSED [ 76%]
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_capabilities_detail_returns_404_for_unknown PASSED [ 78%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_errors_page_exists PASSED [ 81%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_architecture_page_exists PASSED [ 84%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_capabilities_list_page_exists PASSED [ 86%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_capabilities_detail_page_exists PASSED [ 89%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_history_compare_page_exists PASSED [ 92%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_diagnostics_page_exists PASSED [ 94%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_sidebar_component_exists PASSED [ 97%]
+runtime/tests/test_platform_api_phase9.py::TestFrontendRoutesExist::test_hooks_exist PASSED [100%]
+
+=============================== warnings summary ===============================
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:48: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/accounts_dto.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/behaviour_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class BehaviourDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/cashflow_dto.py:136: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CashflowSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/credit_cards_dto.py:186: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CreditCardsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DashboardSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:65: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class OverviewDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:100: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategoryBreakdownDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/forecast_dto.py:141: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ForecastDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/investments_dto.py:143: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class InvestmentsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/loans_dto.py:191: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class LoansDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/net_worth_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class NetWorthDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:230: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationsListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:270: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationScanResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class MoneyDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:27: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase9.py::TestHttpEndpointStructure::test_errors_endpoints_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:84: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategorySummaryDTO(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 38 passed, 20 warnings in 26.11s =======================

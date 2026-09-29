@@ -1,0 +1,81 @@
+{
+  "phase": "Phase 2 — Canonical Runtime Contract",
+  "target": "Node.js 24 LTS",
+  "release_lifecycle_basis": "Node 20 reached EOL 2025-04-30; Node 24 LTS is Active LTS (released 2025-05-06)",
+  "canonical_mechanism_chosen": {
+    "path": ".github/actions/setup-node-runtime/action.yml",
+    "type": "GitHub composite action (existing)",
+    "rationale": "The repository already enforces a single canonical Node setup action per architectural rule github_actions.reusable_setup (validated by .github/scripts/validate_actions.py which forbids inline setup-node). No new configuration architecture is needed — only update the existing canonical default and call sites.",
+    "input": {
+      "node-version": {
+        "current": "20",
+        "target": "24"
+      },
+      "working-directory": {
+        "current": "frontend",
+        "target": "frontend (unchanged)"
+      }
+    },
+    "underlying": "actions/setup-node@v4 (unchanged)"
+  },
+  "local_dev_contract": {
+    "primary_pin": "frontend/.nvmrc",
+    "current": "20",
+    "target": "24",
+    "rationale": ".nvmrc is the lightest-weight standard mechanism recognized by nvm, fnm, Volta, asdf-node, and mise. It binds local dev to the same major version as CI without adding tooling."
+  },
+  "manifest_contract": {
+    "path": "frontend/package.json",
+    "field": "engines.node",
+    "current": ">=20 <21",
+    "target": ">=24 <25",
+    "rationale": "Tightens Node range to Node 24 major; npm will warn (not fail) on mismatch, but CI uses the canonical action so dev/CI parity is enforced through .nvmrc + canonical action."
+  },
+  "verification_config_contract": {
+    "path": "runtime/foundation/verification/verification.yaml",
+    "field": "infrastructure.node_version",
+    "current": "20",
+    "target": "24",
+    "note": "Header comment says 'Do not edit manually' but node_version is a static infrastructure key with no CLI mutation command; it is updated as part of canonical runtime reconciliation."
+  },
+  "package_manager_decision": {
+    "manager": "npm",
+    "frontend_pin": "npm@10.8.2 (unchanged — compatible with Node 24)",
+    "root_pin": "none (unchanged)",
+    "rationale": "npm 10.8.2 supports Node 24. No package manager upgrade required."
+  },
+  "call_site_update_plan": {
+    "summary": "Update 8 workflow invocations + 1 action default + 3 supporting files = 12 minimal targeted changes. No architecture redesign.",
+    "files_to_change": [
+      ".github/actions/setup-node-runtime/action.yml (default 20→24, description string)",
+      "frontend/.nvmrc (20→24)",
+      "frontend/package.json (engines.node '>=20 <21' → '>=24 <25')",
+      "runtime/foundation/verification/verification.yaml (infrastructure.node_version 20→24)",
+      ".github/workflows/frontend-verify.yml (node-version input 20→24)",
+      ".github/workflows/backend-verify.yml (node-version input 20→24)",
+      ".github/workflows/playwright.yml (node-version input 20→24)",
+      ".github/workflows/api-contracts.yml (node-version input 20→24)",
+      ".github/workflows/quality.yml (node-version input 20→24)",
+      ".github/workflows/verification-runtime.yml (node-version input 20→24)",
+      ".github/workflows/release.yml (node-version input 20→24)",
+      ".github/workflows/dependency-update.yml (node-version input 20→24)",
+      "start.sh (cosmetic message 'Node.js 18 or higher' → 'Node.js 24 or higher')"
+    ],
+    "files_intentionally_unchanged_with_justification": [
+      "runtime/generated/c31.1-provenance.json — historical certification provenance; immutable record of past CI Node 20.20.2 evidence",
+      "runtime/generated/c31.2-change-preservation.json — same",
+      "runtime/generated/c33-chromium-certification.json — same",
+      "runtime/generated/c40-provenance.json — same",
+      ".github/scripts/validate_actions.py — linter for canonical contract; the modernization strengthens the canonical pattern",
+      ".github/workflows/mutation.yml — Python-only; no Node consumer",
+      ".github/workflows/golden.yml — Python-only",
+      ".github/workflows/verification-reconcile.yml — Python-only",
+      ".github/workflows/m9-forensic-diagnostic-lab.yml — diagnostic reads ambient node (no pin); not a contract"
+    ]
+  },
+  "version_specificity": {
+    "ci_default": "24",
+    "rationale_for_major_only": "actions/setup-node@v4 with node-version '24' resolves to the latest Node 24.x (currently 24.13.0). Pinning to a 24.x.y would cause perpetual drift and break cache hits; major-only is the GitHub-Actions-native convention for LTS.",
+    "lockfile_impact": "frontend/package-lock.json may shift transitively if any installed package bumps for Node 24 support. Inspect diff before merging; reject drift unrelated to Node compatibility."
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "title": "M9-C42.20 \u2014 Certification",
+  "generated_at": "2026-08-24T18:15:36.161742+00:00",
+  "verdict": "CERTIFIED \u2014 FULL CAMPAIGN SCOPE DEFINED",
+  "rationale": "Complete production-surface inventory performed; coverage, mutation eligibility, population, priority, and exclusions are evidence-based. Four pilot engines carry authoritative M9-C42.19 results (not_checked=0). R2 defect confirmed and fixed architecturally with a regression test. The full campaign boundary is explicit.",
+  "pilot_engines": {
+    "credit_card_engine": {
+      "total": 582,
+      "killed": 440,
+      "survived": 142,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "score": 75.6
+    },
+    "account_engine": {
+      "total": 183,
+      "killed": 163,
+      "survived": 20,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "score": 89.1
+    },
+    "loan_engine": {
+      "total": 1273,
+      "killed": 1066,
+      "survived": 199,
+      "timeout": 4,
+      "no_tests": 4,
+      "not_checked": 0,
+      "suspicious": 0,
+      "score": 84.0
+    },
+    "reconciliation_engine": {
+      "total": 368,
+      "killed": 296,
+      "survived": 72,
+      "timeout": 0,
+      "no_tests": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "score": 80.4
+    }
+  },
+  "included_now": [
+    "credit_card_engine",
+    "account_engine",
+    "loan_engine",
+    "reconciliation_engine",
+    "behaviour_engine",
+    "balance_engine",
+    "ledger_audit_engine",
+    "cashflow_engine",
+    "financial_events (lineage_walker)",
+    "recommendation_engine",
+    "core/domain (Money)",
+    "common/calculations"
+  ],
+  "gated": [
+    "transaction_intelligence",
+    "financial_intelligence"
+  ],
+  "excluded": [
+    "core/mappers",
+    "core/dtos",
+    "core/db",
+    "models (ORM)",
+    "repositories (data access)",
+    "routers (HTTP layer)",
+    "extraction (PDF/parsing)",
+    "structural (layout analysis)",
+    "api.py / health.py / ingest.py / startup.py",
+    "config.py",
+    "errors.py",
+    "logger.py",
+    "utils/__init__ / data/"
+  ],
+  "estimated_total_included_mutants": 5354,
+  "scope_definition": "Full mutation campaign = Tier 1 engines + Tier 2 with existing suites (cashflow_engine, financial_events, core/domain Money, common/calculations) + Tier 2 gated (transaction_intelligence, financial_intelligence) executed after test-strengthening. All Tier 3 (infra/ORM/DB/glue/entry-points) excluded with written justification."
+}

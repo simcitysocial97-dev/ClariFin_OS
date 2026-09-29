@@ -1,0 +1,85 @@
+{
+  "phase": "Phase 1 — Complete Node Runtime Inventory",
+  "scan_scope": "/home/vasantha/AI-Projects/ClariFin_OS (entire repo, no path restrictions)",
+  "scan_date": "2026-08-30T14:17:33Z",
+  "branch_context": "M9-POST-C46 Node 24 LTS modernization (target: Node.js 24, current: Node.js 20)",
+  "findings": [
+    {"id": 1, "path": "frontend/package.json", "line": 5, "declaration_type": "engines.node", "current_value": ">=20 <21", "role": "frontend manifest runtime contract", "change_required": "yes"},
+    {"id": 2, "path": "frontend/package.json", "line": 8, "declaration_type": "packageManager", "current_value": "npm@10.8.2", "role": "frontend manifest package manager pin", "change_required": "evaluate"},
+    {"id": 3, "path": "package.json", "line": null, "declaration_type": "root manifest (no engines, no scripts)", "current_value": "devDeps only (vite-tsconfig-paths)", "role": "repo root tooling marker", "change_required": "no"},
+    {"id": 4, "path": "runtime/system/context/package.json", "line": null, "declaration_type": "engines.node (absent)", "current_value": "absent", "role": "sub-runtime TS build manifest", "change_required": "evaluate"},
+    {"id": 5, "path": "frontend/.nvmrc", "line": 1, "declaration_type": ".nvmrc", "current_value": "20", "role": "local dev Node version pin", "change_required": "yes"},
+    {"id": 6, "path": ".github/actions/setup-node-runtime/action.yml", "line": 13, "declaration_type": "action input default (node-version)", "current_value": "20", "role": "canonical CI Node setup default", "change_required": "yes"},
+    {"id": 7, "path": ".github/actions/setup-node-runtime/action.yml", "line": 7, "declaration_type": "action description string", "current_value": "Installs Node.js 20", "role": "action documentation", "change_required": "yes"},
+    {"id": 8, "path": ".github/actions/setup-node-runtime/action.yml", "line": 23, "declaration_type": "setup-node@v4 invocation (uses inputs.node-version)", "current_value": "actions/setup-node@v4", "role": "canonical CI Node resolution", "change_required": "no"},
+    {"id": 9, "path": ".github/workflows/frontend-verify.yml", "line": 57, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 10, "path": ".github/workflows/backend-verify.yml", "line": 53, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 11, "path": ".github/workflows/playwright.yml", "line": 71, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 12, "path": ".github/workflows/api-contracts.yml", "line": 61, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 13, "path": ".github/workflows/quality.yml", "line": 49, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 14, "path": ".github/workflows/verification-runtime.yml", "line": 56, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 15, "path": ".github/workflows/release.yml", "line": 41, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime (release build)", "change_required": "yes"},
+    {"id": 16, "path": ".github/workflows/dependency-update.yml", "line": 43, "declaration_type": "node-version input", "current_value": "20", "role": "CI workflow invoking setup-node-runtime", "change_required": "yes"},
+    {"id": 17, "path": ".github/workflows/m9-forensic-diagnostic-lab.yml", "line": 252, "declaration_type": "diagnostic command -v node", "current_value": "(no pin)", "role": "CI forensic diagnostic (reads ambient node)", "change_required": "no"},
+    {"id": 18, "path": ".github/workflows/mutation.yml", "line": null, "declaration_type": "(no Node setup)", "current_value": "n/a", "role": "Python-only CI workflow", "change_required": "no"},
+    {"id": 19, "path": ".github/workflows/golden.yml", "line": null, "declaration_type": "(no Node setup)", "current_value": "n/a", "role": "Python-only CI workflow", "change_required": "no"},
+    {"id": 20, "path": ".github/workflows/verification-reconcile.yml", "line": null, "declaration_type": "(no Node setup)", "current_value": "n/a", "role": "Python-only CI workflow", "change_required": "no"},
+    {"id": 21, "path": "runtime/foundation/verification/verification.yaml", "line": 12, "declaration_type": "infrastructure.node_version", "current_value": "20", "role": "verification runtime config (single source of truth)", "change_required": "yes"},
+    {"id": 22, "path": "runtime/generated/c31.1-provenance.json", "line": 44, "declaration_type": "provenance artifact (historical)", "current_value": "v20.20.2", "role": "certification provenance (immutable history)", "change_required": "no"},
+    {"id": 23, "path": "runtime/generated/c31.2-change-preservation.json", "line": 30, "declaration_type": "provenance artifact (historical)", "current_value": "v20.20.2", "role": "certification provenance", "change_required": "no"},
+    {"id": 24, "path": "runtime/generated/c33-chromium-certification.json", "line": 59, "declaration_type": "provenance artifact (historical)", "current_value": "v20.20.2", "role": "certification provenance", "change_required": "no"},
+    {"id": 25, "path": "runtime/generated/c40-provenance.json", "line": 57, "declaration_type": "provenance artifact (historical)", "current_value": "20", "role": "certification provenance", "change_required": "no"},
+    {"id": 26, "path": "runtime/generated/m9-post-c46-node24/baseline.json", "line": 95, "declaration_type": "scope_decisions text", "current_value": "Node.js 24 LTS", "role": "Phase-0 baseline rationale", "change_required": "no"},
+    {"id": 27, "path": "scripts/env-doctor.sh", "line": 16, "declaration_type": "diagnostic command -v node", "current_value": "(no pin)", "role": "local env diagnostic (reports PATH node)", "change_required": "no"},
+    {"id": 28, "path": "scripts/bootstrap.sh", "line": null, "declaration_type": "(no Node version pin)", "current_value": "n/a", "role": "local Python bootstrap; runs npm ci", "change_required": "no"},
+    {"id": 29, "path": "start.sh", "line": 32, "declaration_type": "manual Node version check string", "current_value": "Please install Node.js 18 or higher", "role": "one-click local launcher", "change_required": "evaluate"},
+    {"id": 30, "path": ".github/scripts/run_playwright_tests.sh", "line": 4, "declaration_type": "header comment", "current_value": "Requires: node + browsers pre-installed by CI node setup", "role": "playwright E2E script", "change_required": "no"},
+    {"id": 31, "path": ".github/scripts/validate_actions.py", "line": 127, "declaration_type": "architecture linter forbid-list", "current_value": "forbids inline actions/setup-node", "role": "prevents duplication of canonical action", "change_required": "no"}
+  ],
+  "canonical_enforcement": {
+    "exists": true,
+    "path": ".github/actions/setup-node-runtime/action.yml",
+    "underlying_action": "actions/setup-node@v4",
+    "workflows_consuming_it": ["frontend-verify.yml", "backend-verify.yml", "playwright.yml", "api-contracts.yml", "quality.yml", "verification-runtime.yml", "release.yml", "dependency-update.yml"],
+    "architectural_rule": "github_actions.reusable_setup — no inline setup-node in workflows; verified by .github/scripts/validate_actions.py"
+  },
+  "package_managers": {
+    "root_package_json": {"lockfile": "package-lock.json", "manager": "npm", "manager_pinned_in_manifest": false},
+    "frontend_package_json": {"lockfile": "frontend/package-lock.json", "manager": "npm", "manager_pinned_in_manifest": "npm@10.8.2"},
+    "runtime_context_package_json": {"lockfile": null, "manager": "typescript-build-only"},
+    "yarn_lock_present": false,
+    "pnpm_lock_present": false
+  },
+  "confirmed_absences": [
+    "Dockerfile (no path)",
+    ".devcontainer/ and devcontainer.json",
+    "docker-compose*.yml / *.yaml",
+    "Makefile, Taskfile*, *.mk",
+    ".node-version, .tool-versions, .npmrc",
+    "volta pin, devEngines field",
+    "hardcoded node:20 / nodejs:20 Docker images"
+  ],
+  "change_summary_for_node_24_migration": {
+    "must_change": [
+      ".github/actions/setup-node-runtime/action.yml (default + description)",
+      ".github/workflows/frontend-verify.yml",
+      ".github/workflows/backend-verify.yml",
+      ".github/workflows/playwright.yml",
+      ".github/workflows/api-contracts.yml",
+      ".github/workflows/quality.yml",
+      ".github/workflows/verification-runtime.yml",
+      ".github/workflows/release.yml",
+      ".github/workflows/dependency-update.yml",
+      "frontend/.nvmrc",
+      "frontend/package.json (engines.node)",
+      "runtime/foundation/verification/verification.yaml"
+    ],
+    "do_not_change": [
+      "runtime/generated/c31.1-provenance.json (historical artifact)",
+      "runtime/generated/c31.2-change-preservation.json (historical artifact)",
+      "runtime/generated/c33-chromium-certification.json (historical artifact)",
+      "runtime/generated/c40-provenance.json (historical artifact)",
+      "runtime/generated/m9-post-c46-node24/baseline.json (Phase-0 baseline record itself)"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "run_id": "a19347f517f68686",
+  "timestamp": "2026-09-19T18:48:19.437781+00:00",
+  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
+  "scenario": "api_contract_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/routers/tmp4xbsouua.py"
+  ],
+  "resolved_capabilities": [
+    "api-contract-gate"
+  ],
+  "obligations": [
+    "contract",
+    "unit"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

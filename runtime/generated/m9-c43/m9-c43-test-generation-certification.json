@@ -1,0 +1,62 @@
+{
+  "schema": "m9-c43-test-generation-certification/v1",
+  "generated_at": "2026-08-27T02:07:28.501645+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "generator": "runtime/foundation/verification/test_generator.py (additive over C42 strengthening contract)",
+  "checks": {
+    "G9_operational": {
+      "status": "PASS",
+      "evidence": "566 evidence items processed; 388 Class-A proposals + candidate skeletons; 178 documented rejections; artifacts under runtime/generated/m9-c43/candidates/"
+    },
+    "G10_evidence_derived": {
+      "status": "PASS",
+      "evidence": "every candidate carries evidence_ref to a C42.17 survivor inventory record or raw-coverage.json gap item; zero candidates without evidence (ledger boundary)"
+    },
+    "deterministic": {
+      "status": "PASS",
+      "evidence": "two independent generator instances produced identical proposal/candidate id sets for loan_engine (n=258)"
+    },
+    "G11_human_authorization_intact": {
+      "status": "PASS",
+      "evidence": "generator never sets ApprovalDecision.approved=True; ledger boundary declares self_approval FORBIDDEN; acceptance recorded only via the human-merge-gate approval entries in m9-c43-strengthening-record.json"
+    },
+    "G12_no_autonomous_production_modification": {
+      "status": "PASS",
+      "evidence": "generator emits candidate code as data (CandidateTest.code strings) written only under runtime/generated/; no backend/src file is touched by the generator"
+    },
+    "behavioral_value_design": {
+      "status": "PASS",
+      "evidence": "candidates are discriminating-by-construction: boundary-value input derivation from mutant expressions; permitted assertion forms INVARIANT/DIFFERENTIAL/EXACT_VALUE; pytest.skip until authorized implementation; metric-only patterns impossible (no coverage-only acceptance criteria)"
+    },
+    "no_test_weakening_or_deletion": {
+      "status": "PASS",
+      "evidence": "generator has no edit/delete capability over backend/tests; unit test proves rejection routing for B/C/D/E"
+    },
+    "generator_self_tests": {
+      "status": "PASS",
+      "evidence": "runtime/tests/test_c43_test_generator.py \u2014 6 passed"
+    }
+  },
+  "operationalization": {
+    "survivor_batches": [
+      "batch-account_engine-survivors.json",
+      "batch-credit_card_engine-survivors.json",
+      "batch-loan_engine-survivors.json",
+      "batch-reconciliation_engine-survivors.json"
+    ],
+    "coverage_batches": [
+      "batch-transaction_layer-coverage.json",
+      "batch-financial_intelligence_layer-coverage.json",
+      "batch-account_integrity_layer-coverage.json",
+      "batch-behaviour_risk_layer-coverage.json",
+      "batch-cashflow_balance_layer-coverage.json"
+    ],
+    "ledger": "runtime/generated/m9-c43/candidates/test-generation-ledger.json",
+    "aggregate": {
+      "proposals": 388,
+      "rejections": 178,
+      "ledger_entries": 566
+    }
+  },
+  "verdict": "TEST_GENERATION_OPERATIONAL_UNDER_HUMAN_AUTHORIZATION_BOUNDARY"
+}

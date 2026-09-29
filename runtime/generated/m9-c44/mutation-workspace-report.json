@@ -1,0 +1,22 @@
+{
+  "schema": "m9-c44-workspace-report/v1",
+  "generated_at": "2026-09-03T00:31:53.613228+00:00",
+  "campaigns_root": "runtime/generated/m9-c44/campaigns",
+  "total_campaigns": 0,
+  "campaigns": [],
+  "workspace_structure": {
+    "manifest.json": "Campaign state (MutationCampaign serialized)",
+    "source/": "Read-only copy of source tree for isolated mutation",
+    "mutants/": "Where mutmut applies mutations",
+    "executions/": "Per-mutant execution records (.json)",
+    "evidence/": "Aggregated results and summaries",
+    "logs/": "stdout/stderr captures per execution",
+    "reconciliation/": "Reconciliation artifacts"
+  },
+  "invariants": [
+    "No two workers mutate the same workspace concurrently",
+    "Workspace is fully disposable after campaign completion",
+    "Workspace can be inspected at any point for forensic analysis",
+    "Source tree is never mutated in-place during normal operation"
+  ]
+}

@@ -1,0 +1,1491 @@
+{
+  "id": "ai-cbe653e61ce4",
+  "symptom": "test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "compute_change_intelligence",
+      "arguments": {},
+      "result": {
+        "kind": "platform.change_intelligence",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T05:48:58Z",
+        "id": "sha256:36c0adfba11b2848700b4b45902a875c970896a17250e0931244613ee856a281",
+        "data": {
+          "changed_files": [
+            {
+              "path": "backend/src/routers/platform.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/golden/test_regression.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/acceptance/test_acceptance_matrix.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/cross_layer/test_journey_account_crud.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/cross_layer/test_journey_loan_management.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/performance/test_performance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/test_platform_api_phase3.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/test_platform_api_phase4.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/integration/test_platform_api_phase6.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/control_probe.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/pep604_union.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/pep634_match.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/pep654_exception_groups.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/pep695_type_params.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/test_control_probe.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep604_union.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep634_match.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep654_exception_groups.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/mutation_infra/python_312_probes/test_pep695_type_params.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/test_m9_c56_scenarios.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/balance_engine/test_balance_engine_helpers.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_additional_gaps.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_boolean_flips.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/credit_card_engine/test_m9_c56_mutation_gaps.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/financial_events/test_financial_events.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_behavioral_gaps.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_lineage_gaps.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/engines/financial_events/test_m9_c56_missing_keys.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/repositories/test_account_repository.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "backend/tests/unit/services/test_recommendation_networth_services.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/api_schema_governance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/authorization_boundary.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/c53_certification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/c53_scenarios.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/c56_convergence.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/candidate_validation.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/capability_authority.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/capability_graph_resolver.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/cli_capability_matrix.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/cli_governance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/cli_surface.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/control_plane_facade.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/convergence_pipeline.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/coverage_truth.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/engine_capability_bridge.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/env_contract.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/executor_pipeline.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/forensic_cli.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/frontend_financial_arithmetic_lint.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/function_audit.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/gap_classification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/generation_eligibility.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/generation_engine.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/help_resolver.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/milestone_state.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_authority.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/backend_interface.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/cache.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/cache_report.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/config_fingerprint.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/domain_model.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/domain_model_report.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/evidence.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/forensics.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/health.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/mutmut_adapter.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/orchestrator.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/reliability_report.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/verify_result.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/workspace.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_execution/workspace_report.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/mutation_result_unified.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/obligation_reconciliation.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_cache_invalidation.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_command_consolidation.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_convergence_loop.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_false_certification_audit.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_quality.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/foundation/verification/test_strengthening_pipeline.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/git-fetch-events.jsonl",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/platform/snapshot.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/__init__.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/agents.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/config.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/__init__.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/builder.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/cache.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/provenance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/ranker.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/serializer.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/context/trimmer.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/intent.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/memory.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/orchestrator.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/planner.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/policy.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/providers/__init__.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/providers/base.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/providers/local.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/providers/router.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/runs.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/tools/__init__.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/ai/tools/handlers.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/_primitives.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/ai.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/application.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/architecture.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/capabilities.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/change.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/context.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/diagnostics.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/errors.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/events.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/evidence.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/executions.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/health.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/history.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/tasks.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/contracts/verification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/errors.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/_comparison.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/application.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/architecture.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/capabilities.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/change.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/errors.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/events.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/evidence.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/executions.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/health.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/history.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/tasks.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/tasks_write.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/verification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/api/services/verification_write.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/cache.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/diagnostics/__init__.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/diagnostics/engine.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/platform/diagnostics/rules.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/system/evidence/aggregator_obsolete_disposition.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/system/evidence/tests/test_evidence_unification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/audit_final_freeze.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c44_mutation_architecture.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_api_schema_governance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_capability_graph.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_cli_governance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_coverage_truth.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_frontend_arithmetic.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_function_audit.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_milestone_state.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_mutation_unified.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_test_quality.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c48_test_strengthening.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_ci_convergence.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_executor_adapters.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_final_governance.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_operational_lineage.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_operational_validation.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_self_verification.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c53.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_m9_c55.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase1.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase10_12.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase13.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase14.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase15_21.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase2.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase7.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase8.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/tests/test_platform_api_phase9.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/verify.py",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-01f71e4a8605.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-0324f408bcba.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-084beef15de9.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-0dd05a14c16e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-0e50de43a1cf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-12fed327d8d4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-14ef4d5af76d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-158f90b37fae.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-15b9c60c6665.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-179ed83b275f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-17d6b9e74c7b.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-185605d7b379.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-1a38a9d2d158.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-1ab85b266c03.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-1b4a2621d5a4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-1bf6cd05045c.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-211102b4dec2.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-2147c644b18b.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-22a566d4cce6.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-26ea5a8f9507.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-2957dc6f1570.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-2b2b7ae0a670.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-2bec5f4646a4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-2e30c0f2a3b5.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-3104e6a43a24.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-32e635e0fe6d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-332b6132a62d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-33d1841ec8c3.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-347cd27ddcbf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-34ee1fc84f15.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-35682a424ff9.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-3682d20e24e7.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-36d17598340f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-377b62af3f7f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-37eac8866ed7.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-389e22db81ad.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-3a660f2d64dd.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-3b094b9e5aed.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-3cd69ef28908.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-4081c4d28004.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-43c5adfa5501.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-44d7f7da7d12.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-44f77666283b.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-47982b8caa47.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-47f14fc3091e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-4887b03b441c.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-4be63ac120ca.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-4edc5f4a4397.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-4ff7fb3b9601.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-512efb4223cf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-51496fe33d04.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-520a33103366.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-599249c54f0f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-5be2c5b978fa.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-5f217b4e39ee.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-60a4e477dbdf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-60de6859f721.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-626870b36fb4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-63b0d69c1816.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-645062c0db2a.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-69307910c988.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-6a577150f973.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-6b53403eeb7e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-6cd9a01b5089.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-6d111716410a.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-71699c424a1e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-71a3131342d8.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-71af8156fa27.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-722a43a2ead2.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-72a2d7fa837e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-73acd71a8e92.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-73e89bdff86c.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7404be67e100.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7aa727d75897.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7c156a0df33d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7cd8dbdd2169.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7e11440695bf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7e6c401cf5dd.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-7ff9dbd06d76.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-810cbce11081.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8273ed1e4d58.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8327f2ce5616.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8395065a2b8c.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-84c4e56100f6.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-84cdc04e67ac.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-85c6f9b498ba.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-87ec992cea2d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8bbd30143b60.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8cf7362145e9.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-8dc072d17b9b.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-9079c311485e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-94792ce85048.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-957c2bdc89ec.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-9647fa15e977.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-97d6866fe404.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-98dc6b2d3cea.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-99e42617cdf5.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-9bca33027ba5.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-9e94e3c7ecd7.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a0513c3802d3.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a168fbef7e6f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a2bf56376c6e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a2d4446fce19.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a40e836a7a00.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a55c3f4e391e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a5c41854a722.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a7d832e84afd.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-a910498c5e72.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-aac0fa2d09b4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ab14806bac61.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ab322910f244.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-abb42263e201.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ae2c92529e23.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-afa4cae53b00.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-b108051b2b7b.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-b24b1d44b711.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-b343b35a6a0c.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-b5890c5954a0.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-b5f96efd79bf.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-baccfede8a8d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-bd56d68ad13d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-bd9ab1f828ad.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-bde0874a696d.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-be4b8d3367f3.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c15819ef5391.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c4282cf47d5a.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c750cc883500.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c7b18cc03712.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c8de5facef7f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-c933d5e354dd.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-cbccc2ed61b4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-cbe653e61ce4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-cd31c005ad99.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-cd8801ce69dc.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ce2e05573270.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-cff3cf029f95.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d05298b59901.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d0df8ce04481.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d2c8488696ee.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d4c92e80d106.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d7a56befc9f8.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-d87b5e2db8ce.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-db87d7ee0320.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-dbf91d427db4.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-e36092acf3c9.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-e3c4f3a93ea6.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-e4ffc0f25c13.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-e909b2ded6bd.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-eb5e30f6869f.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ed4038e8ef98.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-edf9f9511acc.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ee8ec9fab3fc.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ef0baa093dc8.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f18883e0b864.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f42e2948462e.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f475873e19ef.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f5fd6eb80f10.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f6c13a3bd5fe.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-f94b1d8ea42a.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-fb9b47bf3d75.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-fbff2761e923.json",
+              "change_type": "modified"
+            },
+            {
+              "path": "runtime/generated/ai-runs/ai-ffac667be185.json",
+              "change_type": "modified"
+            }
+          ],
+          "affected_capabilities": [
+            "api-contracts",
+            "loan-engine"
+          ],
+          "stale_evidence": [],
+          "affected_tests": [
+            "frontend/tests/src"
+          ],
+          "affected_workflows": [
+            "backend",
+            "contracts",
+            "frontend",
+            "run_backend_verification",
+            "run_contract_tests",
+            "run_frontend_verification"
+          ],
+          "recommended_verification": [
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useBehaviourCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useBehaviourCapability \u2014 no executable command available', has_executable_command=False)",
+            "VerificationSurfaceRequirement(surface_kind='backend', capability_id='capability:useLoansCapability', command='', profile='', estimated_duration_seconds=0, is_mandatory=True, is_escalation=False, authorization_required=False, reason='unmapped capability capability:useLoansCapability \u2014 no executable command available', has_executable_command=False)"
+          ],
+          "risk": "HIGH",
+          "generated_from": "2026-09-06T05:48:56.632715+00:00"
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T05:48:56.561208Z",
+      "completed_at": "2026-09-06T05:48:58.127765Z",
+      "evidence_id": "sha256:36c0adfba11b2848700b4b45902a875c970896a17250e0931244613ee856a281",
+      "duration_ms": 1566
+    },
+    {
+      "step_number": 2,
+      "tool_name": "diagnose_failure",
+      "arguments": {
+        "symptom": "INTEGRITY_FAILED"
+      },
+      "result": {
+        "kind": "platform.diagnostic_result",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T05:49:01Z",
+        "id": "sha256:016965c1cca82a551ec691c518557e6bea7f5ed9a42f288350cb336b211c1546",
+        "data": {
+          "symptom": "INTEGRITY_FAILED",
+          "error_code": null,
+          "capability_id": null,
+          "level": "L1",
+          "fact": "no_match",
+          "evidence": [],
+          "affected_capability": null,
+          "recommendation": [
+            {
+              "action": "run_full_verification",
+              "target": "all"
+            }
+          ],
+          "generated_at": "2026-09-06T05:49:01Z"
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T05:48:58.148246Z",
+      "completed_at": "2026-09-06T05:49:01.807173Z",
+      "evidence_id": "sha256:016965c1cca82a551ec691c518557e6bea7f5ed9a42f288350cb336b211c1546",
+      "duration_ms": 3658
+    }
+  ],
+  "created_at": "2026-09-06T05:48:56.557812Z",
+  "updated_at": "2026-09-06T05:49:01.807173Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-d266a00d9d58",
+      "event_type": "run_created",
+      "run_id": "ai-cbe653e61ce4",
+      "timestamp": "2026-09-06T05:48:56.558129Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-51e06fbbc0c5",
+      "event_type": "step_started",
+      "run_id": "ai-cbe653e61ce4",
+      "timestamp": "2026-09-06T05:48:56.561438Z",
+      "payload": {
+        "step": 1,
+        "tool": "compute_change_intelligence",
+        "arguments": {}
+      }
+    },
+    {
+      "event_id": "audit-a888d6108ac1",
+      "event_type": "step_completed",
+      "run_id": "ai-cbe653e61ce4",
+      "timestamp": "2026-09-06T05:48:58.130090Z",
+      "payload": {
+        "step": 1,
+        "tool": "compute_change_intelligence",
+        "success": true,
+        "evidence_id": "sha256:36c0adfba11b2848700b4b45902a875c970896a17250e0931244613ee856a281",
+        "duration_ms": 1566
+      }
+    },
+    {
+      "event_id": "audit-1425fe375d5c",
+      "event_type": "step_started",
+      "run_id": "ai-cbe653e61ce4",
+      "timestamp": "2026-09-06T05:48:58.150860Z",
+      "payload": {
+        "step": 2,
+        "tool": "diagnose_failure",
+        "arguments": {
+          "symptom": "INTEGRITY_FAILED"
+        }
+      }
+    }
+  ]
+}

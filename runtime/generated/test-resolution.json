@@ -1,0 +1,241 @@
+{
+  "schema": "test-resolution/v1",
+  "generated_at": "2026-08-06T15:11:31.316036+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "scope": "all engines (architecture-derived, stable)",
+  "total": 46,
+  "unresolved": 0,
+  "tests": [
+    {
+      "test": "backend/tests/audits/test_audit_minimal.py",
+      "engine": "ledger_audit_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/capability/financial_events/__init__.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/capability/financial_events/test_capability.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/capability/financial_events/test_revocation.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/capability/transaction_intelligence/__init__.py",
+      "engine": "transaction_intelligence",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/capability/transaction_intelligence/test_capability.py",
+      "engine": "transaction_intelligence",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/contract/generated/test_financial_events.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/invariants/financial_events.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/invariants/test_determinism.py",
+      "engine": "balance_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/invariants/test_reconciliation_determinism.py",
+      "engine": "reconciliation_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/invariants/test_reconciliation_properties.py",
+      "engine": "reconciliation_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/behaviour/test_engine_properties.py",
+      "engine": "account_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/credit_card_engine/__init__.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/credit_cards/test_engine_properties.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/financial_events/__init__.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/financial_events/test_engine_properties.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/financial_events/test_lineage_properties.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/forecasting/test_engine_properties.py",
+      "engine": "financial_intelligence",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/lending/test_engine_properties.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/__init__.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_amortization_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_emi_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_metrics_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/recommendations/test_engine_properties.py",
+      "engine": "nudge_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/reconciliation/test_engine_properties.py",
+      "engine": "reconciliation_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/transaction_intelligence/__init__.py",
+      "engine": "transaction_intelligence",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+      "engine": "transaction_intelligence",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/account/test_account_engine.py",
+      "engine": "account_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/behaviour/test_core.py",
+      "engine": "behaviour_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/behaviour/test_integration.py",
+      "engine": "behaviour_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "engine": "behaviour_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "engine": "behaviour_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "engine": "credit_card_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/financial_events/__init__.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/financial_events/test_financial_events.py",
+      "engine": "financial_events",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/loan/test_amortization.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "engine": "loan_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+      "engine": "recommendation_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+      "engine": "reconciliation_engine",
+      "resolution": "provider"
+    },
+    {
+      "test": "backend/tests/unit/engines/transaction_intelligence/__init__.py",
+      "engine": "transaction_intelligence",
+      "resolution": "provider"
+    }
+  ],
+  "policy": "tests resolved only from provider-recorded Engine.tests; unresolved tests are reported as Unknown, never inferred"
+}

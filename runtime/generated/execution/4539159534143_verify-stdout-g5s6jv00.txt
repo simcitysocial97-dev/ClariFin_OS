@@ -1,0 +1,621 @@
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+.........F.............................................................. [ 12%]
+........................................................................ [ 24%]
+......................................F................................. [ 36%]
+........................................................................ [ 48%]
+........................................................................ [ 61%]
+.F...................................................................... [ 73%]
+..................................................................FF.... [ 85%]
+.FFF....................FF.............................................. [ 97%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+____ TestExitCodeContract.test_backend_exit_contract_holds_both_directions _____
+
+self = <test_backend_evidence.TestExitCodeContract object at 0x798ad4c9e300>
+tmp_path = PosixPath('/tmp/pytest-of-vasantha/pytest-27/test_backend_exit_contract_hol0')
+
+    @pytest.mark.timeout(300)
+    def test_backend_exit_contract_holds_both_directions(self, tmp_path: Path):
+        """Executes the real script with an injected failure.
+    
+        Direction 1 (unmodified tree must pass) is omitted: the passing contract
+        is already proven by the green backend suite in CI and by the three
+        code-inspection tests above. This test therefore focuses on the
+        failure-attribution direction, which is the expensive part (~60-140s)
+        because it runs the real backend verification script with a probe.
+    
+        The 300s timeout is derived from measured execution characteristics
+        (66-140s observed locally), not chosen arbitrarily. The outer
+        runtime-test-suite invocation uses --timeout=30; this per-test marker
+        overrides that for this specific evidence-producing test.
+        """
+        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        evidence = tmp_path / "evidence"
+    
+        probe_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            (probe_dir / "test_m4_exit_probe.py").write_text(
+                "def test_m4_probe():\n    assert False\n"
+            )
+>           failing = subprocess.run(
+                ["bash", str(BACKEND_SCRIPT)],
+                capture_output=True,
+                text=True,
+                env={**_env(), "BACKEND_EVIDENCE_DIR": str(evidence)},
+            )
+
+runtime/tests/test_backend_evidence.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad45177d0>, timeout = None
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>300.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+________ TestArchitecturalIntegrityEngine.test_evaluate_returns_report _________
+
+self = <test_integrity_engine.TestArchitecturalIntegrityEngine object at 0x798ad4a0bfb0>
+
+    def test_evaluate_returns_report(self) -> None:
+        engine = ArchitecturalIntegrityEngine()
+>       report = engine.evaluate()
+                 ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_integrity_engine.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/foundation/integrity/engine.py:54: in evaluate
+    graph = scanner.scan()
+            ^^^^^^^^^^^^^^
+runtime/foundation/integrity/scanner.py:530: in scan
+    scanned = self._scan_file(rel_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/integrity/scanner.py:559: in _scan_file
+    return self._scan_typescript(full_path, rel_path, layer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/integrity/scanner.py:603: in _scan_typescript
+    source = full.read_text(encoding="utf-8")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1030: in read_text
+    return f.read()
+           ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <encodings.utf_8.IncrementalDecoder object at 0x798ad45cdf40>
+input = b'/**\n * Back Button Component - Stage 3 Transaction Intelligence Workspace\n *\n * Navigation back button for return...sName="h-4 w-4" aria-hidden="true" />\n      <span className="hidden sm:inline">{label}</span>\n    </Button>\n  );\n}'
+final = True
+
+>   ???
+E   Failed: Timeout (>30.0s) from pytest-timeout.
+
+<frozen codecs>:319: Failed
+___________________ test_pr_base_resolution_priority_and_sha ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x798ad4340e90>
+tmp_path = PosixPath('/tmp/pytest-of-vasantha/pytest-27/test_pr_base_resolution_priori0')
+
+    def test_pr_base_resolution_priority_and_sha(monkeypatch, tmp_path):
+        """M1 — base resolution priority + authoritative PR base SHA (A-F)."""
+        import inspect
+    
+        import runtime.foundation.verification.orchestrator as O
+    
+        # A. PR base resolution with explicit base SHA via event payload.
+        _clear_ci_env(monkeypatch)
+        event = tmp_path / "event.json"
+        event.write_text(json.dumps({"pull_request": {"base": {"sha": "abc123" * 6 + "0" * 16}}}))
+        monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+        monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+        assert _resolve_base_ref() == "abc123" * 6 + "0" * 16
+    
+        # B. PR base resolution with GITHUB_BASE_REF (branch name).
+        _clear_ci_env(monkeypatch)
+        monkeypatch.setenv("GITHUB_BASE_REF", "main")
+        assert _resolve_base_ref() == "main"
+    
+        # C. Stale origin/main must NOT override the authoritative PR base SHA.
+        _clear_ci_env(monkeypatch)
+        event.write_text(json.dumps({"pull_request": {"base": {"sha": "deadbeef" * 8}}}))
+        monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+        monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+        # GITHUB_BASE_REF differs; the PR base SHA still wins (P0-1).
+        monkeypatch.setenv("GITHUB_BASE_REF", "some-other-branch")
+        assert _resolve_base_ref() == "deadbeef" * 8
+    
+        # D. Local invocation (no CI env) remains functional and non-raising.
+        from runtime.foundation.verification.orchestrator import _collect_changed_files
+    
+        _clear_ci_env(monkeypatch)
+        result = _resolve_base_ref()
+        assert result is None or isinstance(result, str)
+>       assert isinstance(_collect_changed_files().files, list)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_orchestrator.py:551: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/foundation/verification/orchestrator.py:381: in _collect_changed_files
+    combined = _run_diff_three_dot(local_base)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:265: in _run_diff_three_dot
+    result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['git', 'diff', '--name-only', 'dc238b249315813...>
+endtime = 4173.040010883, orig_timeout = 10, stdout_seq = [], stderr_seq = []
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['git', 'diff', '--name-only', 'dc238b249315813ef8770c1daad710c7ae7851fb...HEAD']' timed out after 10 seconds
+
+/usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+_ TestPlannedStepsCarryIdentity.test_known_unit_step_carries_expected_unit_id __
+
+self = <test_verification_identity_execution.TestPlannedStepsCarryIdentity object at 0x798ad48c50a0>
+
+    def test_known_unit_step_carries_expected_unit_id(self):
+        """A planned step for a known unit carries the expected unit_id."""
+>       orchestrator = _planned("runtime")
+                       ^^^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:381: in _collect_changed_files
+    combined = _run_diff_three_dot(local_base)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:265: in _run_diff_three_dot
+    result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['git', 'diff', '--name-only', 'dc238b249315813...>
+endtime = 4203.95480734, orig_timeout = 10, stdout_seq = [], stderr_seq = []
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['git', 'diff', '--name-only', 'dc238b249315813ef8770c1daad710c7ae7851fb...HEAD']' timed out after 10 seconds
+
+/usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+_ TestPlannedStepsCarryIdentity.test_backend_step_carries_backend_unit_identity _
+
+self = <test_verification_identity_execution.TestPlannedStepsCarryIdentity object at 0x798ad48c53d0>
+
+    def test_backend_step_carries_backend_unit_identity(self):
+>       orchestrator = _planned("backend")
+                       ^^^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:381: in _collect_changed_files
+    combined = _run_diff_three_dot(local_base)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:265: in _run_diff_three_dot
+    result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['git', 'diff', '--name-only', 'dc238b249315813...>
+endtime = 4214.93687518, orig_timeout = 10, stdout_seq = [], stderr_seq = []
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['git', 'diff', '--name-only', 'dc238b249315813ef8770c1daad710c7ae7851fb...HEAD']' timed out after 10 seconds
+
+/usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+______ TestDedupPreservesIdentity.test_commands_remain_unique_after_dedup ______
+
+self = <test_verification_identity_execution.TestDedupPreservesIdentity object at 0x798ad48c6720>
+
+    def test_commands_remain_unique_after_dedup(self):
+        """Identity threading must not resurrect duplicate commands."""
+        for profile in PROFILES:
+>           commands = [s.command for s in _planned(profile).plan.steps]
+                                           ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:379: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:101: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad3cf6390>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+___ TestExecutionResultCarriesIdentity.test_result_unit_id_matches_its_step ____
+
+self = <test_verification_identity_execution.TestExecutionResultCarriesIdentity object at 0x798ad48a3b30>
+
+    def test_result_unit_id_matches_its_step(self):
+>       orchestrator = _planned("backend")
+                       ^^^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:379: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:101: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad4138d10>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+___ TestExecutionResultCarriesIdentity.test_identity_is_copied_not_rederived ___
+
+self = <test_verification_identity_execution.TestExecutionResultCarriesIdentity object at 0x798ad48c62d0>
+
+    def test_identity_is_copied_not_rederived(self):
+        """A result must never resolve identity independently of its step.
+    
+        Re-derivation could drift from the plan; copying cannot.
+        """
+>       orchestrator = _planned("runtime")
+                       ^^^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:379: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:101: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad413ad20>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+_ TestExecutedCommandsAreUnchanged.test_step_ids_remain_positional_and_contiguous[runtime] _
+
+self = <test_verification_identity_execution.TestExecutedCommandsAreUnchanged object at 0x798ad48c6d80>
+profile = 'runtime'
+
+    @pytest.mark.parametrize("profile", PROFILES)
+    def test_step_ids_remain_positional_and_contiguous(self, profile):
+>       steps = _planned(profile).plan.steps
+                ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:294: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:379: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:101: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad4165100>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+_ TestExecutedCommandsAreUnchanged.test_step_ids_remain_positional_and_contiguous[golden] _
+
+self = <test_verification_identity_execution.TestExecutedCommandsAreUnchanged object at 0x798ad48c6e40>
+profile = 'golden'
+
+    @pytest.mark.parametrize("profile", PROFILES)
+    def test_step_ids_remain_positional_and_contiguous(self, profile):
+>       steps = _planned(profile).plan.steps
+                ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:294: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:690: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:379: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:101: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x798ad4164410>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+=============================== warnings summary ===============================
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 12 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 36 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_backend_evidence.py::TestExitCodeContract::test_backend_exit_contract_holds_both_directions
+FAILED runtime/tests/test_integrity_engine.py::TestArchitecturalIntegrityEngine::test_evaluate_returns_report
+FAILED runtime/tests/test_orchestrator.py::test_pr_base_resolution_priority_and_sha
+FAILED runtime/tests/test_verification_identity_execution.py::TestPlannedStepsCarryIdentity::test_known_unit_step_carries_expected_unit_id
+FAILED runtime/tests/test_verification_identity_execution.py::TestPlannedStepsCarryIdentity::test_backend_step_carries_backend_unit_identity
+FAILED runtime/tests/test_verification_identity_execution.py::TestDedupPreservesIdentity::test_commands_remain_unique_after_dedup
+FAILED runtime/tests/test_verification_identity_execution.py::TestExecutionResultCarriesIdentity::test_result_unit_id_matches_its_step
+FAILED runtime/tests/test_verification_identity_execution.py::TestExecutionResultCarriesIdentity::test_identity_is_copied_not_rederived
+FAILED runtime/tests/test_verification_identity_execution.py::TestExecutedCommandsAreUnchanged::test_step_ids_remain_positional_and_contiguous[runtime]
+FAILED runtime/tests/test_verification_identity_execution.py::TestExecutedCommandsAreUnchanged::test_step_ids_remain_positional_and_contiguous[golden]
+10 failed, 579 passed, 64 warnings in 779.33s (0:12:59)
+[0;31m✗ Runtime tests failed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       837   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-13T14:13:08 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;31m  Failed checks: runtime-tests[0m
+================================================

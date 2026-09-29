@@ -1,0 +1,49 @@
+{
+  "schema": "intelligence-retirement-plan/v1",
+  "generated_at": "2026-08-06T15:11:31.336376+00:00",
+  "deletion_policy": "legacy modules deleted after documented replacement",
+  "modules": [
+    {
+      "module": "runtime/foundation/intelligence/affected.py",
+      "replacement": "runtime/foundation/intelligence/platform/optimizer.py + blast.py + api.verification_plan",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    },
+    {
+      "module": "runtime/foundation/intelligence/diagnostics.py",
+      "replacement": "runtime/foundation/intelligence/platform/{change,blast,risk,repair}.py + api",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    },
+    {
+      "module": "runtime/foundation/intelligence/risk.py",
+      "replacement": "runtime/foundation/intelligence/platform/risk.py (assess_risk)",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    },
+    {
+      "module": "runtime/foundation/intelligence/repair.py",
+      "replacement": "runtime/foundation/intelligence/platform/repair.py (build_repair_intelligence)",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    },
+    {
+      "module": "runtime/foundation/intelligence/formatter.py",
+      "replacement": "runtime/foundation/intelligence/platform/cli_format.py",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    },
+    {
+      "module": "runtime/foundation/intelligence/models.py",
+      "replacement": "canonical platform dataclasses (ChangeIntelligence, BlastRadius, ...)",
+      "last_consumer": "none (all migrated to platform API)",
+      "dependency_count": 0,
+      "removal_readiness": "ready"
+    }
+  ]
+}

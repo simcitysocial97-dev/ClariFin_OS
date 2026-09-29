@@ -1,0 +1,1236 @@
+{
+  "generated_at": "2026-09-04T03:52:08+00:00",
+  "milestones": {
+    "M48-A1": {
+      "acceptance_criteria": [
+        "10 pytest scenarios pass",
+        "ledger refuses to mark COMPLETE without evidence",
+        "ledger refuses to mark COMPLETE with non-zero exit",
+        "ledger refuses to mark COMPLETE with mismatched sha256",
+        "snapshot round-trip preserves status and evidence",
+        "reconciliation report produced"
+      ],
+      "acceptance_result": "10 pytest scenarios pass; evidence guard active (3 negative scenarios tested); snapshot round-trip preserves status; reconciliation report produced",
+      "artifact_paths": [
+        "runtime/foundation/verification/milestone_state.py",
+        "runtime/generated/m9-c48/EXECUTION_PROGRESS.md",
+        "runtime/tests/test_m9_c48_milestone_state.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_milestone_state.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:14:52+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:14:52+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/milestone_state.py",
+          "artifact_sha256": "6ce3d75166671ab0049ccaa05d75f80136393dab2455249b09f7597a44f717a9",
+          "description": "milestone_state.py",
+          "evidence_id": "m48-a1-engine"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_milestone_state.py",
+          "artifact_sha256": "508f3541714f37fdb6c24503b0078a39db4135c98755434c9a853f83e57098da",
+          "description": "acceptance tests",
+          "evidence_id": "m48-a1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/EXECUTION_PROGRESS.md",
+          "artifact_sha256": "875b6bb7820df4e259c37cc7280d5a264ce619dca4a763b3a80c1931fd4f768c",
+          "description": "progress ledger",
+          "evidence_id": "m48-a1-progress"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/milestone_state.py",
+        "runtime/tests/test_m9_c48_milestone_state.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-002",
+      "id": "M48-A1",
+      "implementation_status": "",
+      "objective": "Machine-verifiable progress state engine.",
+      "phase": "FOUNDATION",
+      "priority": "P0",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "foundation trust engine",
+      "started_at": "2026-09-04T02:14:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-A2": {
+      "acceptance_criteria": [
+        "canonical entrypoint is resolvable",
+        "canonical runner function is callable",
+        "canonical result type is resolvable",
+        "non-canonical backends are explicitly listed",
+        "smoke mutation runs through canonical path with exit 0",
+        "mutation summary JSON exists after smoke"
+      ],
+      "acceptance_result": "all 3 anchors resolvable; smoke mutation exit 0 through canonical path; authority audit JSON written; non-canonical backends explicitly listed (2)",
+      "artifact_paths": [
+        "runtime/foundation/verification/mutation_authority.py",
+        "runtime/generated/m9-c48/mutation-authority-audit.json"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": "mutation_authority.assert_canonical_path_is_used()",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:18:40+00:00"
+        },
+        {
+          "command": ".venv/bin/python runtime/verify.py mutation --smoke",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; last line:   [truth] measurement-truth persisted: backend/tests/generated/mutation/local-smoke/measurement-truth.json",
+          "timestamp": "2026-09-04T02:18:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:18:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/mutation_authority.py",
+          "artifact_sha256": "7465557703fccf000dc96ec77097ff233b691783b3e75a97f431aacb33c2fcb6",
+          "description": "canonical authority declaration",
+          "evidence_id": "m48-a2-authority"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/mutation-authority-audit.json",
+          "artifact_sha256": "e4abeefb681d8b11f94fcda572a674678274d149c326b89ecc6d6de74954de28",
+          "description": "authority audit",
+          "evidence_id": "m48-a2-audit"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/mutation_authority.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-001",
+      "id": "M48-A2",
+      "implementation_status": "",
+      "objective": "Resolve mutation execution authority to one canonical path.",
+      "phase": "FOUNDATION",
+      "priority": "P0",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "declare single canonical mutation path",
+      "started_at": "2026-09-04T02:18:40+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-A3": {
+      "acceptance_criteria": [
+        "11 pytest scenarios pass",
+        "canonical type used in projection",
+        "rich orchestrator taxonomy retained as provenance",
+        "execution_path preserved",
+        "infra failure separated from quality failure",
+        "smoke mutation runs through canonical path"
+      ],
+      "acceptance_result": "11 pytest scenarios pass; canonical serialization preserved; rich provenance retained; smoke mutation exit 0",
+      "artifact_paths": [
+        "runtime/foundation/verification/mutation_result_unified.py",
+        "runtime/tests/test_m9_c48_mutation_unified.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_mutation_unified.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:21:57+00:00"
+        },
+        {
+          "command": ".venv/bin/python runtime/verify.py mutation --smoke",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:22:05+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:22:05+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/mutation_result_unified.py",
+          "artifact_sha256": "50a1e09bdaac3d4552fccc45479a0119c1f8176fbb48e6e62d49ff61be266776",
+          "description": "unified projection module",
+          "evidence_id": "m48-a3-projection"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_mutation_unified.py",
+          "artifact_sha256": "b5c4edda8d5e93879e1f790522495f84be06b161444f76f85af7ccf1ba04de5b",
+          "description": "acceptance tests",
+          "evidence_id": "m48-a3-tests"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/mutation_result_unified.py",
+        "runtime/tests/test_m9_c48_mutation_unified.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-003",
+      "id": "M48-A3",
+      "implementation_status": "",
+      "objective": "Unify MutationResult into one canonical contract.",
+      "phase": "FOUNDATION",
+      "priority": "P0",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "unify MutationResult semantics via projection",
+      "started_at": "2026-09-04T02:21:56+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-B1": {
+      "acceptance_criteria": [
+        "canonical authority + factory resolvable",
+        "derived projection (CapabilityContractRegistry) listed",
+        "single canonical lookup function",
+        "no-competing-authority guard"
+      ],
+      "acceptance_result": "canonical anchors resolve; derived projection listed; guard does not raise; single canonical lookup works",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_authority.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": "pytest B1 scenarios",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:29:24+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:29:24+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_authority.py",
+          "artifact_sha256": "d03fdd10d78d469f237ce9ca9fb72b72d9ba97df7a1a99f656dfc65ae7630b93",
+          "description": "canonical authority declaration",
+          "evidence_id": "m48-b1-authority"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_authority.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-007",
+      "id": "M48-B1",
+      "implementation_status": "",
+      "objective": "Capability registry unification.",
+      "phase": "SOURCE_OF_TRUTH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "declare layered canonical authority",
+      "started_at": "2026-09-04T02:29:23+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-B2": {
+      "acceptance_criteria": [
+        "all 14 engines have canonical capability IDs",
+        "records derived from ENGINE_SELECTION (single mutation authority)",
+        "register is idempotent",
+        "metadata.engine_derived=True on every record",
+        "assert_all_engines_registered passes after registration"
+      ],
+      "acceptance_result": "14 engine IDs produced; 13 newly registered (loan-engine pre-existed); all engines registered after first call; idempotent re-registration; 9 pytest scenarios pass",
+      "artifact_paths": [
+        "runtime/foundation/verification/engine_capability_bridge.py",
+        "runtime/generated/m9-c48/engine-capability-bridge.json"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": "pytest engine capability scenarios",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:29:25+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:29:25+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/engine_capability_bridge.py",
+          "artifact_sha256": "11b8c13bfbcb5d1451e1e4c9a9a0269dc277128c5b26138b95de7ea060078f28",
+          "description": "engine capability bridge",
+          "evidence_id": "m48-b2-bridge"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/engine-capability-bridge.json",
+          "artifact_sha256": "83095697628634c985e94a437d76c38f3d328ee450820b95f2b842f103bd43e1",
+          "description": "registration snapshot",
+          "evidence_id": "m48-b2-snapshot"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/engine_capability_bridge.py",
+        "runtime/tests/test_m9_c48_capability_authority.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-008",
+      "id": "M48-B2",
+      "implementation_status": "",
+      "objective": "Register all 14 mutation engines as canonical capabilities.",
+      "phase": "SOURCE_OF_TRUTH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "register all 14 mutation engines as derived capabilities",
+      "started_at": "2026-09-04T02:29:24+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-C1": {
+      "acceptance_criteria": [
+        "27 pytest scenarios pass",
+        "fail-closed on unmapped change",
+        "rename produces INVALIDATED + new edge",
+        "deletion produces DELETED edge + deleted_capabilities entry",
+        "unresolved symbols recorded (not dropped)",
+        "endpoint changes resolve to capabilities"
+      ],
+      "acceptance_result": "27 pytest scenarios pass; controlled scenario executed and snapshot persisted; fail-closed verified; rename/deletion edges verified",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/generated/m9-c48/capability-graph-scenario.json",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_capability_graph.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 27 passed, 1 warning in 0.51s",
+          "timestamp": "2026-09-04T02:36:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:36:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_graph_resolver.py",
+          "artifact_sha256": "1117523e2c6c332e8fe0d32f337c1ab84b265390d51f65f6640ebafe93be1f27",
+          "description": "graph resolver",
+          "evidence_id": "m48-c1-resolver"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_capability_graph.py",
+          "artifact_sha256": "887183e8c7f885f5527a13c07ded15e4b6b221096f015b0e29b1ff81e5fe1e41",
+          "description": "acceptance tests",
+          "evidence_id": "m48-c1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/capability-graph-scenario.json",
+          "artifact_sha256": "73ffcfc5e29857cb80f5c5d3c61699ef21fa78ecbeb4873e2c5831620c756b58",
+          "description": "controlled scenario",
+          "evidence_id": "m48-c1-scenario"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-004",
+      "id": "M48-C1",
+      "implementation_status": "",
+      "objective": "Symbol-level planning via AST analysis.",
+      "phase": "CAPABILITY_GRAPH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "AST-based symbol resolution",
+      "started_at": "2026-09-04T02:36:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-C2": {
+      "acceptance_criteria": [
+        "27 pytest scenarios pass",
+        "fail-closed on unmapped change",
+        "rename produces INVALIDATED + new edge",
+        "deletion produces DELETED edge + deleted_capabilities entry",
+        "unresolved symbols recorded (not dropped)",
+        "endpoint changes resolve to capabilities"
+      ],
+      "acceptance_result": "27 pytest scenarios pass; controlled scenario executed and snapshot persisted; fail-closed verified; rename/deletion edges verified",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/generated/m9-c48/capability-graph-scenario.json",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_capability_graph.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 27 passed, 1 warning in 0.51s",
+          "timestamp": "2026-09-04T02:36:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:36:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_graph_resolver.py",
+          "artifact_sha256": "1117523e2c6c332e8fe0d32f337c1ab84b265390d51f65f6640ebafe93be1f27",
+          "description": "graph resolver",
+          "evidence_id": "m48-c2-resolver"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_capability_graph.py",
+          "artifact_sha256": "887183e8c7f885f5527a13c07ded15e4b6b221096f015b0e29b1ff81e5fe1e41",
+          "description": "acceptance tests",
+          "evidence_id": "m48-c2-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/capability-graph-scenario.json",
+          "artifact_sha256": "73ffcfc5e29857cb80f5c5d3c61699ef21fa78ecbeb4873e2c5831620c756b58",
+          "description": "controlled scenario",
+          "evidence_id": "m48-c2-scenario"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_graph_resolver.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-005",
+      "id": "M48-C2",
+      "implementation_status": "",
+      "objective": "Graph-based capability resolution (endpoint \u2192 capability).",
+      "phase": "CAPABILITY_GRAPH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "Endpoint \u2192 capability graph resolution",
+      "started_at": "2026-09-04T02:36:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-C3": {
+      "acceptance_criteria": [
+        "27 pytest scenarios pass",
+        "fail-closed on unmapped change",
+        "rename produces INVALIDATED + new edge",
+        "deletion produces DELETED edge + deleted_capabilities entry",
+        "unresolved symbols recorded (not dropped)",
+        "endpoint changes resolve to capabilities"
+      ],
+      "acceptance_result": "27 pytest scenarios pass; controlled scenario executed and snapshot persisted; fail-closed verified; rename/deletion edges verified",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/generated/m9-c48/capability-graph-scenario.json",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_capability_graph.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 27 passed, 1 warning in 0.51s",
+          "timestamp": "2026-09-04T02:36:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:36:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_graph_resolver.py",
+          "artifact_sha256": "1117523e2c6c332e8fe0d32f337c1ab84b265390d51f65f6640ebafe93be1f27",
+          "description": "graph resolver",
+          "evidence_id": "m48-c3-resolver"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_capability_graph.py",
+          "artifact_sha256": "887183e8c7f885f5527a13c07ded15e4b6b221096f015b0e29b1ff81e5fe1e41",
+          "description": "acceptance tests",
+          "evidence_id": "m48-c3-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/capability-graph-scenario.json",
+          "artifact_sha256": "73ffcfc5e29857cb80f5c5d3c61699ef21fa78ecbeb4873e2c5831620c756b58",
+          "description": "controlled scenario",
+          "evidence_id": "m48-c3-scenario"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_graph_resolver.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-006",
+      "id": "M48-C3",
+      "implementation_status": "",
+      "objective": "Severity filtering / prioritization in planner.",
+      "phase": "CAPABILITY_GRAPH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "Severity tier mapping + filter",
+      "started_at": "2026-09-04T02:36:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-C4": {
+      "acceptance_criteria": [
+        "27 pytest scenarios pass",
+        "fail-closed on unmapped change",
+        "rename produces INVALIDATED + new edge",
+        "deletion produces DELETED edge + deleted_capabilities entry",
+        "unresolved symbols recorded (not dropped)",
+        "endpoint changes resolve to capabilities"
+      ],
+      "acceptance_result": "27 pytest scenarios pass; controlled scenario executed and snapshot persisted; fail-closed verified; rename/deletion edges verified",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/generated/m9-c48/capability-graph-scenario.json",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_capability_graph.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 27 passed, 1 warning in 0.51s",
+          "timestamp": "2026-09-04T02:36:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:36:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_graph_resolver.py",
+          "artifact_sha256": "1117523e2c6c332e8fe0d32f337c1ab84b265390d51f65f6640ebafe93be1f27",
+          "description": "graph resolver",
+          "evidence_id": "m48-c4-resolver"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_capability_graph.py",
+          "artifact_sha256": "887183e8c7f885f5527a13c07ded15e4b6b221096f015b0e29b1ff81e5fe1e41",
+          "description": "acceptance tests",
+          "evidence_id": "m48-c4-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/capability-graph-scenario.json",
+          "artifact_sha256": "73ffcfc5e29857cb80f5c5d3c61699ef21fa78ecbeb4873e2c5831620c756b58",
+          "description": "controlled scenario",
+          "evidence_id": "m48-c4-scenario"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_graph_resolver.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-009",
+      "id": "M48-C4",
+      "implementation_status": "",
+      "objective": "Rename / move graph invalidation.",
+      "phase": "CAPABILITY_GRAPH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "Rename / move invalidation",
+      "started_at": "2026-09-04T02:36:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-C5": {
+      "acceptance_criteria": [
+        "27 pytest scenarios pass",
+        "fail-closed on unmapped change",
+        "rename produces INVALIDATED + new edge",
+        "deletion produces DELETED edge + deleted_capabilities entry",
+        "unresolved symbols recorded (not dropped)",
+        "endpoint changes resolve to capabilities"
+      ],
+      "acceptance_result": "27 pytest scenarios pass; controlled scenario executed and snapshot persisted; fail-closed verified; rename/deletion edges verified",
+      "artifact_paths": [
+        "runtime/foundation/verification/capability_graph_resolver.py",
+        "runtime/generated/m9-c48/capability-graph-scenario.json",
+        "runtime/tests/test_m9_c48_capability_graph.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_capability_graph.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 27 passed, 1 warning in 0.51s",
+          "timestamp": "2026-09-04T02:36:49+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:36:49+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/capability_graph_resolver.py",
+          "artifact_sha256": "1117523e2c6c332e8fe0d32f337c1ab84b265390d51f65f6640ebafe93be1f27",
+          "description": "graph resolver",
+          "evidence_id": "m48-c5-resolver"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_capability_graph.py",
+          "artifact_sha256": "887183e8c7f885f5527a13c07ded15e4b6b221096f015b0e29b1ff81e5fe1e41",
+          "description": "acceptance tests",
+          "evidence_id": "m48-c5-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/capability-graph-scenario.json",
+          "artifact_sha256": "73ffcfc5e29857cb80f5c5d3c61699ef21fa78ecbeb4873e2c5831620c756b58",
+          "description": "controlled scenario",
+          "evidence_id": "m48-c5-scenario"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/capability_graph_resolver.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-010",
+      "id": "M48-C5",
+      "implementation_status": "",
+      "objective": "Deletion capability removal + evidence invalidation.",
+      "phase": "CAPABILITY_GRAPH",
+      "priority": "P1",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "Deletion capability removal",
+      "started_at": "2026-09-04T02:36:49+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-D1": {
+      "acceptance_criteria": [
+        "prohibited monetary arithmetic detected",
+        "legitimate formatting passes",
+        "non-monetary arithmetic passes",
+        "string template context ignored",
+        "real frontend scan produces structured report"
+      ],
+      "acceptance_result": "14 pytest scenarios pass; lint detected real findings in repository; report persisted as evidence",
+      "artifact_paths": [
+        "runtime/foundation/verification/frontend_financial_arithmetic_lint.py",
+        "runtime/generated/m9-c48/frontend-arithmetic-lint.json",
+        "runtime/tests/test_m9_c48_frontend_arithmetic.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_frontend_arithmetic.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0; 14 passed, 1 warning in 1.18s",
+          "timestamp": "2026-09-04T02:47:56+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:47:56+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/frontend_financial_arithmetic_lint.py",
+          "artifact_sha256": "ffdc4d3c9fcabb8d6364694460236bb8497cc61adc61cd4cc53b1c43ff1f4771",
+          "description": "lint rule",
+          "evidence_id": "m48-d1-lint"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_frontend_arithmetic.py",
+          "artifact_sha256": "4bed83d8979bc2b1def19cebe7a3e4ae74e877cc71816590fa19643d8c07ae2a",
+          "description": "acceptance tests",
+          "evidence_id": "m48-d1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/frontend-arithmetic-lint.json",
+          "artifact_sha256": "cade156606a2abfd6cef8c1fc228c2c2b1c473340ea920170208415e10baeaef",
+          "description": "frontend scan report: 112 findings",
+          "evidence_id": "m48-d1-report"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/frontend_financial_arithmetic_lint.py",
+        "runtime/tests/test_m9_c48_frontend_arithmetic.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-012",
+      "id": "M48-D1",
+      "implementation_status": "",
+      "objective": "Enforce frontend financial-arithmetic rule.",
+      "phase": "CROSS_LAYER",
+      "priority": "P2",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "static rule for frontend financial arithmetic",
+      "started_at": "2026-09-04T02:47:56+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-D2": {
+      "acceptance_criteria": [
+        "historical defects recorded with provenance",
+        "current contract derived from gate evidence",
+        "enforcement workflow present",
+        "8 pytest scenarios pass",
+        "real-repo governance report persisted"
+      ],
+      "acceptance_result": "8 pytest scenarios pass; real-repo governance report persisted; historical/current/enforcement distinction recorded",
+      "artifact_paths": [
+        "runtime/foundation/verification/api_schema_governance.py",
+        "runtime/generated/m9-c48/API_SCHEMA_MISMATCH_GOVERNANCE.md",
+        "runtime/generated/m9-c48/api-schema-governance.json"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_api_schema_governance.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:50:53+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:50:53+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/api_schema_governance.py",
+          "artifact_sha256": "f9b683a1362f6620524abe90951246244d5ebc6d66f8c9c78bf088eb795441ae",
+          "description": "governance module",
+          "evidence_id": "m48-d2-governance"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/api-schema-governance.json",
+          "artifact_sha256": "16fd46a0c2baa6bccb347c6994ffeb34066c2d09f6895ee1e21c05ecc512366c",
+          "description": "governance report",
+          "evidence_id": "m48-d2-report"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/API_SCHEMA_MISMATCH_GOVERNANCE.md",
+          "artifact_sha256": "eb4d9a9a782efc5597f0865f36a09e7f4c941cb639a77549c16c2e5316157fdf",
+          "description": "documentation",
+          "evidence_id": "m48-d2-doc"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/api_schema_governance.py",
+        "runtime/generated/m9-c48/API_SCHEMA_MISMATCH_GOVERNANCE.md",
+        "runtime/tests/test_m9_c48_api_schema_governance.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-013",
+      "id": "M48-D2",
+      "implementation_status": "",
+      "objective": "API schema mismatch governance.",
+      "phase": "CROSS_LAYER",
+      "priority": "P2",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "governance report distinguishing historical / current / enforcement",
+      "started_at": "2026-09-04T02:50:53+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-E1": {
+      "acceptance_criteria": [
+        "10 pytest scenarios pass",
+        "promotion requires syntax+baseline+kill+regression",
+        "rejection categories cover all five",
+        "evidence persisted with sha",
+        "end-to-end run executes and persists"
+      ],
+      "acceptance_result": "10 pytest scenarios pass; promotion gate enforces all 4 criteria; rejection: syntax, baseline, no-kill, regression, equivalent; end-to-end pipeline produces PROMOTED state with evidence",
+      "artifact_paths": [
+        "runtime/foundation/verification/test_strengthening_pipeline.py",
+        "runtime/generated/m9-c48/test-strengthening-e2e.json",
+        "runtime/tests/test_m9_c48_test_strengthening.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_test_strengthening.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T02:54:09+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T02:54:09+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/test_strengthening_pipeline.py",
+          "artifact_sha256": "c818334cdfc4383599e0c1f244ba1ae826bb3f4537e8d870cf2ab62b8c5add7a",
+          "description": "pipeline orchestrator",
+          "evidence_id": "m48-e1-pipeline"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_test_strengthening.py",
+          "artifact_sha256": "3836ca40951b4a7a2203a1d1c4a348a3e3f5c38365d05c763728326227a90aea",
+          "description": "acceptance tests",
+          "evidence_id": "m48-e1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/test-strengthening-e2e.json",
+          "artifact_sha256": "281f449d22fda0b3d9514bd0c4adbf98fb3f0d7582dd33e412eb61f92961f99e",
+          "description": "end-to-end run: promoted",
+          "evidence_id": "m48-e1-e2e"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/test_strengthening_pipeline.py",
+        "runtime/tests/test_m9_c48_test_strengthening.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-011",
+      "id": "M48-E1",
+      "implementation_status": "",
+      "objective": "End-to-end automatic test generation pipeline.",
+      "phase": "STRENGTHENING",
+      "priority": "P2",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "end-to-end test generation pipeline",
+      "started_at": "2026-09-04T02:54:09+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-F1": {
+      "acceptance_criteria": [
+        "3 pytest scenarios pass",
+        "fresh measurement persisted with sha256",
+        "identity spine complete (sha/tree/tool versions/timestamp)",
+        "coverage distinct from mutation (no mutation_score field)"
+      ],
+      "acceptance_result": "3 pytest scenarios pass; 3 engine coverage artifacts persisted with sha; identity spine populated; coverage and mutation are distinct dimensions",
+      "artifact_paths": [
+        "runtime/foundation/verification/coverage_truth.py",
+        "runtime/generated/m9-c48/coverage-truth-account.json",
+        "runtime/generated/m9-c48/coverage-truth-credit-card.json",
+        "runtime/generated/m9-c48/coverage-truth-loan.json",
+        "runtime/tests/test_m9_c48_coverage_truth.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_coverage_truth.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T03:13:06+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:13:06+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/coverage_truth.py",
+          "artifact_sha256": "f060d700351dcbd592ee01db4d742bb06680ea42397a6206cac76ca741b48a26",
+          "description": "coverage truth module",
+          "evidence_id": "m48-f1-coverage"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_coverage_truth.py",
+          "artifact_sha256": "cfa71675b5d92b58c72f877e95efe3d45a723f29fa6860290c6ee1ebda6b6d7e",
+          "description": "acceptance tests",
+          "evidence_id": "m48-f1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/coverage-truth-credit-card.json",
+          "artifact_sha256": "a2592699e58627b16bde2bff74c2e7ade1053ecd5cffbb23961b83bea2931fd1",
+          "description": "credit_card_engine coverage",
+          "evidence_id": "m48-f1-credit-card"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/coverage-truth-loan.json",
+          "artifact_sha256": "3ff726ff406cb62db4a0527a22be85a6ac228a957cb4f932078120c8df8081f3",
+          "description": "loan_engine coverage",
+          "evidence_id": "m48-f1-loan"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/coverage-truth-account.json",
+          "artifact_sha256": "14c4b9393feeaaf8fe780f2febdbae1b1cae5fc595f8cab1b5bb9043d45bef8e",
+          "description": "account_engine coverage",
+          "evidence_id": "m48-f1-account"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/coverage_truth.py",
+        "runtime/tests/test_m9_c48_coverage_truth.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-016",
+      "id": "M48-F1",
+      "implementation_status": "",
+      "objective": "Fresh coverage truth measurement with identity spine.",
+      "phase": "COVERAGE",
+      "priority": "P3",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "fresh coverage measurement with identity spine",
+      "started_at": "2026-09-04T03:13:06+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-F2": {
+      "acceptance_criteria": [
+        "12 pytest scenarios pass",
+        "12 quality categories defined",
+        "real-repo classification persisted",
+        "primary + secondary categories populated"
+      ],
+      "acceptance_result": "12 pytest scenarios pass; real-repo classification: 50 files; summary persisted",
+      "artifact_paths": [
+        "runtime/foundation/verification/test_quality.py",
+        "runtime/generated/m9-c48/test-quality-classification.json",
+        "runtime/tests/test_m9_c48_test_quality.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_test_quality.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T03:23:35+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:23:35+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/test_quality.py",
+          "artifact_sha256": "4bb9c8a3f8df11acc3f50165d5689b17ca1488232334b6777d7c17f755df62ac",
+          "description": "classifier module",
+          "evidence_id": "m48-f2-classifier"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_test_quality.py",
+          "artifact_sha256": "b0aca6ca03d44eb598d84c2d1ef5edadb4be55a32625952d6b14461e64ecbf63",
+          "description": "acceptance tests",
+          "evidence_id": "m48-f2-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/test-quality-classification.json",
+          "artifact_sha256": "45b55ec65768a4a61fd6d97e5f18e834341272871616b69e9f649a2a2085e674",
+          "description": "real-repo classification",
+          "evidence_id": "m48-f2-real-repo"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/test_quality.py",
+        "runtime/tests/test_m9_c48_test_quality.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-017",
+      "id": "M48-F2",
+      "implementation_status": "",
+      "objective": "Test quality sampling and classification.",
+      "phase": "TEST_QUALITY",
+      "priority": "P3",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "test quality sampling + classification",
+      "started_at": "2026-09-04T03:23:35+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-G1": {
+      "acceptance_criteria": [
+        "8 pytest scenarios pass",
+        "every command in verify.py classified",
+        "no duplicates",
+        "7 categories defined and used",
+        "real-repo classification persisted"
+      ],
+      "acceptance_result": "8 pytest scenarios pass; 83 commands classified; real-repo classification persisted",
+      "artifact_paths": [
+        "runtime/foundation/verification/cli_governance.py",
+        "runtime/generated/m9-c48/cli-classification.json",
+        "runtime/tests/test_m9_c48_cli_governance.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_cli_governance.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T03:26:08+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:26:08+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/cli_governance.py",
+          "artifact_sha256": "304db8198098faecfa815a4f310578a1888e71796554274ffa664983ec08d0dc",
+          "description": "CLI classifier",
+          "evidence_id": "m48-g1-classifier"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_cli_governance.py",
+          "artifact_sha256": "54cbee85d4ddcef292075dac8b67f1bcc9d118115d652351a9a45762986c3c9e",
+          "description": "acceptance tests",
+          "evidence_id": "m48-g1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/cli-classification.json",
+          "artifact_sha256": "09ba3f0f784965511f4ba7697d365b289246459ed19b83faacc543dc96da8d9a",
+          "description": "real-repo classification",
+          "evidence_id": "m48-g1-real-repo"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/cli_governance.py",
+        "runtime/tests/test_m9_c48_cli_governance.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-014",
+      "id": "M48-G1",
+      "implementation_status": "",
+      "objective": "CLI surface consolidation and classification.",
+      "phase": "CLI",
+      "priority": "P3",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "CLI surface classification into 7 categories",
+      "started_at": "2026-09-04T03:26:08+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-H1": {
+      "acceptance_criteria": [
+        "4 pytest scenarios pass",
+        "both functions marked OBSOLETE-RETAINED-FOR-COMPAT",
+        "rationale records E-4 defect",
+        "report persisted"
+      ],
+      "acceptance_result": "4 pytest scenarios pass; report persisted; explicit lifecycle assigned",
+      "artifact_paths": [
+        "runtime/generated/m9-c48/aggregator-obsolete-disposition.json",
+        "runtime/system/evidence/aggregator_obsolete_disposition.py",
+        "runtime/tests/test_m9_c48_aggregator_obsolete.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_aggregator_obsolete.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T03:28:11+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:28:11+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/system/evidence/aggregator_obsolete_disposition.py",
+          "artifact_sha256": "c51700f19351e583d3fcec4c3d7e5afaed7fda0ef9d9e5c550c1ca3a4e473e7a",
+          "description": "disposition module",
+          "evidence_id": "m48-h1-disposition"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_aggregator_obsolete.py",
+          "artifact_sha256": "3a4960e7ef750555c1e2c73917873f12f1e7eb782e71e54c3232af6a6c819eaf",
+          "description": "acceptance tests",
+          "evidence_id": "m48-h1-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/aggregator-obsolete-disposition.json",
+          "artifact_sha256": "39fac1b15c5f854d4fbdf80cf8ddd3098428625c113fb9af353c58bd5a98a614",
+          "description": "disposition report",
+          "evidence_id": "m48-h1-report"
+        }
+      ],
+      "files_changed": [
+        "runtime/system/evidence/aggregator_obsolete_disposition.py",
+        "runtime/tests/test_m9_c48_aggregator_obsolete.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-015",
+      "id": "M48-H1",
+      "implementation_status": "",
+      "objective": "Resolve obsolete evidence-aggregator functions.",
+      "phase": "CLEANUP",
+      "priority": "P4",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "explicit disposition for obsolete evidence-aggregator functions",
+      "started_at": "2026-09-04T03:28:11+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-H2": {
+      "acceptance_criteria": [
+        "7 pytest scenarios pass",
+        "100% function coverage",
+        "every disposition in taxonomy",
+        "canonical + duplicate authorities explicitly tagged",
+        "real-repo audit persisted"
+      ],
+      "acceptance_result": "7 pytest scenarios pass; 1477 functions classified; 100% coverage; real-repo audit persisted",
+      "artifact_paths": [
+        "runtime/foundation/verification/function_audit.py",
+        "runtime/generated/m9-c48/function-audit.json",
+        "runtime/tests/test_m9_c48_function_audit.py"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_function_audit.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "0",
+          "timestamp": "2026-09-04T03:43:28+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:43:28+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/foundation/verification/function_audit.py",
+          "artifact_sha256": "ff6f9b2ecb6b309063e66884b56190fad05ff10b6678922421ab5494df2e74cd",
+          "description": "function auditor",
+          "evidence_id": "m48-h2-auditor"
+        },
+        {
+          "artifact_path": "runtime/tests/test_m9_c48_function_audit.py",
+          "artifact_sha256": "42ecbd8ad1b418b196b01b765c63835915f715f4556adf6f6f8452c3ec4e6bc8",
+          "description": "acceptance tests",
+          "evidence_id": "m48-h2-tests"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/function-audit.json",
+          "artifact_sha256": "490160a006e43008697eea482b2ed23f0cf40e517db21177329239bd54a35c95",
+          "description": "real-repo function audit",
+          "evidence_id": "m48-h2-real-repo"
+        }
+      ],
+      "files_changed": [
+        "runtime/foundation/verification/function_audit.py",
+        "runtime/tests/test_m9_c48_function_audit.py"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-018",
+      "id": "M48-H2",
+      "implementation_status": "",
+      "objective": "100% framework function audit disposition.",
+      "phase": "AUDIT",
+      "priority": "P4",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "100% framework function audit disposition",
+      "started_at": "2026-09-04T03:43:28+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    },
+    "M48-I1": {
+      "acceptance_criteria": [
+        "all 18 implementation milestones COMPLETE",
+        "123 pytest acceptance scenarios pass",
+        "21 existing mutation infra tests still pass",
+        "smoke mutation runs through canonical path",
+        "all 14 mutation engines registered",
+        "1477 framework functions classified at 100%"
+      ],
+      "acceptance_result": "all 18 implementation milestones COMPLETE; 123 pytest scenarios pass; 21 existing mutation infra tests pass; smoke mutation runs through canonical path; all 14 mutation engines registered as capabilities; 1477 framework functions classified at 100% coverage",
+      "artifact_paths": [
+        "runtime/generated/m9-c48/FINAL_CONVERGENCE_REPORT.md",
+        "runtime/generated/m9-c48/execution-state.json",
+        "runtime/generated/m9-c48/final-convergence-summary.json"
+      ],
+      "blocker": "",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest runtime/tests/test_m9_c48_*.py -q",
+          "exit_code": 0,
+          "expected_result": "0",
+          "observed_result": "123 passed, 3 warnings in 13.60s",
+          "timestamp": "2026-09-04T03:52:08+00:00"
+        }
+      ],
+      "completed_at": "2026-09-04T03:52:08+00:00",
+      "dependencies": [],
+      "dependency_status": "",
+      "evidence": [
+        {
+          "artifact_path": "runtime/generated/m9-c48/final-convergence-summary.json",
+          "artifact_sha256": "0437b44fdde0e3d486178939107c50f6934cbf48dbf9fc6ca91a31b9139b547a",
+          "description": "aggregated summary",
+          "evidence_id": "m48-i1-summary"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/FINAL_CONVERGENCE_REPORT.md",
+          "artifact_sha256": "38c5930d785e7dbadf8c50145940b4bd379e7f4a3970ed3e6cc47e3aa741a5db",
+          "description": "final convergence report",
+          "evidence_id": "m48-i1-report"
+        },
+        {
+          "artifact_path": "runtime/generated/m9-c48/execution-state.json",
+          "artifact_sha256": "fc1b1e63005a601b026dfe9d16e7163a04d8c74cb66ddcc74e504b23ff3ee7bc",
+          "description": "execution state with 19 milestones",
+          "evidence_id": "m48-i1-state"
+        }
+      ],
+      "files_changed": [
+        "runtime/generated/m9-c48/EXECUTION_PROGRESS.md",
+        "runtime/generated/m9-c48/FINAL_CONVERGENCE_REPORT.md",
+        "runtime/generated/m9-c48/GUIDING_DOCUMENT.md"
+      ],
+      "final_disposition": "COMPLETE",
+      "gap": "GAP-CONSOLIDATION",
+      "id": "M48-I1",
+      "implementation_status": "",
+      "objective": "Final repository-wide convergence validation.",
+      "phase": "FINAL",
+      "priority": "P0",
+      "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+      "review_gate": "passed",
+      "scope": "final repository-wide convergence validation",
+      "started_at": "2026-09-04T03:52:08+00:00",
+      "status": "COMPLETE",
+      "validation_status": ""
+    }
+  },
+  "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+  "schema": "m9-c48/milestone-state@1"
+}

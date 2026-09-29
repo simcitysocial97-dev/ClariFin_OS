@@ -1,0 +1,75 @@
+[
+  {
+    "scenario": "CI-A",
+    "name": "unchanged_ci_evidence",
+    "expected": "reusable; no unnecessary execution",
+    "disposition": "reusable",
+    "reusable": true,
+    "drifts": [],
+    "pass": true
+  },
+  {
+    "scenario": "CI-B",
+    "name": "source_change_scope",
+    "expected": "affected component -> targeted verification; unaffected -> reused; aggregate derived where valid",
+    "changed_disposition": "invalidated_component",
+    "unchanged_disposition": "reusable",
+    "aggregate_derivable": true,
+    "pass": true
+  },
+  {
+    "scenario": "CI-C",
+    "name": "test_only_change",
+    "expected": "test evidence stale/revalidation-required; mutation evidence with intact validity fingerprint NOT discarded",
+    "mutation_disposition": "reusable",
+    "mutation_reusable": true,
+    "suite_test_drift_detected": true,
+    "pass": true
+  },
+  {
+    "scenario": "CI-D",
+    "name": "verification_configuration_change",
+    "expected": "only config-dependent evidence invalidated; no silent expansion",
+    "mutation_disposition": "invalidated_task",
+    "suite_disposition": "reusable",
+    "suite_config_drift": false,
+    "pass": true
+  },
+  {
+    "scenario": "CI-E",
+    "name": "toolchain_change",
+    "expected": "invalidated per existing invalidation hierarchy (R-CFG-002)",
+    "disposition": "invalidated_component",
+    "rule_ids": [
+      "R-CFG-002"
+    ],
+    "pass": true
+  },
+  {
+    "scenario": "CI-F",
+    "name": "corrupt_or_missing_artifact",
+    "expected": "classified evidence_failure, NOT verification_failure",
+    "missing_state": "missing",
+    "corrupt_state": "corrupt",
+    "missing_classification": "evidence_failure",
+    "corrupt_classification": "evidence_failure",
+    "pass": true
+  },
+  {
+    "scenario": "CI-G",
+    "name": "verification_failure",
+    "expected": "classified verification_failure",
+    "classification": "verification_failure",
+    "decision_failure": "verification_failure",
+    "pass": true
+  },
+  {
+    "scenario": "CI-H",
+    "name": "infrastructure_failure",
+    "expected": "classified infrastructure_failure (machine-readable distinction)",
+    "classification": "infrastructure_failure",
+    "decision_failure": "infrastructure_failure",
+    "distinct_from_verification": true,
+    "pass": true
+  }
+]

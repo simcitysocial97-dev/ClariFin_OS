@@ -1,0 +1,101 @@
+[WebServer] [33m[1m⚠[22m[39m Warning: Next.js inferred your workspace root, but it may not be correct.
+[WebServer]  We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+[WebServer]  To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+[WebServer]    See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+[WebServer]  Detected additional lockfiles: 
+[WebServer]    * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+[WebServer] 
+[WebServer] INFO:     Started server process [1115182]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] 2026-09-05 21:34:44,661 - clarifin - INFO - Starting ClariFin_OS startup validation...
+[WebServer] 2026-09-05 21:34:44,661 - clarifin - INFO - Configuration validation passed
+[WebServer] 2026-09-05 21:34:44,990 - clarifin - INFO - Database schema initialized and verified
+[WebServer] 2026-09-05 21:34:44,995 - clarifin - INFO - Database connectivity verified
+[WebServer] 2026-09-05 21:34:44,995 - clarifin - INFO - Startup validation complete - all systems ready
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[WebServer] INFO:     127.0.0.1:59418 - "GET /ready HTTP/1.1" 200 OK
+🔧 Running global setup...
+[WebServer] INFO:     127.0.0.1:59418 - "GET / HTTP/1.1" 404 Not Found
+🔌 Port 8000 is in use, checking health...
+[WebServer] INFO:     127.0.0.1:59418 - "GET /ready HTTP/1.1" 200 OK
+✅ Backend API is healthy
+✅ Test data seeded successfully
+✅ Global setup complete
+
+Running 11 tests using 2 workers
+
+[WebServer] INFO:     127.0.0.1:59422 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59424 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59440 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59448 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59422 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59454 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59466 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59474 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59484 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:59484 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+  ✓   1 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:34:5 › Platform Console Dashboard › renders platform title bar (7.5s)
+  ✓   2 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:24:7 › Platform Console Dashboard › page loads without blank screen or crash (7.4s)
+[WebServer] INFO:     127.0.0.1:38664 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38674 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38676 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38684 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38664 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38690 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38700 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38702 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38710 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:38700 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+  ✓   3 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:39:5 › Platform Console Dashboard › renders system status card with a status badge (7.3s)
+  ✓   4 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:45:5 › Platform Console Dashboard › renders dimensions grid (7.3s)
+[WebServer] INFO:     127.0.0.1:50004 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50008 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50010 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50016 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50004 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50024 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50032 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50038 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50044 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50032 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+  ✓   5 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:53:5 › Platform Console Dashboard › renders verification status section (6.8s)
+  ✓   6 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:57:5 › Platform Console Dashboard › renders capabilities summary (6.7s)
+[WebServer] INFO:     127.0.0.1:50046 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50048 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50062 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50068 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50070 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50080 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50086 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50100 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50062 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:50080 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+  ✓   8 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:68:7 › Platform Console Dashboard › renders recent activity feed (6.8s)
+  ✓   7 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:61:7 › Platform Console Dashboard › renders quick actions panel (7.0s)
+[WebServer] INFO:     127.0.0.1:60774 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60790 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60774 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60796 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60802 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60806 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60808 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60812 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60814 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60806 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60806 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60806 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+  ✓   9 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:75:7 › Platform Console Dashboard › renders footer bar (7.4s)
+[WebServer] INFO:     127.0.0.1:60808 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60806 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60814 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60384 - "GET /platform/v1/health HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60396 - "GET /platform/v1/events?limit=8 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60400 - "GET /platform/v1/errors/current HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60404 - "GET /api/members HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60404 - "GET /platform/v1/events?limit=3 HTTP/1.1" 200 OK
+[WebServer] INFO:     127.0.0.1:60404 - "GET /platform/v1/health?nocache=1 HTTP/1.1" 200 OK
+  ✓  11 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:101:7 › Platform Console Dashboard › health endpoint returns valid JSON envelope (6.2s)
+  ✓  10 [chromium] › tests/e2e/specs/platform-dashboard.spec.ts:80:7 › Platform Console Dashboard › does not load mutation or LLM modules at runtime (15.5s)
+
+  11 passed (50.7s)

@@ -1,0 +1,7 @@
+{
+  "planner_ms": 0.04,
+  "orchestrator_ms": 14.08,
+  "evidence_ms": 18.94,
+  "report_ms": 4.43,
+  "cache_ms": 0.06
+}

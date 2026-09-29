@@ -1,0 +1,136 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Coverage Quality Analysis — Genuine Gap vs Scope Mismatch",
+  "timestamp": "2026-08-24T20:26:00+05:30",
+  "repository_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+
+  "question": "Does 36.63% represent (A) genuine testing weakness, (B) scope mismatch, (C) configuration/architecture issue, or (D) a combination?",
+
+  "verdict": {
+    "primary": "B",
+    "primary_label": "SCOPE MISMATCH",
+    "secondary": "A",
+    "secondary_label": "GENUINE TESTING WEAKNESS — residual, confined, and OUTSIDE the current engine-testing campaign",
+    "overall": "D (combination) — but overwhelmingly B",
+    "attribution": {
+      "scope_mismatch_share": "dominant — accounts for the entire 28.96-point difference between 36.63% and 65.59%",
+      "genuine_weakness_share": "residual — confined to transaction_intelligence (24.25%), financial_intelligence (34.82%), repositories (55.42%), balance (58.95%)"
+    },
+    "configuration_issue_C": "NOT PRESENT as a coverage-measurement defect. .coveragerc is coherent and its omit list is documented and justified. One reporting defect WAS found, but in the MUTATION runner (post-run config restoration), not in coverage."
+  },
+
+  "evidence_for_B_scope_mismatch": [
+    {
+      "id": "B-1",
+      "claim": "The 36.63% figure is a test-scope artifact, fully reproducible on demand.",
+      "evidence": "Running `pytest --cov=src --cov-config=.coveragerc tests/unit/engines/` reproduces 843 passed / 3916 covered / 6322 missing / 36.63% — matching every M9-C42.18 number exactly. Running the same coverage config over `tests/` yields 1745 passed / 7111 covered / 3127 missing / 65.59%.",
+      "strength": "DECISIVE"
+    },
+    {
+      "id": "B-2",
+      "claim": "Identical statement population proves it is not a configuration difference.",
+      "evidence": "Both runs measure exactly 10,238 statements under the identical .coveragerc. Only the executing test population differs (843 vs 1746 tests).",
+      "strength": "DECISIVE"
+    },
+    {
+      "id": "B-3",
+      "claim": "Five whole source areas measure 0.00% under the subset purely because no engine unit test can reach them.",
+      "evidence": "services 0.00% -> 66.29% (2047 stmts); common 0.00% -> 99.38%; cashflow 0.00% -> 97.56%; orchestration 0.00% -> 80.28%; other 0.00% -> 78.49%. These are exercised by capability, property, contract, golden, and domain suites that tests/unit/engines/ excludes.",
+      "strength": "DECISIVE"
+    },
+    {
+      "id": "B-4",
+      "claim": "The threshold's own companion policy proves 40% was never an engine-only threshold.",
+      "evidence": ".github/scripts/check_coverage_threshold.py sets engines=70 SEPARATELY from overall=40. Applying the backend-wide 40% aggregate to an engine-only test subset mismatches the threshold to a population it was not designed for.",
+      "strength": "STRONG"
+    },
+    {
+      "id": "B-5",
+      "claim": "The threshold was originally calibrated against a broad unit population, not an engine subset.",
+      "evidence": "Origin commit f0e28f0b calibrated 40% while adding 189 tests across money.py, calculations.py, formatting.py, parsing.py, errors.py — none of which live under tests/unit/engines/.",
+      "strength": "STRONG"
+    }
+  ],
+
+  "evidence_for_A_residual_genuine_weakness": [
+    {
+      "id": "A-1",
+      "area": "transaction_intelligence",
+      "statements": 367, "coverage_pct": 24.25, "missing": 278,
+      "assessment": "GENUINE LOW COVERAGE under the full suite. Not explained by scope.",
+      "in_current_engine_campaign": false
+    },
+    {
+      "id": "A-2",
+      "area": "financial_intelligence",
+      "statements": 807, "coverage_pct": 34.82, "missing": 526,
+      "assessment": "GENUINE LOW COVERAGE under the full suite. Largest single missing-statement contributor (526).",
+      "in_current_engine_campaign": false
+    },
+    {
+      "id": "A-3",
+      "area": "repositories",
+      "statements": 1366, "coverage_pct": 55.42, "missing": 609,
+      "assessment": "MODERATE. Below its own intended 40% threshold? No — 55.42% EXCEEDS the repositories=40 intended threshold. Not a gate failure.",
+      "in_current_engine_campaign": false
+    },
+    {
+      "id": "A-4",
+      "area": "balance_engine",
+      "statements": 95, "coverage_pct": 58.95, "missing": 39,
+      "assessment": "MODERATE and small in absolute terms (39 statements). balance_engine is in ENGINE_SELECTION but was NOT part of the four-engine M9-C42.17/18/19 mutation campaign.",
+      "in_current_engine_campaign": false
+    },
+    {
+      "id": "A-5",
+      "area": "services",
+      "statements": 2047, "coverage_pct": 66.29, "missing": 690,
+      "assessment": "ACCEPTABLE against the services=40 intended threshold (66.29% >> 40%). Largest area by statement count, so its 690 missing statements dominate absolute counts without indicating a gate failure.",
+      "in_current_engine_campaign": false
+    }
+  ],
+
+  "evidence_against_C_configuration_issue": [
+    {
+      "claim": ".coveragerc measures an INTENDED source population.",
+      "evidence": "source = src with a documented, justified omit list: tests/conftest (never measure tests), entry points (main/startup/api/health — bootstrap only), extraction pipeline (requires PDF/binary I/O, explicitly deferred to integration/contract tests), routers (HTTP layer), tools/scripts, and cache/venv directories. Each exclusion carries an inline rationale comment.",
+      "verdict": "COHERENT — no unintended source population detected"
+    },
+    {
+      "claim": "branch=True is active and correctly reflected in the reported percentage.",
+      "evidence": "Verified arithmetic: (7111 covered_lines + 1401 covered_branches) / (10238 statements + 2740 branches) = 65.59%, matching coverage.py's reported percent_covered exactly.",
+      "verdict": "CORRECT"
+    },
+    {
+      "claim": "195 source files measured, spanning every non-omitted area.",
+      "evidence": "Full-suite coverage.json contains 195 file entries totalling 10,238 statements across engines, services, repositories, core, models, common, orchestration.",
+      "verdict": "COMPLETE"
+    }
+  ],
+
+  "p0_engine_coverage_under_full_suite": {
+    "credit_card_engine": 93.65,
+    "account_engine": 98.86,
+    "loan_engine": 98.73,
+    "reconciliation_engine": 95.42,
+    "intended_engines_threshold": 70,
+    "all_exceed_intended_engine_threshold": true,
+    "conclusion": "Every engine in the mutation campaign massively exceeds the 70% intended engine threshold. There is no coverage-driven justification for adding tests to these engines."
+  },
+
+  "decision_on_adding_coverage_tests": {
+    "are_more_tests_required_to_satisfy_the_40_percent_gate": false,
+    "rationale": "The canonical full-suite command already reports 65.59% and pytest-cov emits 'Required test coverage of 40.0% reached'. The gate PASSES. Adding tests to raise a percentage that already passes would be pure metric manipulation and is explicitly forbidden.",
+    "tests_added_this_phase_for_coverage": 0,
+    "source_files_excluded_to_improve_coverage": 0,
+    "tests_excluded_from_coverage": 0,
+    "threshold_altered": false,
+    "genuine_gaps_documented_for_future_phases": [
+      "transaction_intelligence — 24.25% (278 missing statements)",
+      "financial_intelligence — 34.82% (526 missing statements)"
+    ],
+    "genuine_gaps_note": "These are documented as real, evidence-backed opportunities. They are OUTSIDE the current four-engine mutation campaign and were NOT addressed in this phase, because this phase's mandate was to establish metrics rather than optimize them."
+  },
+
+  "final_statement": "36.63% did NOT represent a genuine testing weakness in the engines under campaign. It was a scope-mismatch artifact of measuring a backend-wide aggregate threshold against an engine-only test subset. The authoritative full-suite measurement is 65.59%, which PASSES the unchanged 40% gate. A residual, genuine, and clearly bounded coverage weakness exists in transaction_intelligence and financial_intelligence, both outside the current campaign."
+}

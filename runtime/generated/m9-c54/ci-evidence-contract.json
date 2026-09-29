@@ -1,0 +1,250 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "entry_count": 22,
+  "entries": [
+    {
+      "workflow": "api-contracts.yml",
+      "job": "api-contracts",
+      "step": "Run API contract integrity gate",
+      "verification_task": "task::contract::api",
+      "evidence_kind": "contract-evidence",
+      "execution_mode": "observational",
+      "produces_evidence": true,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "api-contracts.yml",
+      "job": "api-contracts",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "backend-verify.yml",
+      "job": "verify",
+      "step": "Run backend verification",
+      "verification_task": "task::unit::backend-suite",
+      "evidence_kind": "test-report",
+      "execution_mode": "observational",
+      "produces_evidence": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "backend-verify.yml",
+      "job": "verify",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "dependency-update.yml",
+      "job": "dependency-health",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "job": "verify",
+      "step": "Run frontend verification",
+      "verification_task": "task::static::frontend-suite",
+      "evidence_kind": "test-report",
+      "execution_mode": "observational",
+      "produces_evidence": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "job": "verify",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "golden.yml",
+      "job": "golden",
+      "step": "Run golden verification",
+      "verification_task": "task::golden::regression",
+      "evidence_kind": "golden",
+      "execution_mode": "observational",
+      "produces_evidence": true,
+      "evidence_path": "backend/tests/generated/golden/",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "golden.yml",
+      "job": "golden",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "step": "Run verify.py backend with complete capture",
+      "verification_task": "task::unit::backend-suite",
+      "evidence_kind": "test-report",
+      "execution_mode": "observational",
+      "produces_evidence": true,
+      "evidence_path": "runtime/generated/verification-report.md",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation",
+      "step": "Verify canonical environment",
+      "verification_task": "task::static::env-check",
+      "evidence_kind": "environment-fingerprint",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation",
+      "step": "Run mutation testing",
+      "verification_task": "task::mutation::full",
+      "evidence_kind": "mutation-summary",
+      "execution_mode": "authoritative",
+      "produces_evidence": true,
+      "evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation-smoke",
+      "step": "Verify canonical environment",
+      "verification_task": "task::static::env-check",
+      "evidence_kind": "environment-fingerprint",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation-smoke",
+      "step": "Run bounded mutation smoke",
+      "verification_task": "task::mutation::smoke",
+      "evidence_kind": "mutation-smoke-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": "backend/tests/generated/mutation/mutation-smoke-summary.json",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "playwright.yml",
+      "job": "test",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "quality.yml",
+      "job": "quality",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "job": "analyze",
+      "step": "Initialize CodeQL",
+      "verification_task": "task::static::codeql-init",
+      "evidence_kind": "security-scan",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": "results.sarif",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "job": "analyze",
+      "step": "Autobuild",
+      "verification_task": "task::static::codeql-build",
+      "evidence_kind": "security-scan",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": "results.sarif",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "job": "analyze",
+      "step": "Perform CodeQL Analysis",
+      "verification_task": "task::static::codeql",
+      "evidence_kind": "security-scan",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": "results.sarif",
+      "fingerprintable": true
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    },
+    {
+      "workflow": "verification-runtime.yml",
+      "job": "verify-runtime",
+      "step": "Job Summary",
+      "verification_task": "task::static::status-summary",
+      "evidence_kind": "status-summary",
+      "execution_mode": "observational",
+      "produces_evidence": false,
+      "evidence_path": null,
+      "fingerprintable": true
+    }
+  ]
+}

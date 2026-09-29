@@ -1,0 +1,293 @@
+{
+  "schema": "m9-c49-execution-report/v1",
+  "report_id": "report-1437fb95b287",
+  "plan_id": "execplan-6fa1f7f48106",
+  "plan_fingerprint": "6fa1f7f48106a2741fc51a9023adbde2193818031a6e58403447b892cf5ead45",
+  "started_at": "2026-08-31T10:13:30.439131+00:00",
+  "completed_at": "2026-08-31T10:13:52.703919+00:00",
+  "total_duration_seconds": 22.264794655988226,
+  "records": [
+    {
+      "record_id": "task-94b3e3b6ff6f",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0001",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts",
+        "loan-engine"
+      ],
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "scope": "backend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "unit",
+      "started_at": "2026-08-31T10:13:33.167820+00:00",
+      "completed_at": "2026-08-31T10:13:33.167835+00:00",
+      "duration_seconds": 1.4092653979896568,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0001-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0001-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0001-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0001-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-9e4bfa46d4f8",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0002",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts",
+        "loan-engine"
+      ],
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "scope": "contracts",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "contract",
+      "started_at": "2026-08-31T10:13:35.933536+00:00",
+      "completed_at": "2026-08-31T10:13:35.933548+00:00",
+      "duration_seconds": 1.4322740789793897,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0002-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0002-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0002-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0002-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-de3b692fc630",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0003",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts"
+      ],
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "scope": "frontend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "unit",
+      "started_at": "2026-08-31T10:13:38.873977+00:00",
+      "completed_at": "2026-08-31T10:13:38.873989+00:00",
+      "duration_seconds": 1.4637393220036756,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0003-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0003-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0003-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0003-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-5a05844c6a7f",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0004",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "scope": "run_fast_checks",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "unit",
+      "started_at": "2026-08-31T10:13:41.658996+00:00",
+      "completed_at": "2026-08-31T10:13:41.659008+00:00",
+      "duration_seconds": 1.4332454460090958,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0004-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0004-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0004-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0004-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-1bcfc31ddae3",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0005",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "scope": "property",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "property",
+      "started_at": "2026-08-31T10:13:44.432958+00:00",
+      "completed_at": "2026-08-31T10:13:44.432976+00:00",
+      "duration_seconds": 1.464605068002129,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0005-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0005-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0005-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0005-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-6554b128c657",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0006",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts"
+      ],
+      "command": ".venv/bin/python runtime/verify.py measurement coverage backend/src --out /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/measurements/measurement-truth-api-contracts-coverage.json",
+      "scope": "coverage",
+      "is_mandatory": false,
+      "is_escalation": false,
+      "verification_kind": "coverage",
+      "started_at": "2026-08-31T10:13:47.189779+00:00",
+      "completed_at": "2026-08-31T10:13:47.189792+00:00",
+      "duration_seconds": 1.4161757390247658,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0006-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0006-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0006-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0006-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-92201fd6d23a",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0008",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "command": ".venv/bin/python runtime/verify.py measurement coverage backend/src/engines/loan_engine --out /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/measurements/measurement-truth-loan-engine-coverage.json",
+      "scope": "coverage",
+      "is_mandatory": false,
+      "is_escalation": false,
+      "verification_kind": "coverage",
+      "started_at": "2026-08-31T10:13:49.957454+00:00",
+      "completed_at": "2026-08-31T10:13:49.957468+00:00",
+      "duration_seconds": 1.4592125769995619,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0008-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0008-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0008-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0008-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    },
+    {
+      "record_id": "task-298448667d87",
+      "plan_id": "execplan-6fa1f7f48106",
+      "task_id": "exec-0007",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "command": ".venv/bin/python runtime/verify.py mutation --target loan_engine --json",
+      "scope": "mutation",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "verification_kind": "mutation",
+      "started_at": "2026-08-31T10:13:52.703268+00:00",
+      "completed_at": "2026-08-31T10:13:52.703284+00:00",
+      "duration_seconds": 1.407198086992139,
+      "exit_code": 0,
+      "completion_state": "pass",
+      "stdout_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0007-stdout.log",
+      "stderr_path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0007-stderr.log",
+      "artifacts": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0007-stdout.log",
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-6fa1f7f48106/exec-0007-stderr.log"
+      ],
+      "measurement_truth": null,
+      "diagnostic": {
+        "stage": "none",
+        "message": "ok"
+      },
+      "next_action": "no action \u2014 task satisfied",
+      "reason": "command exit 0",
+      "prerequisites_satisfied": true
+    }
+  ],
+  "efficiency": {
+    "total_available_tasks": 75,
+    "tasks_selected": 8,
+    "tasks_executed": 8,
+    "tasks_reused": 0,
+    "tasks_skipped": 0,
+    "tasks_awaiting_authorization": 0,
+    "blind_total_commands": 11,
+    "unnecessary_execution_avoided": 3,
+    "execution_time_seconds": 11.485715716000414
+  },
+  "final_decision": "not_certifiable",
+  "decision_reason": "certification conditions not satisfied: loan-engine mutation measurement authoritative+current",
+  "evidence_reused": [],
+  "escalations_triggered": [],
+  "decisions": []
+}

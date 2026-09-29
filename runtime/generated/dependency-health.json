@@ -1,0 +1,10 @@
+{
+  "overall_status": "pass",
+  "graph_health": {
+    "total_checks": 12,
+    "failures": 0,
+    "passes": 12,
+    "index_node_count": 1200,
+    "index_edge_count": 2095
+  }
+}

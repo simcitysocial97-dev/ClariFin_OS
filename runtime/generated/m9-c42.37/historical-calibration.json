@@ -1,0 +1,119 @@
+{
+  "schema": "m9-c42.37-historical-calibration/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "survivor_inventory_summary": {
+    "credit_card_engine": {
+      "total": 144,
+      "class_a": 44,
+      "class_b": 99,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 1
+    },
+    "account_engine": {
+      "total": 20,
+      "class_a": 17,
+      "class_b": 3,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0
+    },
+    "loan_engine": {
+      "total": 308,
+      "class_a": 258,
+      "class_b": 39,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 11
+    },
+    "reconciliation_engine": {
+      "total": 0,
+      "class_a": 0,
+      "class_b": 0,
+      "class_c": 0,
+      "class_d": 0,
+      "class_e": 0
+    }
+  },
+  "classification_tests": [
+    {
+      "survivor_id": "mut-cc-001",
+      "component": "credit_card_engine",
+      "input_notes": "",
+      "classified_as": "A",
+      "expected": "A",
+      "matches_expected": true
+    },
+    {
+      "survivor_id": "mut-cc-002",
+      "component": "credit_card_engine",
+      "input_notes": "equivalent_rounding_default",
+      "classified_as": "B",
+      "expected": "B",
+      "matches_expected": true
+    },
+    {
+      "survivor_id": "mut-loan-001",
+      "component": "loan_engine",
+      "input_notes": "",
+      "classified_as": "D",
+      "expected": "D",
+      "matches_expected": true
+    },
+    {
+      "survivor_id": "mut-loan-002",
+      "component": "loan_engine",
+      "input_notes": "production_defect_candidate",
+      "classified_as": "E",
+      "expected": "E",
+      "matches_expected": true
+    }
+  ],
+  "proposal_tests": [
+    {
+      "survivor_id": "mut-cc-001",
+      "result_type": "proposal",
+      "proposal_id": "prop::c79dcdfc1234",
+      "classification": "A",
+      "hypothesis": "boundary/ordering behavior at 'risk.py:calculate_risk_score' is load-bearing: th"
+    },
+    {
+      "survivor_id": "mut-cc-002",
+      "result_type": "rejected",
+      "reason": "equivalent/observable-equivalent behavior; targeting it would inflate the score without improving defect detection"
+    },
+    {
+      "survivor_id": "mut-loan-001",
+      "result_type": "rejected",
+      "reason": "measurement integrity problem (timeout/suspicious); repair measurement before interpreting behavior"
+    },
+    {
+      "survivor_id": "mut-loan-002",
+      "result_type": "rejected",
+      "reason": "ambiguous/design/possible production defect; requires human review before any test is written"
+    }
+  ],
+  "escalation_calibration": {
+    "class_a_acceptance_criteria": "covering_tests=0 or covering_tests don't exercise mutated behavior",
+    "class_b_refusal_reason": "equivalent/observable-equivalent behavior \u2014 do not chase",
+    "class_c_refusal_reason": "defensive/observability code \u2014 do not manufacture score",
+    "class_d_refusal_reason": "measurement integrity problem \u2014 repair measurement first",
+    "class_e_escalation_trigger": "explicit escalation marker in notes; requires human review",
+    "proposed_threshold_conditions": [
+      "observation_count >= 3 independent mutation runs",
+      "independent_change_count >= 2 distinct repository states",
+      "previous_proposals >= 1 attempted strengthening",
+      "proposal_outcomes all rejected or validation failed"
+    ],
+    "threshold_status": "NOT_DEFINED \u2014 requires historical data accumulation",
+    "data_confidence": "PROVISIONAL \u2014 thresholds proposed but not empirically validated"
+  },
+  "empirical_support_level": {
+    "class_a_acceptance": "INSUFFICIENT_DATA \u2014 no real approval/rejection cycle completed yet",
+    "class_b_refusal": "EMPIRICALLY_SUPPORTED \u2014 99 Class-B survivors in credit_card_engine correctly refused",
+    "class_d_detection": "EMPIRICALLY_SUPPORTED \u2014 timeout/suspicious classified as D consistently",
+    "class_e_escalation": "PROVISIONAL \u2014 contract defined but threshold not calibrated",
+    "measurement_anomaly_detection": "IMPLEMENTED \u2014 suspicious status triggers Class-D"
+  }
+}

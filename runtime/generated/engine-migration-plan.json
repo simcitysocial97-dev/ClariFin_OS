@@ -1,0 +1,108 @@
+{
+  "schema": "engine-migration-plan/v1",
+  "generated_at": "2026-08-06T16:43:43.901502Z",
+  "program": "18.0",
+  "total_orphans": 2,
+  "total_internal": 5,
+  "summary": {
+    "merge_into_behaviour_engine": 2,
+    "assign_capability": 2,
+    "formally_declare_internal": 3,
+    "maintain": 0
+  },
+  "orphan_migrations": [
+    {
+      "engine": "backend/src/engines/insight_generator.py",
+      "status": "orphan",
+      "migration_action": "merge_into_behaviour_engine",
+      "target": "behaviour_engine/insight_generator.py",
+      "rationale": "insight_generator imported only by behaviour_engine/core.py",
+      "evidence": "backend/src/engines/behaviour_engine/core.py:from src.engines.insight_generator import (",
+      "retirement_order": 2,
+      "risk": "LOW",
+      "verification_command": "python3 runtime/verify.py quick"
+    },
+    {
+      "engine": "backend/src/engines/nudge_engine.py",
+      "status": "orphan",
+      "migration_action": "merge_into_behaviour_engine",
+      "target": "behaviour_engine/nudge_engine.py",
+      "rationale": "nudge_engine imported only by behaviour_engine/core.py",
+      "evidence": "backend/src/engines/behaviour_engine/core.py:from src.engines.nudge_engine import (",
+      "retirement_order": 2,
+      "risk": "LOW",
+      "verification_command": "python3 runtime/verify.py quick"
+    }
+  ],
+  "internal_actions": [
+    {
+      "engine": "backend/src/engines/balance_engine.py",
+      "status": "internal",
+      "action": "formally_declare_internal",
+      "rationale": "Internal engine with no external ownership",
+      "capabilities": [],
+      "endpoints": [],
+      "services": [
+        "backend/src/services/statement_service.py"
+      ],
+      "verification_command": "python3 runtime/verify.py quick"
+    },
+    {
+      "engine": "backend/src/engines/financial_events",
+      "status": "internal",
+      "action": "formally_declare_internal",
+      "rationale": "Internal engine with no external ownership",
+      "capabilities": [],
+      "endpoints": [],
+      "services": [
+        "backend/src/services/financial_events_service.py"
+      ],
+      "verification_command": "python3 runtime/verify.py quick"
+    },
+    {
+      "engine": "backend/src/engines/financial_intelligence",
+      "status": "internal",
+      "action": "assign_capability",
+      "rationale": "Engine has endpoints but no capability",
+      "capabilities": [],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /credit-forecast",
+        "GET /liquidity-forecast",
+        "GET /outlook",
+        "GET /priorities",
+        "GET /recommendations/{recommendation_id}"
+      ],
+      "services": [
+        "backend/src/services/financial_intelligence_service.py"
+      ],
+      "verification_command": "python3 runtime/verify.py quick"
+    },
+    {
+      "engine": "backend/src/engines/ledger_audit_engine.py",
+      "status": "internal",
+      "action": "assign_capability",
+      "rationale": "Engine has endpoints but no capability",
+      "capabilities": [],
+      "endpoints": [
+        "GET /report"
+      ],
+      "services": [
+        "backend/src/services/audit_service.py"
+      ],
+      "verification_command": "python3 runtime/verify.py quick"
+    },
+    {
+      "engine": "backend/src/engines/transaction_intelligence",
+      "status": "internal",
+      "action": "formally_declare_internal",
+      "rationale": "Internal engine with no external ownership",
+      "capabilities": [],
+      "endpoints": [],
+      "services": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "verification_command": "python3 runtime/verify.py quick"
+    }
+  ]
+}

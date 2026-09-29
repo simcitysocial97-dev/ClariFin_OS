@@ -1,0 +1,243 @@
+{
+  "schema": "m9-c46-runtime-command-consolidation/v1",
+  "milestone": "M46.18",
+  "objective": "Consolidate and document all runtime verification commands with authoritative usage patterns",
+  "generated_at": "2026-09-03T12:26:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "Runtime command consolidation ensures all verification commands are documented, consistent, and correctly implemented. This provides a single source of truth for verification execution.",
+  "profiles": {
+    "quick": {
+      "description": "Fast lint+format+typecheck+unit",
+      "tasks": 4,
+      "estimated_duration_seconds": 240,
+      "commands": [
+        "python3 -m ruff check backend/src/",
+        "python3 -m black --check backend/src/ runtime/",
+        "python3 -m mypy backend/src/ --ignore-missing-imports",
+        "python3 -m pytest backend/tests/unit/ -x --tb=short -q"
+      ]
+    },
+    "backend": {
+      "description": "Full backend verification (lint, typecheck, unit, contract, property, architecture, coverage)",
+      "tasks": 7,
+      "delegates_to": "verify.py backend"
+    },
+    "frontend": {
+      "description": "Frontend lint+typecheck+build+tests",
+      "tasks": 5,
+      "delegates_to": "verify.py frontend"
+    },
+    "contracts": {
+      "description": "Contract verification",
+      "tasks": 3,
+      "delegates_to": "verify.py contracts"
+    },
+    "graph": {
+      "description": "Capability graph verification",
+      "tasks": 3,
+      "delegates_to": "verify.py graph"
+    },
+    "full": {
+      "description": "Combined verification suite",
+      "tasks": 11,
+      "delegates_to": "verify.py full"
+    },
+    "integration": {
+      "description": "Integration tests",
+      "tasks": 1,
+      "delegates_to": "verify.py integration"
+    },
+    "mutation": {
+      "description": "Mutation smoke + full campaign",
+      "tasks": 2,
+      "delegates_to": "verify.py mutation"
+    },
+    "runtime": {
+      "description": "Runtime tests (foundation/verification)",
+      "tasks": 2,
+      "delegates_to": "verify.py runtime"
+    },
+    "golden": {
+      "description": "Golden regression suite",
+      "tasks": 2,
+      "delegates_to": "verify.py golden"
+    },
+    "playwright": {
+      "description": "Frontend E2E",
+      "tasks": 2,
+      "delegates_to": "verify.py playwright"
+    }
+  },
+  "commands": {
+    "status": {
+      "description": "Show repository status including changed files, verification status",
+      "usage": "python runtime/verify.py status"
+    },
+    "metrics": {
+      "description": "Display verification metrics",
+      "usage": "python runtime/verify.py metrics"
+    },
+    "history": {
+      "description": "Show verification history",
+      "usage": "python runtime/verify.py history"
+    },
+    "deps": {
+      "description": "Check dependencies",
+      "usage": "python runtime/verify.py deps"
+    },
+    "verify-status": {
+      "description": "Show verification status",
+      "usage": "python runtime/verify.py verify-status"
+    },
+    "health": {
+      "description": "Check system health",
+      "usage": "python runtime/verify.py health"
+    },
+    "doctor": {
+      "description": "Environment diagnostic",
+      "usage": "python runtime/verify.py doctor"
+    },
+    "ci-doctor": {
+      "description": "CI environment diagnostic",
+      "usage": "python runtime/verify.py ci-doctor"
+    },
+    "diagnose": {
+      "description": "Run diagnostic analysis",
+      "usage": "python runtime/verify.py diagnose"
+    },
+    "diagnose-failures": {
+      "description": "Diagnose previous failures",
+      "usage": "python runtime/verify.py diagnose-failures"
+    },
+    "plan": {
+      "description": "Plan verification execution",
+      "usage": "python runtime/verify.py plan"
+    },
+    "reconcile": {
+      "description": "Reconcile verification state",
+      "usage": "python runtime/verify.py reconcile"
+    },
+    "exec-evidence": {
+      "description": "Execute evidence recording",
+      "usage": "python runtime/verify.py exec-evidence --profile <profile> --evidence <path>"
+    },
+    "deep-contract": {
+      "description": "Deep contract verification",
+      "usage": "python runtime/verify.py deep-contract"
+    },
+    "local-gate": {
+      "description": "Local verification gate",
+      "usage": "python runtime/verify.py local-gate"
+    },
+    "affected": {
+      "description": "Show affected components",
+      "usage": "python runtime/verify.py affected"
+    },
+    "repair": {
+      "description": "Attempt automated repair",
+      "usage": "python runtime/verify.py repair"
+    },
+    "risk": {
+      "description": "Assess change risk",
+      "usage": "python runtime/verify.py risk"
+    },
+    "integrity": {
+      "description": "Verify system integrity",
+      "usage": "python runtime/verify.py integrity"
+    },
+    "knowledge": {
+      "description": "Knowledge base queries",
+      "usage": "python runtime/verify.py knowledge [endpoint|capability|workspace|rule|component] [args]"
+    },
+    "env-check": {
+      "description": "Verify canonical .venv environment",
+      "usage": "python runtime/verify.py env-check"
+    }
+  },
+  "mutation_commands": {
+    "mutation": {
+      "description": "Authoritative full mutation campaign (CI only)",
+      "usage": "python runtime/verify.py mutation",
+      "note": "Do NOT run locally during debugging milestones"
+    },
+    "mutation --smoke": {
+      "description": "Bounded mutation infra smoke test",
+      "usage": "python runtime/verify.py mutation --smoke",
+      "note": "Safe to run locally for infra verification"
+    },
+    "mutation --target": {
+      "description": "Incremental mutation on specific engine",
+      "usage": "python runtime/verify.py mutation --target <engine>",
+      "note": "Use for targeted verification"
+    },
+    "mutation --restore": {
+      "description": "Restore mutated source files",
+      "usage": "python runtime/verify.py mutation --restore",
+      "note": "Use after mutation run completes"
+    }
+  },
+  "measurement_commands": {
+    "measurement-truth": {
+      "description": "Record measurement truth",
+      "usage": "python runtime/verify.py measurement-truth <record>"
+    },
+    "measurement coverage": {
+      "description": "Coverage measurement",
+      "usage": "python runtime/verify.py measurement coverage <scope>"
+    }
+  },
+  "git_workflows": {
+    "backend-verify.yml": {
+      "intent": "Full backend verification",
+      "delegates_to": "verify.py backend",
+      "evidence_emitted": "unit_pass, contract_pass, property_pass"
+    },
+    "frontend-verify.yml": {
+      "intent": "Frontend verification",
+      "delegates_to": "verify.py frontend",
+      "evidence_emitted": "frontend_pass"
+    },
+    "api-contracts.yml": {
+      "intent": "API contract verification",
+      "delegates_to": "verify.py contracts",
+      "evidence_emitted": "contract_pass"
+    },
+    "golden.yml": {
+      "intent": "Golden regression suite",
+      "delegates_to": "verify.py golden",
+      "evidence_emitted": "golden_pass"
+    },
+    "mutation.yml": {
+      "intent": "Mutation testing campaign",
+      "delegates_to": "verify.py mutation",
+      "evidence_emitted": "mutation_pass"
+    }
+  },
+  "command_usage_summary": {
+    "local_development": [
+      "python runtime/verify.py quick",
+      "python runtime/verify.py doctor",
+      "python runtime/verify.py mutation --smoke"
+    ],
+    "ci_verification": [
+      "python runtime/verify.py full",
+      "python runtime/verify.py golden"
+    ],
+    "mutation_campaign": [
+      "python runtime/verify.py mutation --smoke  # infra check",
+      "python runtime/verify.py mutation           # full campaign (CI only)"
+    ],
+    "diagnosis": [
+      "python runtime/verify.py status",
+      "python runtime/verify.py diagnose",
+      "python runtime/verify.py diagnose-failures"
+    ]
+  },
+  "success_criteria": [
+    "All 11 profiles are documented and functional",
+    "All commands have usage patterns documented",
+    "GitHub Actions workflows map to runtime commands",
+    "No duplicate or conflicting commands",
+    "Mutation commands are clearly separated (local smoke vs CI full)"
+  ]
+}

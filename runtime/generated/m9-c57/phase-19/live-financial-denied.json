@@ -1,0 +1,13 @@
+{
+  "kind": "platform.error",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:d0737d3c4e2d1f88f36e30712036bf2d92b8c8d3ccf8bde047b327ff2198fbbc",
+  "error": {
+    "code": "POLICY_DENIED",
+    "layer": "platform.ai",
+    "message": "Financial AI disabled \u2014 requires explicit enablement (policy.enable_financial_ai=true)",
+    "evidence_id": null,
+    "capability_id": null
+  }
+}

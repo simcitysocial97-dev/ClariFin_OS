@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-08-06T13:17:41.810636+00:00",
+  "program": "13.3",
+  "discovery_pipelines": 1,
+  "architecture_providers": 1,
+  "ownership_sources": 1,
+  "knowledge_reconstructions": 1,
+  "dependency_graph_builders": 1,
+  "everything_else_is_consumer": true,
+  "engine_count": 13,
+  "capability_count": 10,
+  "endpoint_count": 76,
+  "constitutional": true,
+  "conclusion": "Exactly one discovery pipeline, one architecture provider, one ownership source, one knowledge reconstruction and one dependency graph builder exist. All other subsystems are consumers."
+}

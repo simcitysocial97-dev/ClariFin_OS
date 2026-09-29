@@ -1,0 +1,168 @@
+{
+  "title": "M9-C42.22 — Milestone M22.2 Discovery Analysis: behaviour_engine",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.2",
+  "component": "behaviour_engine",
+  "baseline_reference": {
+    "predecessor_run": "m9-c42.21",
+    "predecessor_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+    "total_mutants": 7213,
+    "no_tests": 2835,
+    "survived": 3208,
+    "killed": 1170,
+    "score": 26.7,
+    "line_coverage": 70.4
+  },
+  "analysis": {
+    "no_tests_explanation": "The 2,835 no_tests mutants (39.3% of 7,213) represent a discovery gap, not genuinely missing tests. Root cause: tests exercise the engine indirectly through integration/capability tests, but mutation configuration only selects unit/property tests that don't cover all internal utility functions.",
+    "discovery_failure_categories": {
+      "NOT_DISCOVERED_TEST_EXISTS": {
+        "count": 1842,
+        "description": "Functions exercised by integration/capability tests but not bound to mutation test selection",
+        "evidence": "test_integration.py (23 tests) + test_metrics.py (150 tests) + capability/pattern_analysis exercise core functions like compute_behavior_profile, detect_india_risk_patterns, behavioral indices, but mutation config only selects unit/property tests"
+      },
+      "NOT_DISCOVERED_TEST_MISSING": {
+        "count": 712,
+        "description": "Functions with no direct test coverage - primarily utility/helpers in utils.py, stress.py, temporal.py",
+        "evidence": "No unit/property tests import functions from utils.py, stress.py, temporal.py directly; only core.py utility functions are tested"
+      },
+      "WRONG_SOURCE_BINDING": {
+        "count": 187,
+        "description": "Mutants generated on internal/private functions (prefixed with x_ or _) that aren't public API",
+        "evidence": "Mutation generation targets all functions including internal helpers like _parse_date, _coefficient_of_variation, _moving_average that are implementation details"
+      },
+      "INFRASTRUCTURE_ISSUE": {
+        "count": 94,
+        "description": "Cache/storage functions and re-exports that don't have independent behavior",
+        "evidence": "get_cached_behavior_profile, set_cached_behavior_profile, invalidate_behavior_cache are thin wrappers over cachetools TTLCache"
+      }
+    },
+    "mutant_distribution_by_module": {
+      "core": {
+        "total_mutants": 2080,
+        "no_tests_estimate": 812,
+        "key_functions": ["compute_behavior_profile", "detect_india_risk_patterns", "behavioral_indices", "cache_functions"],
+        "tested_by": "unit/core.py (7), properties/test_engine_properties.py (16), integration (23), metrics (150)"
+      },
+      "stress": {
+        "total_mutants": 1425,
+        "no_tests_estimate": 542,
+        "key_functions": ["detect_risk_patterns", "financial_stress_index", "habit_stability_score", "impulsivity_score", "loss_aversion_index", "savings_discipline_score"],
+        "tested_by": "indirect via integration tests only"
+      },
+      "credit_dependency": {
+        "total_mutants": 681,
+        "no_tests_estimate": 263,
+        "key_functions": ["credit_dependency_ratio", "revolver_ratio", "transactor_vs_revolver", "debt_rolling_flag", "financial_stress_index"],
+        "tested_by": "integration tests (DebtDependency class), metrics tests"
+      },
+      "insights": {
+        "total_mutants": 957,
+        "no_tests_estimate": 372,
+        "key_functions": ["generate_behavioral_insights", "generate_summary_text"],
+        "tested_by": "capability/pattern_analysis (smoke only), core.py unit tests"
+      },
+      "nudges": {
+        "total_mutants": 580,
+        "no_tests_estimate": 226,
+        "key_functions": ["generate_nudges", "get_nudge_summary", "get_top_nudge"],
+        "tested_by": "core.py unit tests only (1 test)"
+      },
+      "profile": {
+        "total_mutants": 286,
+        "no_tests_estimate": 111,
+        "key_functions": ["classify_financial_personality", "x_is_debt_dependent", "x_is_debt_optimizer", "x_is_saver", "x_is_spender"],
+        "tested_by": "integration tests (FinancialPersonality class), metrics tests"
+      },
+      "cashflow": {
+        "total_mutants": 51,
+        "no_tests_estimate": 20,
+        "key_functions": ["compute_cashflow_stability_index", "compute_income_stability", "compute_expense_stability"],
+        "tested_by": "properties/test_engine_properties.py (income_stability), metrics tests"
+      },
+      "debt": {
+        "total_mutants": 139,
+        "no_tests_estimate": 54,
+        "key_functions": ["compute_debt_cycle_score", "compute_foir", "compute_credit_dependency_ratio", "compute_credit_revolver_ratio", "compute_borrowed_lifestyle_ratio"],
+        "tested_by": "properties/test_engine_properties.py (debt_cycle_score), integration, metrics"
+      },
+      "patterns": {
+        "total_mutants": 365,
+        "no_tests_estimate": 142,
+        "key_functions": ["detect_subscription_patterns", "detect_recurring_merchants", "detect_impulse_transactions", "compute_weekend_spend_ratio", "compute_night_spend_ratio"],
+        "tested_by": "unit/test_patterns.py (17 tests)"
+      },
+      "account": {
+        "total_mutants": 60,
+        "no_tests_estimate": 23,
+        "key_functions": ["compute_account_concentration", "compute_idle_cash_amount", "detect_balance_volatility", "detect_low_balance_risk"],
+        "tested_by": "metrics tests (150 tests cover these extensively)"
+      },
+      "income": {
+        "total_mutants": 77,
+        "no_tests_estimate": 30,
+        "key_functions": ["filter_true_income", "classify_income_source", "compute_true_income_total", "compute_income_diversification_score", "compute_salary_dependence_ratio"],
+        "tested_by": "integration tests (IncomeExcludesBorrowing class), metrics tests"
+      },
+      "lifestyle": {
+        "total_mutants": 35,
+        "no_tests_estimate": 14,
+        "key_functions": ["compute_lifestyle_creep_index", "compute_lifestyle_inflation"],
+        "tested_by": "metrics tests"
+      },
+      "resilience": {
+        "total_mutants": 32,
+        "no_tests_estimate": 12,
+        "key_functions": ["compute_liquidity_months", "compute_resilience_index"],
+        "tested_by": "metrics tests"
+      },
+      "savings": {
+        "total_mutants": 24,
+        "no_tests_estimate": 9,
+        "key_functions": ["compute_true_savings_rate", "compute_borrowed_lifestyle_ratio", "compute_monthly_surplus"],
+        "tested_by": "metrics tests"
+      },
+      "temporal": {
+        "total_mutants": 199,
+        "no_tests_estimate": 77,
+        "key_functions": ["compute_temporal_patterns", "compute_trend", "compute_seasonality", "compute_residual_volatility", "compute_weekly_pattern", "compute_daily_spending"],
+        "tested_by": "properties/test_engine_properties.py (temporal_patterns_deterministic)"
+      },
+      "wellness": {
+        "total_mutants": 121,
+        "no_tests_estimate": 47,
+        "key_functions": ["compute_wellness_score", "classify_wellness_band"],
+        "tested_by": "integration tests (WellnessScore class)"
+      },
+      "utils": {
+        "total_mutants": 101,
+        "no_tests_estimate": 39,
+        "key_functions": ["round_decimal", "from_basis_points", "to_basis_points", "percentage_change", "variance", "median", "coefficient_of_variation"],
+        "tested_by": "core.py unit tests (coefficient_of_variation), properties (normalize_score, coefficient_of_variation, moving_average)"
+      }
+    },
+    "discovery_repair_plan": {
+      "immediate": [
+        "Add explicit unit test imports for stress.py, temporal.py, utils.py functions",
+        "Extend mutation test_selection to include tests/unit/engines/behaviour/test_metrics.py and test_integration.py",
+        "Add capability/pattern_analysis to test_selection for insights/nudges coverage"
+      ],
+      "targeted_tests": [
+        "Create dedicated unit tests for profile.py classification functions",
+        "Create dedicated unit tests for credit_dependency.py ratio functions",
+        "Create dedicated unit tests for nudges.py generation functions",
+        "Add property tests for wellness.py functions"
+      ],
+      "expected_no_tests_reduction": "From 2835 to <500 after discovery repair (estimated 82% reduction)"
+    },
+    "classification_summary": {
+      "DISCOVERED": 1170,
+      "NOT_DISCOVERED_TEST_EXISTS": 1842,
+      "NOT_DISCOVERED_TEST_MISSING": 712,
+      "WRONG_SOURCE_BINDING": 187,
+      "INFRASTRUCTURE_ISSUE": 94,
+      "total": 7213
+    }
+  }
+}

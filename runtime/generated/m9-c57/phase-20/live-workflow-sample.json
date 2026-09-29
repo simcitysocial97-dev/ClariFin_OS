@@ -1,0 +1,15 @@
+{
+  "kind": "platform.workflow_result",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:e75f4e2c398e18749224c68be60bf405707ba349ff730e154b1b9cd546865eda",
+  "data": {
+    "kind": "platform.workflow_result",
+    "workflow_id": "daily-recon",
+    "execution_id": "wf-exec-858dfa46",
+    "status": "REQUIRES_AUTHORIZATION",
+    "authorization_required": "per_task_approval",
+    "evidence_required": true,
+    "note": "Every workflow operation requires explicit policy and per-task authorization"
+  }
+}

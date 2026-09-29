@@ -1,0 +1,25 @@
+{
+  "run_id": "0751965879cb549d",
+  "timestamp": "2026-09-25T10:06:53.471166+00:00",
+  "repository_sha": "5df524bf2b7fd7ee7af857179e1864a3abc08518",
+  "scenario": "backend_unit_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/tmptv_q1j4j.py"
+  ],
+  "resolved_capabilities": [
+    "credit-card-engine"
+  ],
+  "obligations": [
+    "unit",
+    "property",
+    "contract"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

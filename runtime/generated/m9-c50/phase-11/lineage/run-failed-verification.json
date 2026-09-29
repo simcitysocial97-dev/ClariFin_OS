@@ -1,0 +1,31 @@
+{
+  "run_id": "failed_verification-84cd956e",
+  "timestamp": "2026-09-29T04:32:13.439955+00:00",
+  "repository_sha": "8e94dd996085b2a7255079b6b88e00231301d414",
+  "scenario": "failed_verification",
+  "changed_files": [
+    "backend/src/engines/test_broken_r4.py"
+  ],
+  "plan_identity": "plan::failed_verification-7efd0599",
+  "execution_identity": "exec::failed_verification-b80681f8",
+  "task_ids": [
+    "exec-0001",
+    "exec-0002",
+    "exec-0003",
+    "exec-0004"
+  ],
+  "task_count": 4,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

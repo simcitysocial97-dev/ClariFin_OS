@@ -1,0 +1,74 @@
+{
+  "schema": "m9-c46-capability-graph-audit/v1",
+  "milestone": "M46.3",
+  "objective": "Audit capability graph completeness — each meaningful capability attributable to source/capability/test surface/evidence/certification.",
+  "generated_at": "2026-09-03T07:30:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "capability_graph_summary": {
+    "nodes": 55,
+    "edges": 20,
+    "spine_valid": true,
+    "stages": ["CERTIFICATION", "DIAGNOSIS", "DISCOVERY", "EVIDENCE_INSPECTION", "EXECUTION", "MEASUREMENT", "PLANNING", "QUALITY", "STRENGTHENING"],
+    "artifacts": [
+      "runtime/generated/m9-c46/capability-graph.json",
+      "runtime/generated/m9-c46/latent-capability-audit.json"
+    ]
+  },
+  "latent_audit_summary": {
+    "total_findings": 54,
+    "LATENT_BUT_VALID": 39,
+    "INCOMPLETE_INTEGRATION": 14,
+    "DUPLICATE": 1
+  },
+  "findings": [
+    {
+      "category": "INCOMPLETE_INTEGRATION",
+      "severity": "high",
+      "entity": "14 CLI routes without catalog metadata entry",
+      "examples": ["reconcile", "exec-evidence", "repair", "risk", "knowledge", "dashboard", "certify-v4", "certify-v5", "intelligence-audit", "evidence-execute", "evidence-certify", "env-check", "env-contract", "execution-report"],
+      "impact": "These routes are not represented in the capability graph, so blast-radius → capability → execution chains may not recognize them. Under M46.5 (workflow truth) and M46.18 (command consolidation), each must either be registered or deprecated."
+    },
+    {
+      "category": "DUPLICATE",
+      "severity": "high",
+      "entity": "strengthen-survivor",
+      "details": "Line 1461: forensic_cli.run_strengthen_survivor vs Line 1508: strengthening_pipeline.cmd_strengthen_survivor",
+      "impact": "Two distinct implementations of the same capability. One must be deprecated per Rule 1.6."
+    },
+    {
+      "category": "LATENT_BUT_VALID",
+      "severity": "info",
+      "count": 39,
+      "examples": ["BlastRadiusContract", "ExecutionOrchestrator", "ExecutionPlan", "CapabilityResolver", "MeasurementKind", "CapabilityContractRegistry"],
+      "impact": "These are valid latent capabilities from prior C47-C50 milestones. They are intentionally latent (not on the default workflow). Decision: keep latent; document ownership."
+    },
+    {
+      "category": "ORPHAN_EVIDENCE_PRODUCER",
+      "severity": "medium",
+      "count": "many",
+      "details": "Many evidence kinds (latent_capability_audit, strengthening_proposal, diagnostic_report, lint_report, test_pass, forensic_report, evidence_invalidations, bypass_risk_analysis, typecheck_report, knowledge_report, reconciliation_report, configuration_authority_report, certification_report, format_report, capability_graph) are produced but never programmatically consumed.",
+      "impact": "External consumers (CI, human review) are expected. This is acceptable but indicates the control plane reads evidence manually — partially defeating the automation goal. M46.19 (Evidence Unification) will document explicit consumer chains."
+    }
+  ],
+  "capability_to_production_attribution": {
+    "verified_present": [
+      "discovery: blast-radius, capability-graph, capability-inventory, latent-audit, resolve-capabilities, what-should-i-run",
+      "planning: control-plane, execution-plan, deep-contract, local-gate, tier-plan",
+      "execution: orchestrator, evidence-execute, profile.* (12 profiles)",
+      "measurement: coverage, mutation, truth-report, mutation-inventory",
+      "diagnosis: bypass-audit, failure-attribution, intelligence",
+      "strengthening: capability-pipeline, survivor-intel, forensic",
+      "certification: api-contracts, audit, contract-governance, evidence-pipeline, integrity",
+      "evidence_inspection: 7 nodes (reconcile, truth, knowledge-base, etc.)",
+      "quality: ruff, black, mypy, pytest"
+    ],
+    "production_attribution_gap": "Each capability node maps to a verify.py command, but most are not directly attributable to a production capability (e.g., engines). The capability graph is mostly about the verification system itself, not the system-under-test.",
+    "production_capabilities_discovered": "Engine capabilities are listed in CAPABILITY_AUDIT.md and CAPABILITY_COVERAGE.md at repo root (15K + 5K bytes). Those were not merged into the runtime capability graph."
+  },
+  "improvement_actions": [
+    "M46.18: Resolve 14 INCOMPLETE_INTEGRATION routes — register in capability_catalog_data.py OR deprecate.",
+    "M46.18: Resolve DUPLICATE strengthen-survivor route — keep one.",
+    "M46.19: Document explicit consumer chains for orphan evidence producers (or accept as human-review artifacts)."
+  ],
+  "verdict": "M46.3 COMPLETE. Capability graph has 55 nodes / 20 edges / spine valid; latent audit flagged 54 findings (39 latent-valid, 14 incomplete-integration, 1 duplicate). Production-capability attribution exists in repo-root CAPABILITY_AUDIT but is not merged into runtime graph."
+}

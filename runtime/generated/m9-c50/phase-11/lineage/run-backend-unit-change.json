@@ -1,0 +1,31 @@
+{
+  "run_id": "backend_unit_change-95f89806",
+  "timestamp": "2026-09-29T09:12:35.701566+00:00",
+  "repository_sha": "4bc4957218bd5c770025e833cca983b480a81617",
+  "scenario": "backend_unit_change",
+  "changed_files": [
+    "backend/src/engines/test_r4_probe.py"
+  ],
+  "plan_identity": "plan::backend_unit_change-9852c161",
+  "execution_identity": "exec::backend_unit_change-69ec43c0",
+  "task_ids": [
+    "exec-0001",
+    "exec-0002",
+    "exec-0003",
+    "exec-0004"
+  ],
+  "task_count": 4,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

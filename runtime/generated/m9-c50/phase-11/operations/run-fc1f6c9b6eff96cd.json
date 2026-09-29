@@ -1,0 +1,21 @@
+{
+  "run_id": "fc1f6c9b6eff96cd",
+  "timestamp": "2026-09-19T19:08:29.798870+00:00",
+  "repository_sha": "56370d19e2f234cb4c2d0ed203642f550b84ec5e",
+  "scenario": "stale_evidence",
+  "changed_files": [
+    "file1.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "evidence_invalidated",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": [
+    "cache entry for old_commit"
+  ]
+}

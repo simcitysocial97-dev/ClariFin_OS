@@ -1,0 +1,99 @@
+{
+  "title": "M9-C42.26 — Population Expansion Record (12 -> 14 components)",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-expansion",
+  "milestone": "M26.2",
+  "principle": "Admit ONLY the now-ready intelligence components. Do not mutate or modify the existing 12-component population.",
+
+  "previous_population": {
+    "component_count": 12,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine"
+    ],
+    "source_artifact": "runtime/generated/m9-c42.24/m9-c42.24-full-campaign.json"
+  },
+
+  "newly_admitted_components": [
+    {
+      "component": "transaction_intelligence",
+      "source_path": "backend/src/engines/transaction_intelligence/",
+      "admission_authority": "M9-C42.25 transaction/intelligence/transaction/mutation-smoke.json + readiness.json",
+      "evidence_run_id": "m9-c42.25-smoke-transaction",
+      "evidence_generated_at": "2026-08-26T05:00:00+05:30",
+      "score_pct": 70.2,
+      "mutants_generated": 1465,
+      "killed": 1028,
+      "survived": 437,
+      "no_tests": 0,
+      "timeout": 0,
+      "not_checked": 0,
+      "coverage_pct": 98.6,
+      "capability_bound": true,
+      "discovery_confirmed": true
+    },
+    {
+      "component": "financial_intelligence",
+      "source_path": "backend/src/engines/financial_intelligence/",
+      "admission_authority": "M9-C42.25 financial/mutation-smoke.json + readiness.json",
+      "evidence_run_id": "m9-c42.25-smoke-financial",
+      "evidence_generated_at": "2026-08-26T05:00:00+05:30",
+      "score_pct": 73.0,
+      "mutants_generated": 3710,
+      "killed": 2710,
+      "survived": 1000,
+      "no_tests": 0,
+      "timeout": 0,
+      "not_checked": 0,
+      "coverage_pct": 94.4,
+      "capability_bound": true,
+      "discovery_confirmed": true
+    }
+  ],
+
+  "new_certified_population": {
+    "component_count": 14,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+
+  "expected_measured_population": {
+    "previous_c42_24b": {"scored": 9776, "killed": 5277, "no_tests": 1959, "generated": 11730},
+    "new_intelligence_admission": {
+      "transaction_intelligence": {"scored": 1465, "killed": 1028},
+      "financial_intelligence": {"scored": 3710, "killed": 2710}
+    },
+    "new_intelligence_scored_total": 5175,
+    "new_intelligence_killed_total": 3738
+  },
+
+  "audit_trail": {
+    "intent": "Frozen C42.24-B baseline + C42.25 targeted evidence = mathematically reconciled 14-component population",
+    "no_full_14_component_rerun_planned": true,
+    "rationale": "The 12-component evidence remains valid (M26.1 integrity verified). The 2 intelligence components are admitted with their C42.25 targeted smoke evidence (not_checked=0, comprehensive operator coverage, direct unit + property + capability tests). Mathematical reconciliation is the correct operation; rerunning the 12-component population would be wasteful and would invalidate the C42.24-B baseline that is the only repository-wide authoritative full-campaign measurement."
+  }
+}

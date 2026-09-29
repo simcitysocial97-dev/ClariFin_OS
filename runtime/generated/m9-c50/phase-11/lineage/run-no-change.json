@@ -1,0 +1,24 @@
+{
+  "run_id": "no_change-ebe77132",
+  "timestamp": "2026-09-29T09:12:35.701566+00:00",
+  "repository_sha": "4bc4957218bd5c770025e833cca983b480a81617",
+  "scenario": "no_change",
+  "changed_files": [],
+  "plan_identity": "plan::no_change-ee419a8d",
+  "execution_identity": "exec::no_change-3fdb1cec",
+  "task_ids": [],
+  "task_count": 0,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

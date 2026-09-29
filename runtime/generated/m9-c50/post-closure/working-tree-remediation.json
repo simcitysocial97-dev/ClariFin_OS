@@ -1,0 +1,136 @@
+{
+  "schema": "m9-c50/post-closure/working-tree-remediation@1",
+  "generated_at": "2026-09-04T20:45:00+00:00",
+  "repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "branch": "m9c9-merge-authorization-resolution",
+  "total_dirty_entries": 90,
+  "status_breakdown": {"modified": 42, "deleted": 17, "untracked": 31},
+  "commit_groups": [
+    {
+      "group_id": "C50-impl",
+      "description": "C50 core implementation (foundation verification)",
+      "files": [
+        {"path": "runtime/foundation/verification/obligation_reconciliation.py", "status": "??", "type": "new", "rationale": "Phase 2 obligation reconciliation gate — mandatory for STOP GATE 2"},
+        {"path": "runtime/foundation/verification/capability_catalog_data.py", "status": "M", "type": "changed", "rationale": "R2 evidence-kind remapping (10 violations → canonical kinds)"},
+        {"path": "runtime/foundation/verification/capability_graph_resolver.py", "status": "M", "type": "changed", "rationale": "Phase 3 knowledge enrichment wiring + ruff/mypy cleanup"},
+        {"path": "runtime/foundation/verification/control_plane.py", "status": "M", "type": "changed", "rationale": "Phase 3 cast Literal fix (added 'capability', 'integration')"},
+        {"path": "runtime/foundation/verification/control_plane_facade.py", "status": "M", "type": "changed", "rationale": "Phase 2 check()/run() verdict gating on obligation completeness"},
+        {"path": "runtime/foundation/verification/executor_pipeline.py", "status": "M", "type": "changed", "rationale": "Phase 3+4 adapter additions (integration, e2e), VerificationKind expansion to 10 kinds"}
+      ]
+    },
+    {
+      "group_id": "C50-tests",
+      "description": "C50 test suites",
+      "files": [
+        {"path": "runtime/tests/test_m9_c50_executor_adapters.py", "status": "??", "type": "new", "rationale": "Phase 0 adapter baseline test"},
+        {"path": "runtime/tests/test_m9_c50_ci_convergence.py", "status": "??", "type": "new", "rationale": "Phase 8 CI canonicalization acceptance tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py", "status": "??", "type": "new", "rationale": "Phase 2 obligation integrity gate — 6 tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py", "status": "??", "type": "new", "rationale": "Phase 3 capability resolution — 24 tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py", "status": "??", "type": "new", "rationale": "Phase 4 execution completeness — 6 tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py", "status": "??", "type": "new", "rationale": "Phase 5 evidence trust gate — 12 tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py", "status": "??", "type": "new", "rationale": "Phase 6 strengthening authority — 15 tests"},
+        {"path": "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py", "status": "??", "type": "new", "rationale": "Phase 9 fail-closed trust — 15 tests"},
+        {"path": "runtime/tests/test_m9_c50_self_verification.py", "status": "??", "type": "new", "rationale": "Phase 10 self-verification — 35 tests"},
+        {"path": "runtime/tests/test_m9_c50_operational_validation.py", "status": "??", "type": "new", "rationale": "Phase 11 operational validation — to be rebuilt with real lineage"},
+        {"path": "runtime/tests/test_m9_c50_final_governance.py", "status": "??", "type": "new", "rationale": "Phase 12 final governance — 41 tests"},
+        {"path": "runtime/tests/test_m9_c49_canonical_cli.py", "status": "M", "type": "changed", "rationale": "Updated expected task kind set from 9 to 10 kinds"}
+      ]
+    },
+    {
+      "group_id": "C50-evidence",
+      "description": "C50 evidence artifacts",
+      "files": [
+        {"path": "runtime/generated/m9-c50/GUIDING_DOCUMENT.md", "status": "??", "type": "new", "rationale": "79-section governing document"},
+        {"path": "runtime/generated/m9-c50/EXECUTION_PROGRESS.md", "status": "M", "type": "changed", "rationale": "Appended Phase 5 narrative + POST-C50 FORENSIC CLOSURE section"},
+        {"path": "runtime/generated/m9-c50/FINAL_CONVERGENCE_REPORT.md", "status": "??", "type": "new", "rationale": "Final convergence report (will be regenerated post-remediation)"},
+        {"path": "runtime/generated/m9-c50/execution-state.json", "status": "??", "type": "new", "rationale": "Execution state machine tracking all stop gates"},
+        {"path": "runtime/generated/m9-c50/final-convergence-summary.json", "status": "??", "type": "new", "rationale": "Machine-readable convergence summary"},
+        {"path": "runtime/generated/m9-c50/phase-0/", "status": "??", "type": "new-dir", "rationale": "Phase 0 baseline evidence (8 artifacts)"},
+        {"path": "runtime/generated/m9-c50/cli/", "status": "??", "type": "new-dir", "rationale": "Phase 1 CLI governance evidence (4 artifacts)"},
+        {"path": "runtime/generated/m9-c50/phase-1/", "status": "??", "type": "new-dir", "rationale": "Phase 1 operator-ux rationale"},
+        {"path": "runtime/generated/m9-c50/phase-2/", "status": "??", "type": "new-dir", "rationale": "Phase 2 canonical verification model"},
+        {"path": "runtime/generated/m9-c50/phase-4/", "status": "??", "type": "new-dir", "rationale": "Phase 4 execution completeness evidence"},
+        {"path": "runtime/generated/m9-c50/phase-5/", "status": "??", "type": "new-dir", "rationale": "Phase 5 evidence trust evidence"},
+        {"path": "runtime/generated/m9-c50/phase-6/", "status": "??", "type": "new-dir", "rationale": "Phase 6 strengthening authority evidence"},
+        {"path": "runtime/generated/m9-c50/phase-7/", "status": "??", "type": "new-dir", "rationale": "Phase 7 frontend arithmetic disposition"},
+        {"path": "runtime/generated/m9-c50/phase-8/", "status": "??", "type": "new-dir", "rationale": "Phase 8 CI canonicalization inventory"},
+        {"path": "runtime/generated/m9-c50/post-closure/", "status": "??", "type": "new-dir", "rationale": "Post-closure forensic artifacts (this remediation)"}
+      ]
+    },
+    {
+      "group_id": "C50-workflow",
+      "description": "C50 workflow and frontend changes",
+      "files": [
+        {"path": ".github/workflows/backend-verify.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py backend → verify.py check"},
+        {"path": ".github/workflows/frontend-verify.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py frontend → verify.py check"},
+        {"path": ".github/workflows/golden.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py golden → verify.py check"},
+        {"path": ".github/workflows/playwright.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py playwright → verify.py check"},
+        {"path": ".github/workflows/mutation.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py mutation → verify.py check"},
+        {"path": ".github/workflows/quality.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py quick → verify.py check"},
+        {"path": ".github/workflows/verification-runtime.yml", "status": "M", "type": "changed", "rationale": "Phase 8: comment fix verify.py runtime → verify.py check"},
+        {"path": "frontend/lib/graph/metrics.ts", "status": "M", "type": "changed", "rationale": "Phase 7: APPROVED_EXCEPTION JSDoc for display percentages"},
+        {"path": "frontend/lib/intelligence/debt-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/health-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/insight-builder.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/investment-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/opportunity-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/risk-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/intelligence/spending-engine.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/mappers/credit-cards-mapper.ts", "status": "M", "type": "changed", "rationale": "Phase 7: APPROVED_EXCEPTION JSDoc for display utilization %"},
+        {"path": "frontend/lib/simulation/insight-builder.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/simulation/simulators/budget-simulator.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/simulation/simulators/cashflow-simulator.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/simulation/simulators/emergency-fund-simulator.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"},
+        {"path": "frontend/lib/simulation/simulators/loan-simulator.ts", "status": "M", "type": "changed", "rationale": "Phase 7: ARCHITECTURAL_EXCEPTION JSDoc"}
+      ]
+    },
+    {
+      "group_id": "C50-deletions",
+      "description": "Deletions from aborted prior C50 attempt",
+      "files": [
+        {"path": "runtime/generated/m9-c50/CERTIFICATION.md", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact — intentional deletion"},
+        {"path": "runtime/generated/m9-c50/acceptance-scenarios.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/baseline.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/blast-radius-contract.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/brc-*.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifacts (4 files)"},
+        {"path": "runtime/generated/m9-c50/capability-impact-analysis.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/certification.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/change-surface-analysis.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/evidence-invalidation-analysis.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/execution-integration.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/fail-closed-analysis.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/latent-capability-protection.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/latest-blast-radius.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"},
+        {"path": "runtime/generated/m9-c50/verification-surface-analysis.json", "status": "D", "type": "delete", "rationale": "Prior aborted C50 attempt artifact"}
+      ]
+    },
+    {
+      "group_id": "pre-existing-drift",
+      "description": "Pre-existing or ambiguous changes not part of C50 scope",
+      "files": [
+        {"path": "runtime/system/observability/event_store.py", "status": "M", "type": "modified", "provenance": "NOT C50 — verify before committing", "disposition": "REVIEW"},
+        {"path": "runtime/generated/git-fetch-events.jsonl", "status": "M", "type": "modified", "provenance": "Auto-generated event log — should be .gitignored or committed separately", "disposition": "QUARANTINE (add to .gitignore)"},
+        {"path": "memory-bank/activeContext.md", "status": "M", "type": "modified", "provenance": "Session documentation drift", "disposition": "REVIEW"},
+        {"path": "backend/tests/invariants/_m4_probe_live/", "status": "??", "type": "untracked-dir", "provenance": "M4 probe artifact", "disposition": "DELETE (temporary probe output)"},
+        {"path": "runtime/generated/m9-c49/logs/execplan-*/", "status": "??", "type": "untracked-dir", "provenance": "C49 log artifacts", "disposition": "DELETE (non-authoritative logs)"},
+        {"path": "runtime/generated/m9-c48/*.json", "status": "M", "type": "modified", "provenance": "C48 re-generated outputs", "disposition": "COMMIT-separately or regenerate from clean state"}
+      ]
+    }
+  ],
+  "recommended_commit_sequence": [
+    {"order": 1, "group": "C50-workflow", "message": "M9-C50: Phase 7/8 frontend JSDoc and CI workflow comment fixes"},
+    {"order": 2, "group": "C50-impl", "message": "M9-C50: Canonical control plane, obligation reconciliation, evidence-kind remapping"},
+    {"order": 3, "group": "C50-tests", "message": "M9-C50: All stop-gate test suites (phases 0-12)"},
+    {"order": 4, "group": "C50-evidence", "message": "M9-C50: Evidence artifacts and governance documents"},
+    {"order": 5, "group": "C50-deletions", "message": "M9-C50: Remove aborted prior C50 attempt artifacts"},
+    {"order": "deferred", "group": "pre-existing-drift", "message": "Handle separately after C50 closure"}
+  ],
+  "deferred_items": [
+    "runtime/system/observability/event_store.py — not C50 scope, requires separate review",
+    "runtime/generated/git-fetch-events.jsonl — auto-generated, add to .gitignore",
+    "memory-bank/activeContext.md — session drift, acceptable to leave or commit",
+    "backend/tests/invariants/_m4_probe_live/ — probe artifact, delete",
+    "runtime/generated/m9-c49/logs/ — non-authoritative logs, delete",
+    "runtime/generated/m9-c48/*.json — C48 regeneration, handle in C48 closure"
+  ]
+}

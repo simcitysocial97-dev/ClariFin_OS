@@ -1,0 +1,28 @@
+{
+  "run_id": "frontend_change-e8abebb4",
+  "timestamp": "2026-09-29T04:18:34.141622+00:00",
+  "repository_sha": "75d3f80fda194a4f9e26b120fc4272b4b03b269d",
+  "scenario": "frontend_change",
+  "changed_files": [
+    "frontend/lib/test_r4_probe.ts"
+  ],
+  "plan_identity": "plan::frontend_change-ff903d88",
+  "execution_identity": "exec::frontend_change-f9964740",
+  "task_ids": [
+    "exec-0001"
+  ],
+  "task_count": 1,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "planned",
+  "plan_exit_code": 0,
+  "execution_exit_code": null,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

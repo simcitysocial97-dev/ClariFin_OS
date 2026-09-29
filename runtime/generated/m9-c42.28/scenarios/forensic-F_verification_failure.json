@@ -1,0 +1,146 @@
+{
+  "record_id": "forensic::6a1c025a536f",
+  "generated_at": "2026-08-26T04:26:41.199079+00:00",
+  "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+  "change": {
+    "changed_files": [
+      "backend/src/engines/behaviour_engine/some_logic.py"
+    ],
+    "affected_components": [
+      "behaviour"
+    ],
+    "affected_capabilities": [
+      "behaviour-analytics"
+    ]
+  },
+  "affected_graph_nodes": {
+    "sources": [
+      "backend/src/engines/behaviour_engine/some_logic.py"
+    ],
+    "capabilities": [
+      "behaviour-analytics"
+    ]
+  },
+  "invalidations": {
+    "by_component": {
+      "credit_card_engine": [],
+      "account_engine": [],
+      "loan_engine": [],
+      "reconciliation_engine": [],
+      "behaviour_engine": [
+        "R-SRC-001"
+      ],
+      "balance_engine": [],
+      "ledger_audit_engine": [],
+      "cashflow_engine": [],
+      "financial_events": [],
+      "core_domain_money": [],
+      "common_calculations": [],
+      "recommendation_engine": [],
+      "transaction_intelligence": [],
+      "financial_intelligence": []
+    }
+  },
+  "reused_evidence": {
+    "count": 13,
+    "components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ]
+  },
+  "selected_tasks": {
+    "count": 1,
+    "components": [
+      "behaviour_engine"
+    ]
+  },
+  "executed_tasks": {
+    "count": 1,
+    "components": [
+      "behaviour_engine"
+    ]
+  },
+  "execution_results": {
+    "by_component": {
+      "behaviour_engine": {
+        "execution_id": "exec-stub-behaviour_engine-vf",
+        "task_id": "exec::task::mutation::behaviour_engine",
+        "component": "behaviour_engine",
+        "capability": "behaviour-engine",
+        "verification_kind": "mutation",
+        "started_at": "2026-08-26T04:26:39.047079+00:00",
+        "completed_at": "2026-08-26T04:26:39.047083+00:00",
+        "duration_seconds": 0.01,
+        "command": ".venv/bin/python runtime/verify.py mutation --target behaviour_engine",
+        "exit_code": 2,
+        "failure_kind": "verification_failure",
+        "failure_message": "mutmut reported survived mutants (verification failure)",
+        "source_fingerprint": "4b4960d25100824809504384e87057a5dabe7a7dcfcf5e1a492a9e6e9a7e6fe9",
+        "test_fingerprint": "",
+        "config_fingerprint": "29b283dad76f8949",
+        "toolchain_fingerprint": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+        "repository_sha": "523637b8de928565ee19fbcff2b5645fbd85a2ce",
+        "artifact_paths": [],
+        "notes": "stub: outcome=verification_failure",
+        "counts": {
+          "generated": 50,
+          "killed": 40,
+          "survived": 10,
+          "no_tests": 0,
+          "timeout": 0,
+          "suspicious": 0,
+          "not_checked": 0
+        }
+      }
+    }
+  },
+  "new_evidence": {
+    "count": 0,
+    "components": []
+  },
+  "derived_evidence": {
+    "aggregate": {
+      "label": "MATHEMATICALLY_RECONCILED",
+      "result": 73.6614,
+      "numerator": 7140,
+      "denominator": 9693,
+      "scope": "pop-14-c42.26",
+      "decided_at": "2026-08-26T04:26:41.195360+00:00",
+      "rationale": "derived from 13 reused component(s) over population pop-14-c42.26; no fresh measurement"
+    }
+  },
+  "failures": {
+    "by_component": {
+      "behaviour_engine": {
+        "kind": "verification_failure",
+        "message": "mutmut reported survived mutants (verification failure)"
+      }
+    },
+    "count": 1
+  },
+  "uncertainties": {
+    "no_evidence": [],
+    "invalidated": [
+      "behaviour_engine"
+    ],
+    "drift_blockers": [],
+    "certification_gaps": []
+  },
+  "certification_decision": {
+    "certifiable": false,
+    "rationale": "NOT certifiable: 1 invalidated component(s)",
+    "aggregate_label": "MATHEMATICALLY_RECONCILED",
+    "aggregate_result": 73.6614
+  }
+}

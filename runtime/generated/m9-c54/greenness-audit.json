@@ -1,0 +1,113 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "audit_count": 15,
+  "audits": [
+    {
+      "workflow": "api-contracts.yml",
+      "job": "api-contracts",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "backend-verify.yml",
+      "job": "verify",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "dependency-update.yml",
+      "job": "dependency-health",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "frontend-verify.yml",
+      "job": "verify",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "golden.yml",
+      "job": "golden",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "m9-forensic-diagnostic-lab.yml",
+      "job": "diagnostician",
+      "status": "continue_on_error",
+      "verification_completeness": "complete",
+      "notes": "continue-on-error masks verification failures; legitimate if: always() steps: Produce machine-readable diagnostic summary, Capture generated verification artifacts"
+    },
+    {
+      "workflow": "mutation-pr.yml",
+      "job": "incremental-mutation",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "WARNING: if: always() on non-summary step can mask verification failure"
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "WARNING: if: always() on non-summary step can mask verification failure"
+    },
+    {
+      "workflow": "mutation.yml",
+      "job": "mutation-smoke",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "standard execution"
+    },
+    {
+      "workflow": "playwright.yml",
+      "job": "test",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "quality.yml",
+      "job": "quality",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "build",
+      "status": "executes",
+      "verification_completeness": "none",
+      "notes": "legitimate if: always() steps: Job Summary; no verification steps in job"
+    },
+    {
+      "workflow": "security-codeql.yml",
+      "job": "analyze",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    },
+    {
+      "workflow": "verification-reconcile.yml",
+      "job": "reconcile-gate",
+      "status": "continue_on_error",
+      "verification_completeness": "complete",
+      "notes": "continue-on-error masks verification failures; legitimate if: always() steps: Upload reconciliation artifacts, Job Summary"
+    },
+    {
+      "workflow": "verification-runtime.yml",
+      "job": "verify-runtime",
+      "status": "executes",
+      "verification_completeness": "complete",
+      "notes": "legitimate if: always() steps: Job Summary"
+    }
+  ]
+}

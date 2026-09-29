@@ -1,0 +1,173 @@
+{
+  "schema": "m9-c42.32-36-baseline/v1",
+  "generated_at": "2026-08-26T07:15:45.000000+00:00",
+  "phase": "M9-C42.32-36",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "branch": "m9c9-merge-authorization-resolution",
+  "c42_29_31_certification": {
+    "status": "PASSED",
+    "gates_passed": 26,
+    "gates_total": 26,
+    "certification_file": "runtime/generated/m9-c42.29-31/m9-c42.29-31-certification.json",
+    "fingerprint": "sha256:pending"
+  },
+  "test_baseline": {
+    "total_tests_collected": 785,
+    "c42_29_tests": 30,
+    "c42_30_tests": 25,
+    "c42_31_tests": 27,
+    "total_c42_tests": 82,
+    "passing": 82,
+    "failing": 0,
+    "pre_existing_failures": 1,
+    "pre_existing_details": "test_backend_exit_contract_holds_both_directions in test_backend_evidence.py - unrelated to C42"
+  },
+  "scenarios": {
+    "total": 27,
+    "passed": 27,
+    "scenarios": [
+      "CI-A through CI-H (8 scenarios)",
+      "FA-FH (8 scenarios)",
+      "S-A through S-H (8 scenarios)",
+      "FF, FG, FH (3 scenarios)"
+    ]
+  },
+  "master_acceptance_checks": {
+    "total": 12,
+    "passed": 12,
+    "final_verdict": "CERTIFIABLE"
+  },
+  "c42_27_28_regression_suites": {
+    "status": "PASSED",
+    "tests": 144,
+    "details": "All C42.27/C42.28 tests pass"
+  },
+  "runtime_verification_surface": {
+    "verify_py_version": "runtime/verify.py",
+    "profiles": ["quick", "backend", "frontend", "mutation", "status", "metrics", "history", "deps", "verify-status", "integrity", "env-check"],
+    "mutation_modes": ["--smoke", "--target", "full"],
+    "forensic_commands": ["forensic-diagnose", "forensic-report", "strengthen-analyze", "strengthen-validate"],
+    "canonical_env": ".venv/bin/python",
+    "env_check_result": "CONSISTENT"
+  },
+  "ci_workflow_inventory": {
+    "total_workflows": 12,
+    "verification_related": [
+      "backend-verify.yml",
+      "frontend-verify.yml",
+      "golden.yml",
+      "mutation.yml",
+      "playwright.yml",
+      "quality.yml",
+      "verification-reconcile.yml",
+      "verification-runtime.yml",
+      "m9-forensic-diagnostic-lab.yml",
+      "api-contracts.yml",
+      "security-codeql.yml"
+    ],
+    "mutation_workflow": {
+      "jobs": ["mutation-smoke", "mutation"],
+      "smoke_command": "python runtime/verify.py mutation --smoke",
+      "full_command": "python runtime/verify.py mutation",
+      "evidence_upload": true,
+      "threshold": 80
+    },
+    "forensic_lab_workflow": {
+      "name": "m9-forensic-diagnostic-lab.yml",
+      "evidence_collection": true,
+      "verify_profiles": ["quick", "backend"],
+      "artifact_upload": true
+    }
+  },
+  "verification_graph": {
+    "components": 14,
+    "capabilities": 6,
+    "engines": 12,
+    "services": 17,
+    "endpoints": 89,
+    "graph_file": "runtime/generated/cross-layer-map.json"
+  },
+  "evidence_schemas": {
+    "ci_evidence": "m9-ci-evidence/v1",
+    "diagnostic_report": "m9-diagnostic-report/v1",
+    "strengthening_proposal": "m9-strengthening-proposal/v1",
+    "strengthening_analysis": "m9-strengthening-analysis/v1",
+    "forensic_record": "m9-forensic-execution-record/v1"
+  },
+  "planner": {
+    "implementation": "runtime/foundation/verification/evidence_planner.py",
+    "entry_point": "default_planner()",
+    "tests": "runtime/tests/test_cross_layer_planner.py"
+  },
+  "executor": {
+    "implementation": "runtime/foundation/verification/executor_pipeline.py",
+    "entry_points": ["build_executable_plan", "execute_mutation_task", "reconcile", "build_forensic_record"],
+    "tests": "runtime/tests/test_m9_c42_28.py"
+  },
+  "diagnostic_agent": {
+    "implementation": "runtime/foundation/verification/diagnostic_agent.py",
+    "entry_point": "DiagnosticForensicAgent().diagnose()",
+    "nine_questions": [
+      "Q1: What changed?",
+      "Q2: What is affected?",
+      "Q3: What evidence remains valid?",
+      "Q4: What must actually run?",
+      "Q5: What was actually executed?",
+      "Q6: What happened?",
+      "Q7: What was NOT tested?",
+      "Q8: What remains uncertain?",
+      "Q9: Is the repository state certifiable?"
+    ],
+    "tests": "runtime/tests/test_m9_c42_30.py"
+  },
+  "strengthening_system": {
+    "implementation": "runtime/foundation/verification/strengthening.py",
+    "entry_points": ["generate_proposal", "classify_survivor", "targeted_revalidation", "gate_full_campaign"],
+    "survivor_classes": ["A", "B", "C", "D", "E"],
+    "tests": "runtime/tests/test_m9_c42_31.py"
+  },
+  "verification_cache": {
+    "implementation": "runtime/foundation/verification/cache.py",
+    "key_strategy": "commit + fingerprint"
+  },
+  "correlation": {
+    "implementation": "runtime/foundation/verification/correlation.py",
+    "local_ci_equivalence": true
+  },
+  "baseline_classification": {
+    "repository_change_detection": "IMPLEMENTED",
+    "verification_graph_construction": "IMPLEMENTED",
+    "capability_impact_resolution": "IMPLEMENTED",
+    "evidence_invalidation": "IMPLEMENTED",
+    "evidence_reuse": "IMPLEMENTED",
+    "planner_generation": "IMPLEMENTED",
+    "executable_plan_generation": "IMPLEMENTED",
+    "targeted_verification": "IMPLEMENTED",
+    "evidence_capture": "IMPLEMENTED",
+    "ci_evidence_ingestion": "PARTIALLY_IMPLEMENTED",
+    "local_ci_evidence_correlation": "IMPLEMENTED",
+    "forensic_execution_record": "IMPLEMENTED",
+    "diagnostic_agent": "IMPLEMENTED",
+    "survivor_classification": "IMPLEMENTED",
+    "strengthening_proposal_generation": "IMPLEMENTED",
+    "targeted_strengthening_validation": "IMPLEMENTED",
+    "certification_decision": "IMPLEMENTED"
+  },
+  "fingerprints": {
+    "ci_evidence_py": "sha256:94ec3a6a00805a2d6e88f765a7455db6620fd4d98db1c144d1a662d6b0788ec6",
+    "diagnostic_agent_py": "sha256:857b5b0d2ea1f061e48866011aeabc07ccaa4355da0d2ff965b93f672a1048d0",
+    "strengthening_py": "sha256:ebf4e7d6d06f5b468cfe345d4fa652090d935733d4c8a0737c152f118b8c8c71",
+    "forensic_cli_py": "sha256:9a3c094f713af8424ecffbfeb8180fbc343e6410141f90ba9754a17cb2ca0007",
+    "evidence_planner_py": "sha256:18245fbb90306e1e07aa153c5e026dcbe886f3e767eac671a0ae6a50c9985edb",
+    "executor_pipeline_py": "sha256:5576411d77a27208798261240c755c00a1477180e36ed4a6e98b6dc1d5d0958a",
+    "graph_model_py": "sha256:4bd704594b34620778383cf6c4762f2553ed21d8a95d8fe020c2552509e3c45d",
+    "evidence_reuse_py": "sha256:03d5939893079e285b4533d6a4fb3a7caceb0f2c42a9ab3fe7057af6a6e4ad81",
+    "cache_py": "sha256:685f6ea77db23dd43b2f4f3d15aff82ad586339cf60ac1a417f1ceb9734d8e1e",
+    "correlation_py": "sha256:25af9ddf0b4856ebd14ab51f5a8260d328efccd728c4a2eb549fa81eb8b5a8a5",
+    "mutation_contract_py": "sha256:caf44e6ee563d7817d0212caa703c4a26c35bc12c98438179bba9d42ed574d91",
+    "mutation_runner_py": "sha256:1f5dc9c71a4c6a0dd353d347a3c00d3dc4fa4110bb340c217c6576e5759ae4d5",
+    "mutation_inventory_py": "sha256:fa4dd0c2dc3304146faab330da2fe1d4afa7f4b4d108ac35863dce4417090780",
+    "orchestrator_py": "sha256:3753b0876b22f66c6e210709f69ccca0ba3f3b7fb59d20b68e695f7efe8e3594",
+    "verify_py": "sha256:ff4c552064f183d85e2909de37919471dc8a818a395ffddd6ebcd9319ef7b456"
+  }
+}

@@ -1,0 +1,92 @@
+>> pytest tests/contract (parallel, phase=contract)
+>> pytest tests/invariants (parallel, phase=invariants)
+>> pytest tests/properties (parallel, phase=properties)
+>> pytest tests/unit/engines (parallel, phase=unit-engines)
+--- phase: contract ---
+........................................................................ [ 44%]
+........................................................................ [ 89%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+161 passed, 1 warning in 76.75s (0:01:16)
+<< contract: pass (exit=0, 80s)
+--- phase: invariants ---
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 1 warning in 49.19s
+<< invariants: pass (exit=0, 80s)
+--- phase: properties ---
+........................................................................ [ 34%]
+.....................................................................F.. [ 69%]
+...........................F..................................           [100%]
+=================================== FAILURES ===================================
+____________ test_simulate_floating_rate_schedule_rate_application _____________
+tests/properties/loan_engine/test_floating_rate_properties.py:270: in test_simulate_floating_rate_schedule_rate_application
+    @settings(max_examples=10, deadline=None)
+                   ^^^
+tests/properties/loan_engine/test_floating_rate_properties.py:293: in test_simulate_floating_rate_schedule_rate_application
+    assert modified_emi != original_emi
+E   assert 2242 != 2242
+E   Failing test case: test_simulate_floating_rate_schedule_rate_application(
+E       rate_change_params=,
+E   )
+________________ test_apply_prepayment_at_month_reduce_emi_mode ________________
+tests/properties/loan_engine/test_prepayment_properties.py:267: in test_apply_prepayment_at_month_reduce_emi_mode
+    @settings(max_examples=20, deadline=None)
+                   ^^^
+tests/properties/loan_engine/test_prepayment_properties.py:304: in test_apply_prepayment_at_month_reduce_emi_mode
+    assert new_total <= original_total + total_tolerance
+E   assert 165463165 <= (165398529 + 3960)
+E   Failing test case: test_apply_prepayment_at_month_reduce_emi_mode(
+E       schedule_params=,
+E   )
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/properties/forecasting/test_engine_properties.py::TestForecastEngineProperties::test_goal_achievability_deterministic
+  /home/vasantha/.local/lib/python3.12/site-packages/hypothesis/strategies/_internal/core.py:1872: HypothesisDeprecationWarning: 0.1 cannot be exactly represented as a decimal with places=None
+    min_value = _as_finite_decimal(min_value, "min_value", allow_infinity, places)
+
+tests/properties/loan_engine/test_prepayment_properties.py::test_apply_prepayment_at_month_reduce_emi_mode
+  /home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py:1072: HypothesisWarning: Generating overly large repr. This is an expensive operation, and with a length of 55 kB is unlikely to be useful. Use -Wignore to ignore the warning, or -Werror to get a traceback.
+    text_repr = repr_call(test, args, kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/properties/loan_engine/test_floating_rate_properties.py::test_simulate_floating_rate_schedule_rate_application
+FAILED tests/properties/loan_engine/test_prepayment_properties.py::test_apply_prepayment_at_month_reduce_emi_mode
+2 failed, 204 passed, 3 warnings in 14.60s
+<< properties: fail (exit=1, 80s)
+--- phase: unit-engines ---
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 46%]
+........................................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 92%]
+....................................                                     [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+468 passed, 1 warning in 17.76s
+<< unit-engines: pass (exit=0, 80s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/backend-verification.json
+  contract       pass  exit=0 80s
+  invariants     pass  exit=0 80s
+  properties     fail  exit=1 80s
+  unit-engines   pass  exit=0 80s

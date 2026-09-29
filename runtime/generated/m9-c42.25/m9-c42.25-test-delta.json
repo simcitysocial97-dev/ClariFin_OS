@@ -1,0 +1,36 @@
+{
+  "run_id": "m9-c42.25-delta",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Test Delta",
+  "new_test_files": [
+    "tests/unit/engines/transaction_intelligence/test_detector_result.py",
+    "tests/unit/engines/transaction_intelligence/test_cash_conversion_detector.py",
+    "tests/unit/engines/transaction_intelligence/test_cc_payment_detector.py",
+    "tests/unit/engines/transaction_intelligence/test_loan_emi_detector.py",
+    "tests/properties/transaction_intelligence/test_detector_properties.py",
+    "tests/unit/engines/financial_intelligence/test_utils.py",
+    "tests/unit/engines/financial_intelligence/test_forecasting.py",
+    "tests/unit/engines/financial_intelligence/test_goal_planner.py",
+    "tests/unit/engines/financial_intelligence/test_intelligence.py",
+    "tests/unit/engines/financial_intelligence/test_optimization.py",
+    "tests/unit/engines/financial_intelligence/test_scenario.py",
+    "tests/properties/financial_intelligence/test_optimization_properties.py",
+    "tests/properties/financial_intelligence/test_scenario_intelligence_properties.py",
+    "tests/capability/financial_intelligence/__init__.py",
+    "tests/capability/financial_intelligence/test_capability.py"
+  ],
+  "modified_test_files": [
+    "tests/capability/transaction_intelligence/test_capability.py"
+  ],
+  "new_test_counts": {
+    "transaction_unit": 157,
+    "transaction_property": 20,
+    "transaction_capability": 5,
+    "financial_unit": 245,
+    "financial_property": 22,
+    "financial_capability": 6,
+    "total_new": 455
+  },
+  "existing_test_preserved": true,
+  "existing_tests_not_removed": true
+}

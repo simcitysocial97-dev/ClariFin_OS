@@ -1,0 +1,78 @@
+{
+  "schema": "m9-c50/stabilization/adapter-capability-matrix@1",
+  "generated_at": "2026-09-04T22:55:24.534123+00:00",
+  "real_adapters": [
+    {
+      "kind": "mutation",
+      "adapter_callable": "adapt_mutation_task",
+      "registered": true
+    },
+    {
+      "kind": "unit",
+      "adapter_callable": "adapt_unit_task",
+      "registered": true
+    },
+    {
+      "kind": "property",
+      "adapter_callable": "adapter",
+      "registered": true
+    },
+    {
+      "kind": "invariant",
+      "adapter_callable": "adapter",
+      "registered": true
+    },
+    {
+      "kind": "contract",
+      "adapter_callable": "adapter",
+      "registered": true
+    },
+    {
+      "kind": "coverage",
+      "adapter_callable": "adapter",
+      "registered": true
+    },
+    {
+      "kind": "golden",
+      "adapter_callable": "adapter",
+      "registered": true
+    },
+    {
+      "kind": "capability",
+      "adapter_callable": "adapter",
+      "registered": true
+    }
+  ],
+  "canonical_pytest_targets": {
+    "property": [
+      "backend/tests/properties",
+      "hypothesis-report",
+      600
+    ],
+    "invariant": [
+      "backend/tests/invariants",
+      "pytest-junit",
+      900
+    ],
+    "contract": [
+      "backend/tests/contract",
+      "contract-validation",
+      600
+    ],
+    "coverage": [
+      "backend/tests",
+      "coverage-summary",
+      1800
+    ],
+    "golden": [
+      "backend/tests/golden",
+      "golden-snapshot",
+      600
+    ],
+    "capability": [
+      "backend/tests/capability",
+      "pytest-junit",
+      600
+    ]
+  }
+}

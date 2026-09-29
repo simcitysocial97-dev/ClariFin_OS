@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-08-06T13:17:41.810206+00:00",
+  "program": "13.3",
+  "provider_initialization_ms": 0.005,
+  "provider_cached_access_ms": 0.005,
+  "chain_projection_ms": 5.78,
+  "knowledge_index_build_ms": 97.953,
+  "provider_initialized_once": true,
+  "conclusion": "The architecture provider initialises once and is reused; chain projection and knowledge index are derived projections consumed from the cached provider."
+}

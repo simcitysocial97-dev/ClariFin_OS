@@ -1,0 +1,6 @@
+All checks passed!
+All done! ✨ 🍰 ✨
+705 files would be left unchanged.
+There are no .py[i] files in directory 'backend/src'
+[profile:quick] task 'quick-mypy' failed (exit 2)
+EXIT_CODE=2 DURATION=1s

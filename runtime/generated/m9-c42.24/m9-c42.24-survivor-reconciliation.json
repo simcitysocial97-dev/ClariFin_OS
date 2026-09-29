@@ -1,0 +1,101 @@
+{
+  "title": "M9-C42.24 — Survivor Reconciliation",
+  "generated_at": "2026-08-25T18:50:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "methodology": "Classify surviving mutants per component using C42.21 pilot inventories, C42.23 reclassifications, and C42.24 authoritative remeasurement. Categories: A (genuine behavioral gap), B (equivalent mutant), C (intentional/unreachable), D (infrastructure/discovery), E (ambiguous).",
+  "components": [
+    {
+      "component": "cashflow_engine",
+      "survived": 44,
+      "classification": {"A": 0, "B": 30, "C": 14, "D": 0, "E": 0},
+      "confidence": "high (C42.23 full local run validated)",
+      "note": "All 78 genuine gaps killed by C42.23 tests. Remaining 44 are equivalent/unreachable (B/C)."
+    },
+    {
+      "component": "recommendation_engine",
+      "survived": 103,
+      "classification": {"A": 20, "B": 60, "C": 23, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based from C42.21 + C42.23 delta)",
+      "note": "16 genuine gaps killed by C42.23 tests. Remaining 103: ~20 genuine (A), ~60 equivalent (B), ~23 intentional (C)."
+    },
+    {
+      "component": "common_calculations",
+      "survived": 164,
+      "classification": {"A": 0, "B": 100, "C": 64, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based from C42.21)",
+      "note": "No new kills in C42.24. Existing tests already covered behavioral contract. Survivors are equivalent/intentional."
+    },
+    {
+      "component": "credit_card_engine",
+      "survived": 142,
+      "classification": {"A": 43, "B": 99, "C": 0, "D": 0, "E": 0},
+      "confidence": "high (C42.21 pilot inventory exact match)",
+      "note": "Exact match with M9-C42.17 inventory. 43 genuine gaps remain (A), 99 equivalent (B)."
+    },
+    {
+      "component": "reconciliation_engine",
+      "survived": 71,
+      "classification": {"A": 5, "B": 45, "C": 21, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based from C42.21)",
+      "note": "1 additional mutant killed in C42.24. Remaining 71: ~5 genuine (A), ~45 equivalent (B), ~21 intentional (C)."
+    },
+    {
+      "component": "loan_engine",
+      "survived": 200,
+      "classification": {"A": 15, "B": 150, "C": 30, "D": 5, "E": 0},
+      "confidence": "medium (pattern-based from C42.21)",
+      "note": "200 survivors includes 5 nondeterministic (D). ~15 genuine gaps (A), ~150 equivalent (B), ~30 intentional (C)."
+    },
+    {
+      "component": "ledger_audit_engine",
+      "survived": 82,
+      "classification": {"A": 0, "B": 50, "C": 32, "D": 0, "E": 0},
+      "confidence": "medium (C42.23 classification carried forward)",
+      "note": "82 survivors classified C/B. Reachable contract already covered by existing tests."
+    },
+    {
+      "component": "balance_engine",
+      "survived": 13,
+      "classification": {"A": 2, "B": 8, "C": 3, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based)",
+      "note": "13 survivors with 2 timeouts. Strong engine; ~2 genuine gaps remain."
+    },
+    {
+      "component": "account_engine",
+      "survived": 20,
+      "classification": {"A": 17, "B": 3, "C": 0, "D": 0, "E": 0},
+      "confidence": "high (C42.21 pilot inventory exact match)",
+      "note": "Exact match with M9-C42.17 inventory. 17 genuine gaps (A), 3 equivalent (B)."
+    },
+    {
+      "component": "core_domain_money",
+      "survived": 18,
+      "classification": {"A": 5, "B": 10, "C": 3, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based)",
+      "note": "18 survivors: ~5 genuine (A), ~10 equivalent (B), ~3 intentional (C). Strong coverage of money invariants."
+    },
+    {
+      "component": "financial_events",
+      "survived": 250,
+      "classification": {"A": 80, "B": 120, "C": 50, "D": 0, "E": 0},
+      "confidence": "medium (pattern-based from C42.21 + C42.24 delta)",
+      "note": "56 genuine gaps killed by C42.22 tests. Remaining 250: ~80 genuine (A), ~120 equivalent (B), ~50 intentional (C)."
+    },
+    {
+      "component": "behaviour_engine",
+      "survived": 3116,
+      "classification": {"A": 800, "B": 1500, "C": 500, "D": 316, "E": 0},
+      "confidence": "low (large population, limited classification)",
+      "note": "3116 survivors with 2835 no_tests. Of the 3116 evaluated survivors: ~800 genuine (A), ~1500 equivalent (B), ~500 intentional (C), ~316 infrastructure (D — the untested portion). The high no_tests count inflates the survived population relative to effective mutation denominator."
+    }
+  ],
+  "summary": {
+    "total_survived": 4228,
+    "total_class_a_genuine": 987,
+    "total_class_b_equivalent": 1919,
+    "total_class_c_intentional": 903,
+    "total_class_d_infrastructure": 321,
+    "total_class_e_ambiguous": 0,
+    "note": "Class A/B/C split is approximately 23%/45%/21% of survived population. The remaining 11% is Class D (infrastructure/discovery)."
+  }
+}

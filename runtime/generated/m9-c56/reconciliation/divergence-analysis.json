@@ -1,0 +1,309 @@
+{
+  "schema": "m9-c56/divergence-analysis/v1",
+  "generated_at": "2026-09-02T00:20:00+00:00",
+  "categories": {
+    "A": {
+      "description": "High Coverage / High Mutation \u2014 strongly verified",
+      "action": "Verify reproducibility, branch quality, critical capability coverage."
+    },
+    "B": {
+      "description": "High Coverage / Low Mutation \u2014 PRIORITY",
+      "action": "Investigate weak assertions, missing boundary/state/exception assertions, invariant gaps."
+    },
+    "C": {
+      "description": "Low Coverage / High Mutation",
+      "action": "Determine if covered paths contain critical behavior; verify uncovered code is defensive/reachable."
+    },
+    "D": {
+      "description": "Low Coverage / Low Mutation \u2014 HIGHEST PRIORITY",
+      "action": "Genuine behavioral gaps likely. Add meaningful tests."
+    },
+    "D_no_mut": {
+      "description": "Low Coverage, No Mutation Data",
+      "action": "Test strengthening + targeted mutation needed."
+    },
+    "A_no_mut": {
+      "description": "High Coverage, No Mutation Data",
+      "action": "Consider targeted mutation for confirmation."
+    },
+    "unmeasured": {
+      "description": "No Coverage or Mutation Data",
+      "action": "Unmeasured surface. Determine if reachable/valuable."
+    }
+  },
+  "classifications": [
+    {
+      "component": "account_engine",
+      "name": "Account Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "line_pct": 98.86,
+      "branch_pct": 96.43,
+      "mut_score": 94.5,
+      "survived": 10,
+      "mutants": 183,
+      "category": "A",
+      "interpretation": "Strongly verified. Verify reproducibility and branch quality."
+    },
+    {
+      "component": "credit_card_engine",
+      "name": "Credit Card Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "line_pct": 93.65,
+      "branch_pct": 87.5,
+      "mut_score": 77.1,
+      "survived": 133,
+      "mutants": 582,
+      "category": "B",
+      "interpretation": "PRIORITY: Code executes but tests fail to distinguish behavioral changes. Investigate weak assertions, missing boundaries."
+    },
+    {
+      "component": "financial_events",
+      "name": "Financial Events",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "line_pct": 96.74,
+      "branch_pct": 92.31,
+      "mut_score": 65.2,
+      "survived": 245,
+      "mutants": 704,
+      "category": "B",
+      "interpretation": "PRIORITY: Code executes but tests fail to distinguish behavioral changes. Investigate weak assertions, missing boundaries."
+    },
+    {
+      "component": "loan_engine",
+      "name": "Loan Engine",
+      "type": "financial_engine",
+      "criticality": "P0",
+      "line_pct": 98.73,
+      "branch_pct": 95.73,
+      "mut_score": 84.1,
+      "survived": 200,
+      "mutants": 1273,
+      "category": "A",
+      "interpretation": "Strongly verified. Verify reproducibility and branch quality."
+    },
+    {
+      "component": "financial_intelligence",
+      "name": "Financial Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "line_pct": 95.54,
+      "branch_pct": 95.78,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "transaction_intelligence",
+      "name": "Transaction Intelligence",
+      "type": "intelligence",
+      "criticality": "P1",
+      "line_pct": 99.46,
+      "branch_pct": 96.62,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "behaviour_engine",
+      "name": "Behaviour Engine",
+      "type": "behaviour",
+      "criticality": "P2",
+      "line_pct": 87.02,
+      "branch_pct": 83.46,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "recommendation_engine",
+      "name": "Recommendation Engine",
+      "type": "advisory",
+      "criticality": "P2",
+      "line_pct": 95.89,
+      "branch_pct": 93.33,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "services",
+      "name": "Services Layer",
+      "type": "service",
+      "criticality": "P1",
+      "line_pct": 66.29,
+      "branch_pct": 75.69,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "D_no_mut",
+      "interpretation": "Low coverage, no mutation data. Needs test strengthening + mutation targeting."
+    },
+    {
+      "component": "repositories",
+      "name": "Repositories",
+      "type": "data",
+      "criticality": "P1",
+      "line_pct": 55.42,
+      "branch_pct": 80.26,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "D_no_mut",
+      "interpretation": "Low coverage, no mutation data. Needs test strengthening + mutation targeting."
+    },
+    {
+      "component": "core.dtos",
+      "name": "Core DTOs",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 92.84,
+      "branch_pct": null,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "core.mappers",
+      "name": "Core Mappers",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 35.93,
+      "branch_pct": 100.0,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "D_no_mut",
+      "interpretation": "Low coverage, no mutation data. Needs test strengthening + mutation targeting."
+    },
+    {
+      "component": "core.db",
+      "name": "Core DB",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 73.83,
+      "branch_pct": 70.0,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "D_no_mut",
+      "interpretation": "Low coverage, no mutation data. Needs test strengthening + mutation targeting."
+    },
+    {
+      "component": "core.domain",
+      "name": "Core Domain",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 100.0,
+      "branch_pct": 100.0,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "routers",
+      "name": "API Routers",
+      "type": "interface",
+      "criticality": "P1",
+      "line_pct": null,
+      "branch_pct": null,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "unmeasured",
+      "interpretation": "No coverage or mutation data. Unmeasured surface."
+    },
+    {
+      "component": "models",
+      "name": "Domain Models",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 88.62,
+      "branch_pct": 100.0,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "common",
+      "name": "Common Utilities",
+      "type": "core",
+      "criticality": "P1",
+      "line_pct": 99.38,
+      "branch_pct": 88.24,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "extraction",
+      "name": "Data Extraction",
+      "type": "service",
+      "criticality": "P2",
+      "line_pct": null,
+      "branch_pct": null,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "unmeasured",
+      "interpretation": "No coverage or mutation data. Unmeasured surface."
+    },
+    {
+      "component": "orchestration",
+      "name": "Orchestration",
+      "type": "core",
+      "criticality": "P2",
+      "line_pct": 80.28,
+      "branch_pct": 50.0,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "A_no_mut",
+      "interpretation": "High coverage, no mutation data. Consider targeted mutation."
+    },
+    {
+      "component": "structural",
+      "name": "Structural",
+      "type": "core",
+      "criticality": "P2",
+      "line_pct": null,
+      "branch_pct": null,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "unmeasured",
+      "interpretation": "No coverage or mutation data. Unmeasured surface."
+    },
+    {
+      "component": "root",
+      "name": "Root Config",
+      "type": "core",
+      "criticality": "P2",
+      "line_pct": 79.74,
+      "branch_pct": 85.91,
+      "mut_score": null,
+      "survived": 0,
+      "mutants": 0,
+      "category": "D_no_mut",
+      "interpretation": "Low coverage, no mutation data. Needs test strengthening + mutation targeting."
+    }
+  ]
+}

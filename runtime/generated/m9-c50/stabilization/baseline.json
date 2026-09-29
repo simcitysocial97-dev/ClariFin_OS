@@ -1,0 +1,119 @@
+{
+  "schema": "m9-c50/stabilization/baseline@1",
+  "generated_at": "2026-09-05T00:00:00+00:00",
+  "purpose": "M9-C50 S0 — Architectural freeze and baseline before stabilization implementation.",
+  "repository_identity": {
+    "head_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+    "branch": "m9c9-merge-authorization-resolution",
+    "working_tree": {
+      "modified_count": 3,
+      "untracked_count": 33,
+      "total_dirty": 36,
+      "modified_files": [
+        "runtime/foundation/verification/capability_catalog_data.py",
+        "runtime/generated/git-fetch-events.jsonl",
+        "runtime/generated/m9-c50/EXECUTION_PROGRESS.md"
+      ],
+      "untracked_files": [
+        "backend/src/engines/test_rem_ediation_probe.py",
+        "runtime/foundation/verification/obligation_reconciliation.py",
+        "runtime/generated/m9-c49/logs/execplan-1f0cbb408d4d/",
+        "runtime/generated/m9-c49/logs/execplan-48497bb42eb8/",
+        "runtime/generated/m9-c49/logs/execplan-c5d811a2b103/",
+        "runtime/generated/m9-c49/logs/execplan-ccd1ddc4b498/",
+        "runtime/generated/m9-c50/FINAL_CONVERGENCE_REPORT.md",
+        "runtime/generated/m9-c50/GUIDING_DOCUMENT.md",
+        "runtime/generated/m9-c50/cli/",
+        "runtime/generated/m9-c50/execution-state.json",
+        "runtime/generated/m9-c50/final-convergence-summary.json",
+        "runtime/generated/m9-c50/phase-0/",
+        "runtime/generated/m9-c50/phase-1/",
+        "runtime/generated/m9-c50/phase-11/",
+        "runtime/generated/m9-c50/phase-2/",
+        "runtime/generated/m9-c50/phase-4/",
+        "runtime/generated/m9-c50/phase-5/",
+        "runtime/generated/m9-c50/phase-6/",
+        "runtime/generated/m9-c50/phase-7/",
+        "runtime/generated/m9-c50/phase-8/",
+        "runtime/generated/m9-c50/post-closure/",
+        "runtime/tests/test_m9_c50_ci_convergence.py",
+        "runtime/tests/test_m9_c50_executor_adapters.py",
+        "runtime/tests/test_m9_c50_final_governance.py",
+        "runtime/tests/test_m9_c50_operational_lineage.py",
+        "runtime/tests/test_m9_c50_operational_validation.py",
+        "runtime/tests/test_m9_c50_self_verification.py",
+        "runtime/tests/test_m9_c50_stop_gate2_obligation_reconciliation.py",
+        "runtime/tests/test_m9_c50_stop_gate3_capability_resolution.py",
+        "runtime/tests/test_m9_c50_stop_gate4_execution_completeness.py",
+        "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py",
+        "runtime/tests/test_m9_c50_stop_gate6_strengthening_authority.py",
+        "runtime/tests/test_m9_c50_stop_gate9_failure_modes.py"
+      ]
+    }
+  },
+  "implementation_boundary": {
+    "scope": "runtime/foundation/verification/* and runtime/verify.py (the canonical verification runtime)",
+    "adapter_registry": "runtime/foundation/verification/executor_pipeline.py:ADAPTERS",
+    "control_plane": "runtime/foundation/verification/control_plane_facade.py",
+    "canonical_commands": [
+      "verify.py status",
+      "verify.py metrics",
+      "verify.py history",
+      "verify.py deps",
+      "verify.py verify-status",
+      "verify.py integrity",
+      "verify.py env-check",
+      "verify.py mutation --smoke",
+      "verify.py mutation"
+    ],
+    "verification_kinds": ["unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"],
+    "adapter_status": {
+      "unit": "EXECUTABLE",
+      "mutation": "EXECUTABLE",
+      "property": "STUB_NOT_EXECUTABLE_YET",
+      "invariant": "STUB_NOT_EXECUTABLE_YET",
+      "contract": "STUB_NOT_EXECUTABLE_YET",
+      "coverage": "STUB_NOT_EXECUTABLE_YET",
+      "golden": "STUB_NOT_EXECUTABLE_YET",
+      "capability": "STUB_NOT_EXECUTABLE_YET"
+    },
+    "real_adapters": 2,
+    "stub_adapters": 6,
+    "obligation_model": "runtime/foundation/verification/obligation.py (ObligationSet, VerificationObligation, Disposition)",
+    "obligation_reconciliation": "runtime/foundation/verification/obligation_reconciliation.py (untracked, freshly authored)",
+    "evidence_contract": "runtime/foundation/verification/evidence_contract.py (EVIDENCE_KINDS closed vocabulary)"
+  },
+  "canonical_entry_points": [
+    "runtime/foundation/verification/control_plane_facade.main",
+    "runtime/verify.py main"
+  ],
+  "test_collection_baseline": {
+    "total_tests_collected": "see runtime/verify.py status",
+    "c50_specific_test_files": 12,
+    "previously_reported_passing": 223,
+    "test_collection_method": "pytest --collect-only -q"
+  },
+  "cache_status_baseline": {
+    "hit_rate_percent": 16.0,
+    "correctness_proven": true,
+    "effectiveness_poor": true
+  },
+  "known_architectural_defects": [
+    "6 of 8 verification kinds have stub adapters returning not_executable_yet",
+    "obligation_reconciliation module exists (untracked) but its wiring into verdict path is unverified at the executor pipeline layer",
+    "scenario_15 CI-equivalent invocation hangs beyond pytest-timeout=60s (root cause unestablished)",
+    "operational run-record JSONs had null plan/execution/evidence identities (remediated in 15 lineage records)",
+    "self-verification negative detection is structural only, not behavioral fault injection",
+    "cache effectiveness 16% (legitimate under high churn, but identity generation stability not verified)",
+    "phase 5 narrative was missing from EXECUTION_PROGRESS.md (remediated)",
+    "10 evidence-kind violations in capability catalog (remediated, 0 remain)"
+  ],
+  "stop_gate": {
+    "result": "PASS",
+    "head_unambiguous": true,
+    "branch_unambiguous": true,
+    "working_tree_classified": true,
+    "c50_implementation_boundary_unambiguous": true,
+    "rationale": "HEAD 4c2e9d86 on m9c9-merge-authorization-resolution; working tree classified into modified/untracked groups; C50 implementation boundary = runtime/foundation/verification/ + runtime/verify.py; all canonical entry points identified; adapter status enumerated."
+  }
+}

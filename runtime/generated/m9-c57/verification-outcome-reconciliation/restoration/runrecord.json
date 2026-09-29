@@ -1,0 +1,21 @@
+{
+  "run_id": "c5fdfef7-3846-4977-9cb6-f2a305cd6a55",
+  "timestamp": "2026-09-07T15:24:26.621186+00:00",
+  "environment": "local",
+  "runner": "developer-workstation",
+  "verification_depth": "fast",
+  "intent": "developer-feedback",
+  "trigger": "manual",
+  "commit_sha": "",
+  "branch": "local",
+  "profile": "quick",
+  "status": "passed",
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "duration_seconds": 49.90720450197114,
+  "blast_radius": {},
+  "evidence_count": 0,
+  "cache_hit": false,
+  "metadata": {}
+}

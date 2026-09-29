@@ -1,0 +1,65 @@
+{
+  "schema": "m9-c43-authoritative-baseline/v1",
+  "generated_at": "2026-09-02T23:37:48.699067+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "branch": "m9c9-merge-authorization-resolution",
+  "predecessor_c56": {
+    "line_coverage": 77.72,
+    "branch_coverage": 70.15,
+    "mutation_score": 78.1,
+    "improvement_note": "Fresh measurement shows +2.93pp line, +5.87pp branch from C56 baseline"
+  },
+  "coverage": {
+    "statements": 10241,
+    "covered_lines": 8386,
+    "missing_lines": 1855,
+    "line_coverage_pct": 80.65,
+    "branches": 2740,
+    "covered_branches": 2083,
+    "missing_branches": 657,
+    "branch_coverage_pct": 76.02,
+    "excluded_lines": 50,
+    "measurement": "AUTHORITATIVE_MEASURED (fresh sequential run, pytest-cov branch mode)",
+    "scope": "backend/src (per .coveragerc)"
+  },
+  "mutation": {
+    "generated": 2742,
+    "killed": 2148,
+    "survived": 588,
+    "no_tests": 4,
+    "timeout": 2,
+    "score": 78.34
+  },
+  "tests": {
+    "backend_unit": 2727,
+    "backend_properties": 288,
+    "backend_contract": 161,
+    "backend_golden": 10,
+    "backend_integration": 34,
+    "backend_architecture": 50,
+    "backend_meta": 61,
+    "runtime": 785,
+    "frontend_vitest": 74,
+    "frontend_e2e": 12,
+    "total_collected": 3432,
+    "total_passed": 3428,
+    "intentional_failures": 1,
+    "xpassed": 1
+  },
+  "source_inventory": {
+    "backend_files": 242,
+    "backend_loc": 46127,
+    "frontend_files": 607,
+    "frontend_loc": 78061,
+    "total_source_files": 849,
+    "total_loc": 124188
+  },
+  "thresholds": {
+    "line_coverage_target": 80.0,
+    "branch_coverage_target": 80.0,
+    "mutation_score_target": 80.0,
+    "line_gap_pp": -0.65,
+    "branch_gap_pp": 3.98,
+    "mutation_gap_pp": 1.66
+  }
+}

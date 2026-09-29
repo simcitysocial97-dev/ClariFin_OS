@@ -1,0 +1,16 @@
+/bin/sh: 1: Syntax error: "(" unexpected
+  File "<string>", line 1
+    import
+          ^
+SyntaxError: invalid syntax
+/bin/sh: 2: Syntax error: "(" unexpected
+Traceback (most recent call last):
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c42-14-grandchild.py", line 3, in <module>
+    print(f"GRANDCHILD_PID={os.getpid()}")
+                            ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c42-14-grandchild.py", line 3, in <module>
+    print(f"GRANDCHILD_PID={os.getpid()}")
+                            ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?

@@ -1,0 +1,3729 @@
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 71s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 173s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+⨯ Unable to acquire lock at /home/vasantha/AI-Projects/ClariFin_OS/frontend/dist/lock, is another instance of next build running?
+  Suggestion: If you intended to restart next build, terminate the other process, and then try again.
+<< build: fail (exit=1, 13s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ ❯ components/loading/__tests__/loading-performance.test.tsx (4 tests | 1 failed) 61586ms
+     × SkeletonTable renders 1000 rows 59980ms
+ ❯ components/transaction-table/__tests__/transaction-table-performance.test.tsx (4 tests | 2 failed) 18398ms
+     × renders 100 transactions 10994ms ❯ components/evidence/__tests__/eviden ❯ components/evidence/__tests__/evidence-performance.test.tsx (5 tests | 2 failed) 47303ms
+     × should render evidence dr ❯ components/graph/__tests__/graph-overlay.test.tsx (16 tests | 1 failed) 12393ms
+       × renders ❯ components/graph/__testsNot implemented: navigation to another Document
+ ❯ lib/validation/__tests__/performance.test.tsx (9 tests | 2 failed) 900ms
+       × Surface renders u ❯ lib/validation/__tests__/performance.test.tsx (9 tests |  ❯ components/toolbar/__tests__/workspace-toolbar-performance.test.tsx (4 tests | 1 failed) 1020ms
+     × renders under 150ms 542ms
+ ❯ components/loading/__tests__/error-performance.test.tsx (2 tests | 1 failed) 548ms
+     × ErrorMes ❯ components/loading/__tests ❯ components/loading/__tests__/empty-state-performance.test.tsx (2 tests | 1 failed) 707ms
+     × EmptyState renders under 150ms 561ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  components/evidence/__tests__/evidence-performance.test.tsx > Evidence Performance > should handle large evidence arrays without memory issues
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ components/evidence/__tests__/evidence-performance.test.tsx:76:3
+     74|   });
+     75|
+     76|   it('should handle large evidence arrays without memory issues', () =…
+       |   ^
+     77|     const evidence: EvidenceItem[] = Array.from({ length: 1000 }, (_, …
+     78|       type: 'categorization',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  components/graph/__tests__/graph-overlay.test.tsx > GraphOverlay — Milestone 7 > Keyboard Shortcuts > does not close on other keys
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ components/graph/__tests__/graph-overlay.test.tsx:189:5
+    187|     });
+    188|
+    189|     it('does not close on other keys', () => {
+       |     ^
+    190|       render(<GraphOverlay scope={createScope()} />);
+    191|       vi.clearAllMocks();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  components/loading/__tests__/empty-state-performance.test.tsx > Empty State Performance > EmptyState renders under 150ms
+AssertionError: expected 458.9155300000002 to be less than 150
+ ❯ components/loading/__tests__/empty-state-performance.test.tsx:17:25
+     15|     const end = performance.now();
+     16|     // Performance threshold accounts for test environment overhead
+     17|     expect(end - start).toBeLessThan(150);
+       |                         ^
+     18|   });
+     19|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  components/loading/__tests__/error-performance.test.tsx > Error Performance > ErrorMessage renders under 150ms
+AssertionError: expected 320.61116700000093 to be less than 200
+ ❯ components/loading/__tests__/error-performance.test.tsx:17:25
+     15|     const end = performance.now();
+     16|     // Performance threshold accounts for test environment overhead
+     17|     expect(end - start).toBeLessThan(200);
+       |                         ^
+     18|   });
+     19|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  components/loading/__tests__/loading-performance.test.tsx > Loading Performance > SkeletonTable renders 1000 rows
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ components/loading/__tests__/loading-performance.test.tsx:29:3
+     27|   });
+     28|
+     29|   it('SkeletonTable renders 1000 rows', () => {
+       |   ^
+     30|     const { container } = render(<SkeletonTable rows={1000} />);
+     31|     const pulseElements = container.querySelectorAll('.animate-pulse');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  components/toolbar/__tests__/workspace-toolbar-performance.test.tsx > WorkspaceToolbar Performance > renders under 150ms
+AssertionError: expected 420.4039009999997 to be less than 250
+ ❯ components/toolbar/__tests__/workspace-toolbar-performance.test.tsx:28:25
+     26|     render(<WorkspaceToolbar {...mockProps} />);
+     27|     const end = performance.now();
+     28|     expect(end - start).toBeLessThan(250);
+       |                         ^
+     29|   });
+     30|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  components/transaction-table/__tests__/transaction-table-performance.test.tsx > TransactionTable Performance > renders 500 transactions
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ components/transaction-table/__tests__/transaction-table-performance.test.tsx:35:3
+     33|   });
+     34|
+     35|   it('renders 500 transactions', () => {
+       |   ^
+     36|     const transactions = createMockTransactions(500);
+     37|     render(<TransactionTable transactions={transactions} />);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  lib/validation/__tests__/performance.test.tsx > Performance Validation — Milestone 10 > Rendering Performance > Surface renders under 50ms
+AssertionError: expected 165.27746599999955 to be less than 150
+ ❯ lib/validation/__tests__/performance.test.tsx:21:24
+t.tsx:21:24
+     19|       const end = performance.now();
+     20|       const duration = end - start;
+     21|       expect(duration).toBeLessThan(150);
+       |                        ^
+     22|     });
+     23|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  lib/validation/__tests__/performance.test.tsx > Performance Validation — Milestone 10 > Multiple Component Rendering > 10 Surface components render under 100ms
+AssertionError: expected 184.7630909999989 to be less than 150
+ ❯ lib/validation/__tests__/performance.test.tsx:54:24
+     52|       const end = performance.now();
+     53|       const duration = end - start;
+     54|       expect(duration).toBeLessThan(150);
+       |                        ^
+     55|     });
+     56|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  lib/validation/__tests__/performance.test.tsx > Performance Validation — Milestone 10 > Chart Container States > empty state renders under 30ms
+AssertionError: expected 32.86997100000008 to be less than 30
+ ❯ lib/validation/__tests__/performance.test.tsx:100:24
+     98|       const end = performance.now();
+     99|       const duration = end - start;
+    100|       expect(duration).toBeLessThan(30);
+       |                        ^
+    101|     });
+    102|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  8 failed | 84 passed (92)
+      Tests  10 failed | 1224 passed (1234)
+   Start at  06:49:15
+   Duration  407.08s (transform 33.19s, setup 176.90s, import 186.34s, tests 190.62s, environment 534.10s)
+
+<< test: fail (exit=1, 410s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 95s
+  typecheck  pass  exit=0 166s
+  build      fail  exit=1 30s
+  test       fail  exit=1 446s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+.........F.............................................................. [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 36%]
+........................................................................ [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 96%]
+......................                                                   [100%]
+=================================== FAILURES ===================================
+____ TestExitCodeContract.test_backend_exit_contract_holds_both_directions _____
+
+self = <test_backend_evidence.TestExitCodeContract object at 0x78f9bf6ea270>
+tmp_path = PosixPath('/tmp/pytest-of-vasantha/pytest-19/test_backend_exit_contract_hol0')
+
+    @pytest.mark.timeout(300)
+    def test_backend_exit_contract_holds_both_directions(self, tmp_path: Path):
+        """Executes the real script with an injected failure.
+    
+        Direction 1 (unmodified tree must pass) is omitted: the passing contract
+        is already proven by the green backend suite in CI and by the three
+        code-inspection tests above. This test therefore focuses on the
+        failure-attribution direction, which is the expensive part (~60-140s)
+        because it runs the real backend verification script with a probe.
+    
+        The 300s timeout is derived from measured execution characteristics
+        (66-140s observed locally), not chosen arbitrarily. The outer
+        runtime-test-suite invocation uses --timeout=30; this per-test marker
+        overrides that for this specific evidence-producing test.
+    
+        INTENDED CONTRACT (parallel execution model)
+        -----------------------------------------------
+        The backend verification script runs four phases in parallel
+        (contract, invariants, properties, unit-engines). The exit-contract
+        semantics are:
+    
+        1. Exit code is non-zero when ANY required phase fails (not zero).
+        2. Evidence records per-phase status individually in the JSON summary.
+        3. A probed/failing phase MUST appear in the failed_phases list.
+        4. Independent pre-existing failures in OTHER phases are ALLOWED to
+           coexist — exact equality of failed_phases to the probed set would
+           require serial phase isolation, which the script does not provide.
+    
+        Therefore this test asserts:
+        - overall_status == "fail" (some phase failed)
+        - the injected "invariants" phase appears in failed_phases
+        - NOT: that failed_phases contains ONLY "invariants"
+    
+        Violating any of these would indicate a framework defect. Allowing
+        independent concurrent failures reflects the actual parallel execution
+        model and is the correct contract.
+        """
+        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        evidence = tmp_path / "evidence"
+    
+        probe_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            (probe_dir / "test_m4_exit_probe.py").write_text(
+                "def test_m4_probe():\n    assert False\n"
+            )
+            failing = subprocess.run(
+                ["bash", str(BACKEND_SCRIPT)],
+                capture_output=True,
+                text=True,
+                env={**_env(), "BACKEND_EVIDENCE_DIR": str(evidence)},
+            )
+>           assert failing.returncode == 1
+E           AssertionError: assert 0 == 1
+E            +  where 0 = CompletedProcess(args=['bash', '/home/vasantha/AI-Projects/ClariFin_OS/.github/scripts/run_backend_verification.sh'], ...n  invariants     pass  exit=0 96s\n  properties     pass  exit=0 96s\n  unit-engines   pass  exit=0 96s\n', stderr='').returncode
+
+runtime/tests/test_backend_evidence.py:135: AssertionError
+=============================== warnings summary ===============================
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_backend_evidence.py::TestExitCodeContract::test_backend_exit_contract_holds_both_directions
+1 failed, 597 passed, 82 warnings in 190.32s (0:03:10)
+[0;31m✗ Runtime tests failed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       837   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-20T01:35:08 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;31m  Failed checks: runtime-tests[0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 36%]
+........................................................................ [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 96%]
+......................                                                   [100%]
+=============================== warnings summary ===============================
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+598 passed, 82 warnings in 204.11s (0:03:24)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       837   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-20T02:15:25 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 39s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 15s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 17.4s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 809.7ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 42s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  14:47:56
+   Duration  81.62s (transform 3.61s, setup 36.92s, import 19.87s, tests 21.44s, environment 133.98s)
+
+<< test: pass (exit=0, 83s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 39s
+  typecheck  pass  exit=0 15s
+  build      pass  exit=0 42s
+  test       pass  exit=0 83s
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 27s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 5s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 16.3s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 853.4ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 59s)
+>> test: npx vitest run
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 185.92s (0:03:05)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-20T10:02:52 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 50s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 8s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 21.5s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 1338.0ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 61s)
+>> test: npx vitest run
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+..................................F..................................... [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+..................................F..................................... [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=================================== FAILURES ===================================
+_________ TestNoWorkflowFilesTouched.test_no_workflow_file_is_modified _________
+
+self = <test_backend_evidence.TestNoWorkflowFilesTouched object at 0x7ad3879ddb50>
+
+    def test_no_workflow_file_is_modified(self):
+        result = subprocess.run(
+            ["git", "status", "--porcelain", ".github/workflows/"],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+        )
+        # Allow: new api-contracts.yml, modified playwright.yml (needs contract-gate),
+        # modified frontend-verify.yml (added contract gate step)
+        allowed_changes = {
+            ".github/workflows/api-contracts.yml",
+            ".github/workflows/playwright.yml",
+            ".github/workflows/frontend-verify.yml",
+        }
+        lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
+        unexpected = []
+        for line in lines:
+            parts = line.split()
+            if parts:
+                filepath = parts[-1]
+                if filepath not in allowed_changes:
+                    unexpected.append(filepath)
+>       assert not unexpected, (
+            f"unexpected workflow file changes: {unexpected}"
+        )
+E       AssertionError: unexpected workflow file changes: ['.github/workflows/mutation.yml']
+E       assert not ['.github/workflows/mutation.yml']
+
+runtime/tests/test_backend_evidence.py:376: AssertionError
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_backend_evidence.py::TestNoWorkflowFilesTouched::test_no_workflow_file_is_modified
+1 failed, 608 passed, 83 warnings in 163.19s (0:02:43)
+[0;31m✗ Runtime tests failed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T06:42:07 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;31m  Failed checks: runtime-tests[0m
+================================================
+>> pytest tests/contract (parallel, phase=contract)
+>> pytest tests/invariants (parallel, phase=invariants)
+>> pytest tests/properties (parallel, phase=properties)
+>> pytest tests/unit/engines (parallel, phase=unit-engines)
+--- phase: contract ---
+........................................................................ [ 44%]
+........................................................................ [ 89%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+161 passed, 1 warning in 83.81s (0:01:23)
+<< contract: pass (exit=0, 87s)
+--- phase: invariants ---
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 1 warning in 44.25s
+<< invariants: pass (exit=0, 87s)
+--- phase: properties ---
+........................................................................ [ 34%]
+........................................................................ [ 69%]
+..............................................................           [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/properties/forecasting/test_engine_properties.py::TestForecastEngineProperties::test_goal_achievability_deterministic
+  /home/vasantha/.local/lib/python3.12/site-packages/hypothesis/strategies/_internal/core.py:1872: HypothesisDeprecationWarning: 0.1 cannot be exactly represented as a decimal with places=None
+    min_value = _as_finite_decimal(min_value, "min_value", allow_infinity, places)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+206 passed, 2 warnings in 27.23s
+<< properties: pass (exit=0, 87s)
+--- phase: unit-engines ---
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 45%]
+........................................................................ [ 60%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+.........................................                                [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+473 passed, 1 warning in 16.15s
+<< unit-engines: pass (exit=0, 87s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/backend-verification.json
+  contract       pass  exit=0 87s
+  invariants     pass  exit=0 87s
+  properties     pass  exit=0 87s
+  unit-engines   pass  exit=0 87s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 183.81s (0:03:03)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T10:00:37 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 170.04s (0:02:50)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T10:13:04 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+....................FF.................................................. [ 94%]
+.................................                                        [100%]
+=================================== FAILURES ===================================
+_ TestDedupPreservesIdentity.test_step_unit_id_is_one_of_its_contributing_units _
+
+self = <test_verification_identity_execution.TestDedupPreservesIdentity object at 0x78a090401b80>
+
+    def test_step_unit_id_is_one_of_its_contributing_units(self):
+        """The scalar unit_id must never disagree with the recorded set."""
+        for profile in PROFILES:
+>           for step in _planned(profile).plan.steps:
+                        ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:713: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:380: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:102: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x78a09011ede0>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+______ TestDedupPreservesIdentity.test_commands_remain_unique_after_dedup ______
+
+self = <test_verification_identity_execution.TestDedupPreservesIdentity object at 0x78a090401eb0>
+
+    def test_commands_remain_unique_after_dedup(self):
+        """Identity threading must not resurrect duplicate commands."""
+        for profile in PROFILES:
+>           commands = [s.command for s in _planned(profile).plan.steps]
+                                           ^^^^^^^^^^^^^^^^^
+
+runtime/tests/test_verification_identity_execution.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/tests/test_verification_identity_execution.py:60: in _planned
+    orchestrator.collect_changed_files()
+runtime/foundation/verification/orchestrator.py:713: in collect_changed_files
+    result = _collect_changed_files()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:380: in _collect_changed_files
+    local_base = _merge_base_with_default()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/foundation/verification/orchestrator.py:102: in _merge_base_with_default
+    fetch_result = subprocess.run(
+/usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/subprocess.py:2115: in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selectors.PollSelector object at 0x78a09021e5a0>, timeout = 30000
+
+    def select(self, timeout=None):
+        # This is shared between poll() and epoll().
+        # epoll() has a different signature and handling of timeout parameter.
+        if timeout is None:
+            timeout = None
+        elif timeout <= 0:
+            timeout = 0
+        else:
+            # poll() has a resolution of 1 millisecond, round away from
+            # zero to wait *at least* timeout seconds.
+            timeout = math.ceil(timeout * 1e3)
+        ready = []
+        try:
+>           fd_event_list = self._selector.poll(timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: Timeout (>30.0s) from pytest-timeout.
+
+/usr/lib/python3.12/selectors.py:415: Failed
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 38 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_verification_identity_execution.py::TestDedupPreservesIdentity::test_step_unit_id_is_one_of_its_contributing_units
+FAILED runtime/tests/test_verification_identity_execution.py::TestDedupPreservesIdentity::test_commands_remain_unique_after_dedup
+2 failed, 607 passed, 75 warnings in 273.53s (0:04:33)
+[0;31m✗ Runtime tests failed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T10:26:38 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;31m  Failed checks: runtime-tests[0m
+================================================
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 43s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 7s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 18.8s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 1446.9ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 55s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  16:28:11
+   Duration  108.97s (transform 4.81s, setup 50.59s, import 26.74s, tests 30.18s, environment 177.55s)
+
+<< test: pass (exit=0, 111s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 43s
+  typecheck  pass  exit=0 7s
+  build      pass  exit=0 55s
+  test       pass  exit=0 111s
+>> pytest tests/contract (parallel, phase=contract)
+>> pytest tests/invariants (parallel, phase=invariants)
+>> pytest tests/properties (parallel, phase=properties)
+>> pytest tests/unit/engines (parallel, phase=unit-engines)
+--- phase: contract ---
+........................................................................ [ 44%]
+........................................................................ [ 89%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+161 passed, 2 warnings in 83.38s (0:01:23)
+<< contract: pass (exit=0, 87s)
+--- phase: invariants ---
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 2 warnings in 41.76s
+<< invariants: pass (exit=0, 87s)
+--- phase: properties ---
+........................................................................ [ 34%]
+........................................................................ [ 69%]
+..............................................................           [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+tests/properties/forecasting/test_engine_properties.py::TestForecastEngineProperties::test_goal_achievability_deterministic
+  /home/vasantha/.local/lib/python3.12/site-packages/hypothesis/strategies/_internal/core.py:1872: HypothesisDeprecationWarning: 0.1 cannot be exactly represented as a decimal with places=None
+    min_value = _as_finite_decimal(min_value, "min_value", allow_infinity, places)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+206 passed, 3 warnings in 15.67s
+<< properties: pass (exit=0, 87s)
+--- phase: unit-engines ---
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 45%]
+........................................................................ [ 60%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+.........................................                                [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+473 passed, 2 warnings in 15.86s
+<< unit-engines: pass (exit=0, 87s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/backend-verification.json
+  contract       pass  exit=0 87s
+  invariants     pass  exit=0 87s
+  properties     pass  exit=0 87s
+  unit-engines   pass  exit=0 87s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 181.16s (0:03:01)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T11:21:03 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 44s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 9s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 21.6s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 1366.1ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 59s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  16:58:50
+   Duration  117.26s (transform 5.01s, setup 53.71s, import 28.66s, tests 30.35s, environment 193.44s)
+
+<< test: pass (exit=0, 119s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 44s
+  typecheck  pass  exit=0 9s
+  build      pass  exit=0 59s
+  test       pass  exit=0 119s
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 44s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 8s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 20.7s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 862.2ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 56s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  17:10:54
+   Duration  116.94s (transform 5.14s, setup 53.96s, import 30.87s, tests 29.67s, environment 190.63s)
+
+<< test: pass (exit=0, 119s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 44s
+  typecheck  pass  exit=0 8s
+  build      pass  exit=0 56s
+  test       pass  exit=0 119s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 166.23s (0:02:46)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T11:53:20 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 46s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 6s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 21.3s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 909.9ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 57s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  17:31:00
+   Duration  121.13s (transform 5.98s, setup 57.14s, import 31.80s, tests 33.46s, environment 192.28s)
+
+<< test: pass (exit=0, 122s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 46s
+  typecheck  pass  exit=0 6s
+  build      pass  exit=0 57s
+  test       pass  exit=0 122s
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 114s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 9s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 42s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 4.9s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 101s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/vasantha/AI-Projects/ClariFin_OS/frontend[39m
+
+[90mstderr[2m | components/loading/__tests__/loading-performance.test.tsx[2m > [22m[2mLoading Performance[2m > [22m[2mSkeletonRow renders
+[22m[39mIn HTML, <tr> cannot be a child of <div>.
+This will cause a hydration error.
+
+ [32m✓[39m components/loading/__tests__/loading-performance.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 2138[2mms[22m[39m
+     [33m[2m✓[22m[39m SkeletonTable renders 100 rows [33m 483[2mms[22m[39m
+     [33m[2m✓[22m[39m SkeletonTable renders 1000 rows [33m 1480[2mms[22m[39m
+ [32m✓[39m components/transaction-table/__tests__/transaction-table-performance.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 5517[2mms[22m[39m
+     [33m[2m✓[22m[39m renders 100 transactions [33m 1885[2mms[22m[39m
+     [33m[2m✓[22m[39m renders 500 transactions [33m 3546[2mms[22m[39m
+ [32m✓[39m components/evidence/__tests__/evidence-performance.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 6302[2mms[22m[39m
+     [33m[2m✓[22m[39m should render evidence drawer with 100 items [33m 344[2mms[22m[39m
+     [33m[2m✓[22m[39m should handle large evidence arrays without memory issues [33m 3688[2mms[22m[39m
+     [33m[2m✓[22m[39m should calculate average confidence efficiently [33m 2027[2mms[22m[39m
+ [32m✓[39m components/transaction-table/__tests__/pagination-controls.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2780[2mms[22m[39m
+     [33m[2m✓[22m[39m renders pagination controls with correct page info [33m 555[2mms[22m[39m
+     [33m[2m✓[22m[39m disables previous button on first page [33m 449[2mms[22m[39m
+     [33m[2m✓[22m[39m calls onPageChange when next button is clicked [33m 328[2mms[22m[39m
+     [33m[2m✓[22m[39m calls onLimitChange when limit selector changes [33m 851[2mms[22m[39m
+ [32m✓[39m components/transaction-table/__tests__/transaction-table.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 2036[2mms[22m[39m
+     [33m[2m✓[22m[39m renders all transactions [33m 666[2mms[22m[39m
+     [33m[2m✓[22m[39m has table role and aria-label [33m 635[2mms[22m[39m
+ [32m✓[39m components/graph/__tests__/graph-overlay.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 1605[2mms[22m[39m
+       [33m[2m✓[22m[39m renders layout control buttons [33m 689[2mms[22m[39m
+ [32m✓[39m components/toolbar/__tests__/workspace-toolbar.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 2228[2mms[22m[39m
+     [33m[2m✓[22m[39m renders all action buttons [33m 549[2mms[22m[39m
+     [33m[2m✓[22m[39m has toolbar role and aria-label [33m 677[2mms[22m[39m
+ [32m✓[39m app/transactions/workspace-page.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 905[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the workspace with all regions [33m 335[2mms[22m[39m
+     [33m[2m✓[22m[39m has proper accessibility attributes [33m 372[2mms[22m[39m
+ [32m✓[39m components/os-shell/__tests__/context-panel.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 1014[2mms[22m[39m
+ [32m✓[39m components/transaction-table/__tests__/virtualized-table.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 770[2mms[22m[39m
+     [33m[2m✓[22m[39m has table role and aria-label [33m 332[2mms[22m[39m
+ [32m✓[39m components/primitives/__tests__/card.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[33m 756[2mms[22m[39m
+       [33m[2m✓[22m[39m renders actions [33m 409[2mms[22m[39m
+ [32m✓[39m components/graph/__tests__/graph-evidence-panel.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 739[2mms[22m[39m
+ [32m✓[39m components/primitives/__tests__/chart-container.test.tsx [2m([22m[2m25 tests[22m[2m)[22m[33m 803[2mms[22m[39m
+       [33m[2m✓[22m[39m renders retry button when onRetry provided [33m 403[2mms[22m[39m
+ [32m✓[39m components/primitives/__tests__/data-display.test.tsx [2m([22m[2m75 tests[22m[2m)[22m[33m 663[2mms[22m[39m
+ [32m✓[39m components/loading/__tests__/loading-spinner.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 551[2mms[22m[39m
+     [33m[2m✓[22m[39m renders with default size [33m 442[2mms[22m[39m
+ [32m✓[39m components/loading/__tests__/error-message.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 512[2mms[22m[39m
+ [32m✓[39m app/transactions/__tests__/user-behavior.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 441[2mms[22m[39m
+       [33m[2m✓[22m[39m should have main role for accessibility [33m 308[2mms[22m[39m
+Not implemented: navigation to another Document
+ [32m✓[39m components/graph/__tests__/graph-context-panel.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 440[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/performance.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 362[2mms[22m[39m
+ [32m✓[39m lib/capabilities/__tests__/use-transaction-capability.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 262[2mms[22m[39m
+ [32m✓[39m components/primitives/__tests__/surface.test.tsx [2m([22m[2m28 tests[22m[2m)[22m[33m 340[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/responsiveness.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 357[2mms[22m[39m
+ [32m✓[39m components/evidence/__tests__/evidence-drawer.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[32m 286[2mms[22m[39m
+ [32m✓[39m components/loading/__tests__/empty-state.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 312[2mms[22m[39m
+ [32m✓[39m components/toolbar/__tests__/workspace-toolbar-performance.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 216[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/reconciliation.contract.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 209[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/cards.contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 213[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/accessibility.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 179[2mms[22m[39m
+ [32m✓[39m components/loading/__tests__/empty-state-performance.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 177[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/analytics.contract.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/behavior.contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+ [32m✓[39m lib/__tests__/gateway-invariance.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/cashflow.contract.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 233[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/categories.contract.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 156[2mms[22m[39m
+ [32m✓[39m components/loading/__tests__/error-performance.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 158[2mms[22m[39m
+ [32m✓[39m lib/capabilities/__tests__/use-net-worth-capability.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 123[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/banks.contract.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 180[2mms[22m[39m
+ [32m✓[39m lib/timeline/__tests__/timeline-experience.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 262[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/transactions.contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/dashboard.contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 160[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/statements.contract.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 231[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/runtime.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32m✓[39m __tests__/api-contracts/overview.contract.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 131[2mms[22m[39m
+ [32m✓[39m lib/__tests__/context-runtime.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 193[2mms[22m[39m
+ [32m✓[39m lib/mappers/__tests__/transaction-mapper.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 274[2mms[22m[39m
+ [32m✓[39m lib/design-system/__tests__/design-system.test.ts [2m([22m[2m66 tests[22m[2m)[22m[32m 245[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/dock-manager.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/undo-manager.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 84[2mms[22m[39m
+ [32m✓[39m lib/sort/__tests__/sort-logic.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 207[2mms[22m[39m
+ [32m✓[39m lib/simulation/__tests__/runtime.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 189[2mms[22m[39m
+ [32m✓[39m lib/capabilities/__tests__/contract-coverage.test.ts [2m([22m[2m40 tests[22m[2m)[22m[32m 190[2mms[22m[39m
+ [32m✓[39m lib/graph/__tests__/graph-invocation.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 193[2mms[22m[39m
+[90mstderr[2m | lib/__tests__/event-bus.test.ts[2m > [22m[2mRuntimeEventBus[2m > [22m[2mshould isolate subscriber errors
+[22m[39m[EventBus] Subscriber error for "SelectionChanged": Error: subscriber error
+    at [90m/home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mlib/__tests__/event-bus.test.ts:62:44
+    at Mock [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:332:34[90m)[39m
+    at EventBus.publish [90m(/home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mlib/event-bus.ts:297:11[90m)[39m
+    at [90m/home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mlib/__tests__/event-bus.test.ts:68:23
+    at Proxy.assertThrows [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4mchai[24m/index.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4mchai[24m/index.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1216:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4mchai[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1552:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/vasantha/AI-Projects/ClariFin_OS/frontend/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1156:15[90m)[39m
+
+ [32m✓[39m lib/__tests__/event-bus.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 180[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/drag-manager.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 181[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/spending-engine.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m lib/command/__tests__/command-runtime.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/interaction-integration.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/focus-engine.test.ts [2m([22m[2m30 tests[22m[2m)[22m[32m 109[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/keyboard-registry.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 85[2mms[22m[39m
+ [32m✓[39m lib/workspace/__tests__/workspace-lifecycle.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m lib/navigation/__tests__/navigation.test.ts [2m([22m[2m37 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/pin-manager.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 182[2mms[22m[39m
+ [32m✓[39m lib/evidence/__tests__/explainability.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m✓[39m lib/navigation/__tests__/navigation-performance.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 100[2mms[22m[39m
+ [32m✓[39m types/__tests__/invariants.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 84[2mms[22m[39m
+ [32m✓[39m lib/__tests__/scenario-runtime.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 75[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/test-utils2.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m lib/filters/__tests__/filter-logic.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m tools/__tests__/fvf.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 146[2mms[22m[39m
+ [32m✓[39m lib/selection/__tests__/selection-logic.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/investigative-runtime.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m lib/__tests__/notification-runtime.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m types/__tests__/transaction-view-model.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m lib/__tests__/event-bus-wiring.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m lib/utils/__tests__/format.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/navigation-speed.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [32m✓[39m lib/search/__tests__/search-logic.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/executive-runtime.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/keyboard-engine.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32m✓[39m lib/simulation/__tests__/comparison.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m lib/capabilities/__tests__/contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m lib/groups/__tests__/group-logic.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m components/os-shell/__tests__/bottom-intelligence-shelf.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 123[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/health-engine.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m lib/capabilities/__tests__/performance.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m app/transactions/__tests__/dark-mode.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m app/transactions/__tests__/responsive.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m lib/intelligence/__tests__/passive-runtime.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m app/transactions/__tests__/integration.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m app/transactions/__tests__/accessibility.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32m✓[39m lib/interaction/__tests__/test-alias-check.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/test-utils-ts.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m lib/validation/__tests__/test-utils.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 23[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m93 passed[39m[22m[90m (93)[39m
+[2m      Tests [22m [1m[32m1238 passed[39m[22m[90m (1238)[39m
+[2m   Start at [22m 19:05:39
+[2m   Duration [22m 182.10s[2m (transform 9.28s, setup 91.57s, import 44.51s, tests 40.16s, environment 296.18s)[22m
+
+<< test: pass (exit=0, 188s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 114s
+  typecheck  pass  exit=0 9s
+  build      pass  exit=0 101s
+  test       pass  exit=0 188s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 42s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 8s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 20.3s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 1312.9ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 57s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  19:21:46
+   Duration  114.08s (transform 4.96s, setup 51.91s, import 28.52s, tests 31.46s, environment 183.28s)
+
+<< test: pass (exit=0, 115s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 42s
+  typecheck  pass  exit=0 8s
+  build      pass  exit=0 57s
+  test       pass  exit=0 115s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 59s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 12s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 42s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 2.7s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+tent
+
+<< build: pass (exit=0, 118s)
+>> test: npx vitest run
+================================================
+  ClariFin OS — Fast Quality Checks
+  Target: under 5 minutes
+================================================
+
+[1;33m[1/5] Ruff lint check...[0m
+[0;32m✓ Ruff passed[0m
+
+[1;33m[2/5] Black format check...[0m
+[0;32m✓ Black passed[0m
+
+[1;33m[3/5] Mypy type check...[0m
+src/extraction/statement_extractor.py:286: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/statement_extractor.py:318: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/statement_extractor.py:1130: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/statement_extractor.py:1197: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/hybrid_extractor.py:329: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/camelot_extractor.py:83: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/extraction/camelot_extractor.py:104: error: Module "camelot" does not explicitly export attribute "read_pdf"  [attr-defined]
+src/api.py:32: error: Function is missing a return type annotation  [no-untyped-def]
+[1;33m⚠ Mypy had issues (non-blocking for now)[0m
+
+[1;33m[4/5] Unit tests...[0m
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 28%]
+........................................................................ [ 37%]
+........................................................................ [ 47%]
+........................................................................ [ 56%]
+........................................................................ [ 65%]
+........................................................................ [ 75%]
+........................................................................ [ 84%]
+........................................................................ [ 94%]
+.............................................                            [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+765 passed, 5 warnings in 42.30s
+[0;32m✓ Unit tests passed[0m
+
+[1;33m[5/6] Architecture boundary tests...[0m
+..................................................                       [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+50 passed, 2 warnings in 3.71s
+[0;32m✓ Architecture tests passed[0m
+
+[1;33m[6/6] Meta / registry tests...[0m
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+ ❯ lib/validation/__tests__/performance.test.tsx (9 tests | 1 failed) 455ms
+       × Surface renders under 50ms 213ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  lib/validation/__tests__/performance.test.tsx > Performance Validation — Milestone 10 > Rendering Performance > Surface renders under 50ms
+AssertionError: expected 152.33846900000026 to be less than 150
+ ❯ lib/validation/__tests__/performance.test.tsx:21:24
+     19|       const end = performance.now();
+     20|       const duration = end - start;
+     21|       expect(duration).toBeLessThan(150);
+       |                        ^
+     22|     });
+     23|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 92 passed (93)
+      Tests  1 failed | 1237 passed (1238)
+   Start at  23:12:51
+   Duration  133.33s (transform 6.66s, setup 61.51s, import 39.07s, tests 45.59s, environment 201.96s)
+
+<< test: fail (exit=1, 136s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 59s
+  typecheck  pass  exit=0 12s
+  build      pass  exit=0 118s
+  test       fail  exit=1 136s
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../../.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/.local/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 2 warnings in 18.90s
+[0;32m✓ Meta tests passed[0m
+
+================================================
+[0;32m  All fast checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 70%]
+........................................................................ [ 82%]
+........................................................................ [ 94%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+runtime/system/evidence/collectors/test_results.py:41
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/system/evidence/collectors/test_results.py:41: PytestCollectionWarning: cannot collect test class 'TestResultCollector' because it has a __init__ constructor (from: runtime/tests/test_c37_certification_arithmetic.py)
+    class TestResultCollector(EvidenceCollector):
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+609 passed, 83 warnings in 160.54s (0:02:40)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-21T18:00:35 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+.....................................F.................................. [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 34%]
+........................................................................ [ 45%]
+........................................................................ [ 57%]
+........................................................................ [ 68%]
+..............F......................................................... [ 80%]
+================================================
+  ClariFin OS — Fast Quality Checks
+  Target: under 5 minutes
+================================================
+
+[1;33m[1/5] Ruff lint check...[0m
+::error title=ruff (I001),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py,line=17,endLine=20::tests/mutation_infra/mutants/probe.py:17:1: I001 Import block is un-sorted or un-formatted%0A  help: Organize imports
+::error title=ruff (F401),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/test_probe.py,line=13,col=8,endLine=13,endColumn=13::tests/mutation_infra/mutants/test_probe.py:13:8: F401 `probe` imported but unused%0A  help: Remove unused import: `probe`
+::error title=ruff (F401),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/test_probe.py,line=13,col=8,endLine=13,endColumn=13::tests/mutation_infra/test_probe.py:13:8: F401 `probe` imported but unused%0A  help: Remove unused import: `probe`
+[0;31m✗ Ruff failed[0m
+
+[1;33m[2/5] Black format check...[0m
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py	2026-08-23 06:27:31.902663+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py	2026-08-23 15:30:32.409364+00:00
+@@ -16,10 +16,11 @@
+ 
+ from __future__ import annotations
+ 
+ 
+ from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
++
+ mutants_x_mutation_probe__mutmut: MutantDict = {}  # type: ignore
+ 
+ 
+ @_mutmut_mutated(mutants_x_mutation_probe__mutmut)
+ def mutation_probe(value: int) -> int:
+@@ -61,15 +62,16 @@
+     """Return value+1 when value exceeds 10, else value unchanged."""
+     if value > 10:
+         return value + 2
+     return value
+ 
+-mutants_x_mutation_probe__mutmut['_mutmut_orig'] = x_mutation_probe__mutmut_orig # type: ignore # mutmut generated
+-mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_1'] = x_mutation_probe__mutmut_1 # type: ignore # mutmut generated
+-mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_2'] = x_mutation_probe__mutmut_2 # type: ignore # mutmut generated
+-mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_3'] = x_mutation_probe__mutmut_3 # type: ignore # mutmut generated
+-mutants_x_mutation_probe__mutmut['x_mutation_probe__mutmut_4'] = x_mutation_probe__mutmut_4 # type: ignore # mutmut generated
++
++mutants_x_mutation_probe__mutmut["_mutmut_orig"] = x_mutation_probe__mutmut_orig  # type: ignore # mutmut generated
++mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_1"] = x_mutation_probe__mutmut_1  # type: ignore # mutmut generated
++mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_2"] = x_mutation_probe__mutmut_2  # type: ignore # mutmut generated
++mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_3"] = x_mutation_probe__mutmut_3  # type: ignore # mutmut generated
++mutants_x_mutation_probe__mutmut["x_mutation_probe__mutmut_4"] = x_mutation_probe__mutmut_4  # type: ignore # mutmut generated
+ mutants_x_unused_probe__mutmut: MutantDict = {}  # type: ignore
+ 
+ 
+ @_mutmut_mutated(mutants_x_unused_probe__mutmut)
+ def unused_probe(value: int) -> int:
+@@ -89,8 +91,9 @@
+ 
+ def x_unused_probe__mutmut_2(value: int) -> int:
+     """Intentionally has NO test — exercises the 'no tests' classification."""
+     return value * 3
+ 
+-mutants_x_unused_probe__mutmut['_mutmut_orig'] = x_unused_probe__mutmut_orig # type: ignore # mutmut generated
+-mutants_x_unused_probe__mutmut['x_unused_probe__mutmut_1'] = x_unused_probe__mutmut_1 # type: ignore # mutmut generated
+-mutants_x_unused_probe__mutmut['x_unused_probe__mutmut_2'] = x_unused_probe__mutmut_2 # type: ignore # mutmut generated
++
++mutants_x_unused_probe__mutmut["_mutmut_orig"] = x_unused_probe__mutmut_orig  # type: ignore # mutmut generated
++mutants_x_unused_probe__mutmut["x_unused_probe__mutmut_1"] = x_unused_probe__mutmut_1  # type: ignore # mutmut generated
++mutants_x_unused_probe__mutmut["x_unused_probe__mutmut_2"] = x_unused_probe__mutmut_2  # type: ignore # mutmut generated
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/loan_engine/test_floating_rate_properties.py	2026-08-23 06:33:44.527604+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/loan_engine/test_floating_rate_properties.py	2026-08-23 15:30:33.869747+00:00
+@@ -335,11 +335,14 @@
+                         f"adjust_emi at month {change.change_month} with rate "
+                         f"{change.new_rate_bps} did not change EMI "
+                         f"(was {emi_before}, now {emi_after})"
+                     )
+                 # For adjust_tenure mode, tenure (schedule length) should change
+-                if change.mode == "adjust_tenure" and change.new_rate_bps != initial_rate:
++                if (
++                    change.mode == "adjust_tenure"
++                    and change.new_rate_bps != initial_rate
++                ):
+                     # We can't easily check tenure change here since it affects future months
+                     # but we can verify the schedule was modified
+                     pass
+ 
+     # Final schedule should match the one from simulate_floating_rate_schedule
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_behavior_engine.py	2026-08-23 06:16:16.213459+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_behavior_engine.py	2026-08-23 15:30:34.298330+00:00
+@@ -174,12 +174,20 @@
+ 
+         transactions = [
+             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000},
+             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000},
+             {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 75000},
+-            {"type": "credit", "date_iso": "2025-01-15", "amount_paise": 500000},  # Should be ignored
+-            {"type": "debit", "date_iso": "2025-01-14", "amount_paise": 10000},  # Before cutoff
++            {
++                "type": "credit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 500000,
++            },  # Should be ignored
++            {
++                "type": "debit",
++                "date_iso": "2025-01-14",
++                "amount_paise": 10000,
++            },  # Before cutoff
+         ]
+ 
+         result = _get_daily_spending_data(transactions, "2025-01-15")
+         assert result["2025-01-15"] == 150000.0
+         assert result["2025-01-16"] == 75000.0
+@@ -190,14 +198,34 @@
+         from src.engines.behaviour_engine.core import (
+             _get_monthly_category_spending_data,
+         )
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-15", "category": "Food", "amount_paise": 100000},
+-            {"type": "debit", "date_iso": "2025-01-16", "category": "Transport", "amount_paise": 50000},
+-            {"type": "debit", "date_iso": "2025-02-01", "category": "Food", "amount_paise": 80000},
+-            {"type": "credit", "date_iso": "2025-01-15", "category": "Salary", "amount_paise": 500000},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "category": "Food",
++                "amount_paise": 100000,
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-16",
++                "category": "Transport",
++                "amount_paise": 50000,
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-02-01",
++                "category": "Food",
++                "amount_paise": 80000,
++            },
++            {
++                "type": "credit",
++                "date_iso": "2025-01-15",
++                "category": "Salary",
++                "amount_paise": 500000,
++            },
+         ]
+ 
+         result = _get_monthly_category_spending_data(transactions, "2025-01-01")
+         assert result["2025-01"]["Food"] == 100000.0
+         assert result["2025-01"]["Transport"] == 50000.0
+@@ -207,13 +235,21 @@
+         """Test transaction statistics computation."""
+         from src.engines.behaviour_engine.core import _get_transaction_stats_data
+ 
+         transactions = [
+             {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000},
+-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 5000},  # micro txn
++            {
++                "type": "debit",
++                "date_iso": "2025-01-16",
++                "amount_paise": 5000,
++            },  # micro txn
+             {"type": "credit", "date_iso": "2025-01-15", "amount_paise": 500000},
+-            {"type": "debit", "date_iso": "2025-01-14", "amount_paise": 50000},  # Before cutoff
++            {
++                "type": "debit",
++                "date_iso": "2025-01-14",
++                "amount_paise": 50000,
++            },  # Before cutoff
+         ]
+ 
+         result = _get_transaction_stats_data(transactions, "2025-01-15")
+         assert result["total_count"] == 3
+         assert result["debit_count"] == 2
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_stress.py	2026-08-23 06:16:24.883353+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_stress.py	2026-08-23 15:30:35.015032+00:00
+@@ -1,7 +1,6 @@
+ """Unit tests for behaviour_engine/stress.py."""
+-
+ 
+ 
+ class TestStressUtilityFunctions:
+     """Tests for utility functions in stress.py."""
+ 
+@@ -120,11 +119,15 @@
+ 
+         transactions = [
+             {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000},
+             {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 100000},
+             {"type": "debit", "date_iso": "2025-01-02", "amount_paise": 100000},
+-            {"type": "debit", "date_iso": "2025-01-03", "amount_paise": 500000},  # Large expense
++            {
++                "type": "debit",
++                "date_iso": "2025-01-03",
++                "amount_paise": 500000,
++            },  # Large expense
+         ]
+         result = loss_aversion_index(transactions)
+         assert result["large_expense_count"] >= 1
+         assert result["recovery_time_days"] > 0
+ 
+@@ -135,11 +138,15 @@
+         # Create scenario with very large expense
+         transactions = [
+             {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 100000},
+             {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 1000},
+             {"type": "debit", "date_iso": "2025-01-02", "amount_paise": 1000},
+-            {"type": "debit", "date_iso": "2025-01-03", "amount_paise": 1000000},  # Huge expense
++            {
++                "type": "debit",
++                "date_iso": "2025-01-03",
++                "amount_paise": 1000000,
++            },  # Huge expense
+         ]
+         result = loss_aversion_index(transactions)
+         assert result["recovery_time_days"] <= 30
+ 
+ 
+@@ -166,38 +173,80 @@
+     def test_micro_transactions_detected(self):
+         """Micro-transactions (<₹500) ratio calculated."""
+         from src.engines.behaviour_engine.stress import impulsivity_score
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 10000, "category": "Food"},
+-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 5000, "category": "Transport"},
+-            {"type": "debit", "date_iso": "2025-01-17", "amount_paise": 100000, "category": "Rent"},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 10000,
++                "category": "Food",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-16",
++                "amount_paise": 5000,
++                "category": "Transport",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-17",
++                "amount_paise": 100000,
++                "category": "Rent",
++            },
+         ]
+         result = impulsivity_score(transactions)
+         assert result["micro_txn_ratio"] > 0
+         assert result["micro_txn_count"] == 2  # Two transactions < ₹500
+ 
+     def test_weekend_vs_weekday_ratio(self):
+         """Weekend spending ratio calculated."""
+         from src.engines.behaviour_engine.stress import impulsivity_score
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-11", "amount_paise": 100000},  # Saturday
+-            {"type": "debit", "date_iso": "2025-01-12", "amount_paise": 100000},  # Sunday
+-            {"type": "debit", "date_iso": "2025-01-13", "amount_paise": 50000},   # Monday
++            {
++                "type": "debit",
++                "date_iso": "2025-01-11",
++                "amount_paise": 100000,
++            },  # Saturday
++            {
++                "type": "debit",
++                "date_iso": "2025-01-12",
++                "amount_paise": 100000,
++            },  # Sunday
++            {
++                "type": "debit",
++                "date_iso": "2025-01-13",
++                "amount_paise": 50000,
++            },  # Monday
+         ]
+         result = impulsivity_score(transactions)
+         assert result["weekend_ratio"] >= 1.0  # Weekend spend >= weekday
+ 
+     def test_discretionary_spending_ratio(self):
+         """Discretionary category ratio calculated."""
+         from src.engines.behaviour_engine.stress import impulsivity_score
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000, "category": "Food & Dining"},
+-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 50000, "category": "Entertainment"},
+-            {"type": "debit", "date_iso": "2025-01-17", "amount_paise": 200000, "category": "Salary"},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 100000,
++                "category": "Food & Dining",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-16",
++                "amount_paise": 50000,
++                "category": "Entertainment",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-17",
++                "amount_paise": 200000,
++                "category": "Salary",
++            },
+         ]
+         result = impulsivity_score(transactions)
+         assert result["discretionary_ratio"] > 0
+         assert result["discretionary_ratio"] < 1.0
+ 
+@@ -225,27 +274,66 @@
+     def test_recurring_expenses_detected(self):
+         """Recurring expenses increase stability score."""
+         from src.engines.behaviour_engine.stress import habit_stability_score
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
+-            {"type": "debit", "date_iso": "2025-02-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
+-            {"type": "debit", "date_iso": "2025-03-01", "amount_paise": 100000, "description": "Netflix", "category": "Entertainment"},
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Groceries", "category": "Groceries"},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-01",
++                "amount_paise": 100000,
++                "description": "Netflix",
++                "category": "Entertainment",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-02-01",
++                "amount_paise": 100000,
++                "description": "Netflix",
++                "category": "Entertainment",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-03-01",
++                "amount_paise": 100000,
++                "description": "Netflix",
++                "category": "Entertainment",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 50000,
++                "description": "Groceries",
++                "category": "Groceries",
++            },
+         ]
+         result = habit_stability_score(transactions)
+         assert result["recurring_count"] >= 1
+         assert result["score"] > 0.3
+ 
+     def test_category_cv_calculated(self):
+         """Category coefficient of variation computed."""
+         from src.engines.behaviour_engine.stress import habit_stability_score
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 100000, "category": "Food"},
+-            {"type": "debit", "date_iso": "2025-02-15", "amount_paise": 120000, "category": "Food"},
+-            {"type": "debit", "date_iso": "2025-03-15", "amount_paise": 110000, "category": "Food"},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 100000,
++                "category": "Food",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-02-15",
++                "amount_paise": 120000,
++                "category": "Food",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-03-15",
++                "amount_paise": 110000,
++                "category": "Food",
++            },
+         ]
+         result = habit_stability_score(transactions)
+         assert isinstance(result["category_cv"], float)
+         assert result["category_cv"] >= 0
+ 
+@@ -378,65 +466,122 @@
+         from src.engines.behaviour_engine.stress import detect_risk_patterns
+ 
+         transactions = []
+         # Create 11 micro transactions on same day
+         for _i in range(11):
+-            transactions.append({
+-                "type": "debit",
+-                "date_iso": "2025-01-15",
+-                "amount_paise": 10000,  # ₹100
+-                "description": "UPI Payment"
+-            })
++            transactions.append(
++                {
++                    "type": "debit",
++                    "date_iso": "2025-01-15",
++                    "amount_paise": 10000,  # ₹100
++                    "description": "UPI Payment",
++                }
++            )
+         result = detect_risk_patterns(transactions)
+         assert result["upi_micro_spend_flag"] is True
+ 
+     def test_gambling_detection(self):
+         """Gambling transactions detected by keywords."""
+         from src.engines.behaviour_engine.stress import detect_risk_patterns
+ 
+         transactions = [
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Dream11 deposit"},
+-            {"type": "debit", "date_iso": "2025-01-16", "amount_paise": 100000, "description": "Rummy circle"},
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 50000,
++                "description": "Dream11 deposit",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-16",
++                "amount_paise": 100000,
++                "description": "Rummy circle",
++            },
+         ]
+         result = detect_risk_patterns(transactions)
+         assert result["gambling_flag"] is True
+         assert result["gambling_transaction_count"] >= 1
+ 
+     def test_loan_app_detection(self):
+         """Loan app pattern detected."""
+         from src.engines.behaviour_engine.stress import detect_risk_patterns
+ 
+         transactions = [
+-            {"type": "credit", "date_iso": "2025-01-10", "amount_paise": 10000, "description": "Instant loan credit"},
+-            {"type": "credit", "date_iso": "2025-01-12", "amount_paise": 15000, "description": "NBFC cash advance"},
++            {
++                "type": "credit",
++                "date_iso": "2025-01-10",
++                "amount_paise": 10000,
++                "description": "Instant loan credit",
++            },
++            {
++                "type": "credit",
++                "date_iso": "2025-01-12",
++                "amount_paise": 15000,
++                "description": "NBFC cash advance",
++            },
+         ]
+         result = detect_risk_patterns(transactions)
+         assert result["loan_app_pattern_flag"] is True
+         assert result["loan_credit_count"] >= 2
+ 
+     def test_emi_ratio_calculation(self):
+         """EMI to income ratio calculated."""
+         from src.engines.behaviour_engine.stress import detect_risk_patterns
+ 
+         transactions = [
+-            {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000, "description": "Salary"},
+-            {"type": "debit", "date_iso": "2025-01-05", "amount_paise": 200000, "description": "EMI payment"},
+-            {"type": "debit", "date_iso": "2025-02-01", "amount_paise": 1000000, "description": "Salary"},
+-            {"type": "debit", "date_iso": "2025-02-05", "amount_paise": 200000, "description": "Loan repayment"},
++            {
++                "type": "credit",
++                "date_iso": "2025-01-01",
++                "amount_paise": 1000000,
++                "description": "Salary",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-05",
++                "amount_paise": 200000,
++                "description": "EMI payment",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-02-01",
++                "amount_paise": 1000000,
++                "description": "Salary",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-02-05",
++                "amount_paise": 200000,
++                "description": "Loan repayment",
++            },
+         ]
+         result = detect_risk_patterns(transactions)
+         assert result["emi_ratio"] > 0
+         assert result["emi_ratio"] < 1.0  # EMI should be less than income
+ 
+     def test_no_false_positives(self):
+         """Normal transactions don't trigger flags."""
+         from src.engines.behaviour_engine.stress import detect_risk_patterns
+ 
+         transactions = [
+-            {"type": "credit", "date_iso": "2025-01-01", "amount_paise": 1000000, "description": "Salary"},
+-            {"type": "debit", "date_iso": "2025-01-15", "amount_paise": 50000, "description": "Grocery shopping"},
+-            {"type": "debit", "date_iso": "2025-01-20", "amount_paise": 100000, "description": "Electricity bill"},
++            {
++                "type": "credit",
++                "date_iso": "2025-01-01",
++                "amount_paise": 1000000,
++                "description": "Salary",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-15",
++                "amount_paise": 50000,
++                "description": "Grocery shopping",
++            },
++            {
++                "type": "debit",
++                "date_iso": "2025-01-20",
++                "amount_paise": 100000,
++                "description": "Electricity bill",
++            },
+         ]
+         result = detect_risk_patterns(transactions)
+         assert result["upi_micro_spend_flag"] is False
+         assert result["gambling_flag"] is False
+         assert result["loan_app_pattern_flag"] is False
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/balance_engine.py	2026-08-22 17:10:04.050278+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/balance_engine.py	2026-08-23 15:30:35.057160+00:00
+@@ -492,15 +492,21 @@
+             "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (9, '01/01/2025', '2025-01-01', 'Income', 1000000, 'credit', 'START_BAL', 'hash_s1', 0)"
+         )
+         conn.commit()
+         conn.close()
+ 
+-        result_zero = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=0)
+-        result_custom = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=500000)
++        result_zero = compute_account_balance(
++            temp_db_with_data, "START_BAL", starting_balance_paise=0
++        )
++        result_custom = compute_account_balance(
++            temp_db_with_data, "START_BAL", starting_balance_paise=500000
++        )
+ 
+         assert result_custom["balance_paise"] == result_zero["balance_paise"] + 500000
+-        assert result_custom["balance_display"] == _format_paise(result_custom["balance_paise"])
++        assert result_custom["balance_display"] == _format_paise(
++            result_custom["balance_paise"]
++        )
+ 
+     def test_compute_account_balance_account_isolation(self, temp_db_with_data):
+         """Account balance is isolated per account_id."""
+         hdfc_result = compute_account_balance(temp_db_with_data, "HDFC")
+         icici_result = compute_account_balance(temp_db_with_data, "ICICI")
+@@ -749,11 +755,13 @@
+         for r in results:
+             assert "account_id" in r and isinstance(r["account_id"], str)
+             assert "bank" in r and isinstance(r["bank"], str)
+             assert "transaction_count" in r and isinstance(r["transaction_count"], int)
+             assert "total_debit_paise" in r and isinstance(r["total_debit_paise"], int)
+-            assert "total_credit_paise" in r and isinstance(r["total_credit_paise"], int)
++            assert "total_credit_paise" in r and isinstance(
++                r["total_credit_paise"], int
++            )
+             assert "balance_paise" in r and isinstance(r["balance_paise"], int)
+             assert "balance_display" in r and isinstance(r["balance_display"], str)
+ 
+     def test_get_accounts_list_negative_balance_display(self, temp_db_with_data):
+         """Negative balances displayed correctly in accounts list."""
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/credit_card/test_credit_card_engine.py	2026-08-22 18:00:21.589361+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/credit_card/test_credit_card_engine.py	2026-08-23 15:30:35.487092+00:00
+@@ -179,13 +179,18 @@
+             compute_card_foreclosure(1000000, 2400, -1)
+ 
+     def test_foreclosure_with_penalty(self):
+         """Foreclosure with prepayment penalty returns higher amount."""
+         result_no_penalty = compute_card_foreclosure(1000000, 2400, 6, penalty_bps=0)
+-        result_with_penalty = compute_card_foreclosure(1000000, 2400, 6, penalty_bps=500)
++        result_with_penalty = compute_card_foreclosure(
++            1000000, 2400, 6, penalty_bps=500
++        )
+         assert result_with_penalty["penalty_paise"] > 0
+-        assert result_with_penalty["foreclosure_amount_paise"] > result_no_penalty["foreclosure_amount_paise"]
++        assert (
++            result_with_penalty["foreclosure_amount_paise"]
++            > result_no_penalty["foreclosure_amount_paise"]
++        )
+ 
+     def test_foreclosure_zero_remaining_months(self):
+         """Zero remaining months still owes principal (no penalty, but full amount)."""
+         result = compute_card_foreclosure(1000000, 2400, 0)
+         # Foreclosure with 0 remaining months: principal still owed, no future interest
+@@ -297,14 +302,13 @@
+ 
+     def test_compute_monthly_interest_charge_multiple_days(self):
+         """Monthly charge aggregates multiple daily balances correctly."""
+         balances = [("2025-01-01", 100000), ("2025-01-02", 200000)]
+         result = interest.compute_monthly_interest_charge(balances, 2400)
+-        expected = (
+-            interest.compute_daily_interest(100000, 2400)
+-            + interest.compute_daily_interest(200000, 2400)
+-        )
++        expected = interest.compute_daily_interest(
++            100000, 2400
++        ) + interest.compute_daily_interest(200000, 2400)
+         assert result == expected
+ 
+     def test_compute_monthly_interest_charge_large_cycle(self):
+         """Interest over 30-day cycle with varying balances."""
+         balances = [(f"2025-01-{i:02d}", 500000) for i in range(1, 31)]
+@@ -434,18 +438,20 @@
+ 
+     def test_compute_emi_fixed_zero_rate(self):
+         """Zero rate EMI is exact division (ceiling-adjusted)."""
+         result = billing._next_billing_day_after  # trigger import
+         from src.engines.credit_card_engine.emi import compute_emi_fixed
++
+         result = compute_emi_fixed(100000, 0, 3)
+         # 100000 / 3 = 33333.33... → ceiling to 33334
+         assert result == 33334
+         assert result * 3 >= 100000
+ 
+     def test_compute_emi_fixed_positive_rate(self):
+         """Positive rate EMI is greater than simple division."""
+         from src.engines.credit_card_engine.emi import compute_emi_fixed
++
+         zero_rate = compute_emi_fixed(100000, 0, 12)
+         positive_rate = compute_emi_fixed(100000, 2400, 12)
+         assert positive_rate > zero_rate
+ 
+     def test_compute_emi_conversion_zero_principal(self):
+@@ -467,8 +473,9 @@
+         assert result["total_repayment_paise"] == result["emi_paise"] * 12
+ 
+     def test_compute_monthly_interest_edge_cases(self):
+         """Monthly interest handles edge cases correctly."""
+         from src.engines.credit_card_engine.emi import compute_monthly_interest
++
+         assert compute_monthly_interest(0, 2400) == 0
+         assert compute_monthly_interest(100000, 0) == 0
+         assert compute_monthly_interest(-1, 2400) == 0
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/ledger_audit_engine.py	2026-08-22 17:45:05.073712+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/ledger_audit_engine.py	2026-08-23 15:30:35.764671+00:00
+@@ -199,11 +199,13 @@
+         """)
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+-        null_account_violations = [v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"]
++        null_account_violations = [
++            v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"
++        ]
+         assert len(null_account_violations) == 3
+         txn_ids = {v["transaction_id"] for v in null_account_violations}
+         assert len(txn_ids) == 3
+ 
+     def test_validate_ledger_integrity_multiple_empty_account_ids(self, temp_db):
+@@ -220,11 +222,12 @@
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+         empty_account_violations = [
+-            v for v in result["violations"]
++            v
++            for v in result["violations"]
+             if v["type"] == "NULL_ACCOUNT_ID" and "empty" in v["message"].lower()
+         ]
+         assert len(empty_account_violations) == 2
+ 
+     def test_validate_ledger_integrity_defensive_checks_exist(self, clean_db):
+@@ -254,11 +257,12 @@
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+         null_hash_violations = [
+-            v for v in result["violations"]
++            v
++            for v in result["violations"]
+             if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
+         ]
+         assert len(null_hash_violations) == 2
+ 
+     def test_validate_ledger_integrity_multiple_empty_hashes(self, temp_db):
+@@ -277,11 +281,12 @@
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+         null_hash_violations = [
+-            v for v in result["violations"]
++            v
++            for v in result["violations"]
+             if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
+         ]
+         assert len(null_hash_violations) >= 1
+ 
+     def test_validate_ledger_integrity_schema_prevents_duplicates(self, temp_db):
+@@ -297,11 +302,13 @@
+         """)
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+-        dup_violations = [v for v in result["violations"] if v["type"] == "DUPLICATE_HASH"]
++        dup_violations = [
++            v for v in result["violations"] if v["type"] == "DUPLICATE_HASH"
++        ]
+         assert len(dup_violations) == 0
+ 
+     def test_validate_ledger_integrity_all_detectable_violation_types(self, temp_db):
+         """Database with multiple violation types reports all correctly."""
+         from src.core.db.connection import get_connection
+@@ -363,16 +370,28 @@
+     def test_validate_ledger_integrity_many_transactions(self, temp_db):
+         """Performance: many valid transactions still passes quickly."""
+         from src.core.db.connection import get_connection
+ 
+         conn = get_connection(temp_db)
+-        conn.execute("INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf')")
++        conn.execute(
++            "INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf')"
++        )
+         # Insert 100 transactions
+         for i in range(100):
+             conn.execute(
+                 "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+-                (1, f'{i+1:02d}/01/2025', f'2025-01-{i+1:02d}', f'Txn{i}', 10000, 'debit', 'HDFC', f'hash_{i}', i),
++                (
++                    1,
++                    f"{i+1:02d}/01/2025",
++                    f"2025-01-{i+1:02d}",
++                    f"Txn{i}",
++                    10000,
++                    "debit",
++                    "HDFC",
++                    f"hash_{i}",
++                    i,
++                ),
+             )
+         conn.commit()
+         conn.close()
+ 
+         result = validate_ledger_integrity(temp_db)
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/reconciliation/test_reconciliation.py	2026-08-23 06:16:16.209528+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/reconciliation/test_reconciliation.py	2026-08-23 15:30:36.598846+00:00
+@@ -688,11 +688,13 @@
+ 
+     assert _simple_description_similarity("NEFT Transfer", "Transfer via NEFT") == 1.0
+     assert _simple_description_similarity("IMPS payment", "Received via IMPS") == 1.0
+     assert _simple_description_similarity("UPI transfer", "Payment via UPI") == 1.0
+     assert _simple_description_similarity("RTGS credit", "RTGS debit") == 1.0
+-    assert _simple_description_similarity("Paytm transfer", "Transfer from Paytm") == 1.0
++    assert (
++        _simple_description_similarity("Paytm transfer", "Transfer from Paytm") == 1.0
++    )
+     assert _simple_description_similarity("GPay payment", "Payment via GPay") == 1.0
+ 
+ 
+ def test_simple_description_similarity_no_keywords():
+     """Descriptions without transfer keywords return similarity 0.0."""
+@@ -707,28 +709,32 @@
+ def test_calculate_confidence_caps_at_one():
+     """Confidence cannot exceed 1.0 even with all factors maxed."""
+     from src.engines.reconciliation_engine import _calculate_confidence
+ 
+     # All factors present: date_diff=0 (+0.4), amount_exact (+0.4), sim>0.7 (+0.2) = 1.0
+-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
++    conf = _calculate_confidence(
++        date_diff_days=0, amount_exact=True, description_similarity=1.0
++    )
+     assert conf == 1.0
+ 
+     # Edge case: slight above threshold still caps
+-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.99)
++    conf = _calculate_confidence(
++        date_diff_days=0, amount_exact=True, description_similarity=0.99
++    )
+     assert conf == 1.0
+ 
+ 
+ def test_calculate_confidence_rounds_to_four_decimals():
+     """Confidence is rounded to exactly 4 decimal places."""
+     from src.engines.reconciliation_engine import _calculate_confidence
+ 
+     # Base confidence should have at most 4 decimal places
+     conf = _calculate_confidence(date_diff_days=0, amount_exact=True)
+     assert conf == round(conf, 4)
+-    assert str(conf).count('.') <= 1
+-    if '.' in str(conf):
+-        assert len(str(conf).split('.')[1]) <= 4
++    assert str(conf).count(".") <= 1
++    if "." in str(conf):
++        assert len(str(conf).split(".")[1]) <= 4
+ 
+ 
+ def test_check_match_with_description_similarity():
+     """Match includes description similarity factor in confidence."""
+     from src.engines.reconciliation_engine import _check_match
+[0;31m✗ Black failed[0m
+
+[1;33m[3/5] Mypy type check...[0m
+[0;32m✓ Mypy passed[0m
+
+[1;33m[4/5] Unit tests...[0m
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 23%]
+........................................................................ [ 31%]
+........................................................................ [ 38%]
+........................................................................ [ 46%]
+........................................................................ [ 54%]
+........................................................................ [ 62%]
+........................................................................ [ 69%]
+........................................................................ [ 77%]
+........................................................................ [ 85%]
+........................................................................ [ 93%]
+..............................................................           [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+926 passed, 4 warnings in 30.72s
+[0;32m✓ Unit tests passed[0m
+
+[1;33m[5/6] Architecture boundary tests...[0m
+..................................................                       [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+50 passed, 1 warning in 1.37s
+[0;32m✓ Architecture tests passed[0m
+
+[1;33m[6/6] Meta / registry tests...[0m
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 13.46s
+[0;32m✓ Meta tests passed[0m
+
+================================================
+[0;31m  Failed checks: ruff black[0m
+================================================
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 43s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 17s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 22.1s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 1034.5ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 55s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  93 passed (93)
+      Tests  1238 passed (1238)
+   Start at  00:18:01
+   Duration  103.76s (transform 5.61s, setup 50.16s, import 30.06s, tests 20.50s, environment 167.81s)
+
+<< test: pass (exit=0, 108s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 43s
+  typecheck  pass  exit=0 17s
+  build      pass  exit=0 55s
+  test       pass  exit=0 108s
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 27%]
+........................................................................ [ 36%]
+........................................................................ [ 45%]
+........................................................................ [ 55%]
+........................................................................ [ 64%]
+........................................................................ [ 73%]
+........................................................................ [ 82%]
+........................................................................ [ 91%]
+.................................................................        [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+runtime/foundation/verification/graph_model.py:120
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/graph_model.py:120: PytestCollectionWarning: cannot collect test class 'TestSurfaceNode' because it has a __init__ constructor (from: runtime/tests/test_m9_c42_27.py)
+    @dataclass(frozen=True, slots=True)
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+785 passed, 84 warnings in 340.18s (0:05:40)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-27T00:47:14 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Fast Quality Checks
+  Target: under 5 minutes
+================================================
+
+[1;33m[1/5] Ruff lint check...[0m
+[0;32m✓ Ruff passed[0m
+
+[1;33m[2/5] Black format check...[0m
+[0;32m✓ Black passed[0m
+
+[1;33m[3/5] Mypy type check...[0m
+src/api.py:32: error: Function is missing a return type annotation  [no-untyped-def]
+[1;33m⚠ Mypy had issues (non-blocking for now)[0m
+
+[1;33m[4/5] Unit tests...[0m
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  4%]
+........................................................................ [  8%]
+........................................................................ [ 13%]
+........................................................................ [ 17%]
+........................................................................ [ 21%]
+........................................................................ [ 26%]
+........................................................................ [ 30%]
+........................................................................ [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 43%]
+........................................................................ [ 48%]
+........................................................................ [ 52%]
+........................................................................ [ 57%]
+........................................................................ [ 61%]
+........................................................................ [ 65%]
+........................................................................ [ 70%]
+........................................................................ [ 74%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 87%]
+........................................................................ [ 92%]
+........................................................................ [ 96%]
+.......................................................                  [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1639 passed, 4 warnings in 31.16s
+[0;32m✓ Unit tests passed[0m
+
+[1;33m[5/6] Architecture boundary tests...[0m
+..................................................                       [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+50 passed, 1 warning in 1.38s
+[0;32m✓ Architecture tests passed[0m
+
+[1;33m[6/6] Meta / registry tests...[0m
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 13.90s
+[0;32m✓ Meta tests passed[0m
+
+================================================
+[0;32m  All fast checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+........................................................................ [ 35%]
+........................................................................ [ 44%]
+........................................................................ [ 53%]
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+........................................................................ [ 35%]
+........................................................................ [ 44%]
+........................................................................ [ 53%]
+........................................................................ [ 62%]
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+........................................................................ [ 35%]
+........................................................................ [ 44%]
+........................................................................ [ 53%]
+........................................................................ [ 62%]
+........................................................................ [ 71%]
+........................................................................ [ 80%]
+........................................................................ [ 89%]
+........................................................................ [ 98%]
+.............                                                            [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+runtime/foundation/verification/test_generator.py:220
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/test_generator.py:220: PytestCollectionWarning: cannot collect test class 'TestGenerator' because it has a __init__ constructor (from: runtime/tests/test_c43_test_generator.py)
+    class TestGenerator:
+
+runtime/foundation/verification/graph_model.py:120
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/graph_model.py:120: PytestCollectionWarning: cannot collect test class 'TestSurfaceNode' because it has a __init__ constructor (from: runtime/tests/test_m9_c42_27.py)
+    @dataclass(frozen=True, slots=True)
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+805 passed, 85 warnings in 349.27s (0:05:49)
+[0;32m✓ Runtime tests passed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-30T07:32:04 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;32m  All runtime checks passed![0m
+================================================
+================================================
+  ClariFin OS — Runtime Self-Verification
+================================================
+
+[1;33m[1/2] Runtime test suite...[0m
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+........................................................................ [ 35%]
+........................................................................ [ 44%]
+........................................................................ [ 53%]
+........................................................................ [ 62%]
+.............................F.......................................... [ 71%]
+........................................................................ [ 80%]
+........................................................................ [ 89%]
+........................................................................ [ 98%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+_____________ test_r2_evidence_collected_with_target_config_active _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x772511a22810>
+tmp_path = PosixPath('/home/vasantha/.tmp/pytest-of-vasantha/pytest-660/test_r2_evidence_collected_wit0')
+
+    @pytest.mark.timeout(300)
+    def test_r2_evidence_collected_with_target_config_active(monkeypatch, tmp_path):
+        """M9-C42.20 Phase 8 (defect R2) — permanent architectural fix.
+    
+        The runner must collect `mutmut results` evidence while the correct *target*
+        [tool.mutmut] configuration is still active, never after it has been restored
+        to the original (different-scope) config. The fix is structural: evidence is
+        collected inside the `try` body, *before* the `finally` block that restores
+        the original config — so the ordering is guaranteed by Python's try/finally
+        semantics, not a runtime flag.
+    
+        The test intercepts the single stable seam `FULL_CONFIG.write_text` to capture
+        the [tool.mutmut] scope that is *active* at the moment `mutmut results` reads
+        evidence. It asserts (a) evidence was collected with the target scope, and
+        (b) the config was restored to the original afterward.
+        """
+        import re
+    
+        from runtime.foundation.verification import mutation_runner as mr
+    
+        backend_pyproject = mr.FULL_CONFIG
+        original_text = backend_pyproject.read_text()
+    
+        def extract_source_paths(text: str) -> list[str] | None:
+            m = re.search(r"source_paths\s*=\s*\[(.*?)\]", text, re.S)
+            if not m:
+                return None
+            return re.findall(r'"([^"]+)"', m.group(1))
+    
+        # M9-C43.1: the test must be hermetic — the repository's resting
+        # [tool.mutmut] scope is not a constant (it legitimately follows the last
+        # targeted run). To keep R2 fully discriminating we seed a resting scope
+        # DISTINCT from the target scope, then assert the exact round trip:
+        # evidence under the TARGET scope, restoration to the seeded resting scope.
+        target_scope = ["src/engines/credit_card_engine"]
+        seeded_resting_scope = ["src/engines/balance_engine.py"]
+        # Hermetic seed: whichever scope currently rests in backend/pyproject.toml,
+        # ensure it is a scope DISTINCT from the target before the run. This holds
+        # regardless of which targeted run previously left its resting scope (e.g.
+        # behaviour_engine), so the R2 round-trip is always discriminating.
+        if extract_source_paths(original_text) != seeded_resting_scope:
+            backend_pyproject.write_text(
+                re.sub(
+                    r"(source_paths\s*=\s*\[).*?(\])",
+                    lambda m: m.group(1) + '"src/engines/balance_engine.py"' + m.group(2),
+                    original_text,
+                    count=1,
+                    flags=re.S,
+                )
+            )
+        resting_scope = extract_source_paths(backend_pyproject.read_text())
+        assert resting_scope == seeded_resting_scope
+    
+        # Before the run we record the active scope whenever evidence is read. The
+        # runner calls `subprocess.run([..., "mutmut", "results", ...])`; we capture
+        # the config scope at that exact instant by snapshotting the live file.
+        active_scope_at_results: dict[str, list[str] | None] = {"scope": None}
+        real_run = mr.subprocess.run
+    
+        def patched_run(args, **kwargs):
+            if (
+                args
+                and str(args[0]).endswith("mutmut")
+                and len(args) > 1
+                and args[1] == "results"
+            ):
+                active_scope_at_results["scope"] = extract_source_paths(
+                    backend_pyproject.read_text()
+                )
+            return real_run(args, **kwargs)
+    
+        monkeypatch.setattr(mr.subprocess, "run", patched_run)
+    
+        try:
+>           result = execute_mutation(
+                mode="target", target="credit_card_engine", allow_dirty=True
+            )
+
+runtime/tests/test_mutation_infra.py:348: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/foundation/verification/mutation_runner.py:737: in execute_mutation
+    safety.exit(installed_config_original)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <runtime.foundation.verification.mutation_runner._MutationSafety object at 0x77251189af00>
+installed_config_original = '# backend/pyproject.toml\n# Scoped configuration authority for the backend source tree.\n#\n# M10 note:\n#   * Depend..."tests/properties/transaction_intelligence",\n    "tests/capability/transaction_intelligence"\n]\nno_progress = true\n'
+
+    def exit(self, installed_config_original: str | None) -> None:
+        """Exit the safety context, verify restoration."""
+        self.original_config_text = installed_config_original
+        self._restore_config()
+    
+        # Verify exact restoration of protected files
+        unexpected = self._verify_restoration()
+        if unexpected:
+>           raise RuntimeError(
+                f"Mutation execution left unexpected file modifications: {unexpected}. "
+                f"This indicates a safety violation — config/source not properly restored."
+            )
+E           RuntimeError: Mutation execution left unexpected file modifications: ['backend/src: hash changed (expected 0b960b22, got 51147319)']. This indicates a safety violation — config/source not properly restored.
+
+runtime/foundation/verification/mutation_runner.py:218: RuntimeError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+runtime/foundation/verification/test_generator.py:220
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/test_generator.py:220: PytestCollectionWarning: cannot collect test class 'TestGenerator' because it has a __init__ constructor (from: runtime/tests/test_c43_test_generator.py)
+    class TestGenerator:
+
+runtime/foundation/verification/graph_model.py:120
+  /home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/graph_model.py:120: PytestCollectionWarning: cannot collect test class 'TestSurfaceNode' because it has a __init__ constructor (from: runtime/tests/test_m9_c42_27.py)
+    @dataclass(frozen=True, slots=True)
+
+runtime/tests/test_backend_evidence.py::TestBackendEvidenceSchema::test_schema_key_is_versioned
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
+runtime/tests/test_cross_layer_planner.py: 8 warnings
+runtime/tests/test_false_positive_rate.py: 1 warning
+runtime/tests/test_m9c3_verification_gate.py: 1 warning
+runtime/tests/test_orchestrator.py: 20 warnings
+runtime/tests/test_runtime_performance.py: 3 warnings
+runtime/tests/test_snapshots.py: 2 warnings
+runtime/tests/test_verification_identity_execution.py: 46 warnings
+  <string>:6: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED runtime/tests/test_mutation_infra.py::test_r2_evidence_collected_with_target_config_active
+1 failed, 804 passed, 85 warnings in 361.05s (0:06:01)
+[0;31m✗ Runtime tests failed[0m
+
+[1;33m[2/2] Architectural integrity...[0m
++------------------------------------------------------------------------------+
+|Architectural Integrity                                                       |
++------------------------------------------------------------------------------+
+
+PASS
+
++---------------------------+
+| Metric              Value |
++---------------------------+
+| Rules               28    |
+| Violations          0     |
+| Critical            0     |
+| High                0     |
+| Medium              0     |
+| Low                 0     |
+| Info                0     |
+| Files Scanned       838   |
+| Cross-Layer Entries 12    |
+| Graph Nodes         1200  |
+| Graph Edges         2095  |
++---------------------------+
+
+No violations detected.
+
++------------------------------------------------------------------------------+
+|Scan completed at 2026-08-30T08:01:34 UTC                                     |
++------------------------------------------------------------------------------+
+[0;32m✓ Integrity scan passed[0m
+
+================================================
+[0;31m  Failed checks: runtime-tests[0m
+================================================
+================================================
+  ClariFin OS — Fast Quality Checks
+  Target: under 5 minutes
+================================================
+
+[1;33m[1/5] Ruff lint check...[0m
+[0;32m✓ Ruff passed[0m
+
+[1;33m[2/5] Black format check...[0m
+[0;32m✓ Black passed[0m
+
+[1;33m[3/5] Mypy type check...[0m
+[0;32m✓ Mypy passed[0m
+
+[1;33m[4/5] Unit tests...[0m
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 57%]
+...........................................................F......F..... [ 60%]
+........................................................................ [ 63%]
+................................................................
+=================================== FAILURES ===================================
+________ test_compute_health_score_invalid_wellness_caught_fin_e3_fixed ________
+[gw1] linux -- Python 3.12.3 /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+tests/unit/engines/financial_intelligence/test_intelligence.py:379: in test_compute_health_score_invalid_wellness_caught_fin_e3_fixed
+    result = _compute_health_score({"wellness_score": "abc"})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/engines/financial_intelligence/intelligence.py:465: in _compute_health_score
+    return Decimal(str(wellness))
+           ^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.ConversionSyntax'>]
+____________ test_projection_invalid_confidence_caught_fin_e3_fixed ____________
+[gw3] linux -- Python 3.12.3 /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+tests/unit/engines/financial_intelligence/test_goal_planner.py:96: in test_projection_invalid_confidence_caught_fin_e3_fixed
+    result = calculate_goal_projection(50_000, 0, forecast)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/engines/financial_intelligence/goal_planner.py:94: in calculate_goal_projection
+    confidence = Decimal(str(forecast["confidence"]))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   decimal.InvalidOperation: [<class 'decimal.ConversionSyntax'>]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/unit/engines/financial_intelligence/test_intelligence.py::test_compute_health_score_invalid_wellness_caught_fin_e3_fixed
+FAILED tests/unit/engines/financial_intelligence/test_goal_planner.py::test_projection_invalid_confidence_caught_fin_e3_fixed
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 2 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!! xdist.dsession.Interrupted: stopping after 1 failures !!!!!!!!!!!!!
+2 failed, 1646 passed, 4 warnings in 14.53s
+[0;31m✗ Unit tests failed[0m
+
+[1;33m[5/6] Architecture boundary tests...[0m
+..................................................                       [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+50 passed, 1 warning in 1.24s
+[0;32m✓ Architecture tests passed[0m
+
+[1;33m[6/6] Meta / registry tests...[0m
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 12.29s
+[0;32m✓ Meta tests passed[0m
+
+================================================
+[0;31m  Failed checks: unit-tests[0m
+================================================

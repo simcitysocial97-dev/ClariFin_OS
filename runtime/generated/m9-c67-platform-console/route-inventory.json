@@ -1,0 +1,47 @@
+# M9-C67.2 Platform Console — Route Inventory
+
+## New Routes Created
+
+| Route | Component | API Endpoint | Status |
+|-------|-----------|--------------|--------|
+| `/platform` | `app/platform/page.tsx` | `GET /platform/v1/status`, `GET /platform/v1/health`, `GET /platform/v1/events`, `GET /platform/v1/errors/current`, `GET /platform/v1/capabilities` | ✅ LIVE |
+| `/platform/health` | `app/platform/health/page.tsx` | `GET /platform/v1/health` | ✅ NEW |
+| `/platform/verification` | `app/platform/verification/page.tsx` | `GET /platform/v1/capabilities`, `GET /platform/v1/verification` | ✅ EXISTING |
+| `/platform/diagnostics` | `app/platform/diagnostics/page.tsx` | `GET /platform/v1/diagnostics`, `POST /platform/v1/diagnose` | ✅ EXISTING |
+| `/platform/workflows` | `app/platform/workflows/page.tsx` | `GET /platform/v1/workflows` | ✅ NEW |
+| `/platform/capabilities` | `app/platform/capabilities/page.tsx` | `GET /platform/v1/capabilities` | ✅ EXISTING |
+| `/platform/runs` | `app/platform/runs/page.tsx` | `GET /platform/v1/runs` | ✅ NEW |
+| `/platform/runs/[runId]` | `app/platform/runs/[runId]/page.tsx` | `GET /platform/v1/runs/{run_id}` | ✅ NEW |
+| `/platform/evidence` | `app/platform/evidence/page.tsx` | `GET /platform/v1/evidence`, `GET /platform/v1/evidence/{id}` | ✅ EXISTING |
+| `/platform/history` | `app/platform/history/page.tsx` | `GET /platform/v1/history/runs`, `GET /platform/v1/history/baselines` | ✅ EXISTING |
+| `/platform/architecture` | `app/platform/architecture/page.tsx` | `GET /platform/v1/architecture/*` | ✅ EXISTING |
+| `/platform/errors` | `app/platform/errors/page.tsx` | `GET /platform/v1/errors/*` | ✅ EXISTING |
+| `/platform/framework` | `app/platform/framework/page.tsx` | `GET /platform/v1/framework/integrity`, `GET /platform/v1/framework/self-tests` | ✅ EXISTING |
+
+## Sidebar Navigation
+
+Updated `components/platform/sidebar.tsx` to include:
+- Dashboard (`/platform`)
+- Health (`/platform/health`) ← NEW
+- Verification (`/platform/verification`)
+- Diagnostics (`/platform/diagnostics`)
+- Change Intelligence (`/platform/diagnostics/change`)
+- Framework (`/platform/framework`)
+- Workflows (`/platform/workflows`) ← NEW
+- Runs (`/platform/runs`) ← NEW
+- History (`/platform/history`)
+- Errors (`/platform/errors`)
+- Evidence (`/platform/evidence`)
+- Capabilities (`/platform/capabilities`)
+- Architecture (`/platform/architecture`)
+- Settings (`/platform/settings`)
+
+## Pre-existing Fixes (unblocked build)
+
+| File | Fix |
+|------|-----|
+| `app/platform/evidence/page.tsx` | Removed unused imports, fixed useQuery type, removed unused interface |
+| `app/platform/framework/page.tsx` | Removed unused useState, HealthBadge, ArrowLeft imports |
+| `app/platform/page.tsx` | Removed unused fiIcon, domainCount; prefixed unused platformStatus param |
+| `app/platform/verification/page.tsx` | Removed unused TestTube, RefreshCw imports |
+| `components/platform/health-badge.test.tsx` | Added vitest reference directive |

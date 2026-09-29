@@ -1,0 +1,24 @@
+{
+  "run_id": "d7e501ef2c5143aa",
+  "timestamp": "2026-09-08T04:12:36.777534+00:00",
+  "repository_sha": "b86042303b2b7a18ca2542850528688faab3b0b9",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpagn7visc.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

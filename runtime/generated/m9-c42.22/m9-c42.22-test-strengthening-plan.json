@@ -1,0 +1,225 @@
+{
+  "title": "M9-C42.22 — Test Strengthening Plan",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "phase": "M22.5 Behavioral Strengthening",
+  "priorities": {
+    "P0_discovery_repair": [
+      "behaviour_engine",
+      "financial_events"
+    ],
+    "P1_behavioral_strengthening": [
+      "cashflow_engine",
+      "ledger_audit_engine",
+      "recommendation_engine",
+      "common_calculations",
+      "credit_card_engine"
+    ],
+    "P2_review": [
+      "loan_engine",
+      "reconciliation_engine"
+    ],
+    "CONTROL_reference": [
+      "balance_engine",
+      "core_domain_money",
+      "account_engine"
+    ]
+  },
+  "workstream_plan": {
+    "A_behaviour_engine_discovery_repair": {
+      "description": "Fix test discovery for 2835 no_tests mutants",
+      "actions": [
+        {
+          "id": "A1",
+          "action": "Extend mutation test_selection to include test_metrics.py, test_integration.py, capability/pattern_analysis",
+          "target_mutants": 1842,
+          "expected_outcome": "no_tests reduction from existing test coverage"
+        },
+        {
+          "id": "A2",
+          "action": "Add dedicated unit tests for stress.py, temporal.py, utils.py internal functions",
+          "target_mutants": 712,
+          "expected_outcome": "Genuine missing test coverage filled"
+        },
+        {
+          "id": "A3",
+          "action": "Add unit tests for profile.py classification functions, credit_dependency.py ratios, nudges.py generation",
+          "target_mutants": 712,
+          "expected_outcome": "High-value behavioral functions protected"
+        },
+        {
+          "id": "A4",
+          "action": "Run bounded mutation smoke to validate no_tests reduction",
+          "target_mutants": 0,
+          "expected_outcome": "Evidence that discovery repair works"
+        }
+      ],
+      "exit_criteria": "no_tests < 500 (82% reduction), normal tests green"
+    },
+    "B_financial_events_discovery_repair": {
+      "description": "Eliminate 29 no_tests in lineage_walker helpers",
+      "actions": [
+        {
+          "id": "B1",
+          "action": "Add unit tests for _parse_date_iso, _date_difference_days in test_financial_events.py",
+          "target_mutants": 17,
+          "expected_outcome": "All date parsing helpers covered"
+        },
+        {
+          "id": "B2",
+          "action": "Add unit tests for _is_liability_event, _is_repayment_event, _is_transfer_event, _is_revocable_event",
+          "target_mutants": 0,
+          "expected_outcome": "Event classification helpers covered (indirectly tested already)"
+        },
+        {
+          "id": "B3",
+          "action": "Add unit tests for _merge_lifecycle_update state merging logic",
+          "target_mutants": 12,
+          "expected_outcome": "State merge logic protected"
+        },
+        {
+          "id": "B4",
+          "action": "Add property tests for date parsing edge cases and event classification boundaries",
+          "target_mutants": 0,
+          "expected_outcome": "Robust edge-case coverage"
+        }
+      ],
+      "exit_criteria": "no_tests = 0, normal tests green"
+    },
+    "C_cashflow_engine_behavioral_strengthening": {
+      "description": "Strengthen behavioral discrimination for 97.6% coverage / 29.1% mutation gap",
+      "actions": [
+        {
+          "id": "C1",
+          "action": "Analyze surviving mutations: identify which mutants survive and why",
+          "target_mutants": 122,
+          "expected_outcome": "Classify survivors as A (genuine gaps) vs B (equivalent)"
+        },
+        {
+          "id": "C2",
+          "action": "Add targeted property tests for: cashflow classification boundaries, sign handling, date boundaries, aggregation, period boundaries, income/expense distinction, zero/negative values, rounding, financial invariants",
+          "target_mutants": 30,
+          "expected_outcome": "Kill ~30 Class-A survivors, convert B→A where genuine"
+        },
+        {
+          "id": "C3",
+          "action": "Add unit tests for MonthClassification boundary conditions",
+          "target_mutants": 0,
+          "expected_outcome": "Explicit boundary coverage"
+        }
+      ],
+      "exit_criteria": "Mutation score improvement with behavioral evidence, normal tests green"
+    },
+    "D_ledger_audit_engine_strengthening": {
+      "description": "Address 56.8% mutation score with invariant-oriented tests",
+      "actions": [
+        {
+          "id": "D1",
+          "action": "Analyze 82 survivors: classify as A (genuine gaps) vs B (equivalent)",
+          "target_mutants": 82,
+          "expected_outcome": "Clear survivor taxonomy"
+        },
+        {
+          "id": "D2",
+          "action": "Add tests for ledger integrity invariants: balance relationships, reconciliation semantics, failure detection",
+          "target_mutants": 25,
+          "expected_outcome": "Kill ~25 Class-A survivors"
+        },
+        {
+          "id": "D3",
+          "action": "Add tests for audit invariants: event consistency, hash verification edge cases",
+          "target_mutants": 0,
+          "expected_outcome": "Strengthen audit behavior protection"
+        }
+      ],
+      "exit_criteria": "Class-A survivors addressed, normal tests green"
+    },
+    "E_recommendation_engine_strengthening": {
+      "description": "Address 57.8% mutation score with threshold/boundary tests",
+      "actions": [
+        {
+          "id": "E1",
+          "action": "Analyze 119 survivors: classify as A (genuine gaps) vs B (equivalent)",
+          "target_mutants": 119,
+          "expected_outcome": "Clear survivor taxonomy"
+        },
+        {
+          "id": "E2",
+          "action": "Add threshold-boundary unit tests for: recommendation selection, thresholds, ranking, eligibility, financial constraints, boundary values, empty inputs, conflicting recommendations, deterministic ordering",
+          "target_mutants": 40,
+          "expected_outcome": "Kill ~40 Class-A survivors"
+        },
+        {
+          "id": "E3",
+          "action": "Leverage existing capability tests; do not optimize independently of capability correctness",
+          "target_mutants": 0,
+          "expected_outcome": "Capability-aligned strengthening"
+        }
+      ],
+      "exit_criteria": "Class-A survivors addressed, normal tests green"
+    },
+    "F_common_calculations_strengthening": {
+      "description": "Focus on shared calculation semantics with boundary-value tests",
+      "actions": [
+        {
+          "id": "F1",
+          "action": "Analyze 164 survivors: classify as A (genuine gaps) vs B (equivalent arithmetic)",
+          "target_mutants": 164,
+          "expected_outcome": "Clear survivor taxonomy with B-dominance expected"
+        },
+        {
+          "id": "F2",
+          "action": "Add boundary-value tests for: percentage_change edge cases, _parse_amount_paise invalid/edge inputs, compute_is_large threshold logic, compute_behavioral_insights month/category boundaries",
+          "target_mutants": 50,
+          "expected_outcome": "Kill ~50 Class-A survivors, document B-class equivalents"
+        },
+        {
+          "id": "F3",
+          "action": "Pay special attention to Class-B equivalent mutants - do not add tests solely to kill equivalent arithmetic",
+          "target_mutants": 0,
+          "expected_outcome": "Equivalent mutants documented, not artificially killed"
+        }
+      ],
+      "exit_criteria": "High-value Class-A survivors addressed, equivalents documented, normal tests green"
+    },
+    "G_credit_card_engine_targeted": {
+      "description": "Targeted strengthening using existing Class-A inventory",
+      "actions": [
+        {
+          "id": "G1",
+          "action": "Use M9-C42.17 and M9-C42.21 Class-A inventory (~43 genuine gaps)",
+          "target_mutants": 43,
+          "expected_outcome": "Focus on interest/fee boundary assertions"
+        },
+        {
+          "id": "G2",
+          "action": "Prioritize: financial behavior, state transitions, boundary conditions, fees, interest, limits, payment handling, rounding, invalid states",
+          "target_mutants": 26,
+          "expected_outcome": "Reach 80% threshold from 75.6%"
+        },
+        {
+          "id": "G3",
+          "action": "Do not attempt wholesale rewriting; only strengthen where evidence indicates behavioral gap",
+          "target_mutants": 0,
+          "expected_outcome": "Surgical test additions"
+        }
+      ],
+      "exit_criteria": "75.6% → 80%+ with behavioral evidence, normal tests green"
+    }
+  },
+  "execution_model": {
+    "batch_1": ["A_behaviour_engine_discovery_repair", "B_financial_events_discovery_repair"],
+    "batch_2": ["C_cashflow_engine_behavioral_strengthening"],
+    "batch_3": ["D_ledger_audit_engine_strengthening", "E_recommendation_engine_strengthening"],
+    "batch_4": ["F_common_calculations_strengthening", "G_credit_card_engine_targeted"],
+    "batch_5": ["H_loan_engine_review", "I_reconciliation_engine_review"],
+    "batch_6": ["J_cross_repository_reconciliation"],
+    "validation_per_batch": [
+      "pytest (affected areas)",
+      "targeted coverage",
+      "targeted mutation smoke",
+      "evidence comparison (before/after)"
+    ],
+    "full_mutation_revalidation": "Only after batches 1-4 complete and evidence justifies repository-wide measurement"
+  }
+}

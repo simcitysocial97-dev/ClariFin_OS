@@ -1,0 +1,24 @@
+{
+  "run_id": "532ad26f20a81813",
+  "timestamp": "2026-09-18T01:22:30.295687+00:00",
+  "repository_sha": "10224f52ba43dd8ae1815755e26ce244cc501a4d",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpwzl_80ok.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

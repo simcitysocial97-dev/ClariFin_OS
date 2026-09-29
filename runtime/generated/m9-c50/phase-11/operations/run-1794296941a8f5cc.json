@@ -1,0 +1,25 @@
+{
+  "run_id": "1794296941a8f5cc",
+  "timestamp": "2026-09-05T19:19:51.212773+00:00",
+  "repository_sha": "685e1b7b54eb5409739fa964332e405633ee6984",
+  "scenario": "backend_unit_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/tmpyogbe8la.py"
+  ],
+  "resolved_capabilities": [
+    "credit-card-engine"
+  ],
+  "obligations": [
+    "unit",
+    "property",
+    "contract"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

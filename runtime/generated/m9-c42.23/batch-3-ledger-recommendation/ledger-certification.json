@@ -1,0 +1,48 @@
+{
+  "batch": "batch-3-ledger-recommendation",
+  "component": "ledger_audit_engine",
+  "objective": "Strengthen ledger behavioral discrimination (C42.21: 190 generated, 108 killed, 82 survived, 56.8%).",
+  "strategic_constraint": "Strengthen genuine behavioral gaps only; do NOT add tests that assert implementation-internal dict keys/output literals merely to kill mutants.",
+  "baseline_c42_21": {"generated": 190, "killed": 108, "survived": 82, "no_tests": 0, "score_pct": 56.8},
+  "current_full_local_run": {"generated": 190, "killed": 108, "survived": 82, "no_tests": 0, "score_pct": 56.8, "note": "Identical to C42.21 baseline — population and result stable."},
+  "approach": "Analyzed all 82 survivors. The reachable behavioral contract (status PASS/FAIL logic, hash tamper detection, run_full_audit overall_status) is already exercised by the existing 25-test suite (which is why 108 mutants are killed). No new tests were added because the remaining survivors are NOT genuine behavioral gaps.",
+  "tests_added": [],
+  "survivor_classification": {
+    "total_remaining": 82,
+    "class_C_unreachable_literal": {
+      "count": "~70",
+      "examples": [
+        "row[\"id\"] -> row[\"ID\"] (column-name literal never produced by SQLite)",
+        "\"type\": \"NEGATIVE_DEBIT\" -> \"TYPE\": \"NEGATIVE_DEBIT\" (output dict key literal)",
+        "\"type\": \"NEGATIVE_DEBIT\" -> \"type\": \"XXNEGATIVE_DEBITXX\" (value literal)",
+        "\"transaction_id\": row[\"id\"] -> \"XXtransaction_idXX\": row[\"id\"]"
+      ],
+      "rationale": "Mutations substitute string literals (dict keys, column names, violation-type strings) that no caller or SQLite result row ever produces. Unreachable under the contract. A test asserting these exact internal literals would be an anti-gaming 'assertion derived from implementation internals' and was NOT added."
+    },
+    "class_B_equivalent": {
+      "count": "~12",
+      "examples": [
+        "message f-string wording changes (e.g., 'null or empty' -> 'NULL or empty')",
+        "violation message formatting that yields identical observable status"
+      ],
+      "rationale": "Human-readable message text mutations that do not change the detection outcome (status/type/severity). Equivalent for valid-domain behavior."
+    },
+    "genuine_gaps_remaining": "None. The NEGATIVE_DEBIT / NEGATIVE_CREDIT / DUAL_ENTRY SQL checks are defensive (debit/credit are GENERATED ALWAYS AS columns from type+amount_paise and cannot be negative/cross via the application), and their status-logic is already covered."
+  },
+  "validation": {
+    "regression": "Existing ledger_audit suite (25 tests) remains green.",
+    "targeted_mutation": "Full 190-mutant local run completed: 108 killed / 82 survived (identical to C42.21).",
+    "ruff_mypy": "n/a (no new tests)"
+  },
+  "production_code_changed": false,
+  "exit_gate": {
+    "ledger_survivor_families_classified": true,
+    "high_value_behavioral_tests_implemented": "N/A — no genuine Class-A gap found; reachable contract already covered (no redundant tests added, per anti-gaming controls)",
+    "targeted_regression_green": true,
+    "targeted_mutation_executed": true,
+    "meaningful_mutation_improvements_evidenced": "Stable at 56.8%; remaining 82 survivors classified as Class B/C (no genuine gap)",
+    "equivalent_mutants_preserved_as_equivalent": true,
+    "no_score_only_tests_introduced": true,
+    "batch_evidence_recorded": true
+  }
+}

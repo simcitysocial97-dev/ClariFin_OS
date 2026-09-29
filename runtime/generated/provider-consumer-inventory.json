@@ -1,0 +1,403 @@
+{
+  "generated_at": "2026-08-06T13:17:41.632515+00:00",
+  "program": "13.3",
+  "single_provider": "runtime.foundation.architecture.get_architecture",
+  "legacy_artifacts_scanned": [
+    "cross-layer-map.json",
+    "cross-layer-map-v2.json",
+    "architecture-provider.json",
+    "ownership-graph.json",
+    "execution-graph.json",
+    "engine-topology.json",
+    "knowledge-index.json"
+  ],
+  "total_module_references": 48,
+  "runtime_operational_consumers": [],
+  "already_migrated_or_canonical": [
+    {
+      "module": "runtime/analyze_artifacts.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_artifacts.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_artifacts.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_artifacts.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_artifacts.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_engine_normalization.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_engine_topology.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_execution.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_execution.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_gap.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_gap.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_knowledge.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_knowledge.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_knowledge.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_ownership.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/analyze_ownership.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/chains.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/cross_layer.py",
+      "current_source": "cross-layer-map-v2.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/discovery.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/discovery.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/discovery.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/ids.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/ids.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/provider.py",
+      "current_source": "architecture-provider.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/provider.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/provider.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/provider.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/sources.py",
+      "current_source": "cross-layer-map-v2.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/sources.py",
+      "current_source": "ownership-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/sources.py",
+      "current_source": "execution-graph.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/architecture/sources.py",
+      "current_source": "engine-topology.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/artifact_ownership.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/artifact_ownership.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/cross_layer.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/failure_injection.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/failure_injection.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/knowledge.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/normalize.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/pipeline.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/remediation.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/remediation.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/verification_profiles.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/audit/verification_profiles.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/integrity/scanner.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/knowledge/indexer.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/knowledge/indexer.py",
+      "current_source": "knowledge-index.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/verification/profiles.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    },
+    {
+      "module": "runtime/foundation/workspace/dependencies.py",
+      "current_source": "cross-layer-map.json",
+      "migration_target": "runtime.foundation.architecture.get_architecture",
+      "remaining_legacy_logic": "",
+      "duplicated_discovery": false,
+      "migration_status": "migrated"
+    }
+  ],
+  "conclusion": "No runtime subsystem reads a legacy architecture artifact as an operational dependency. Every operational consumer resolves ownership/endpoints/capabilities through get_architecture()."
+}

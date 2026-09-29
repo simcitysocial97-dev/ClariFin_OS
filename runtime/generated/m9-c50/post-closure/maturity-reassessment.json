@@ -1,0 +1,63 @@
+{
+  "schema": "m9-c50/post-closure/maturity-reassessment@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Independently recalculate the 6 maturity levels from primary repository evidence. Do not inherit existing labels.",
+  "definitions_from_guiding_document": {
+    "IMPLEMENTED": "All required code for the verification framework exists and compiles cleanly with ruff and mypy.",
+    "ARCHITECTURALLY_CONVERGED": "Single canonical control plane, single planning authority, single execution authority, single capability authority, single evidence contract, single mutation authority, no dormant duplicates, no silent bypass, no capability blindness.",
+    "OPERATIONALLY_VALIDATED": "Representative executions have completed through the canonical pipeline (plan → execute → evidence → reconcile → decision) for each required scenario, with results deterministic where expected, evidence complete, and history machine-readable.",
+    "SUSTAINED_IN_OPERATION": "Repeated execution across multiple sessions / change cycles demonstrates the architecture holds without regression and operational history accumulates longitudinally.",
+    "CERTIFIABLE": "A certification policy exists and is satisfied by the evidence trail; an external reviewer can rely on the evidence to issue a verdict.",
+    "SELF_VERIFYING": "The framework can invoke its own canonical pipeline against its own architecture and detect (not merely assert) intentional architectural violations."
+  },
+  "recalculation": {
+    "IMPLEMENTED": {
+      "verdict": "YES",
+      "evidence": "Required code present: control_plane_facade.py, executor_pipeline.py, obligation_reconciliation.py, capability_graph_resolver.py, mutation_runner, etc. Test suites compiled and collected (35+15+19+41+24+15+15+6+10=180+ tests). ruff and mypy run on changed files with no critical errors observed in Phase 3/4/6 narratives.",
+      "conditions": "Acceptable modulo dirty working tree (87 uncommitted files) and the 10 evidence-kind violations being documentation/discipline issues, not implementation defects."
+    },
+    "ARCHITECTURALLY_CONVERGED": {
+      "verdict": "PARTIAL",
+      "evidence_for": "Single ControlPlane (test passes), 85 legacy tokens delegated (no-duplicate-authority.json), 10/10 adapters registered, MutationOrchestrator bounded NON_CANONICAL, single evidence contract.",
+      "evidence_against": "10 capability-catalog evidence-kind warnings persist — these are emitted by the canonical capability_catalog.py validator against the closed EVIDENCE_KINDS vocabulary. Each warning corresponds to a capability advertising an evidence kind outside the vocabulary. Until either (a) the vocabulary is expanded with governing-document amendment or (b) the capability is remapped to an existing kind, the architecture is not strictly converged on the evidence-contract dimension.",
+      "conclusion": "Substantially converged but NOT fully — the evidence contract is violated by 10 capabilities."
+    },
+    "OPERATIONALLY_VALIDATED": {
+      "verdict": "NO",
+      "evidence_for": "19-test operational suite mostly passes when re-run (15/16 under pytest-timeout=60).",
+      "evidence_against": "Zero of 54 recorded run JSONs have populated plan_identity, execution_identity, or evidence_identities. Every recorded run terminates at the planning stage or at a synthetic decision label. Scenario 15 (CI-equivalent) hangs. The '24 runs through the canonical pipeline' claim cannot be substantiated from the on-disk artifacts.",
+      "conclusion": "Operational validation as defined (representative executions through the canonical pipeline producing lineage) has NOT been achieved. Only planning-stage probes were recorded."
+    },
+    "SUSTAINED_IN_OPERATION": {
+      "verdict": "NO",
+      "evidence": "Single-session execution. Cache hit rate 16% — operational effectiveness has regressed from the <50% Phase-0 baseline. No longitudinal evidence.",
+      "conclusion": "Cannot be claimed from a single session."
+    },
+    "CERTIFIABLE": {
+      "verdict": "NO",
+      "evidence": "No certification policy defined; report acknowledges 'policy undefined' as remaining limitation.",
+      "conclusion": "Precondition not satisfied."
+    },
+    "SELF_VERIFYING": {
+      "verdict": "PARTIAL",
+      "evidence_for": "35 self-verification tests pass; framework invokes its own ControlPlane.plan() (test_self_verification_cycle_runs).",
+      "evidence_against": "Negative-detection tests assert detection names exist in code rather than injecting real violations and proving detection fires. test_framework_detects_duplicate_authority_violation instantiates two ControlPlane objects and asserts same-class — proves class singularity, not detection. test_framework_detects_legacy_bypass checks migration_map contains the legacy token names — proves the map exists, not that bypass is caught at runtime. test_framework_detects_stale_evidence_reuse checks that the string 'stale_evidence_reuse' is in a bypass report — proves the report mentions it, not that bypass enforcement triggers on real stale evidence.",
+      "conclusion": "Structural self-tests only; genuine violation-detection (test the verifier verifies the verifier) has not been demonstrated."
+    }
+  },
+  "delta_vs_final_convergence_report": {
+    "report_claim_1": {"label": "ARCHITECTURALLY_CONVERGED ✅", "recalculated": "PARTIAL — evidence-kind violations (10) remain architectural defects"},
+    "report_claim_2": {"label": "OPERATIONALLY_VALIDATED ✅ (24 runs, 16 scenarios)", "recalculated": "NO — 0/54 recorded runs reached execution; scenario 15 hangs"},
+    "report_claim_3": {"label": "SELF_VERIFYING ✅ (35 tests, negative detection)", "recalculated": "PARTIAL — structural self-tests only; negative detection is weak"},
+    "report_claim_4": {"label": "SUSTAINED_IN_OPERATION ⚠️ requires longitudinal evidence", "recalculated": "NO — also requires the architecture to actually hold; cache hit rate 16% suggests it does not yet"},
+    "report_claim_5": {"label": "CERTIFIABLE ⚠️ requires certification policy", "recalculated": "NO — same reasoning, no policy defined"}
+  },
+  "honest_maturity_table": [
+    {"level": "IMPLEMENTED", "verdict": "YES"},
+    {"level": "ARCHITECTURALLY_CONVERGED", "verdict": "PARTIAL (10 evidence-kind violations remain)"},
+    {"level": "OPERATIONALLY_VALIDATED", "verdict": "NO (no real execution lineage)"},
+    {"level": "SUSTAINED_IN_OPERATION", "verdict": "NO (single session, cache effectiveness regressed)"},
+    {"level": "CERTIFIABLE", "verdict": "NO (no certification policy)"},
+    {"level": "SELF_VERIFYING", "verdict": "PARTIAL (structural tests, not real violation-detection)"}
+  ]
+}

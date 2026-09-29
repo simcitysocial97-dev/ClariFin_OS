@@ -1,0 +1,26 @@
+{
+  "schema": "m9-c48/api-schema-governance@1",
+  "generated_at": "2026-09-29T09:24:41+00:00",
+  "repository_sha": "4bc4957218bd5c770025e833cca983b480a81617",
+  "historical_defects": [
+    {
+      "id": "loan-api-response-shape-c30-c32",
+      "title": "Loan API response-shape mismatch",
+      "description": "Backend returned a list of loans; frontend expected a wrapped object. Fixed by introducing LoanListResponse wrapper.",
+      "discovered_in": "M9-C30",
+      "remediated_in": "M9-C32 / C46 reconciliation",
+      "current_state": "RESOLVED",
+      "authority": "provenance only"
+    }
+  ],
+  "current_contract": {
+    "evidence_path": "runtime/generated/api-contract-evidence.json",
+    "present": true,
+    "gate_status": "UNKNOWN",
+    "dimensions": {},
+    "last_updated": ""
+  },
+  "enforcement_workflow_present": true,
+  "enforcement_workflow_path": ".github/workflows/api-contracts.yml",
+  "state": "UNRESOLVED"
+}

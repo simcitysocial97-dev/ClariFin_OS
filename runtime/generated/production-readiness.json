@@ -1,0 +1,74 @@
+{
+  "schema": "production-readiness/v1",
+  "generated_at": "2026-08-06T16:36:11.455295Z",
+  "program": "17.0",
+  "overall_score": 88,
+  "overall_status": "PRODUCTION_READY_CONDITIONAL",
+  "components": {
+    "backend": {
+      "score": 85,
+      "status": "CONDITIONAL",
+      "issues": [
+        "23 never-reachable items (engines + routers)",
+        "0 parked engines",
+        "2 orphan engines",
+        "Workspace routers need consolidation"
+      ]
+    },
+    "frontend": {
+      "score": 80,
+      "status": "CONDITIONAL",
+      "issues": [
+        "9 frontend workspaces without backend capability",
+        "Duplicate Money/MoneyViewModel types",
+        "Potential duplicate mappers"
+      ]
+    },
+    "runtime": {
+      "score": 100,
+      "status": "PASS",
+      "issues": []
+    },
+    "testing": {
+      "score": 88,
+      "status": "CONDITIONAL",
+      "issues": [
+        "10 engines missing integration tests",
+        "12 engines missing contract tests"
+      ]
+    },
+    "architecture": {
+      "score": 82,
+      "status": "CONDITIONAL",
+      "issues": [
+        "23 legacy drifts detected",
+        "9 accidental drifts detected",
+        "7 deletion candidates pending"
+      ]
+    },
+    "ci": {
+      "score": 95,
+      "status": "PASS",
+      "issues": []
+    },
+    "engineering_maturity": {
+      "score": 87,
+      "status": "PASS",
+      "issues": [
+        "Engineering platform CERTIFIED",
+        "Repository convergence plan complete",
+        "8 simplification opportunities identified"
+      ]
+    }
+  },
+  "evidence": {
+    "runtime_certification": "CERTIFIED (preserved from Program 15)",
+    "deletion_candidates": 7,
+    "engine_convergence": "6 canonical, 0 parked, 2 orphan",
+    "capability_chains": 6,
+    "workspace_gaps": 9,
+    "architectural_drifts": 32,
+    "simplification_opportunities": 8,
+    "roadmap_steps": 16
+  }
+}

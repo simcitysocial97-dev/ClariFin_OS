@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "schema": "m9-c47-auto-test-generation-audit/v1",
+    "generated_at": "2026-09-03T17:40:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "Automatic test generation and strengthening infrastructure"
+  },
+  "components": {
+    "generation_engine.py": {
+      "purpose": "Automatic test generation engine",
+      "status": "ACTIVE",
+      "classification": "SCAFFOLDING_OR_PARTIAL - the engine exists but the actual generation pipeline is not fully wired",
+      "notes": "Contains the generation engine class but the end-to-end pipeline is not documented as complete"
+    },
+    "test_generator.py": {
+      "purpose": "Test generator",
+      "status": "ACTIVE",
+      "classification": "SCAFFOLDING_OR_PARTIAL",
+      "notes": "Contains test generation logic but the actual generation is not fully wired"
+    },
+    "strengthening_pipeline.py": {
+      "purpose": "Test strengthening pipeline",
+      "status": "ACTIVE",
+      "classification": "SCAFFOLDING_OR_PARTIAL",
+      "notes": "Contains the pipeline class but the actual strengthening is not fully wired"
+    },
+    "candidate_validation.py": {
+      "purpose": "Candidate test validation",
+      "status": "ACTIVE",
+      "classification": "SUPPORTING"
+    },
+    "generation_eligibility.py": {
+      "purpose": "Test generation eligibility check",
+      "status": "ACTIVE",
+      "classification": "SUPPORTING"
+    },
+    "c53_scenarios.py": {
+      "purpose": "C53 controlled test generation scenarios",
+      "status": "ACTIVE",
+      "classification": "CANONICAL",
+      "notes": "C53 controlled scenarios for test generation"
+    },
+    "c53_certification.py": {
+      "purpose": "C53 certification",
+      "status": "ACTIVE",
+      "classification": "CANONICAL"
+    }
+  },
+  "end_to_end_pipeline": {
+    "survivor_to_diagnosis": "VERIFIED - survivor_intel.py builds per-mutant survivor intelligence",
+    "diagnosis_to_candidate_weakness": "PARTIALLY_VERIFIED - candidate_validation.py exists but the full diagnosis pipeline is not documented",
+    "candidate_weakness_to_generated_test": "SCAFFOLDING_ONLY - generation_engine.py and test_generator.py exist but the actual generation is not verified to produce useful tests",
+    "generated_test_to_execution": "UNVERIFIED - no evidence that generated tests are actually executed",
+    "execution_to_mutant_re_execution": "UNVERIFIED - no evidence that mutants are re-executed against generated tests",
+    "validation_to_regression_check": "UNVERIFIED - no evidence of regression check",
+    "regression_check_to_evidence": "UNVERIFIED - no evidence of evidence generation"
+  },
+  "scope_restrictions": {
+    "engines_only": "PARTIALLY_VERIFIED - the framework was originally designed for engines but the generation_engine.py and test_generator.py may support other layers",
+    "services": "UNVERIFIED",
+    "repositories": "UNVERIFIED",
+    "api": "UNVERIFIED",
+    "frontend": "UNVERIFIED",
+    "shared_utility": "UNVERIFIED",
+    "cross_layer_contract": "UNVERIFIED"
+  },
+  "human_authorization": {
+    "boundaries": "VERIFIED - AuthorizationLevel enum (NONE, OPERATOR, HUMAN, CI_ONLY) in capability_catalog.py",
+    "enforcement": "PARTIALLY_VERIFIED - the boundaries are defined but the enforcement is not fully documented"
+  },
+  "findings": {
+    "operational": "PARTIALLY_VERIFIED - the components exist but the end-to-end pipeline is not verified to operate",
+    "partial": "VERIFIED - some components work individually (survivor_intel, candidate_validation)",
+    "scaffolding": "VERIFIED - generation_engine.py and test_generator.py appear to be scaffolding without full implementation",
+    "stub": "UNVERIFIED - cannot determine if these are stubs without more detailed inspection"
+  },
+  "conclusion": {
+    "status": "PARTIALLY_VERIFIED",
+    "classification": "SCAFFOLDING_OR_PARTIAL",
+    "notes": "The automatic test generation infrastructure exists as components (generation_engine.py, test_generator.py, strengthening_pipeline.py) but the end-to-end pipeline (survivor -> diagnosis -> generated test -> execution -> mutant re-execution -> validation -> regression check -> evidence) is NOT verified to operate. The system can at best produce high-value, evidence-driven test recommendations. The system is NOT restricted architecturally to engines, but the actual generation scope is not verified. Human authorization boundaries are defined but not fully enforced."
+  }
+}

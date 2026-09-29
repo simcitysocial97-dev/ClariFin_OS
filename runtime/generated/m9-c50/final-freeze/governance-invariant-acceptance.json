@@ -1,0 +1,32 @@
+{
+  "all_invariants_enforced": true,
+  "enforcement": {
+    "8_of_8_adapters_are_real_executable": true,
+    "cache_INVALIDATE_on_environment_change": true,
+    "cache_REUSE_requires_valid_evidence": true,
+    "closed_evidence_vocabulary": true,
+    "decision_without_reconciliation_rejected": true,
+    "deterministic_identity_per_kind": true,
+    "evidence_without_execution_rejected": true,
+    "fault_injection_detects_all_10_classes": true,
+    "forbidden_transitions_rejected": true,
+    "legacy_bypass_rejected": true,
+    "lifecycle_transitions_enforced": true,
+    "no_decision_without_reconciliation": true,
+    "no_execution_without_task": true,
+    "no_silent_obligation_drop": true,
+    "single_control_plane_class": true,
+    "stub_adapter_registered_as_executable": true,
+    "unsupported_evidence_kind_rejected": true
+  },
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "live_checks": {
+    "forbidden_transition_rejected": true,
+    "unsupported_kind_rejected_by_dispatch": true
+  },
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/governance-invariant-acceptance@1"
+}

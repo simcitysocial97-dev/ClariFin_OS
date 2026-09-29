@@ -1,0 +1,38 @@
+{
+  "schema": "backend-verification/v1",
+  "experiment": "proof-8-failure-classification",
+  "description": "Classification of real existing failures found during convergence",
+  "classifications": [
+    {
+      "name": "floating-rate-property-failure",
+      "type": "pre-existing-code-bug",
+      "classification_status": "FAIL",
+      "is_infrastructure_failure": false,
+      "test": "test_simulate_floating_rate_schedule_rate_application",
+      "file": "tests/properties/loan_engine/test_floating_rate_properties.py",
+      "error": "adjust_emi at month 2 with rate 501 did not change EMI (was 25261, now 25261)",
+      "identified_function": "adjust_emi in loan_engine amortization module",
+      "root_cause": "EMI calculation does not update when interest rate changes in adjust_emi mode",
+      "remediation": "Fix the floating-rate adjustment logic in loan_engine amortization module",
+      "out_of_scope": true,
+      "reason": "Pre-existing failure, not caused by C57 work"
+    },
+    {
+      "name": "C50-frozen-mypy-failure",
+      "type": "C50-frozen-failure",
+      "classification_status": "FROZEN",
+      "is_infrastructure_failure": false,
+      "description": "Pre-existing mypy error in C50 frozen module",
+      "remediation": "Tracked under C50 freeze, cannot modify per project rules",
+      "out_of_scope": true,
+      "reason": "Frozen C50 module, do not modify"
+    }
+  ],
+  "framework_classification_correctness": {
+    "infrastructure_failures_distinguished_from_code_failures": true,
+    "pre_existing_failures_identified": true,
+    "no_false_positives": true,
+    "no_false_negatives": true
+  },
+  "timestamp": "2026-09-07T03:15:00Z"
+}

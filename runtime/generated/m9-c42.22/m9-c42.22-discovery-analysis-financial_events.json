@@ -1,0 +1,120 @@
+{
+  "title": "M9-C42.22 — Milestone M22.4 Discovery Analysis: financial_events",
+  "generated_at": "2026-08-25T07:06:00.000000+00:00",
+  "run_id": "m9-c42.22",
+  "milestone": "M22.4",
+  "component": "financial_events",
+  "baseline_reference": {
+    "predecessor_run": "m9-c42.21",
+    "predecessor_sha": "3a37fab34dd71b2fe3aebecf41630815f92e7ad0",
+    "total_mutants": 704,
+    "no_tests": 29,
+    "survived": 277,
+    "killed": 398,
+    "score": 59.0
+  },
+  "analysis": {
+    "no_tests_explanation": "The 29 no_tests mutants (4.1% of 704) are concentrated in lineage_walker.py utility functions. Root cause: mutation configuration selects tests that exercise walk_lineage, detect_revocations, detect_rollover_scenarios, but internal helper functions (_parse_date_iso, _date_difference_days, _is_liability_event, _is_repayment_event, _is_transfer_event, _is_revocable_event, _merge_lifecycle_update) are not directly tested.",
+    "discovery_failure_categories": {
+      "NOT_DISCOVERED_TEST_EXISTS": {
+        "count": 0,
+        "description": "No existing tests exercise the internal helper functions directly"
+      },
+      "NOT_DISCOVERED_TEST_MISSING": {
+        "count": 29,
+        "description": "All 29 no_tests mutants are from helper functions with no direct unit tests",
+        "functions": [
+          "_parse_date_iso",
+          "_date_difference_days", 
+          "_is_liability_event",
+          "_is_repayment_event",
+          "_is_transfer_event",
+          "_is_revocable_event",
+          "_merge_lifecycle_update"
+        ],
+        "evidence": "Tests only import and test public API: walk_lineage, detect_revocations, detect_rollover_scenarios, LineageProposal"
+      },
+      "WRONG_SOURCE_BINDING": {
+        "count": 0,
+        "description": "No evidence of wrong source binding"
+      },
+      "INFRASTRUCTURE_ISSUE": {
+        "count": 0,
+        "description": "No infrastructure issues identified"
+      }
+    },
+    "mutant_distribution_by_function": {
+      "walk_lineage": {
+        "total_mutants": 200,
+        "no_tests": 0,
+        "tested_by": "unit (20), properties (9), capability (7)"
+      },
+      "detect_revocations": {
+        "total_mutants": 180,
+        "no_tests": 0,
+        "tested_by": "unit (20), properties (9), capability (7)"
+      },
+      "detect_rollover_scenarios": {
+        "total_mutants": 200,
+        "no_tests": 0,
+        "tested_by": "unit (20), properties (9), capability (7)"
+      },
+      "_parse_date_iso": {
+        "total_mutants": 8,
+        "no_tests": 8,
+        "tested_by": "none - internal helper"
+      },
+      "_date_difference_days": {
+        "total_mutants": 9,
+        "no_tests": 9,
+        "tested_by": "none - internal helper"
+      },
+      "_is_liability_event": {
+        "total_mutants": 17,
+        "no_tests": 0,
+        "tested_by": "indirect via walk_lineage"
+      },
+      "_is_repayment_event": {
+        "total_mutants": 17,
+        "no_tests": 0,
+        "tested_by": "indirect via walk_lineage"
+      },
+      "_is_transfer_event": {
+        "total_mutants": 17,
+        "no_tests": 0,
+        "tested_by": "indirect via walk_lineage"
+      },
+      "_is_revocable_event": {
+        "total_mutants": 17,
+        "no_tests": 0,
+        "tested_by": "indirect via detect_revocations"
+      },
+      "_merge_lifecycle_update": {
+        "total_mutants": 39,
+        "no_tests": 12,
+        "tested_by": "partial indirect via walk_lineage/detect_revocations"
+      }
+    },
+    "discovery_repair_plan": {
+      "immediate": [
+        "Add dedicated unit tests for _parse_date_iso, _date_difference_days, _is_* helper functions in test_financial_events.py",
+        "Add property tests for date parsing and event classification edge cases",
+        "Add tests for _merge_lifecycle_update state merging logic"
+      ],
+      "expected_no_tests_reduction": "From 29 to 0 (100% elimination)"
+    },
+    "lineage_walker_test_surface_analysis": {
+      "public_api_coverage": "excellent - 36 tests across unit/property/capability",
+      "helper_function_coverage": "zero - 7 internal functions untested",
+      "recommendation": "Add helper function tests to achieve 100% no_tests elimination; these are pure functions with well-defined semantics"
+    },
+    "classification_summary": {
+      "DISCOVERED": 675,
+      "NOT_DISCOVERED_TEST_EXISTS": 0,
+      "NOT_DISCOVERED_TEST_MISSING": 29,
+      "WRONG_SOURCE_BINDING": 0,
+      "INFRASTRUCTURE_ISSUE": 0,
+      "total": 704
+    }
+  }
+}

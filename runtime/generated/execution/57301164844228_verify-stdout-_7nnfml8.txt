@@ -1,0 +1,71 @@
+>> lint: npx eslint . --ext .ts,.tsx --quiet
+<< lint: pass (exit=0, 26s)
+>> typecheck: npx tsc --noEmit
+<< typecheck: pass (exit=0, 6s)
+>> build: npm run build
+
+> nextjs-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/vasantha/AI-Projects/ClariFin_OS/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/vasantha/AI-Projects/ClariFin_OS/frontend/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 21.1s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/17) ...
+  Generating static pages using 3 workers (4/17) 
+  Generating static pages using 3 workers (8/17) 
+  Generating static pages using 3 workers (12/17) 
+✓ Generating static pages using 3 workers (17/17) in 885.9ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /accounts
+├ ○ /behaviour
+├ ○ /cards
+├ ○ /cashflow
+├ ○ /command-center
+├ ○ /dashboard
+├ ○ /forecast
+├ ○ /investments
+├ ○ /loans
+├ ○ /net-worth
+├ ○ /reconciliation
+├ ○ /settings
+└ ○ /transactions
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+<< build: pass (exit=0, 49s)
+>> test: npx vitest run
+vitest config loaded from: /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+ RUN  v4.1.10 /home/vasantha/AI-Projects/ClariFin_OS/frontend
+
+Not implemented: navigation to another Document
+
+ Test Files  92 passed (92)
+      Tests  1237 passed (1237)
+   Start at  13:49:52
+   Duration  88.59s (transform 4.05s, setup 40.24s, import 22.31s, tests 23.62s, environment 143.82s)
+
+<< test: pass (exit=0, 90s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/frontend-verification.json
+  lint       pass  exit=0 26s
+  typecheck  pass  exit=0 6s
+  build      pass  exit=0 49s
+  test       pass  exit=0 90s

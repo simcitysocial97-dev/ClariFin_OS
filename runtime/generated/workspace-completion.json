@@ -1,0 +1,113 @@
+{
+  "schema": "workspace-completion/v1",
+  "generated_at": "2026-08-06T16:43:15.581496Z",
+  "program": "18.0",
+  "total_gaps": 9,
+  "summary": {
+    "missing_capability": 9,
+    "missing_router": 9,
+    "frontend_exists": 8,
+    "implementation_status_missing": 1
+  },
+  "workspaces": [
+    {
+      "workspace": "__tests__",
+      "frontend_exists": false,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "missing",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "cashflow",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "command-center",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "dashboard",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "forecast",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "investments",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "net-worth",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "settings",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    },
+    {
+      "workspace": "transactions",
+      "frontend_exists": true,
+      "missing_capability": true,
+      "missing_router": true,
+      "missing_ownership": true,
+      "missing_verification": true,
+      "implementation_status": "incomplete",
+      "action_required": "create_capability",
+      "evidence": "cross-layer-map.json"
+    }
+  ]
+}

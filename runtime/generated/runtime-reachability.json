@@ -1,0 +1,324 @@
+{
+  "schema": "runtime-reachability/v1",
+  "generated_at": "2026-08-06T16:13:48.476389+00:00",
+  "program": "16.0",
+  "guaranteed_reachable": [
+    {
+      "id": "engine:account_engine",
+      "path": "engines/account_engine/__init__.py",
+      "style": "package",
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "endpoints": 25,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useAccountsCapability']"
+    },
+    {
+      "id": "engine:behaviour_engine",
+      "path": "engines/behaviour_engine/__init__.py",
+      "style": "package",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "endpoints": 11,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useBehaviourCapability']"
+    },
+    {
+      "id": "engine:credit_card_engine",
+      "path": "engines/credit_card_engine/__init__.py",
+      "style": "package",
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "endpoints": 14,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useCreditCardsCapability']"
+    },
+    {
+      "id": "engine:loan_engine",
+      "path": "engines/loan_engine/__init__.py",
+      "style": "package",
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "endpoints": 13,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useLoansCapability']"
+    },
+    {
+      "id": "engine:recommendation_engine",
+      "path": "engines/recommendation_engine/__init__.py",
+      "style": "package",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "endpoints": 14,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useBehaviourCapability']"
+    },
+    {
+      "id": "engine:reconciliation_engine",
+      "path": "engines/reconciliation_engine.py",
+      "style": "single_file",
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "endpoints": 6,
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json capabilities=['useReconciliationCapability']"
+    }
+  ],
+  "conditionally_reachable": [
+    {
+      "id": "engine:financial_events",
+      "path": "engines/financial_events/__init__.py",
+      "style": "package",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:financial_intelligence",
+      "path": "engines/financial_intelligence/__init__.py",
+      "style": "package",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:transaction_intelligence",
+      "path": "engines/transaction_intelligence/__init__.py",
+      "style": "package",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:balance_engine",
+      "path": "engines/balance_engine.py",
+      "style": "single_file",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:insight_generator",
+      "path": "engines/insight_generator.py",
+      "style": "single_file",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:ledger_audit_engine",
+      "path": "engines/ledger_audit_engine.py",
+      "style": "single_file",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    },
+    {
+      "id": "engine:nudge_engine",
+      "path": "engines/nudge_engine.py",
+      "style": "single_file",
+      "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
+    }
+  ],
+  "never_reachable": [
+    {
+      "id": "engine:insight_generator",
+      "path": "engines/insight_generator.py",
+      "style": "single_file",
+      "reason": "ORPHAN_INTERNAL engine with no capability, no router, no service. Only reachable via direct Python import.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows 0 services/routers/endpoints/capabilities"
+    },
+    {
+      "id": "engine:nudge_engine",
+      "path": "engines/nudge_engine.py",
+      "style": "single_file",
+      "reason": "ORPHAN_INTERNAL engine with no capability, no router, no service. Only reachable via direct Python import.",
+      "confidence": "HIGH",
+      "evidence": "engine-topology.json shows 0 services/routers/endpoints/capabilities"
+    },
+    {
+      "id": "parked:behavior_engine",
+      "path": "backend/src/engines/behavior_engine.py",
+      "style": "single_file",
+      "reason": "PARKED legacy engine.",
+      "confidence": "HIGH",
+      "evidence": "engine-normalization.json engines.{name}"
+    },
+    {
+      "id": "parked:cashflow_engine",
+      "path": "backend/src/engines/cashflow_engine.py.parked",
+      "style": "single_file",
+      "reason": "PARKED legacy engine.",
+      "confidence": "HIGH",
+      "evidence": "engine-normalization.json engines.{name}"
+    },
+    {
+      "id": "router:backend/src/routers/financial_events.py",
+      "path": "backend/src/routers/financial_events.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/financial_events.py"
+    },
+    {
+      "id": "router:backend/src/routers/export.py",
+      "path": "backend/src/routers/export.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/export.py"
+    },
+    {
+      "id": "router:backend/src/routers/reconciliation_workspace.py",
+      "path": "backend/src/routers/reconciliation_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/reconciliation_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/health.py",
+      "path": "backend/src/routers/health.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/health.py"
+    },
+    {
+      "id": "router:backend/src/routers/__init__.py",
+      "path": "backend/src/routers/__init__.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/__init__.py"
+    },
+    {
+      "id": "router:backend/src/routers/cashflow.py",
+      "path": "backend/src/routers/cashflow.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/cashflow.py"
+    },
+    {
+      "id": "router:backend/src/routers/cashflow_workspace.py",
+      "path": "backend/src/routers/cashflow_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/cashflow_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/loans_workspace.py",
+      "path": "backend/src/routers/loans_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/loans_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/investments_workspace.py",
+      "path": "backend/src/routers/investments_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/investments_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/investments.py",
+      "path": "backend/src/routers/investments.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/investments.py"
+    },
+    {
+      "id": "router:backend/src/routers/forecast.py",
+      "path": "backend/src/routers/forecast.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/forecast.py"
+    },
+    {
+      "id": "router:backend/src/routers/credit_cards_workspace.py",
+      "path": "backend/src/routers/credit_cards_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/credit_cards_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/banks.py",
+      "path": "backend/src/routers/banks.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/banks.py"
+    },
+    {
+      "id": "router:backend/src/routers/networth.py",
+      "path": "backend/src/routers/networth.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/networth.py"
+    },
+    {
+      "id": "router:backend/src/routers/cards_statements.py",
+      "path": "backend/src/routers/cards_statements.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/cards_statements.py"
+    },
+    {
+      "id": "router:backend/src/routers/behaviour_workspace.py",
+      "path": "backend/src/routers/behaviour_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/behaviour_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/transactions.py",
+      "path": "backend/src/routers/transactions.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/transactions.py"
+    },
+    {
+      "id": "router:backend/src/routers/networth_workspace.py",
+      "path": "backend/src/routers/networth_workspace.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/networth_workspace.py"
+    },
+    {
+      "id": "router:backend/src/routers/members.py",
+      "path": "backend/src/routers/members.py",
+      "style": "router",
+      "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+      "confidence": "HIGH",
+      "evidence": "execution-graph.json has no node for backend/src/routers/members.py"
+    }
+  ],
+  "unknown": [],
+  "summary": {
+    "guaranteed": 6,
+    "conditional": 7,
+    "never": 23,
+    "unknown": 0
+  }
+}

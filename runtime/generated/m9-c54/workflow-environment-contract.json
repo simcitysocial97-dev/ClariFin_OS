@@ -1,0 +1,67 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "parameters": [
+    {
+      "parameter": "python_version",
+      "value": "3.12",
+      "source": "bootstrap-runtime action input",
+      "notes": "All workflows use the same Python version via composite action"
+    },
+    {
+      "parameter": "node_version",
+      "value": "24",
+      "source": "setup-node-runtime action input",
+      "notes": "All workflows use the same Node version via composite action"
+    },
+    {
+      "parameter": "os",
+      "value": "ubuntu-latest",
+      "source": "runs-on field",
+      "notes": "All jobs run on ubuntu-latest"
+    },
+    {
+      "parameter": "shell",
+      "value": "bash",
+      "source": "shell: bash declarations",
+      "notes": "Bash is the standard shell"
+    },
+    {
+      "parameter": "package_manager_pip",
+      "value": "pip (via .venv)",
+      "source": "bootstrap-runtime action",
+      "notes": "Root pyproject.toml is the single dependency authority"
+    },
+    {
+      "parameter": "package_manager_npm",
+      "value": "npm ci",
+      "source": "setup-node-runtime action",
+      "notes": "npm ci used for reproducible frontend installs"
+    },
+    {
+      "parameter": "lockfiles",
+      "value": "pyproject.toml + package-lock.json",
+      "source": "repository root + frontend/",
+      "notes": "Lockfiles exist for both Python and Node"
+    },
+    {
+      "parameter": "mutation_tooling",
+      "value": "mutmut 3.7.0",
+      "source": "root pyproject.toml",
+      "notes": "Pinned version in root dependency authority"
+    },
+    {
+      "parameter": "cache_state",
+      "value": "actions/cache via bootstrap-runtime",
+      "source": "composite action",
+      "notes": "Caching is centralized in the bootstrap-runtime action"
+    },
+    {
+      "parameter": "generated_artifacts",
+      "value": "runtime/generated/",
+      "source": "verify.py output paths",
+      "notes": "All verification artifacts written under runtime/generated/"
+    }
+  ]
+}

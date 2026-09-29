@@ -1,0 +1,337 @@
+{
+  "schema": "m9-c43-test-generation/v1",
+  "batch_id": "gen::b4cc3be198e3",
+  "generated_at": "2026-08-27T02:06:54.206126+00:00",
+  "source_evidence": {
+    "kind": "coverage_gaps",
+    "path": "backend/tests/generated/raw-coverage.json",
+    "component": "behaviour_risk_layer",
+    "target_files": [
+      "src/engines/behaviour_engine/insights.py",
+      "src/engines/behaviour_engine/core.py",
+      "src/engines/behaviour_engine/stress.py",
+      "src/engines/behaviour_engine/nudges.py",
+      "src/engines/behaviour_engine/profile.py",
+      "src/engines/behaviour_engine/patterns.py",
+      "src/services/behaviour_service.py"
+    ]
+  },
+  "proposals": [
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::92b4ab14b8d0",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/insights.py (missing lines: 60)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/insights.py::60",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/insights.py:33",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "60 uncovered line(s), 47 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/insights.py is consequential: 107 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_92b4ab14b8d0.py",
+      "proposed_test": "def test_92b4ab14b8d0_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/insights.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::2f45227f5357",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/core.py (missing lines: 52)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/core.py::52",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/core.py:145",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "52 uncovered line(s), 34 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/core.py is consequential: 86 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_2f45227f5357.py",
+      "proposed_test": "def test_2f45227f5357_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/core.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::73df7d6ae889",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/stress.py (missing lines: 12)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/stress.py::12",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/stress.py:63",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "12 uncovered line(s), 23 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/stress.py is consequential: 35 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_73df7d6ae889.py",
+      "proposed_test": "def test_73df7d6ae889_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/stress.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::c14b3223fc4f",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/nudges.py (missing lines: 23)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/nudges.py::23",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/nudges.py:37",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "23 uncovered line(s), 23 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/nudges.py is consequential: 46 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_c14b3223fc4f.py",
+      "proposed_test": "def test_c14b3223fc4f_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/nudges.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::e98b7b3c2469",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/profile.py (missing lines: 28)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/profile.py::28",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/profile.py:106",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "28 uncovered line(s), 27 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/profile.py is consequential: 55 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_e98b7b3c2469.py",
+      "proposed_test": "def test_e98b7b3c2469_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/profile.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::0dc0f6e4ba4a",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/engines/behaviour_engine/patterns.py (missing lines: 15)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/engines/behaviour_engine/patterns.py::15",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/engines/behaviour_engine/patterns.py:27",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "15 uncovered line(s), 12 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/engines/behaviour_engine/patterns.py is consequential: 27 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_0dc0f6e4ba4a.py",
+      "proposed_test": "def test_0dc0f6e4ba4a_covers_missing_behavior():\n    # Exercises the uncovered surface of src/engines/behaviour_engine/patterns.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    },
+    {
+      "schema": "m9-strengthening-proposal/v1",
+      "proposal_id": "prop::6885612b052b",
+      "component": "behaviour_risk_layer",
+      "capability": "pattern_analysis",
+      "source_location": "src/services/behaviour_service.py (missing lines: 55)",
+      "survivor_evidence": {
+        "survivor_id": "covgap::src/services/behaviour_service.py::55",
+        "component": "behaviour_risk_layer",
+        "capability": "pattern_analysis",
+        "location": "src/services/behaviour_service.py:339",
+        "mutation_operator": "uncovered_behavior",
+        "original_snippet": "55 uncovered line(s), 19 uncovered branch(es)",
+        "mutated_snippet": "",
+        "status": "survived",
+        "notes": "",
+        "covering_tests": []
+      },
+      "classification": "A",
+      "behavioral_hypothesis": "uncovered behavior at src/services/behaviour_service.py is consequential: 74 statement/branch items are reachable by no test, so mutations there cannot be detected",
+      "expected_invariant": "new tests execute the missing lines AND assert their outcomes (coverage without assertion is rejected at the targeted-mutation gate)",
+      "proposed_test_surface": "backend/tests/unit/engines/behaviour_risk_layer/test_coverage_gap_6885612b052b.py",
+      "proposed_test": "def test_6885612b052b_covers_missing_behavior():\n    # Exercises the uncovered surface of src/services/behaviour_service.py; assertions must be evidence-derived.\n    ...\n",
+      "reason": "coverage-gap evidence: reachable behavior with zero test reach; required before mutation campaigns can see these mutants at all",
+      "expected_mutation_discrimination": "previously un-generatable mutants in this surface become generated AND scored; acceptance requires kills, not coverage alone",
+      "regression_risk": "low",
+      "validation_command": ".venv/bin/python -m pytest backend/tests/unit/engines/behaviour_risk_layer -q",
+      "acceptance_criteria": [
+        "missing lines decrease by exercising real behavior",
+        "assertions discriminate (targeted mutation shows kills)",
+        "no production source modified"
+      ]
+    }
+  ],
+  "rejections": [],
+  "candidates": [
+    {
+      "candidate_id": "e149db7b7592",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/insights.py",
+      "module_under_test": "src/engines/behaviour_engine/insights.py",
+      "import_target": "engines.behaviour_engine.insights",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 33)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate e149db7b7592 \u2014 evidence: coverage gap src/engines/behaviour_engine/insights.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.insights as target_mod  # engines.behaviour_engine.insights\n\n\ndef test_e149db7b7592_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/insights.py:33\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "3029fa83893b",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/core.py",
+      "module_under_test": "src/engines/behaviour_engine/core.py",
+      "import_target": "engines.behaviour_engine.core",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 145)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 3029fa83893b \u2014 evidence: coverage gap src/engines/behaviour_engine/core.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.core as target_mod  # engines.behaviour_engine.core\n\n\ndef test_3029fa83893b_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/core.py:145\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "5a94fa0041dd",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/stress.py",
+      "module_under_test": "src/engines/behaviour_engine/stress.py",
+      "import_target": "engines.behaviour_engine.stress",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 63)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 5a94fa0041dd \u2014 evidence: coverage gap src/engines/behaviour_engine/stress.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.stress as target_mod  # engines.behaviour_engine.stress\n\n\ndef test_5a94fa0041dd_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/stress.py:63\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "67a8e8d347a0",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/nudges.py",
+      "module_under_test": "src/engines/behaviour_engine/nudges.py",
+      "import_target": "engines.behaviour_engine.nudges",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 37)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 67a8e8d347a0 \u2014 evidence: coverage gap src/engines/behaviour_engine/nudges.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.nudges as target_mod  # engines.behaviour_engine.nudges\n\n\ndef test_67a8e8d347a0_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/nudges.py:37\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "caf886106564",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/profile.py",
+      "module_under_test": "src/engines/behaviour_engine/profile.py",
+      "import_target": "engines.behaviour_engine.profile",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 106)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate caf886106564 \u2014 evidence: coverage gap src/engines/behaviour_engine/profile.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.profile as target_mod  # engines.behaviour_engine.profile\n\n\ndef test_caf886106564_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/profile.py:106\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "8e466e9ee6f9",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/engines/behaviour_engine/patterns.py",
+      "module_under_test": "src/engines/behaviour_engine/patterns.py",
+      "import_target": "engines.behaviour_engine.patterns",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 27)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate 8e466e9ee6f9 \u2014 evidence: coverage gap src/engines/behaviour_engine/patterns.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport engines.behaviour_engine.patterns as target_mod  # engines.behaviour_engine.patterns\n\n\ndef test_8e466e9ee6f9_discriminates():\n    \"\"\"Target: src/engines/behaviour_engine/patterns.py:27\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    },
+    {
+      "candidate_id": "e12872de6285",
+      "evidence_kind": "coverage_gap",
+      "evidence_ref": "raw-coverage.json::src/services/behaviour_service.py",
+      "module_under_test": "src/services/behaviour_service.py",
+      "import_target": "services.behaviour_service",
+      "input_derivation": "drive the public surface along paths reaching the missing lines (first missing line: 339)",
+      "assertion_form": "INVARIANT",
+      "assertion_hint": "assert observable outcomes/conservation laws of the surface \u2014 never implementation-derived values",
+      "code": "\"\"\"Generated candidate e12872de6285 \u2014 evidence: coverage gap src/services/behaviour_service.py.\n\nM9-C43.5: this skeleton was produced by the evidence-driven test\ngenerator. It is NOT accepted evidence on its own: it requires\nhuman authorization (m9-c43-strengthening-record.json approval\nentry) and must prove behavioral discrimination (targeted mutation\ntransition) before acceptance. Expected values must never be\ncopied from the implementation under test.\n\"\"\"\n\nimport pytest\n\nimport services.behaviour_service as target_mod  # services.behaviour_service\n\n\ndef test_e12872de6285_discriminates():\n    \"\"\"Target: src/services/behaviour_service.py:339\n\n    Input derivation: drive public surface to missing lines\n    Assertion: invariant/conservation assertions\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    }
+  ],
+  "counts": {
+    "proposals": 7,
+    "rejections": 0,
+    "candidates": 7
+  }
+}

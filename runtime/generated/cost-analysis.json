@@ -1,0 +1,128 @@
+{
+  "Planning": {
+    "phase": "Planning",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  },
+  "Execution": {
+    "phase": "Execution",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  },
+  "Aggregation": {
+    "phase": "Aggregation",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  },
+  "Report generation": {
+    "phase": "Report generation",
+    "local": {
+      "total_seconds": 0.05,
+      "runs": 1,
+      "avg_seconds": 0.05
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.05,
+      "runs": 1,
+      "avg_seconds": 0.05
+    }
+  },
+  "Cache lookup": {
+    "phase": "Cache lookup",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  },
+  "Evidence generation": {
+    "phase": "Evidence generation",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  },
+  "Cross-layer analysis": {
+    "phase": "Cross-layer analysis",
+    "local": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "ci": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    },
+    "combined": {
+      "total_seconds": 0.0,
+      "runs": 0,
+      "avg_seconds": 0.0
+    }
+  }
+}

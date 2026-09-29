@@ -1,0 +1,238 @@
+{
+  "schema": "architectural-drift/v1",
+  "generated_at": "2026-08-06T16:30:15.360110Z",
+  "program": "17.0",
+  "summary": {
+    "total_drifts": 32,
+    "intentional": 0,
+    "temporary": 0,
+    "accidental": 9,
+    "legacy": 23
+  },
+  "drifts": [
+    {
+      "path": "backend/src/engines/balance_engine.py",
+      "type": "legacy",
+      "severity": "MEDIUM",
+      "description": "Single-file engine balance_engine.py instead of package structure",
+      "recommendation": "Migrate to package structure"
+    },
+    {
+      "path": "backend/src/engines/insight_generator.py",
+      "type": "legacy",
+      "severity": "MEDIUM",
+      "description": "Single-file engine insight_generator.py instead of package structure",
+      "recommendation": "Migrate to package structure"
+    },
+    {
+      "path": "backend/src/engines/ledger_audit_engine.py",
+      "type": "legacy",
+      "severity": "MEDIUM",
+      "description": "Single-file engine ledger_audit_engine.py instead of package structure",
+      "recommendation": "Migrate to package structure"
+    },
+    {
+      "path": "backend/src/engines/nudge_engine.py",
+      "type": "legacy",
+      "severity": "MEDIUM",
+      "description": "Single-file engine nudge_engine.py instead of package structure",
+      "recommendation": "Migrate to package structure"
+    },
+    {
+      "path": "backend/src/routers/financial_events.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/export.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/reconciliation_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/health.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/__init__.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/cashflow.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/cashflow_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/loans_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/investments_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/investments.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/forecast.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/credit_cards_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/banks.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/networth.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/cards_statements.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/behaviour_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/transactions.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/networth_workspace.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "backend/src/routers/members.py",
+      "type": "legacy",
+      "severity": "LOW",
+      "description": "Router registered but never reached by any capability",
+      "recommendation": "Remove or wire to capability"
+    },
+    {
+      "path": "frontend/app/settings/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace settings has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/command-center/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace command-center has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/investments/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace investments has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/dashboard/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace dashboard has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/cashflow/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace cashflow has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/forecast/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace forecast has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/__tests__/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace __tests__ has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/transactions/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace transactions has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    },
+    {
+      "path": "frontend/app/net-worth/",
+      "type": "accidental",
+      "severity": "MEDIUM",
+      "description": "Frontend workspace net-worth has no backend capability owner",
+      "recommendation": "Assign capability or remove frontend workspace"
+    }
+  ]
+}

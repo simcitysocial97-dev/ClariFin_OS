@@ -1,0 +1,60 @@
+{
+  "schema": "m9-c50/post-closure/phase-reconciliation@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Reconcile the execution record against the 79-section governing document and identify phase-level discrepancies.",
+  "governing_document": "runtime/generated/m9-c50/GUIDING_DOCUMENT.md",
+  "executing_phases_documented_in_execution_progress": [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12],
+  "executing_phases_required_by_guiding_document": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  "missing_phase_documentation": {
+    "phase": 5,
+    "title": "PHASE 5 — EVIDENCE / CACHE / RECONCILIATION CONVERGENCE",
+    "guiding_document_lines": "1510-1551",
+    "status_in_record": "ABSENT from EXECUTION_PROGRESS.md phase narrative",
+    "evidence_present": true,
+    "evidence_path": "runtime/generated/m9-c50/phase-5/stop-gate5-evidence.json",
+    "evidence_sha256": "ec05181f269d5fd21749980457af81d9bfc59525ba44fe57112a1a93eff5e393",
+    "evidence_generated_at": "2026-09-04T13:01:59.177149+00:00",
+    "test_suite_path": "runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py",
+    "test_suite_sha256": "40f6c9befaa8858905470160cfe3949837b349ac72a11ada65e0fb060c72d7c6",
+    "execution_state_references": [
+      "execution-state.json line 13: stop_gate_5 PASSED",
+      "execution-state.json line 57-60: phase_5_evidence_artifacts"
+    ],
+    "reconciliation": "Phase 5 WORK was executed (gate suite present, evidence JSON present, evidence-generated timestamp pre-dates Phase 6). Phase 5 NARRATIVE was not appended to EXECUTION_PROGRESS.md. The execution record is therefore INCOMPLETE — phase count is 11 documented, 13 phases attested in execution_state (0+12). The execution-state.json claims 13 stop gates passed; EXECUTION_PROGRESS.md only documents 11 phases (skipping Phase 5 and the implicit numbering gap that produced a Phase 5→6 jump in the narrative).",
+    "downstream_phases_that_implicitly_assume_phase_5": [
+      {
+        "phase": 6,
+        "claim": "mutation evidence enters common evidence model (closed EVIDENCE_KINDS)",
+        "depends_on_phase_5": "evidence trust gate — Phase 5 establishes evidence trustworthiness precondition that Phase 6 builds upon"
+      },
+      {
+        "phase": 9,
+        "claim": "stale evidence → INVALIDATED (cache invalidation)",
+        "depends_on_phase_5": "Phase 5 explicitly tests stale evidence rejection; Phase 9 reuses the same cache invariants"
+      },
+      {
+        "phase": 11,
+        "claim": "stale evidence is rejected / reused evidence is explicitly classified",
+        "depends_on_phase_5": "operational scenarios 12-14 invoke cache invalidation logic that is canonicalized only in Phase 5"
+      },
+      {
+        "phase": 12,
+        "claim": "evidence governance — closed EVIDENCE_KINDS, cache invalidation, obligation reconciliation",
+        "depends_on_phase_5": "Phase 12 governance tests assert Phase-5-establish invariants"
+      }
+    ],
+    "disposition": "EVIDENCE/GOVERNANCE DEFECT — not an implementation defect. The Phase 5 work was performed and tested (stop-gate5-evidence.json SHA matches on-disk file, gate test suite SHA matches). The defect is missing narrative in EXECUTION_PROGRESS.md. This must be remediated by appending a Phase 5 narrative section before any completion claim is defensible."
+  },
+  "stop_gate_discrepancies": {
+    "execution_state_stop_gates_passed": 13,
+    "execution_progress_phases_documented": 11,
+    "execution_progress_stop_gates_documented": [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12],
+    "execution_progress_missing_narrative_for": [5],
+    "verdict": "INCONSISTENT — execution_state.json asserts PASS for all 13 stop gates, but only 11 are narrated in EXECUTION_PROGRESS.md. Stop Gate 5 has no narrative section."
+  },
+  "phase0_working_tree_claim_verification": {
+    "phase_0_claim": "Working tree: DIRTY (44 changed/deleted/untracked files)",
+    "current_git_status_count": 87,
+    "reconciliation": "Phase 0 captured the count at start of C50 execution. Current count of 87 reflects accumulated uncommitted C50 work plus pre-existing items. The 44 figure is stale and the report still reproduces it as the current state."
+  }
+}

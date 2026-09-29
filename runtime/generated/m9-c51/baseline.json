@@ -1,0 +1,10 @@
+{
+  "schema": "m9-c51-baseline/v1",
+  "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+  "generated_at": "2026-08-31T17:30:00+00:00",
+  "catalog_capabilities": 44,
+  "catalog_profiles": 13,
+  "graph_nodes": 44,
+  "graph_edges": 20,
+  "pipeline_spine_valid": true
+}

@@ -1,0 +1,391 @@
+{
+  "schema": "m9-c49-execution-plan/v1",
+  "plan_id": "execplan-6fa1f7f48106",
+  "source_plan_id": "f007ce514f17",
+  "repository_fingerprint": {
+    "repository_sha": "b8914c4333c48d36d9db2805c04d8775bedba86a",
+    "working_tree_hash": "91a1ec157f27eecddc8b0e341ea9f653eb3558d106eedb42a0e1dd74332abe91",
+    "config_hash": "4fc8aeb80405c4edb8b7395ae392d55cc647f6db69dbf8e57cc4b7c32d01466c",
+    "toolchain_hash": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+    "fingerprint": "2edffd341b11f3719eaf16ae8c1afc4cad8bf3b333eb0d62c3823835dccdf479"
+  },
+  "changed_files": [
+    "backend/src/engines/loan_engine/amortization.py"
+  ],
+  "affected_capabilities": [
+    "api-contracts",
+    "loan-engine"
+  ],
+  "affected_components": [
+    "loan_engine"
+  ],
+  "invalidated_evidence": [],
+  "reusable_evidence": [
+    "credit_card_engine",
+    "account_engine",
+    "loan_engine",
+    "reconciliation_engine",
+    "behaviour_engine",
+    "balance_engine",
+    "ledger_audit_engine",
+    "cashflow_engine",
+    "financial_events",
+    "core_domain_money",
+    "common_calculations",
+    "recommendation_engine",
+    "transaction_intelligence",
+    "financial_intelligence"
+  ],
+  "tasks": [
+    {
+      "task_id": "exec-0001",
+      "source_task_id": "api-contracts::task-0003",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts",
+        "loan-engine"
+      ],
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "profile": "backend",
+      "scope": "backend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change (serves: api-contracts, loan-engine)",
+      "origin": "control_plane",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "depends_on": [],
+      "expected_evidence": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 600,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 300,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0002",
+      "source_task_id": "api-contracts::task-0001",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts",
+        "loan-engine"
+      ],
+      "verification_kind": "contract",
+      "command": "bash .github/scripts/run_contract_tests.sh",
+      "profile": "contracts",
+      "scope": "contracts",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change (serves: api-contracts, loan-engine)",
+      "origin": "control_plane",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "depends_on": [],
+      "expected_evidence": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 360,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 180,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0003",
+      "source_task_id": "api-contracts::task-0002",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts"
+      ],
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_frontend_verification.sh",
+      "profile": "frontend",
+      "scope": "frontend",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change (serves: api-contracts)",
+      "origin": "control_plane",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "depends_on": [],
+      "expected_evidence": [],
+      "measurement_required": [
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 360,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 180,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0004",
+      "source_task_id": "loan-engine::task-0007",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "verification_kind": "unit",
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "profile": "run_fast_checks",
+      "scope": "run_fast_checks",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change (serves: loan-engine)",
+      "origin": "control_plane",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "depends_on": [],
+      "expected_evidence": [],
+      "measurement_required": [
+        "mutation",
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 3600,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 60,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0005",
+      "source_task_id": "loan-engine::task-0001",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "verification_kind": "property",
+      "command": "bash .github/scripts/run_property_tests.sh",
+      "profile": "property",
+      "scope": "property",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "Directly affected by change (serves: loan-engine)",
+      "origin": "control_plane",
+      "prerequisites": [
+        ".venv",
+        "backend/pyproject.toml"
+      ],
+      "depends_on": [],
+      "expected_evidence": [],
+      "measurement_required": [
+        "mutation",
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 600,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 300,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0006",
+      "source_task_id": "revalidate::api-contracts::coverage",
+      "primary_capability": "api-contracts",
+      "capabilities": [
+        "api-contracts"
+      ],
+      "verification_kind": "coverage",
+      "command": ".venv/bin/python runtime/verify.py measurement coverage backend/src --out /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/measurements/measurement-truth-api-contracts-coverage.json",
+      "profile": "coverage",
+      "scope": "coverage",
+      "is_mandatory": false,
+      "is_escalation": false,
+      "reason": "revalidation: api-contracts coverage evidence is stale",
+      "origin": "revalidation",
+      "prerequisites": [
+        ".venv",
+        "coverage"
+      ],
+      "depends_on": [],
+      "expected_evidence": [
+        "measurement_truth"
+      ],
+      "measurement_required": [
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 900,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 900,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0008",
+      "source_task_id": "revalidate::loan-engine::coverage",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "verification_kind": "coverage",
+      "command": ".venv/bin/python runtime/verify.py measurement coverage backend/src/engines/loan_engine --out /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/measurements/measurement-truth-loan-engine-coverage.json",
+      "profile": "coverage",
+      "scope": "coverage",
+      "is_mandatory": false,
+      "is_escalation": false,
+      "reason": "revalidation: loan-engine coverage evidence is stale",
+      "origin": "revalidation",
+      "prerequisites": [
+        ".venv",
+        "coverage"
+      ],
+      "depends_on": [],
+      "expected_evidence": [
+        "measurement_truth"
+      ],
+      "measurement_required": [
+        "coverage"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": false,
+      "timeout_seconds": 900,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 900,
+      "mutation_target": ""
+    },
+    {
+      "task_id": "exec-0007",
+      "source_task_id": "revalidate::loan-engine::mutation",
+      "primary_capability": "loan-engine",
+      "capabilities": [
+        "loan-engine"
+      ],
+      "verification_kind": "mutation",
+      "command": ".venv/bin/python runtime/verify.py mutation --target loan_engine --json",
+      "profile": "mutation",
+      "scope": "mutation",
+      "is_mandatory": true,
+      "is_escalation": false,
+      "reason": "revalidation: loan-engine mutation evidence is stale for certification",
+      "origin": "revalidation",
+      "prerequisites": [
+        ".venv",
+        "mutmut==3.7.0",
+        "git"
+      ],
+      "depends_on": [],
+      "expected_evidence": [
+        "mutation_score",
+        "survivor_intel"
+      ],
+      "measurement_required": [
+        "mutation"
+      ],
+      "escalation_conditions": [],
+      "authorization_required": true,
+      "timeout_seconds": 1200,
+      "failure_policy": "diagnose_then_stop",
+      "evidence_reused": [],
+      "evidence_invalidated": [],
+      "estimated_duration_seconds": 1200,
+      "mutation_target": "loan_engine"
+    }
+  ],
+  "escalation_conditions": [
+    "Capability api-contracts lacks measurement truth \u2014 authoritative mutation score cannot be certified"
+  ],
+  "measurement_requirements": [
+    {
+      "measurement_kind": "mutation",
+      "required_for_capabilities": [
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine"
+      ],
+      "authoritative_evidence_available": true,
+      "required_for_certification": true
+    },
+    {
+      "measurement_kind": "coverage",
+      "required_for_capabilities": [
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "api-contracts",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine",
+        "loan-engine"
+      ],
+      "authoritative_evidence_available": true,
+      "required_for_certification": true
+    }
+  ],
+  "certification_requirements": [
+    {
+      "capability": "loan-engine",
+      "condition_id": "cert::loan-engine::mutation",
+      "description": "Mutation score >= 80% with authoritative classification for Loan Engine",
+      "evidence_available": false,
+      "requires_authoritative_classification": true,
+      "minimum_mutation_score": 80.0,
+      "minimum_coverage_percent": null
+    }
+  ],
+  "rationale": "Plan built from C48 control-plane f007ce514f17 for 1 changed file(s). Selected 2 directly + 0 transitively affected capabilities. Mandatory tasks: 6; escalation tasks: 0; reusable measurements: 0; revalidation injections: 3. Mutation is a single capability among many; full mutation campaigns require explicit authorization. Stop-on-sufficiency rule applies: escalation tasks are skipped when all mandatory tasks are PASS or REUSED.",
+  "plan_fingerprint": "6fa1f7f48106a2741fc51a9023adbde2193818031a6e58403447b892cf5ead45",
+  "generated_at": "2026-08-31T10:12:23.674644+00:00",
+  "revalidation_sources": [
+    {
+      "capability": "api-contracts",
+      "kind": "coverage",
+      "reason": "record not certifiable",
+      "path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json"
+    },
+    {
+      "capability": "loan-engine",
+      "kind": "mutation",
+      "reason": "record not certifiable",
+      "path": "backend/tests/generated/mutation/measurement-truth-loan-engine.json"
+    },
+    {
+      "capability": "loan-engine",
+      "kind": "coverage",
+      "reason": "record not certifiable",
+      "path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json"
+    }
+  ],
+  "reusable_measurements": []
+}

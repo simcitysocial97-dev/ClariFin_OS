@@ -1,0 +1,224 @@
+{
+  "schema": "m9-c42.37-repository-acceptance-matrix/v1",
+  "generated_at": "2026-08-26T18:51:43.938837+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "scenarios": [
+    {
+      "name": "backend_source_change",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "plan_selected": 1,
+      "plan_excluded": 13,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "frontend_source_change",
+      "changed_files": [
+        "frontend/src/components/RiskDisplay.tsx"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "test_only_change",
+      "changed_files": [
+        "backend/tests/unit/engines/credit_card/test_risk.py"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "configuration_change",
+      "changed_files": [
+        "pyproject.toml"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "dependency_toolchain_change",
+      "changed_files": [
+        "backend/pyproject.toml"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": false,
+      "diagnostic_verdict": "CERTIFICATION_BLOCKED",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 1,
+      "full_chain_valid": true
+    },
+    {
+      "name": "verification_infrastructure_change",
+      "changed_files": [
+        "runtime/foundation/verification/evidence_reuse.py"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": false,
+      "diagnostic_verdict": "CERTIFICATION_BLOCKED",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 1,
+      "full_chain_valid": true
+    },
+    {
+      "name": "shared_infrastructure_change",
+      "changed_files": [
+        "backend/src/common/calculations/interest.py"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "ci_change",
+      "changed_files": [
+        ".github/workflows/mutation.yml"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "new_component_admission",
+      "changed_files": [
+        "backend/src/engines/new_engine/core.py"
+      ],
+      "plan_selected": 1,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "cross_engine_dependency_change",
+      "changed_files": [
+        "backend/src/models/monetary.py"
+      ],
+      "plan_selected": 3,
+      "plan_excluded": 11,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "discovery_drift",
+      "changed_files": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": false,
+      "diagnostic_verdict": "CERTIFICATION_BLOCKED",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 1,
+      "full_chain_valid": true
+    },
+    {
+      "name": "verification_failure",
+      "changed_files": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "plan_selected": 1,
+      "plan_excluded": 13,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "infrastructure_failure",
+      "changed_files": [],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    },
+    {
+      "name": "evidence_failure",
+      "changed_files": [],
+      "plan_selected": 0,
+      "plan_excluded": 14,
+      "planner_certifiable": true,
+      "diagnostic_verdict": "CERTIFIABLE",
+      "record_complete": true,
+      "record_missing": [],
+      "explainability_complete": true,
+      "uncertainty_count": 0,
+      "full_chain_valid": true
+    }
+  ],
+  "summary": {
+    "total_scenarios": 14,
+    "all_chains_valid": true,
+    "plans_generated": 4,
+    "diagnostics_ran": 14,
+    "records_complete": 14,
+    "by_verdict": {
+      "CERTIFIABLE": 11,
+      "CERTIFICATION_BLOCKED": 3
+    }
+  }
+}

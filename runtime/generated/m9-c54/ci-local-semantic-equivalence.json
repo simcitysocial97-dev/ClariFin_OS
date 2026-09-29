@@ -1,0 +1,77 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "dimensions": [
+    {
+      "dimension": "repository SHA",
+      "local_value": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+      "ci_value": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+      "result": "equivalent",
+      "notes": "identical"
+    },
+    {
+      "dimension": "configuration",
+      "local_value": "local",
+      "ci_value": "ci",
+      "result": "incompatible",
+      "notes": "mismatch: local=local, ci=ci"
+    },
+    {
+      "dimension": "toolchain",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "command",
+      "local_value": "verify.py backend",
+      "ci_value": "verify.py backend",
+      "result": "equivalent",
+      "notes": "identical"
+    },
+    {
+      "dimension": "capability",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "component",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "verification profile",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "execution result",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "measurement result",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    },
+    {
+      "dimension": "artifact/evidence identity",
+      "local_value": "",
+      "ci_value": "",
+      "result": "insufficient_evidence",
+      "notes": "no evidence on either side"
+    }
+  ]
+}

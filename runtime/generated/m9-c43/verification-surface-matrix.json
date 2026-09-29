@@ -1,0 +1,194 @@
+{
+  "schema": "m9-c43-verification-surface-matrix/v1",
+  "generated_at": "2026-09-02T23:39:52.748098+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "baseline": {
+    "line_coverage_pct": 80.65,
+    "branch_coverage_pct": 76.02,
+    "mutation_score": 78.34,
+    "thresholds": {
+      "line_coverage_target": 80.0,
+      "branch_coverage_target": 80.0,
+      "mutation_score_target": 80.0,
+      "line_gap_pp": -0.65,
+      "branch_gap_pp": 3.98,
+      "mutation_gap_pp": 1.66
+    }
+  },
+  "verification_surface": {
+    "backend": {
+      "source_files": 242,
+      "loc": 46127,
+      "test_counts": {
+        "unit": 2727,
+        "properties": 288,
+        "contract": 161,
+        "golden": 10,
+        "integration": 34,
+        "architecture": 50,
+        "meta": 61,
+        "total": 3331
+      },
+      "coverage": {
+        "line_pct": 80.65,
+        "branch_pct": 76.02,
+        "statements": 10241,
+        "covered_lines": 8386,
+        "missing_lines": 1855
+      },
+      "mutation": {
+        "generated": 2742,
+        "killed": 2148,
+        "survived": 588,
+        "no_tests": 4,
+        "timeout": 2,
+        "score": 78.34
+      },
+      "components": [
+        {
+          "name": "account_engine",
+          "type": "financial_engine",
+          "criticality": "P0",
+          "files": 7,
+          "loc": 479,
+          "line_coverage_pct": 98.86,
+          "branch_coverage_pct": 96.43,
+          "mutation_score": 94.5,
+          "mutation_survived": 10,
+          "mutation_generated": 183,
+          "status": "certified"
+        },
+        {
+          "name": "credit_card_engine",
+          "type": "financial_engine",
+          "criticality": "P0",
+          "files": 8,
+          "loc": 726,
+          "line_coverage_pct": 93.65,
+          "branch_coverage_pct": 87.5,
+          "mutation_score": 77.1,
+          "mutation_survived": 133,
+          "mutation_generated": 582,
+          "status": "measured"
+        },
+        {
+          "name": "financial_events",
+          "type": "financial_engine",
+          "criticality": "P0",
+          "files": 2,
+          "loc": 476,
+          "line_coverage_pct": 96.74,
+          "branch_coverage_pct": 92.31,
+          "mutation_score": 65.2,
+          "mutation_survived": 245,
+          "mutation_generated": 704,
+          "status": "measured"
+        },
+        {
+          "name": "loan_engine",
+          "type": "financial_engine",
+          "criticality": "P0",
+          "files": 9,
+          "loc": 1400,
+          "line_coverage_pct": 98.73,
+          "branch_coverage_pct": 95.73,
+          "mutation_score": 84.1,
+          "mutation_survived": 200,
+          "mutation_generated": 1273,
+          "status": "certified"
+        }
+      ]
+    },
+    "frontend": {
+      "source_files": 612,
+      "loc": 78482,
+      "test_counts": {
+        "vitest": 74,
+        "e2e_playwright": 12,
+        "total": 86
+      },
+      "coverage": {
+        "line_pct": null,
+        "branch_pct": null,
+        "note": "not measured"
+      },
+      "status": "unmeasured"
+    },
+    "runtime": {
+      "source_files": 785,
+      "loc": "~8000",
+      "test_counts": {
+        "runtime_suite": 785
+      },
+      "coverage": {
+        "line_pct": null,
+        "note": "verification infrastructure"
+      },
+      "status": "certified"
+    }
+  },
+  "gaps": {
+    "line_coverage_pp_to_80": 0,
+    "branch_coverage_pp_to_80": 3.980000000000004,
+    "mutation_score_pp_to_80": 1.6599999999999966,
+    "unmeasured_components": [
+      "frontend/lib",
+      "frontend/components",
+      "frontend/hooks",
+      "routers",
+      "extraction",
+      "structural"
+    ],
+    "below_threshold_components": [
+      {
+        "component": "credit_card_engine",
+        "metric": "mutation",
+        "value": 77.1,
+        "gap": 2.9
+      },
+      {
+        "component": "financial_events",
+        "metric": "mutation",
+        "value": 65.2,
+        "gap": 14.8
+      },
+      {
+        "component": "services",
+        "metric": "line_coverage",
+        "value": 66.29,
+        "gap": 13.71
+      },
+      {
+        "component": "repositories",
+        "metric": "line_coverage",
+        "value": 55.42,
+        "gap": 24.58
+      },
+      {
+        "component": "core/mappers",
+        "metric": "line_coverage",
+        "value": 35.93,
+        "gap": 44.07
+      }
+    ]
+  },
+  "capabilities": {
+    "total": 55,
+    "by_stage": {
+      "discovery": 7,
+      "planning": 5,
+      "execution": 21,
+      "measurement": 8,
+      "diagnosis": 4,
+      "strengthening": 3,
+      "evidence_inspection": 4,
+      "certification": 3
+    }
+  },
+  "workflows": {
+    "total": 13,
+    "green_local": 11,
+    "deferred": 1,
+    "environmental_limitation": 1
+  }
+}

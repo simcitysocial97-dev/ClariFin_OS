@@ -1,0 +1,17 @@
+{
+  "schema": "m9-c53-candidate-tests/v1",
+  "generated_at": "2026-09-01T11:16:07.126368+00:00",
+  "candidates": [
+    {
+      "candidate_id": "6e24e773b1c6",
+      "evidence_kind": "survivor",
+      "evidence_ref": "survivor#cand-001",
+      "module_under_test": "backend/src/engines/credit_card_engine/core.py",
+      "import_target": "backend.engines.credit_card_engine.core",
+      "input_derivation": "exercise both sides of the comparison with values that make the comparison result decisive",
+      "assertion_form": "DIFFERENTIAL",
+      "assertion_hint": "the branch taken must match the original comparison semantics",
+      "code": "\"\"\"Generated candidate 6e24e773b1c6 \u2014 evidence: survivor#cand-001.\n\nM9-C53: this skeleton was produced by the evidence-driven test\ngeneration engine. It is NOT accepted evidence on its own: it requires\nhuman authorization and must prove behavioral discrimination before\nacceptance. Expected values must never be copied from the implementation\nunder test.\n\nGeneration strategy: example_based_unit\n\"\"\"\n\nimport pytest\n\nimport backend.engines.credit_card_engine.core as target_mod  # backend.engines.credit_card_engine.core\n\n\ndef test_6e24e773b1c6_discriminates():\n    \"\"\"Target: backend/src/engines/credit_card_engine/core.py:42\n\n    Input derivation: exercise both sides of the comparison with values that make the comparison result decisive\n    Assertion: the branch taken must match the original comparison semantics\n    \"\"\"\n    pytest.skip(\n        \"candidate skeleton: authorized implementation must replace this skip\"\n    )\n"
+    }
+  ]
+}

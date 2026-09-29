@@ -1,0 +1,91 @@
+{
+  "schema": "repository-modernization/v1",
+  "generated_at": "2026-08-06T16:13:48.478252+00:00",
+  "program": "16.0",
+  "total_opportunities": 7,
+  "opportunities": [
+    {
+      "id": "op-remove-parked-facades",
+      "type": "deletion",
+      "name": "Remove parked legacy facades",
+      "description": "Delete behavior_engine.py and cashflow_engine.py.parked after confirming zero importers.",
+      "engineering_value": "HIGH",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "architectural_impact": "Reduces confusion; removes dead code from architecture scan.",
+      "evidence": "engine-normalization.json parked_facades; grep shows zero importers"
+    },
+    {
+      "id": "op-migrate-orphan-engines",
+      "type": "migration",
+      "name": "Migrate orphan engines to behaviour_engine",
+      "description": "Move insight_generator and nudge_engine logic into behaviour_engine as internal modules. Add proper capability or formally declare as internal.",
+      "engineering_value": "HIGH",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "architectural_impact": "Eliminates orphan engines; clarifies ownership model.",
+      "evidence": "engine-topology.json shows insight_generator and nudge_engine as ORPHAN_INTERNAL"
+    },
+    {
+      "id": "op-consolidate-workspace-services",
+      "type": "consolidation",
+      "name": "Consolidate workspace services into domain services",
+      "description": "7 workspace service files wrap 7 domain services. Consolidate into single service with workspace parameter or merge into domain service.",
+      "engineering_value": "MEDIUM",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "architectural_impact": "Reduces service count from 33 to ~26; simplifies dependency graph.",
+      "evidence": "backend/src/services/ has 33 service files; 7 are workspace services"
+    },
+    {
+      "id": "op-consolidate-dtos",
+      "type": "consolidation",
+      "name": "Consolidate account DTOs",
+      "description": "Merge account_dto.py (simple) and accounts_dto.py (detailed) into single coherent DTO structure.",
+      "engineering_value": "MEDIUM",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "architectural_impact": "Reduces DTO count from 15 to ~14; simplifies mapper layer.",
+      "evidence": "architecture-inventory shows both DTO files with overlapping Account* types"
+    },
+    {
+      "id": "op-cleanup-frontend-types",
+      "type": "deletion",
+      "name": "Remove orphan frontend type files",
+      "description": "Delete frontend/types/financial.ts (0 importers) and consolidate duplicate Money/MoneyViewModel types.",
+      "engineering_value": "MEDIUM",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "architectural_impact": "Reduces frontend type file count; eliminates dead code.",
+      "evidence": "architecture-inventory import scan shows zero importers for financial.ts"
+    },
+    {
+      "id": "op-add-insight-generator-tests",
+      "type": "test_addition",
+      "name": "Add tests for insight_generator",
+      "description": "12/13 engines have tests; insight_generator is the only gap. Add unit tests.",
+      "engineering_value": "HIGH",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "architectural_impact": "Achieves 100% engine test coverage.",
+      "evidence": "engine-topology.json shows tests=[] for insight_generator"
+    },
+    {
+      "id": "op-capability-internal-engines",
+      "type": "migration",
+      "name": "Assign capabilities to internal engines",
+      "description": "financial_events, financial_intelligence, transaction_intelligence have no capability owner. Wire to existing capability or create new.",
+      "engineering_value": "HIGH",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "architectural_impact": "Closes capability ownership gap; enables full chain tracing.",
+      "evidence": "engine-topology.json shows capabilities=[] for 4 internal engines"
+    }
+  ],
+  "summary": {
+    "deletions": 2,
+    "migrations": 2,
+    "consolidations": 2,
+    "test_additions": 1
+  }
+}

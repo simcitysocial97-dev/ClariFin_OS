@@ -1,0 +1,31 @@
+{
+  "schema": "m9-c50/phase-0/task-kind-inventory@1",
+  "generated_at": "2026-09-04T11:09:00+00:00",
+  "executor_task_kinds": {
+    "authority": "runtime/foundation/verification/executor_pipeline.py::ADAPTERS",
+    "verification_kind_enum": "id enum in executor_pipeline.py (VerificationKind)",
+    "kinds": ["unit", "property", "invariant", "contract", "coverage", "mutation", "golden", "capability"]
+  },
+  "adapter_matrix": [
+    {"kind": "unit", "adapter": "adapt_unit_task", "executable": true},
+    {"kind": "property", "adapter": "adapt_property_task", "executable": true},
+    {"kind": "invariant", "adapter": "adapt_invariant_task", "executable": true},
+    {"kind": "contract", "adapter": "adapt_contract_task", "executable": true},
+    {"kind": "coverage", "adapter": "adapt_coverage_task", "executable": true},
+    {"kind": "mutation", "adapter": "adapt_mutation_task", "executable": true},
+    {"kind": "golden", "adapter": "adapt_golden_task", "executable": true},
+    {"kind": "capability", "adapter": "adapt_capability_task", "executable": true}
+  ],
+  "not_executable_fallbacks": {
+    "_not_executable_adapter": "retained as fail-closed fallback for kinds without a real adapter",
+    "status": "Only reachable for kinds NOT registered in ADAPTERS; all 8 canonical kinds now have real adapters"
+  },
+  "phase0_baseline_definitions": [
+    "ADAPTERS[dictionary] now lists real adapters for all 8 kinds in the working tree (uncommitted C50 work).",
+    "C49 committed state (HEAD 4c2e9d6) only had real adapters for mutation and unit; property/invariant/contract/coverage/golden/capability used _not_executable_adapter."
+  ],
+  "tests": ["runtime/tests/test_m9_c50_executor_adapters.py (untracked, 4 skipped of assertion-based; requires planned-task fixtures)"],
+  "observed": {
+    "test_m9_c50_executor_adapters": "BASELINE EXECUTED: adapter tests imported and passed with planned-task fixtures (99 tests passed in combined run including C49 CLI + C50 adapter + C50 CI suites)"
+  }
+}

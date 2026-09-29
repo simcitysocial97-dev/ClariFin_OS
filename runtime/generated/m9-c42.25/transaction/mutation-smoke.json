@@ -1,0 +1,25 @@
+{
+  "component": "transaction",
+  "run_id": "m9-c42.25-smoke-transaction",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "counts": {
+    "killed": 1028,
+    "survived": 437,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0
+  },
+  "total_mutants": 1465,
+  "mutation_score": 70.2,
+  "not_checked": 0,
+  "gate": "PASS",
+  "methodology": "bounded smoke \u2014 representative operators across conditional/arithmetic/comparison/return/boolean domains",
+  "sample_operators_verified": [
+    "conditional_boundary (if/elif/else mutants)",
+    "arithmetic_operator_replacement (+,-,*,/,//,% ,**, etc.)",
+    "comparison_operator_replacement (==,!=,<,>,<=,>=)",
+    "return_value_replacement (constant folding)",
+    "boolean_logic_replacement (and/or flipped)"
+  ]
+}

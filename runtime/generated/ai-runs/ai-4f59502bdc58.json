@@ -1,0 +1,13 @@
+{
+  "id": "ai-4f59502bdc58",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-06T13:28:24.162619Z",
+  "updated_at": "2026-09-06T13:28:24.162619Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

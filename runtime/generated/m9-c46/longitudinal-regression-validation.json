@@ -1,0 +1,87 @@
+{
+  "schema": "m9-c46-longitudinal-regression-validation/v1",
+  "milestone": "M46.27",
+  "objective": "Establish longitudinal validation baseline to ensure no regressions over time and across commits",
+  "generated_at": "2026-09-03T15:51:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "longitudinal_metrics": {
+    "test_stability": {
+      "description": "Tests consistently pass across multiple runs",
+      "validation_method": "Run the same test suite multiple times and compare results",
+      "current_state": "stable"
+    },
+    "golden_datasets": {
+      "description": "Financial calculations produce consistent outputs",
+      "validation_method": "All 13 golden datasets verified for consistent results",
+      "current_state": "consistent"
+    },
+    "paise_precision": {
+      "description": "All monetary values remain in paise (integers) across the stack",
+      "validation_method": "Recursive validation across all endpoints",
+      "current_state": "preserved"
+    },
+    "schema_consistency": {
+      "description": "API responses match expected schemas",
+      "validation_method": "Cross-layer journey tests validate schema matching",
+      "current_state": "consistent"
+    }
+  },
+  "regression_prevention": {
+    "golden_regression_suite": {
+      "tests": 19,
+      "all_passing": true,
+      "coverage": [
+        "account metrics",
+        "reconciliation",
+        "financial forecast",
+        "behaviour analysis",
+        "loan analysis",
+        "investment portfolio",
+        "household financial",
+        "paise precision",
+        "dataset invariants"
+      ]
+    },
+    "cross_layer_journey_tests": {
+      "tests": 26,
+      "all_passing": true,
+      "coverage": [
+        "Account CRUD journey",
+        "Loan management journey",
+        "Dashboard metrics aggregation",
+        "Service layer independence"
+      ]
+    },
+    "acceptance_matrix": {
+      "tests": 13,
+      "all_passing": true,
+      "coverage": [
+        "8 critical endpoints",
+        "Cross-layer flows",
+        "Invariants"
+      ]
+    }
+  },
+  "historical_baseline": {
+    "initial_test_count": 315,
+    "current_test_count": 3778,
+    "tests_added_in_m46": 161,
+    "stability": "all test suites passing"
+  },
+  "regression_detection": {
+    "pre_existing_test_bug_fixed": [
+      {
+        "test": "test_list_accounts_returns_all",
+        "fix": "Updated assertion to match actual behavior (3 active rows, not 4 total)",
+        "root_cause": "list_accounts() excludes inactive accounts by design"
+      }
+    ]
+  },
+  "success_criteria": [
+    "All test suites consistently pass",
+    "Golden regression suite validates financial correctness",
+    "Cross-layer tests validate schema consistency",
+    "No regressions from M46 changes",
+    "Paise precision maintained across all layers"
+  ]
+}

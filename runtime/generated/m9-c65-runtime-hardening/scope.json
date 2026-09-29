@@ -1,0 +1,134 @@
+{
+  "schema": "m9-c65-runtime-hardening/scope/v1",
+  "generated_at": "2026-09-20T11:45:00Z",
+  "commit_sha": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
+  "phases": [
+    {
+      "phase": "C65.0",
+      "title": "Freeze C64 and establish C65 baseline",
+      "status": "DONE",
+      "deliverables": ["baseline.json", "scope.json", "progress.md"]
+    },
+    {
+      "phase": "C65.1",
+      "title": "Fix R001: Measurement Truth Path Resolution",
+      "status": "IN_PROGRESS",
+      "target": "coverage measurement always resolves against same authority",
+      "tests_required": [
+        "repository root invocation",
+        "runtime subdirectory invocation",
+        "absolute repository path",
+        "equivalent shell environment",
+        "clean environment",
+        "CI-like environment",
+        "nonexistent target",
+        "malformed target",
+        "coverage artifact missing",
+        "coverage command non-zero"
+      ]
+    },
+    {
+      "phase": "C65.2",
+      "title": "Fix R003: inspect workflows as first-class capability",
+      "status": "PENDING",
+      "target": "enumerate .github/workflows/*.yml with full metadata record"
+    },
+    {
+      "phase": "C65.3",
+      "title": "Fix R002: Eliminate duplicate E2E IMPACT output",
+      "status": "PENDING",
+      "target": "single presentation boundary for ChangeImpact result"
+    },
+    {
+      "phase": "C65.4",
+      "title": "Resolve R004: Historical health semantics",
+      "status": "PENDING",
+      "target": "distinguish CURRENT FRAMEWORK HEALTH from HISTORICAL EXECUTION STATISTICS"
+    },
+    {
+      "phase": "C65.5",
+      "title": "Replace timeout ambiguity with execution-budget model",
+      "status": "PENDING",
+      "target": "planning_budget, execution_budget, diagnostic_budget, certification_budget"
+    },
+    {
+      "phase": "C65.6",
+      "title": "Controlled-failure injection experiment",
+      "status": "PENDING",
+      "target": "healthy → controlled fault → verify → FAILED → evidence persisted → diagnosis → restore → verify healthy"
+    },
+    {
+      "phase": "C65.7",
+      "title": "Authority-drift attack experiment",
+      "status": "PENDING",
+      "target": "CLI says A, registry says B → AUTHORITY_DRIFT detected"
+    },
+    {
+      "phase": "C65.8",
+      "title": "Configuration-divergence attack experiment",
+      "status": "PENDING",
+      "target": "local ≠ CI configuration → CONFIG_DIVERGENCE with expected/actual/source/impact"
+    },
+    {
+      "phase": "C65.9",
+      "title": "Re-run complete command matrix with classifications",
+      "status": "PENDING",
+      "target": "every result classified: PASS/PASS_WITH_WARNING/PASS_WITH_NOTES/FAILED/BLOCKED/INCOMPLETE/EXTERNAL_BOUNDARY/ENVIRONMENT_BOUNDARY/GITHUB_ONLY/DEPRECATED"
+    },
+    {
+      "phase": "C65.10",
+      "title": "Output truth audit 2.0 — automated",
+      "status": "PENDING",
+      "target": "detect duplicate output, contradiction, stale identity, wrong artifact, wrong authority, false success"
+    },
+    {
+      "phase": "C65.11",
+      "title": "CI workflow parity becomes self-describing",
+      "status": "PENDING",
+      "target": "verify inspect workflows and verify ci consume same underlying workflow model"
+    },
+    {
+      "phase": "C65.12",
+      "title": "Cross-surface truth reconciliation as invariant",
+      "status": "PENDING",
+      "target": "run_id/commit/command/status/outcome/plan_fingerprint/artifact_identity/classification agree across all surfaces"
+    },
+    {
+      "phase": "C65.13",
+      "title": "Clean-state and artifact lifecycle hardening",
+      "status": "PENDING",
+      "target": "creation, ownership, identity, retention, cleanup, reproducibility for every artifact"
+    },
+    {
+      "phase": "C65.14",
+      "title": "Repeatability × 3",
+      "status": "PENDING",
+      "target": "three identical runs produce identical plan IDs and obligations"
+    },
+    {
+      "phase": "C65.15",
+      "title": "Full certification",
+      "status": "PENDING",
+      "target": "FAIL=0, SKIPPED=0, UNEXPLAINED=0, FALSE_PASS=0, TRUTH_DRIFT=0"
+    },
+    {
+      "phase": "C65.16",
+      "title": "Independent forensic review",
+      "status": "PENDING",
+      "target": "external verification of all claims"
+    },
+    {
+      "phase": "C65.17",
+      "title": "C65 FINAL certification",
+      "status": "PENDING",
+      "target": "runtime foundation complete"
+    }
+  ],
+  "command_matrix": {
+    "canonical": ["check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"],
+    "inspect_subqueries": ["capabilities", "evidence", "plan", "mutation", "workflows", "health", "evidence-cleanup"],
+    "compatibility_aliases": ["status", "metrics", "history", "deps", "verify-status", "analytics", "health", "ci-doctor", "env-check"],
+    "profiles": ["quick", "backend", "frontend", "contracts", "graph", "full", "runtime", "golden", "playwright"]
+  },
+  "remediation_ledger_path": "runtime/generated/m9-c65-runtime-hardening/remediation-ledger.json"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "ai-2b2b7ae0a670",
+  "symptom": "audit test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "COMPLETED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": {},
+      "error": null,
+      "started_at": "2026-09-06T04:57:23.823989Z",
+      "completed_at": "2026-09-06T04:57:23.824751Z",
+      "evidence_id": "e1",
+      "duration_ms": 0
+    }
+  ],
+  "created_at": "2026-09-06T04:57:23.823007Z",
+  "updated_at": "2026-09-06T04:57:23.824751Z",
+  "completed_at": "2026-09-06T04:57:23.824751Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-8154d55b42b9",
+      "event_type": "run_created",
+      "run_id": "ai-2b2b7ae0a670",
+      "timestamp": "2026-09-06T04:57:23.823906Z",
+      "payload": {
+        "symptom": "audit test",
+        "mode": "MANUAL",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-3c4c1ae541ad",
+      "event_type": "step_started",
+      "run_id": "ai-2b2b7ae0a670",
+      "timestamp": "2026-09-06T04:57:23.824696Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    }
+  ]
+}

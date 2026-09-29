@@ -1,0 +1,29 @@
+{
+  "schema": "m9-c50/phase-0/baseline-inventory@1",
+  "generated_at": "2026-09-04T11:05:00+00:00",
+  "baseline_repository_sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde",
+  "branch": "m9c9-merge-authorization-resolution",
+  "working_tree_state": "DIRTY",
+  "working_tree_dirty_file_count": 44,
+  "note": "Working tree contains uncommitted M9-C50 in-progress changes (executor adapters, CI workflow migration, event_store, verify.py re-export, two new C50 test suites). These were NOT part of the committed HEAD; they represent in-progress convergence work.",
+  "python_environment": "repository-root .venv (sanctioned)",
+  "python_version": "3.12",
+  "test_baseline": {
+    "collected": 1372,
+    "note": "pytest --co across runtime/tests; 1372 tests collected"
+  },
+  "canonical_executor_adapter_registry": {
+    "mutation": "adapt_mutation_task",
+    "unit": "adapt_unit_task",
+    "property": "adapt_property_task",
+    "invariant": "adapt_invariant_task",
+    "contract": "adapt_contract_task",
+    "coverage": "adapt_coverage_task",
+    "golden": "adapt_golden_task",
+    "capability": "adapt_capability_task"
+  },
+  "canonical_command_surface": [
+    "check", "plan", "run", "diagnose", "strengthen", "inspect", "certify", "ci", "doctor"
+  ],
+  "verification_config_authority": "runtime/foundation/verification/verification.yaml"
+}

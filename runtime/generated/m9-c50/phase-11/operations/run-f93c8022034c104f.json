@@ -1,0 +1,25 @@
+{
+  "run_id": "f93c8022034c104f",
+  "timestamp": "2026-09-28T09:22:43.520497+00:00",
+  "repository_sha": "21a5b6be2ed1463c54bca6f26eb737a3299a13fc",
+  "scenario": "backend_unit_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/backend/src/engines/tmpdaugscfj.py"
+  ],
+  "resolved_capabilities": [
+    "credit-card-engine"
+  ],
+  "obligations": [
+    "unit",
+    "property",
+    "contract"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

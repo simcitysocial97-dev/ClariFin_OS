@@ -1,0 +1,298 @@
+[
+  {
+    "token": "diagnose-failures",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "reconcile",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "exec-evidence",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "deep-contract",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "local-gate",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "affected",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "repair",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "risk",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "integrity",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "knowledge",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "dashboard",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "intelligence",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "intelligence-audit",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "audit",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "api-contracts",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "contract-governance",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "mutation",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "measurement-truth",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "measurement",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "evidence-plan",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "verification-contract",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "evidence-execute",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "evidence-reconcile",
+    "canonical_operation": "ci"
+  },
+  {
+    "token": "evidence-certify",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "enforce",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "mutation-inventory",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "mutation-intel",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "forensic-diagnose",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "forensic-report",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "strengthen-analyze",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-discover",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-propose",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-validate",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-survivor-forensic",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-report",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "env-contract",
+    "canonical_operation": "doctor"
+  },
+  {
+    "token": "what-should-i-run",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-inventory",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "control-plane-plan",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "resolve-capabilities",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "strengthen-capability",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "strengthen-survivor",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "measurement-truth-report",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "blast-radius",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "execution-plan",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "execute",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "execution-status",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "execution-report",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "capabilities",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-for",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "capability-graph",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "bypass-audit",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "bypass-enforcement",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "pipeline-enforcement",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "scenarios",
+    "canonical_operation": "inspect"
+  },
+  {
+    "token": "evidence-integrity",
+    "canonical_operation": "diagnose"
+  },
+  {
+    "token": "strengthening-integration",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "cross-capability-impact",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "config-authority-verify",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "efficiency",
+    "canonical_operation": "certify"
+  },
+  {
+    "token": "regression",
+    "canonical_operation": "run"
+  },
+  {
+    "token": "latent-audit",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "config-authority",
+    "canonical_operation": "plan"
+  },
+  {
+    "token": "generate-test",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "c53-scenarios",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "c53-certify",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "convergence-status",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "coverage-analysis",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "mutation-analysis",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "gap-analysis",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "convergence-plan",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "threshold-assessment",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "converge",
+    "canonical_operation": "strengthen"
+  },
+  {
+    "token": "help-resolve",
+    "canonical_operation": "plan"
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "schema": "m9-c55/coverage-evidence-contract/v1",
+  "generated_at": "2026-09-01T19:56:26+00:00",
+  "source_identity": {
+    "module": "runtime.foundation.verification.coverage_measurement",
+    "canonical_command": "python runtime/verify.py measurement coverage <scope>",
+    "output_directory": "runtime/generated/m9-c47/coverage/"
+  },
+  "fingerprint": {
+    "included_fields": [
+      "run_id",
+      "measurement_kind",
+      "repository_sha",
+      "tree_sha",
+      "environment_fingerprint",
+      "toolchain_versions",
+      "artifact_paths"
+    ],
+    "independent_from_mutation": true
+  },
+  "ci_upload_path": {
+    "workflow": "mutation.yml",
+    "step_name": "Upload mutation report",
+    "paths": [
+      "backend/tests/generated/mutation/mutation-report.md",
+      "backend/tests/generated/mutation/mutation-summary.json"
+    ],
+    "note": "Coverage measurements (m9-c47/coverage/) should be added as dedicated upload step in C55 Phase 6"
+  },
+  "evidence_status": "operational_but_upload_not_yet_integrated",
+  "note": "C54 Phase 6 deferred: dedicated CI coverage upload workflow step added below"
+}

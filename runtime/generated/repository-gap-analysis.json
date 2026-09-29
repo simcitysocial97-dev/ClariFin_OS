@@ -1,0 +1,42 @@
+{
+  "schema": "repository-gap-analysis/v1",
+  "generated_at": "2026-08-06T16:33:17.707392",
+  "repository_findings": [
+    {
+      "defect": "insight_generator has no tests",
+      "category": "testing",
+      "severity": "medium",
+      "evidence_source": "certification-gap-analysis.json"
+    },
+    {
+      "defect": "legacy cashflow_engine.py.parked never cleaned up",
+      "category": "other",
+      "severity": "medium",
+      "evidence_source": "certification-gap-analysis.json"
+    },
+    {
+      "defect": "duplicate ownership: behaviour domain has both package and legacy single-file",
+      "category": "ownership",
+      "severity": "medium",
+      "evidence_source": "certification-gap-analysis.json"
+    }
+  ],
+  "platform_findings": [],
+  "gap_categories": {
+    "engines_without_tests": [
+      "insight_generator has no tests"
+    ],
+    "services_without_ownership": [
+      "duplicate ownership: behaviour domain has both package and legacy single-file"
+    ],
+    "routers_without_verification": [],
+    "repositories_without_integrity": [],
+    "workspaces_without_capabilities": [],
+    "undocumented_execution_paths": []
+  },
+  "summary": {
+    "total_repository_gaps": 3,
+    "total_platform_gaps": 0,
+    "evidence_backed": true
+  }
+}

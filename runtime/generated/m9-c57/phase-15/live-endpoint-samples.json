@@ -1,0 +1,40 @@
+{
+  "/platform/v1/ai/providers": {
+    "status": 200,
+    "kind": "platform.ai_providers",
+    "len": 1364
+  },
+  "/platform/v1/ai/config": {
+    "status": 200,
+    "kind": "platform.ai_config",
+    "len": 464
+  },
+  "/platform/v1/ai/mode": {
+    "status": 200,
+    "kind": "platform.ai_mode",
+    "len": 903
+  },
+  "/platform/v1/ai/tools": {
+    "status": 200,
+    "kind": "platform.ai_tool_list",
+    "len": 6222
+  },
+  "/platform/v1/ai/agents": {
+    "status": 200,
+    "kind": "platform.ai_agents",
+    "len": 646
+  },
+  "/platform/v1/context/pack?symptom=build+failed&token_budget=8000": {
+    "status": 200,
+    "kind": "platform.context_pack",
+    "len": 567
+  },
+  "POST /platform/v1/ai/diagnose": {
+    "status": 200,
+    "kind": "platform.ai_diagnose_result"
+  },
+  "POST /platform/v1/ai/runs": {
+    "status": 200,
+    "kind": "platform.ai_run"
+  }
+}

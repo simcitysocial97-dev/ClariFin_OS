@@ -1,0 +1,1226 @@
+{
+  "schema": "end-to-end-pipeline/v1",
+  "generated_at": "2026-08-06T16:13:48.473633+00:00",
+  "program": "16.0",
+  "total_chains": 6,
+  "chains": [
+    {
+      "chain_id": "engine:account_engine",
+      "engine": "account_engine",
+      "capability": [
+        "useAccountsCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/accounts/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:DELETE /accounts/manage/{account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:DELETE /accounts/{account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:DELETE /accounts/{account_id}/links/{linked_account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/manage",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/analytics",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/balance",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/balance-history",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/balance-history/latest",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/dormancy",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/links",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/metrics",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/running-balance",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /accounts/{account_id}/status",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /institutions",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /institutions/{institution_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /accounts",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /accounts/manage",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /accounts/{account_id}/balance-history",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /accounts/{account_id}/links",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /institutions",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:PUT /accounts/manage/{account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:PUT /accounts/{account_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:PUT /institutions/{institution_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/accounts.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/managed_accounts.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/account_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_balance_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_link_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:institution_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/account/test_account_engine.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/accounts/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/accounts/accounts-summary",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/accounts/balance-trend",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/accounts/evidence-drawer",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "chain_id": "engine:behaviour_engine",
+      "engine": "behaviour_engine",
+      "capability": [
+        "useBehaviourCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/behaviour/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:GET /cashflow-health",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /debt-health",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /monthly-report",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /patterns",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /profile",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /recommendations",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /summary",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /wellness-score",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /import/detect",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /import/execute",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /upload",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/behaviour.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/dashboard.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/import_router.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/behaviour_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/dashboard_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/import_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:behaviour_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:credit_card_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:loan_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:pattern_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:reconciliation_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:transaction_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/behaviour/test_core.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/behaviour/test_integration.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/behaviour/test_patterns.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/behaviour/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-evidence-drawer",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-insights-panel",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-score",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "chain_id": "engine:credit_card_engine",
+      "engine": "credit_card_engine",
+      "capability": [
+        "useCreditCardsCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/cards/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:DELETE /credit-cards/{card_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}/metrics",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}/next-statement-date",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}/outstanding",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}/statements",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-cards/{card_id}/utilization",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /credit-cards",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /credit-cards/{card_id}/emi-conversion",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /credit-cards/{card_id}/foreclosure",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /credit-cards/{card_id}/payments",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /credit-cards/{card_id}/statements",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:PUT /credit-cards/{card_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/credit_cards.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/credit_card_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:credit_card_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:credit_card_statement_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/credit_card_engine/__init__.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/credit_cards/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/lending/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/cards/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/cards/cards-evidence-drawer",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/cards/cards-insights-panel",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/cards/cards-toolbar",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "chain_id": "engine:loan_engine",
+      "engine": "loan_engine",
+      "capability": [
+        "useLoansCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/loans/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:DELETE /loans/{loan_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /loans",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /loans/analysis/priority",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /loans/{loan_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /loans/{loan_id}/schedule",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/analysis/surplus-allocation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/{loan_id}/payments",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /loans/{loan_id}/rate-change-simulation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:PUT /loans/{loan_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/loans.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/loan_analysis_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/loan_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/loan_simulation_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/transaction_intelligence_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:credit_card_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:financial_event_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:liquidity_pattern_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:loan_payment_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:loan_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:statement_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:transaction_classification_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:transaction_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/lending/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/__init__.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_emi_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/loan/test_amortization.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/loan/test_loan_engine.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/loans/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/loans/amortization-schedule",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/loans/cross-navigation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/loans/empty-state",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "chain_id": "engine:recommendation_engine",
+      "engine": "recommendation_engine",
+      "capability": [
+        "useBehaviourCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/behaviour/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:GET /cashflow-forecast",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /cashflow-health",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /credit-forecast",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /debt-health",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /liquidity-forecast",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /monthly-report",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /outlook",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /patterns",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /priorities",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /profile",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /recommendations",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /recommendations/{recommendation_id}",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /report",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /wellness-score",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/behaviour.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/financial_intelligence.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/behaviour_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/recommendation_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:account_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:behaviour_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:credit_card_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:loan_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:pattern_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:transaction_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/behaviour/test_integration.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/behaviour/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-evidence-drawer",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-insights-panel",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/behaviour/behaviour-score",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "chain_id": "engine:reconciliation_engine",
+      "engine": "reconciliation_engine",
+      "capability": [
+        "useReconciliationCapability"
+      ],
+      "workspace": [],
+      "page": [
+        "frontend/app/reconciliation/workspace-page.tsx"
+      ],
+      "edges": [
+        {
+          "from": "capability",
+          "to": "endpoint:GET /pending",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:GET /scan",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /batch-insert",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /create",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /{reconciliation_id}/confirm",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "endpoint:POST /{reconciliation_id}/reject",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "endpoint",
+          "to": "router:backend/src/routers/reconciliation.py",
+          "layer": "http",
+          "status": "present"
+        },
+        {
+          "from": "router",
+          "to": "service:backend/src/services/reconciliation_service.py",
+          "layer": "service",
+          "status": "present"
+        },
+        {
+          "from": "service",
+          "to": "repository:reconciliation_repository",
+          "layer": "repository",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/invariants/test_reconciliation_determinism.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/invariants/test_reconciliation_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/properties/reconciliation/test_engine_properties.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "engine",
+          "to": "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+          "layer": "test",
+          "status": "present"
+        },
+        {
+          "from": "capability",
+          "to": "page:frontend/app/reconciliation/workspace-page.tsx",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/reconciliation/audit-trail",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/reconciliation/cross-navigation",
+          "layer": "frontend",
+          "status": "present"
+        },
+        {
+          "from": "page",
+          "to": "component:components/reconciliation/discrepancy-list",
+          "layer": "frontend",
+          "status": "present"
+        }
+      ],
+      "issues": []
+    }
+  ],
+  "missing_links": [],
+  "duplicate_links": [],
+  "multiple_owners": [],
+  "broken_chains": [],
+  "unreachable_chains": [],
+  "unused_chains": []
+}

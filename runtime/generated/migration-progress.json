@@ -1,0 +1,77 @@
+{
+  "schema": "migration-progress/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 8 - Readiness Recalculation",
+  "migration_dag_summary": {
+    "total_steps": 7,
+    "completed_steps": 2,
+    "pending_dag_steps": 5,
+    "deferred_wave_1": 5,
+    "executed_wave_1": 0,
+    "remaining_dag": [
+      {
+        "id": "STEP-003",
+        "action": "merge_engine",
+        "target": "backend/src/engines/insight_generator.py",
+        "status": "deferred",
+        "reason": "Ownership ambiguous (canonical_implementation=null)",
+        "depends_on": ["STEP-001", "STEP-002"]
+      },
+      {
+        "id": "STEP-004",
+        "action": "merge_engine",
+        "target": "backend/src/engines/nudge_engine.py",
+        "status": "deferred",
+        "reason": "Ownership ambiguous (canonical_implementation=null), blocked by STEP-003",
+        "depends_on": ["STEP-001", "STEP-002", "STEP-003"]
+      },
+      {
+        "id": "STEP-005",
+        "action": "create_workspace",
+        "target": "frontend/app/__tests__/",
+        "status": "deferred",
+        "reason": "Would require placeholder workspace / synthetic capability creation",
+        "depends_on": []
+      },
+      {
+        "id": "STEP-006",
+        "action": "consolidate_routers",
+        "target": "backend/src/routers/*_workspace.py",
+        "status": "deferred",
+        "reason": "Router restructuring forbidden by Program 19.0",
+        "depends_on": []
+      },
+      {
+        "id": "STEP-007",
+        "action": "add_tests",
+        "target": "backend/tests/integration/",
+        "status": "deferred",
+        "reason": "Outside Wave 1 scope; test addition not test alignment",
+        "depends_on": []
+      }
+    ]
+  },
+  "convergence_metrics": {
+    "overall_completion": 0.286,
+    "steps_total": 7,
+    "steps_completed": 2,
+    "steps_deferred": 5,
+    "steps_executed_this_wave": 0,
+    "notes": "2 of 7 steps already completed in Program 18 (safe deletions). 5 of 5 remaining steps deferred in Wave 1 due to ownership ambiguity, forbidden actions, or out-of-scope operations. DAG remains acyclic with no circular dependencies."
+  },
+  "technical_debt_status": {
+    "total_items": 8,
+    "executed_wave_1": 0,
+    "deferred": 6,
+    "already_completed": 2,
+    "remaining_queue": [
+      "DELETE-duplicate-behaviour-ownership (blocked by test references)",
+      "MIGRATE-insight_generator.py (ownership ambiguous)",
+      "MIGRATE-nudge_engine.py (ownership ambiguous, blocked by insight_generator)",
+      "WORKSPACE-GAPS (requires synthetic capabilities)",
+      "WORKSPACE-ROUTER-CONSOLIDATION (router restructuring forbidden)",
+      "TEST-ADD-INTERACTION (outside Wave 1 scope)"
+    ]
+  }
+}

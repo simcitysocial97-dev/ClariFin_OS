@@ -1,0 +1,315 @@
+{
+  "schema": "change-intelligence/v1",
+  "generated_at": "2026-08-06T15:06:39.115815+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "discovery": "none (provider-resolved)",
+  "changeset": {
+    "base": "HEAD",
+    "head": "22ed278d4f7a44a8ede26cd65f7500b39c616741",
+    "source": "git",
+    "file_count": 16,
+    "files": [
+      {
+        "path": "runtime/generated/blast-radius.json",
+        "status": "modified",
+        "added_lines": 9,
+        "removed_lines": 521,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/change-intelligence.json",
+        "status": "modified",
+        "added_lines": 59,
+        "removed_lines": 2462,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-memory.json",
+        "status": "modified",
+        "added_lines": 1,
+        "removed_lines": 1,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-risk.json",
+        "status": "modified",
+        "added_lines": 10,
+        "removed_lines": 10,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/execution/verify-stderr-4x3uvgif.txt",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/execution/verify-stdout-g7qtlb_q.txt",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/github-intelligence.json",
+        "status": "modified",
+        "added_lines": 1,
+        "removed_lines": 1,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/platform-state.json",
+        "status": "modified",
+        "added_lines": 50,
+        "removed_lines": 50,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/real-defect-validation.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/real-defect-validation.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/repair-intelligence.json",
+        "status": "modified",
+        "added_lines": 78,
+        "removed_lines": 4063,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/repository-health-baseline.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/verification-cost.json",
+        "status": "modified",
+        "added_lines": 23,
+        "removed_lines": 28,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/verification-plan.json",
+        "status": "modified",
+        "added_lines": 13,
+        "removed_lines": 40,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/workflow-validation.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/workflow-validation.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      }
+    ],
+    "notes": []
+  },
+  "changed": {
+    "engines": [],
+    "modules": [],
+    "capabilities": [],
+    "routers": [],
+    "endpoints": [],
+    "services": [],
+    "repositories": [],
+    "workspaces": [],
+    "components": [],
+    "mappers": [],
+    "dtos": [],
+    "view_models": [],
+    "tests": [],
+    "artifacts": []
+  },
+  "counts": {
+    "engines": 0,
+    "modules": 0,
+    "capabilities": 0,
+    "routers": 0,
+    "endpoints": 0,
+    "services": 0,
+    "repositories": 0,
+    "workspaces": 0,
+    "components": 0,
+    "mappers": 0,
+    "dtos": 0,
+    "view_models": 0,
+    "tests": 0,
+    "artifacts": 0
+  },
+  "owning_engines": [],
+  "changed_endpoints": [],
+  "unmapped_paths": [],
+  "platform_paths": [
+    "runtime/generated/blast-radius.json",
+    "runtime/generated/change-intelligence.json",
+    "runtime/generated/engineering-memory.json",
+    "runtime/generated/engineering-risk.json",
+    "runtime/generated/execution/verify-stderr-4x3uvgif.txt",
+    "runtime/generated/execution/verify-stdout-g7qtlb_q.txt",
+    "runtime/generated/github-intelligence.json",
+    "runtime/generated/platform-state.json",
+    "runtime/generated/real-defect-validation.json",
+    "runtime/generated/real-defect-validation.py",
+    "runtime/generated/repair-intelligence.json",
+    "runtime/generated/repository-health-baseline.json",
+    "runtime/generated/verification-cost.json",
+    "runtime/generated/verification-plan.json",
+    "runtime/generated/workflow-validation.json",
+    "runtime/generated/workflow-validation.py"
+  ],
+  "path_scopes": {
+    "note": "the canonical provider models PRODUCTION architecture; Engineering Runtime files under runtime/ are the platform itself and are out of that scope by construction, so they are reported separately from genuinely unowned paths",
+    "platform": 16,
+    "unmapped": 0
+  },
+  "evidence": [
+    {
+      "path": "runtime/generated/blast-radius.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/change-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-memory.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-risk.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/execution/verify-stderr-4x3uvgif.txt",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/execution/verify-stdout-g7qtlb_q.txt",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/github-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/platform-state.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/real-defect-validation.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/real-defect-validation.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/repair-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/repository-health-baseline.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/verification-cost.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/verification-plan.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/workflow-validation.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/workflow-validation.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    }
+  ]
+}

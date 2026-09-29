@@ -1,0 +1,13 @@
+{
+  "id": "ai-a168fbef7e6f",
+  "symptom": "test failure",
+  "mode": "MANUAL",
+  "capability_id": "discover.blast-radius",
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-05T23:30:45.133011Z",
+  "updated_at": "2026-09-05T23:30:45.133011Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

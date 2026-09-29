@@ -1,0 +1,97 @@
+{
+  "phase": "M9-C42.18",
+  "title": "Coverage & Mutation Evidence Reconciliation — Mutation Accounting",
+  "timestamp": "2026-08-24T18:51:00+05:30",
+  "engine_results": {
+    "credit_card_engine": {
+      "total": 582,
+      "killed": 440,
+      "survived": 142,
+      "no_tests": 0,
+      "timeout": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "mutation_score": 75.6,
+      "threshold_percent": 80,
+      "status": "NEEDS_WORK",
+      "accounting_identity": "582 = 440 + 142 + 0 + 0 + 0 + 0"
+    },
+    "account_engine": {
+      "total": 183,
+      "killed": 163,
+      "survived": 20,
+      "no_tests": 0,
+      "timeout": 0,
+      "not_checked": 0,
+      "suspicious": 0,
+      "mutation_score": 89.1,
+      "threshold_percent": 80,
+      "status": "PASS",
+      "accounting_identity": "183 = 163 + 20 + 0 + 0 + 0 + 0"
+    },
+    "loan_engine": {
+      "total": 1273,
+      "killed": 834,
+      "survived": 152,
+      "no_tests": 4,
+      "timeout": 3,
+      "not_checked": 280,
+      "suspicious": 0,
+      "mutation_score": 84.2,
+      "threshold_percent": 80,
+      "status": "PARTIAL_RUN",
+      "accounting_identity": "1273 = 834 + 152 + 4 + 3 + 280 + 0",
+      "note": "Run incomplete; 280 mutants not checked (no covering tests). M9-C42.17 reported 1062 killed, 204 survived, 7 unaccounted."
+    },
+    "reconciliation_engine": {
+      "total": 368,
+      "killed": 74,
+      "survived": 28,
+      "no_tests": 0,
+      "timeout": 0,
+      "not_checked": 266,
+      "suspicious": 0,
+      "mutation_score": 72.5,
+      "threshold_percent": 80,
+      "status": "PARTIAL_RUN",
+      "accounting_identity": "368 = 74 + 28 + 0 + 0 + 266 + 0",
+      "note": "Run incomplete; 266 mutants not checked (no covering tests)"
+    }
+  },
+  "aggregate_metrics": {
+    "total_mutants": 2406,
+    "total_killed": 1511,
+    "total_survived": 342,
+    "total_no_tests": 4,
+    "total_timeout": 3,
+    "total_not_checked": 546,
+    "total_suspicious": 0,
+    "aggregate_score": 81.6,
+    "threshold_percent": 80
+  },
+  "seven_unaccounted_loan_mutants": {
+    "m9_c42_17_reported": {
+      "total": 1273,
+      "killed": 1062,
+      "survived": 204,
+      "sum": 1266,
+      "unaccounted": 7
+    },
+    "reconciliation": "The 7 unaccounted mutants in M9-C42.17 correspond to mutmut 'timeout' status. M9-C42.17 summary used only killed/survived categories, omitting timeout/no_tests/not_checked from both counts and score denominator.",
+    "mutmut_status_categories": [
+      "killed",
+      "survived",
+      "timeout",
+      "no_tests",
+      "not_checked",
+      "suspicious"
+    ],
+    "current_run_timeout": 3,
+    "m9_c42_17_omission": "M9-C42.17 report used only killed/survived; excluded timeout, no_tests, not_checked from both counts and score denominator"
+  },
+  "scoring_methodology": {
+    "mutation_score_formula": "killed / (killed + survived + timeout)",
+    "excluded_from_denominator": ["no_tests", "not_checked", "suspicious"],
+    "matches_c42_baseline": true
+  }
+}

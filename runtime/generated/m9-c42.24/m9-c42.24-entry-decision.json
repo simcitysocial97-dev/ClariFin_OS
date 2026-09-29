@@ -1,0 +1,42 @@
+{
+  "title": "M9-C42.24 — Deferred Intelligence Entry Decision",
+  "generated_at": "2026-08-25T18:58:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "decisions": [
+    {
+      "component": "transaction_intelligence",
+      "decision": "NOT READY",
+      "reason": "Fails all readiness conditions: 0 unit tests (need >=50), 3 property tests (need >=20), no capability registration, 29.1% direct coverage (need >=70%). Mutation would predominantly measure test-discovery absence (71% no_tests) rather than test effectiveness.",
+      "remediation_path": [
+        "Register transaction_intelligence in canonical capability set",
+        "Build unit test suite: tests/unit/engines/transaction_intelligence/ with >=50 tests",
+        "Expand property tests from 3 to >=20",
+        "Achieve >=70% direct coverage with direct tests",
+        "Validate test-discovery quality",
+        "Re-evaluate readiness"
+      ],
+      "estimated_effort": "HIGH — new test suite from scratch"
+    },
+    {
+      "component": "financial_intelligence",
+      "decision": "NOT READY",
+      "reason": "Fails all readiness conditions: 0 unit tests (need >=100), 0 property tests (need >=30), no capability registration, 35.4% direct coverage (need >=70%). Mutation would predominantly measure test-discovery absence (65% no_tests) rather than test effectiveness.",
+      "remediation_path": [
+        "Register financial_intelligence in canonical capability set",
+        "Build unit test suite: tests/unit/engines/financial_intelligence/ with >=100 tests",
+        "Create property test suite: tests/properties/financial_intelligence/ with >=30 tests",
+        "Achieve >=70% direct coverage with direct tests",
+        "Validate test-discovery quality",
+        "Re-evaluate readiness"
+      ],
+      "estimated_effort": "HIGH — new test suite from scratch (1099 stmts)"
+    }
+  ],
+  "population_decision": {
+    "current_population": "12 components (frozen)",
+    "proposed_population": "14 components (12 + transaction_intelligence + financial_intelligence)",
+    "decision": "DO NOT EXPAND — population remains at 12 components",
+    "rationale": "Both intelligence components are NOT READY. Expanding the mutation population to include them would yield mostly no_tests, wasting CI resources and obscuring the measurement signal. The 12-component population remains the authoritative scope."
+  },
+  "next_action": "Generate bounded intelligence-specific strengthening phase (C42.24-B) while preserving the certified 12-component state."
+}

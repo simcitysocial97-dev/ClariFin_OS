@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-09-21T05:52:40.303991Z",
+  "total_routes": 14,
+  "routes": [
+    {
+      "route": "/accounts",
+      "page": "frontend/app/accounts/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/behaviour",
+      "page": "frontend/app/behaviour/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/cards",
+      "page": "frontend/app/cards/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/cashflow",
+      "page": "frontend/app/cashflow/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [
+        "use-cashflow-capability"
+      ],
+      "has_workspace": false
+    },
+    {
+      "route": "/command-center",
+      "page": "frontend/app/command-center/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [
+        "use-dashboard-metrics",
+        "use-accounts",
+        "use-loans",
+        "use-cards",
+        "use-investments",
+        "use-cashflow",
+        "use-behavior-score",
+        "use-reconciliation"
+      ],
+      "capabilities": [
+        "use-forecast-capability"
+      ],
+      "has_workspace": false
+    },
+    {
+      "route": "/dashboard",
+      "page": "frontend/app/dashboard/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [
+        "from \"@/lib/hooks/use-dashboard-metrics\""
+      ],
+      "capabilities": [],
+      "has_workspace": false
+    },
+    {
+      "route": "/forecast",
+      "page": "frontend/app/forecast/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/investments",
+      "page": "frontend/app/investments/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/loans",
+      "page": "frontend/app/loans/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/net-worth",
+      "page": "frontend/app/net-worth/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [
+        "use-net-worth-capability"
+      ],
+      "has_workspace": false
+    },
+    {
+      "route": "/platform",
+      "page": "frontend/app/platform/page.tsx",
+      "type": "PLATFORM",
+      "hooks": [
+        "use-platform-health",
+        "use-platform-events",
+        "use-platform-errors",
+        "use-platform-tasks",
+        "use-platform-capabilities"
+      ],
+      "capabilities": [],
+      "has_workspace": false
+    },
+    {
+      "route": "/reconciliation",
+      "page": "frontend/app/reconciliation/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    },
+    {
+      "route": "/settings",
+      "page": "frontend/app/settings/page.tsx",
+      "type": "SUPPORT",
+      "hooks": [
+        "use-mounted"
+      ],
+      "capabilities": [],
+      "has_workspace": false
+    },
+    {
+      "route": "/transactions",
+      "page": "frontend/app/transactions/page.tsx",
+      "type": "FINANCIAL",
+      "hooks": [],
+      "capabilities": [],
+      "has_workspace": true
+    }
+  ],
+  "by_type": {
+    "FINANCIAL": 12,
+    "PLATFORM": 1,
+    "SUPPORT": 1
+  }
+}

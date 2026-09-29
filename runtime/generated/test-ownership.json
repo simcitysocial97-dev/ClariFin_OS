@@ -1,0 +1,231 @@
+{
+  "schema": "test-ownership/v1",
+  "generated_at": "2026-08-06T16:13:48.477158+00:00",
+  "program": "16.0",
+  "engines": [
+    {
+      "engine": "account_engine",
+      "path": "engines/account_engine/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/account/test_account_engine.py"
+      ],
+      "test_count": 2,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "behaviour_engine",
+      "path": "engines/behaviour_engine/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/behaviour/test_metrics.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py"
+      ],
+      "test_count": 5,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "credit_card_engine",
+      "path": "engines/credit_card_engine/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "test_count": 7,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "financial_events",
+      "path": "engines/financial_events/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/capability/financial_events/__init__.py",
+        "backend/tests/capability/financial_events/test_capability.py",
+        "backend/tests/capability/financial_events/test_revocation.py",
+        "backend/tests/contract/generated/test_financial_events.py",
+        "backend/tests/invariants/financial_events.py",
+        "backend/tests/properties/financial_events/__init__.py",
+        "backend/tests/properties/financial_events/test_engine_properties.py",
+        "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/unit/engines/financial_events/__init__.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ],
+      "test_count": 10,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "financial_intelligence",
+      "path": "engines/financial_intelligence/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/forecasting/test_engine_properties.py"
+      ],
+      "test_count": 1,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "loan_engine",
+      "path": "engines/loan_engine/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/properties/loan_engine/__init__.py",
+        "backend/tests/properties/loan_engine/test_amortization_properties.py",
+        "backend/tests/properties/loan_engine/test_emi_properties.py",
+        "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+        "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+        "backend/tests/properties/loan_engine/test_metrics_properties.py",
+        "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_loan_engine.py"
+      ],
+      "test_count": 10,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "recommendation_engine",
+      "path": "engines/recommendation_engine/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+      ],
+      "test_count": 2,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "transaction_intelligence",
+      "path": "engines/transaction_intelligence/__init__.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/capability/transaction_intelligence/__init__.py",
+        "backend/tests/capability/transaction_intelligence/test_capability.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+      ],
+      "test_count": 6,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "balance_engine",
+      "path": "engines/balance_engine.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/invariants/test_determinism.py"
+      ],
+      "test_count": 1,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "insight_generator",
+      "path": "engines/insight_generator.py",
+      "migration_status": "",
+      "tests": [],
+      "test_count": 0,
+      "has_tests": false,
+      "missing_tests": true,
+      "ownership": "",
+      "issues": [
+        "NO_TESTS"
+      ]
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "path": "engines/ledger_audit_engine.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/audits/test_audit_minimal.py"
+      ],
+      "test_count": 1,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "nudge_engine",
+      "path": "engines/nudge_engine.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/properties/recommendations/test_engine_properties.py"
+      ],
+      "test_count": 1,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    },
+    {
+      "engine": "reconciliation_engine",
+      "path": "engines/reconciliation_engine.py",
+      "migration_status": "",
+      "tests": [
+        "backend/tests/invariants/test_reconciliation_determinism.py",
+        "backend/tests/invariants/test_reconciliation_properties.py",
+        "backend/tests/properties/reconciliation/test_engine_properties.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+      ],
+      "test_count": 4,
+      "has_tests": true,
+      "missing_tests": false,
+      "ownership": "",
+      "issues": []
+    }
+  ],
+  "duplicate_tests": [
+    "backend/tests/properties/behaviour/test_engine_properties.py",
+    "backend/tests/unit/engines/behaviour/test_integration.py",
+    "backend/tests/properties/credit_cards/test_engine_properties.py",
+    "backend/tests/properties/lending/test_engine_properties.py"
+  ],
+  "legacy_targeting_tests": [],
+  "missing_tests_summary": [
+    "insight_generator"
+  ],
+  "summary": {
+    "total_engines": 13,
+    "engines_with_tests": 12,
+    "engines_without_tests": 1,
+    "duplicate_tests": 4,
+    "legacy_targeting": 0
+  }
+}

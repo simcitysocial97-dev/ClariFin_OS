@@ -1,0 +1,96 @@
+{
+  "title": "M9-C42.28 \u2014 Final Certification",
+  "milestone": "M9-C42.28",
+  "phase": "Targeted Verification Execution & Mutation Plumbing",
+  "date": "2026-08-26",
+  "status": "CERTIFIED",
+  "certification_label": "TARGETED VERIFICATION EXECUTION \u2014 27/27 GATES PASSED",
+  "baseline": {
+    "frozen_artifact_count": 19,
+    "runtime_surface_count": 9,
+    "frozen_aggregate_sha256": "3401e197d75156c982738fa5fa10c07d2b266ccdba69bc7409405c6964bac90f"
+  },
+  "scenarios": {
+    "passed": 7,
+    "total": 7,
+    "names": [
+      "A_no_change",
+      "B_single_engine_change",
+      "C_test_only_change",
+      "D_new_component",
+      "E_scope_mismatch",
+      "F_verification_failure",
+      "G_infrastructure_failure"
+    ]
+  },
+  "resource_efficiency": {
+    "name": "single_engine_change_vs_full_campaign",
+    "full_campaign_components": 14,
+    "planner_selected_components": 1,
+    "full_campaign_cost_units": 840,
+    "planner_selected_cost_units": 60,
+    "saved_cost_units": 780,
+    "saved_fraction": 0.9286,
+    "cost_basis": "Per-component 60-minute mutation budget; sum of all 14 components = full campaign; 1 component = planner-selected for the canonical single-engine-change scenario (Scenario B). Cost basis matches the C42.25/C42.26 cost model.",
+    "certification_confidence_preserved": true,
+    "notes": "Avoided 13/14 = 92.86% of the full mutation cost without reducing certification confidence. The avoided work would have re-measured 13 components whose evidence remained valid under the C42.27 invalidation rules."
+  },
+  "invariants": {
+    "G22_existing_verification_gates_intact": {
+      "gates_count": 24,
+      "all_passed": true
+    },
+    "G23_no_production_business_logic_changed": {
+      "drift_count": 0,
+      "drifted_paths": []
+    },
+    "G24_no_code_deleted": {
+      "missing_count": 0
+    },
+    "G25_no_mutation_score_chasing": {
+      "single_engine_change_label": "AUTHORITATIVE_TARGETED",
+      "no_change_label": "MATHEMATICALLY_RECONCILED",
+      "distinguished": true
+    }
+  },
+  "gates": {
+    "G1_C42.27 baseline preserved": "PASS",
+    "G2_Executable verification-plan contract implemented": "PASS",
+    "G3_Planner/executor boundary preserved": "PASS",
+    "G4_Existing verification mechanisms reused": "PASS",
+    "G5_Targeted mutation execution implemented": "PASS",
+    "G6_Evidence capture implemented": "PASS",
+    "G7_Evidence reconciliation implemented": "PASS",
+    "G8_Derived aggregate calculation implemented": "PASS",
+    "G9_Scope enforcement implemented": "PASS",
+    "G10_Scope mismatch blocks execution": "PASS",
+    "G11_Verification failures correctly classified": "PASS",
+    "G12_Infrastructure failures correctly classified": "PASS",
+    "G13_Evidence failures correctly classified": "PASS",
+    "G14_No silent repository-wide fallback": "PASS",
+    "G15_No fabricated/partial evidence treated as valid": "PASS",
+    "G16_No-change scenario passes": "PASS",
+    "G17_Single-component scenario passes": "PASS",
+    "G18_Test-only scenario passes": "PASS",
+    "G19_Population-expansion scenario passes": "PASS",
+    "G20_Scope-mismatch scenario passes": "PASS",
+    "G21_Resource-efficiency benefit demonstrated": "PASS",
+    "G22_Existing verification gates remain intact": "PASS",
+    "G23_No production business logic changed": "PASS",
+    "G24_No code deleted": "PASS",
+    "G25_No mutation-score chasing introduced": "PASS",
+    "G26_Forensic execution record produced": "PASS",
+    "G27_Forward convergence updated": "PASS"
+  },
+  "test_summary": {
+    "returncode": 0,
+    "stdout_tail": "%]\nruntime/tests/test_m9_c42_28.py::TestReconciliation::test_reconcile_verification_failure_invalidates PASSED [ 50%]\nruntime/tests/test_m9_c42_28.py::TestLabelledAggregate::test_authoritative_measured_label PASSED [ 54%]\nruntime/tests/test_m9_c42_28.py::TestLabelledAggregate::test_authoritative_targeted_label PASSED [ 58%]\nruntime/tests/test_m9_c42_28.py::TestLabelledAggregate::test_mathematically_reconciled_label PASSED [ 62%]\nruntime/tests/test_m9_c42_28.py::TestLabelledAggregate::test_aggregate_never_collapses PASSED [ 66%]\nruntime/tests/test_m9_c42_28.py::TestScopeEnforcement::test_scope_mismatch_blocks_execution PASSED [ 70%]\nruntime/tests/test_m9_c42_28.py::TestFailureClassification::test_failure_kind_values_are_distinct PASSED [ 75%]\nruntime/tests/test_m9_c42_28.py::TestFailureClassification::test_all_failure_kinds_present PASSED [ 79%]\nruntime/tests/test_m9_c42_28.py::TestForensicRecord::test_record_captures_full_chain PASSED [ 83%]\nruntime/tests/test_m9_c42_28.py::TestCLIIntegration::test_evidence_plan_subcommand_exists PASSED [ 87%]\nruntime/tests/test_m9_c42_28.py::TestBaselineIntegrity::test_baseline_artifact_present PASSED [ 91%]\nruntime/tests/test_m9_c42_28.py::TestBaselineIntegrity::test_baseline_scenarios_present PASSED [ 95%]\nruntime/tests/test_m9_c42_28.py::TestBaselineIntegrity::test_resource_efficiency_demonstrated PASSED [100%]\n\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481\n  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 24 passed, 1 warning in 26.39s ========================\n"
+  },
+  "new_modules": [
+    "runtime/foundation/verification/executor_pipeline.py"
+  ],
+  "new_tests": "runtime/tests/test_m9_c42_28.py",
+  "new_artifacts": "runtime/generated/m9-c42.28/ (baseline, scenarios, resource-efficiency, scenarios/*.json, evidence-E_*.json, forensic-execution-record.json)",
+  "production_code_modified": false,
+  "scenarios_pass": "7/7"
+}

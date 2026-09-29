@@ -1,0 +1,2615 @@
+{
+  "schema": "m9-c48-capability-contract/v1",
+  "generated_at": "2026-08-31T02:54:11.280881+00:00",
+  "contracts": {
+    "loan-engine": {
+      "id": "loan-engine",
+      "name": "Loan Engine",
+      "description": "Core loan calculation engine",
+      "category": "capability",
+      "maturity": "operational",
+      "implementation_surfaces": [
+        {
+          "id": "surf::backend/src/engines/loan_engine",
+          "path": "backend/src/engines/loan_engine",
+          "kind": "engine",
+          "fingerprint": "",
+          "description": "Loan Engine implementation surface"
+        }
+      ],
+      "affected_by_paths": [
+        "backend/src/engines/loan_engine"
+      ],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "backend/tests/unit/engines/loan_engine",
+          "test_kind": "property",
+          "capability_id": "loan-engine",
+          "covers_functions": [],
+          "description": "property tests for loan-engine"
+        },
+        {
+          "test_path": "backend/tests/unit/engines/loan_engine",
+          "test_kind": "contract",
+          "capability_id": "loan-engine",
+          "covers_functions": [],
+          "description": "contract tests for loan-engine"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "property",
+          "profile_name": "property",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "contracts",
+          "profile_name": "contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "backend",
+          "profile_name": "backend",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend",
+            "contracts",
+            "property"
+          ],
+          "is_minimum": true,
+          "escalation_order": 0
+        },
+        {
+          "workflow_id": "run_property_tests",
+          "profile_name": "run_property_tests",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_contract_tests",
+          "profile_name": "run_contract_tests",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_backend_verification",
+          "profile_name": "run_backend_verification",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_fast_checks",
+          "profile_name": "run_fast_checks",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "estimated_duration_seconds": 60,
+          "scopes": [
+            "quick"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [
+        {
+          "measurement_kind": "mutation",
+          "scope": "loan-engine_engine",
+          "required_for_certification": true,
+          "authoritative_evidence_path": "backend/tests/generated/mutation/measurement-truth-loan-engine.json",
+          "reusable_evidence_path": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+          "completion_requirements": {
+            "minimum_score": 80,
+            "completion": "AUTHORITATIVE_COMPLETE"
+          }
+        },
+        {
+          "measurement_kind": "coverage",
+          "scope": "backend/src/engines/loan_engine",
+          "required_for_certification": false,
+          "authoritative_evidence_path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+          "reusable_evidence_path": "",
+          "completion_requirements": {
+            "minimum_line_percent": 40
+          }
+        }
+      ],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::property::loan-engine",
+          "evidence_kind": "property",
+          "component_id": "backend/src/engines/loan_engine",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        },
+        {
+          "evidence_id": "ev::contract::loan-engine",
+          "evidence_kind": "contract",
+          "component_id": "backend/src/engines/loan_engine",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::loan-engine::mutation",
+          "name": "Mutation Survivor Strengthening for Loan Engine",
+          "description": "Strengthen existing tests to kill surviving mutants",
+          "trigger_condition": "mutation_survivor",
+          "applies_to": [
+            "loan-engine"
+          ],
+          "steps": [
+            "Load durable survivor-intel record",
+            "Identify Class A/B survivors with covering tests",
+            "Propose behavioral assertions for missing distinguishing behavior",
+            "Validate proposed strengthening against mutant",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": true,
+          "produces_evidence": [
+            "strengthened_test",
+            "mutation_revalidation"
+          ]
+        },
+        {
+          "mechanism_id": "strengthen::loan-engine::coverage",
+          "name": "Coverage Regression Strengthening for Loan Engine",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "loan-engine"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [
+        {
+          "condition_id": "cert::loan-engine::mutation",
+          "description": "Mutation score >= 80% with authoritative classification for Loan Engine",
+          "required_evidence": [
+            "ev::mutation::loan-engine"
+          ],
+          "required_measurements": [
+            "mutation"
+          ],
+          "minimum_mutation_score": 80.0,
+          "minimum_coverage_percent": null,
+          "requires_authoritative_classification": true,
+          "requires_no_survivors": false,
+          "requires_no_coverage_gaps": false
+        }
+      ],
+      "missing": [
+        "nothing"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_backend_verification.sh",
+      "minimum_verification_profile": "backend",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "escalation_verification_profiles": [
+        "property",
+        "contracts",
+        "run_property_tests",
+        "run_contract_tests",
+        "run_backend_verification",
+        "run_fast_checks"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280033+00:00"
+    },
+    "reconciliation": {
+      "id": "reconciliation",
+      "name": "Reconciliation Engine",
+      "description": "Financial reconciliation engine",
+      "category": "capability",
+      "maturity": "operational",
+      "implementation_surfaces": [
+        {
+          "id": "surf::backend/src/engines/reconciliation_engine.py",
+          "path": "backend/src/engines/reconciliation_engine.py",
+          "kind": "engine",
+          "fingerprint": "",
+          "description": "Reconciliation Engine implementation surface"
+        }
+      ],
+      "affected_by_paths": [
+        "backend/src/engines/reconciliation_engine.py"
+      ],
+      "transitive_capabilities": [
+        "accounts",
+        "credit-cards",
+        "financial-intelligence",
+        "common-calculations",
+        "loans"
+      ],
+      "test_mappings": [
+        {
+          "test_path": "backend/tests/unit/engines/reconciliation_engine.py",
+          "test_kind": "property",
+          "capability_id": "reconciliation",
+          "covers_functions": [],
+          "description": "property tests for reconciliation"
+        },
+        {
+          "test_path": "backend/tests/unit/engines/reconciliation_engine.py",
+          "test_kind": "contract",
+          "capability_id": "reconciliation",
+          "covers_functions": [],
+          "description": "contract tests for reconciliation"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "property",
+          "profile_name": "property",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "contracts",
+          "profile_name": "contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "backend",
+          "profile_name": "backend",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend",
+            "contracts",
+            "property"
+          ],
+          "is_minimum": true,
+          "escalation_order": 0
+        },
+        {
+          "workflow_id": "run_property_tests",
+          "profile_name": "run_property_tests",
+          "command": "bash .github/scripts/run_property_tests.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_contract_tests",
+          "profile_name": "run_contract_tests",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_backend_verification",
+          "profile_name": "run_backend_verification",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_fast_checks",
+          "profile_name": "run_fast_checks",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "estimated_duration_seconds": 60,
+          "scopes": [
+            "quick"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [
+        {
+          "measurement_kind": "mutation",
+          "scope": "reconciliation_engine",
+          "required_for_certification": true,
+          "authoritative_evidence_path": "backend/tests/generated/mutation/measurement-truth-reconciliation.json",
+          "reusable_evidence_path": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+          "completion_requirements": {
+            "minimum_score": 80,
+            "completion": "AUTHORITATIVE_COMPLETE"
+          }
+        },
+        {
+          "measurement_kind": "coverage",
+          "scope": "backend/src/engines/reconciliation_engine.py",
+          "required_for_certification": false,
+          "authoritative_evidence_path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+          "reusable_evidence_path": "",
+          "completion_requirements": {
+            "minimum_line_percent": 40
+          }
+        }
+      ],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::property::reconciliation",
+          "evidence_kind": "property",
+          "component_id": "backend/src/engines/reconciliation_engine.py",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        },
+        {
+          "evidence_id": "ev::contract::reconciliation",
+          "evidence_kind": "contract",
+          "component_id": "backend/src/engines/reconciliation_engine.py",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::reconciliation::mutation",
+          "name": "Mutation Survivor Strengthening for Reconciliation Engine",
+          "description": "Strengthen existing tests to kill surviving mutants",
+          "trigger_condition": "mutation_survivor",
+          "applies_to": [
+            "reconciliation"
+          ],
+          "steps": [
+            "Load durable survivor-intel record",
+            "Identify Class A/B survivors with covering tests",
+            "Propose behavioral assertions for missing distinguishing behavior",
+            "Validate proposed strengthening against mutant",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": true,
+          "produces_evidence": [
+            "strengthened_test",
+            "mutation_revalidation"
+          ]
+        },
+        {
+          "mechanism_id": "strengthen::reconciliation::coverage",
+          "name": "Coverage Regression Strengthening for Reconciliation Engine",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "reconciliation"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [
+        {
+          "condition_id": "cert::reconciliation::mutation",
+          "description": "Mutation score >= 80% with authoritative classification for Reconciliation Engine",
+          "required_evidence": [
+            "ev::mutation::reconciliation"
+          ],
+          "required_measurements": [
+            "mutation"
+          ],
+          "minimum_mutation_score": 80.0,
+          "minimum_coverage_percent": null,
+          "requires_authoritative_classification": true,
+          "requires_no_survivors": false,
+          "requires_no_coverage_gaps": false
+        }
+      ],
+      "missing": [
+        "nothing"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_backend_verification.sh",
+      "minimum_verification_profile": "backend",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_property_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "escalation_verification_profiles": [
+        "property",
+        "contracts",
+        "run_property_tests",
+        "run_contract_tests",
+        "run_backend_verification",
+        "run_fast_checks"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280205+00:00"
+    },
+    "ledger": {
+      "id": "ledger",
+      "name": "Ledger Service",
+      "description": "General ledger and accounting",
+      "category": "capability",
+      "maturity": "operational",
+      "implementation_surfaces": [
+        {
+          "id": "surf::backend/src/engines/ledger_audit_engine.py",
+          "path": "backend/src/engines/ledger_audit_engine.py",
+          "kind": "engine",
+          "fingerprint": "",
+          "description": "Ledger Service implementation surface"
+        }
+      ],
+      "affected_by_paths": [
+        "backend/src/engines/ledger_audit_engine.py"
+      ],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "backend/tests/unit/engines/ledger_audit_engine.py",
+          "test_kind": "invariant",
+          "capability_id": "ledger",
+          "covers_functions": [],
+          "description": "invariant tests for ledger"
+        },
+        {
+          "test_path": "backend/tests/unit/engines/ledger_audit_engine.py",
+          "test_kind": "contract",
+          "capability_id": "ledger",
+          "covers_functions": [],
+          "description": "contract tests for ledger"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "contracts",
+          "profile_name": "contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "backend",
+          "profile_name": "backend",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend",
+            "contracts",
+            "property"
+          ],
+          "is_minimum": true,
+          "escalation_order": 0
+        },
+        {
+          "workflow_id": "integration",
+          "profile_name": "integration",
+          "command": "bash .github/scripts/run_integration_tests.sh",
+          "estimated_duration_seconds": 600,
+          "scopes": [
+            "integration"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_contract_tests",
+          "profile_name": "run_contract_tests",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_backend_verification",
+          "profile_name": "run_backend_verification",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_fast_checks",
+          "profile_name": "run_fast_checks",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "estimated_duration_seconds": 60,
+          "scopes": [
+            "quick"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [
+        {
+          "measurement_kind": "mutation",
+          "scope": "ledger_engine",
+          "required_for_certification": true,
+          "authoritative_evidence_path": "backend/tests/generated/mutation/measurement-truth-ledger.json",
+          "reusable_evidence_path": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+          "completion_requirements": {
+            "minimum_score": 80,
+            "completion": "AUTHORITATIVE_COMPLETE"
+          }
+        },
+        {
+          "measurement_kind": "coverage",
+          "scope": "backend/src/engines/ledger_audit_engine.py",
+          "required_for_certification": false,
+          "authoritative_evidence_path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+          "reusable_evidence_path": "",
+          "completion_requirements": {
+            "minimum_line_percent": 40
+          }
+        }
+      ],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::invariant::ledger",
+          "evidence_kind": "invariant",
+          "component_id": "backend/src/engines/ledger_audit_engine.py",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        },
+        {
+          "evidence_id": "ev::contract::ledger",
+          "evidence_kind": "contract",
+          "component_id": "backend/src/engines/ledger_audit_engine.py",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::ledger::mutation",
+          "name": "Mutation Survivor Strengthening for Ledger Service",
+          "description": "Strengthen existing tests to kill surviving mutants",
+          "trigger_condition": "mutation_survivor",
+          "applies_to": [
+            "ledger"
+          ],
+          "steps": [
+            "Load durable survivor-intel record",
+            "Identify Class A/B survivors with covering tests",
+            "Propose behavioral assertions for missing distinguishing behavior",
+            "Validate proposed strengthening against mutant",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": true,
+          "produces_evidence": [
+            "strengthened_test",
+            "mutation_revalidation"
+          ]
+        },
+        {
+          "mechanism_id": "strengthen::ledger::coverage",
+          "name": "Coverage Regression Strengthening for Ledger Service",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "ledger"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [
+        {
+          "condition_id": "cert::ledger::mutation",
+          "description": "Mutation score >= 80% with authoritative classification for Ledger Service",
+          "required_evidence": [
+            "ev::mutation::ledger"
+          ],
+          "required_measurements": [
+            "mutation"
+          ],
+          "minimum_mutation_score": 80.0,
+          "minimum_coverage_percent": null,
+          "requires_authoritative_classification": true,
+          "requires_no_survivors": false,
+          "requires_no_coverage_gaps": false
+        }
+      ],
+      "missing": [
+        "nothing"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_backend_verification.sh",
+      "minimum_verification_profile": "backend",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_integration_tests.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "escalation_verification_profiles": [
+        "contracts",
+        "integration",
+        "run_contract_tests",
+        "run_backend_verification",
+        "run_fast_checks"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280331+00:00"
+    },
+    "api-contracts": {
+      "id": "api-contracts",
+      "name": "API Contracts",
+      "description": "OpenAPI contract verification",
+      "category": "contract",
+      "maturity": "operational",
+      "implementation_surfaces": [
+        {
+          "id": "surf::backend/src",
+          "path": "backend/src",
+          "kind": "engine",
+          "fingerprint": "",
+          "description": "API Contracts implementation surface"
+        },
+        {
+          "id": "surf::frontend/src",
+          "path": "frontend/src",
+          "kind": "frontend",
+          "fingerprint": "",
+          "description": "API Contracts implementation surface"
+        }
+      ],
+      "affected_by_paths": [
+        "backend/src",
+        "frontend/src"
+      ],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "frontend/tests/src",
+          "test_kind": "contract",
+          "capability_id": "api-contracts",
+          "covers_functions": [],
+          "description": "contract_frontend tests for api-contracts"
+        },
+        {
+          "test_path": "",
+          "test_kind": "contract",
+          "capability_id": "api-contracts",
+          "covers_functions": [],
+          "description": "contract_backend tests for api-contracts"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "contracts",
+          "profile_name": "contracts",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "frontend",
+          "profile_name": "frontend",
+          "command": "bash .github/scripts/run_frontend_verification.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "frontend",
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "backend",
+          "profile_name": "backend",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend",
+            "contracts",
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_contract_tests",
+          "profile_name": "run_contract_tests",
+          "command": "bash .github/scripts/run_contract_tests.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "contracts"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_frontend_verification",
+          "profile_name": "run_frontend_verification",
+          "command": "bash .github/scripts/run_frontend_verification.sh",
+          "estimated_duration_seconds": 180,
+          "scopes": [
+            "frontend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_backend_verification",
+          "profile_name": "run_backend_verification",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [
+        {
+          "measurement_kind": "coverage",
+          "scope": "backend/src",
+          "required_for_certification": false,
+          "authoritative_evidence_path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+          "reusable_evidence_path": "",
+          "completion_requirements": {
+            "minimum_line_percent": 40
+          }
+        }
+      ],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::contract_frontend::api-contracts",
+          "evidence_kind": "contract_frontend",
+          "component_id": "frontend/src",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        },
+        {
+          "evidence_id": "ev::contract_backend::api-contracts",
+          "evidence_kind": "contract_backend",
+          "component_id": "backend/src",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::api-contracts::coverage",
+          "name": "Coverage Regression Strengthening for API Contracts",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "api-contracts"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_contract_tests.sh",
+      "minimum_verification_profile": "contracts",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_frontend_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_contract_tests.sh",
+        "bash .github/scripts/run_frontend_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh"
+      ],
+      "escalation_verification_profiles": [
+        "contracts",
+        "frontend",
+        "backend",
+        "run_contract_tests",
+        "run_frontend_verification",
+        "run_backend_verification"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280436+00:00"
+    },
+    "migrations": {
+      "id": "migrations",
+      "name": "Database Migrations",
+      "description": "Database migration verification",
+      "category": "migration",
+      "maturity": "operational",
+      "implementation_surfaces": [
+        {
+          "id": "surf::backend/src/migrations",
+          "path": "backend/src/migrations",
+          "kind": "engine",
+          "fingerprint": "",
+          "description": "Database Migrations implementation surface"
+        }
+      ],
+      "affected_by_paths": [
+        "backend/src/migrations"
+      ],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "backend/tests/unit/migrations",
+          "test_kind": "unit",
+          "capability_id": "migrations",
+          "covers_functions": [],
+          "description": "migration tests for migrations"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "migration",
+          "profile_name": "migration",
+          "command": "bash .github/scripts/run_migration_verification.sh",
+          "estimated_duration_seconds": 120,
+          "scopes": [
+            "migration"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "backend",
+          "profile_name": "backend",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend",
+            "contracts",
+            "property"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_migration_verification",
+          "profile_name": "run_migration_verification",
+          "command": "bash .github/scripts/run_migration_verification.sh",
+          "estimated_duration_seconds": 120,
+          "scopes": [
+            "migration"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        },
+        {
+          "workflow_id": "run_backend_verification",
+          "profile_name": "run_backend_verification",
+          "command": "bash .github/scripts/run_backend_verification.sh",
+          "estimated_duration_seconds": 300,
+          "scopes": [
+            "backend"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [
+        {
+          "measurement_kind": "coverage",
+          "scope": "backend/src/migrations",
+          "required_for_certification": false,
+          "authoritative_evidence_path": "runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
+          "reusable_evidence_path": "",
+          "completion_requirements": {
+            "minimum_line_percent": 40
+          }
+        }
+      ],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::migration::migrations",
+          "evidence_kind": "migration",
+          "component_id": "backend/src/migrations",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::migrations::coverage",
+          "name": "Coverage Regression Strengthening for Database Migrations",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "migrations"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_migration_verification.sh",
+      "minimum_verification_profile": "migration",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_migration_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh",
+        "bash .github/scripts/run_migration_verification.sh",
+        "bash .github/scripts/run_backend_verification.sh"
+      ],
+      "escalation_verification_profiles": [
+        "migration",
+        "backend",
+        "run_migration_verification",
+        "run_backend_verification"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280508+00:00"
+    },
+    "quick": {
+      "id": "quick",
+      "name": "Quick Quality Gate",
+      "description": "Fast lint, typecheck, format, unit, architecture and meta checks",
+      "category": "capability",
+      "maturity": "operational",
+      "implementation_surfaces": [],
+      "affected_by_paths": [],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "",
+          "test_kind": "unit",
+          "capability_id": "quick",
+          "covers_functions": [],
+          "description": "capability tests for quick"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "quick",
+          "profile_name": "quick",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "estimated_duration_seconds": 60,
+          "scopes": [
+            "quick"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_fast_checks",
+          "profile_name": "run_fast_checks",
+          "command": "bash .github/scripts/run_fast_checks.sh",
+          "estimated_duration_seconds": 60,
+          "scopes": [
+            "quick"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::capability::quick",
+          "evidence_kind": "capability",
+          "component_id": "backend/src",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::quick::coverage",
+          "name": "Coverage Regression Strengthening for Quick Quality Gate",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "quick"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_fast_checks.sh",
+      "minimum_verification_profile": "quick",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_fast_checks.sh",
+        "bash .github/scripts/run_fast_checks.sh"
+      ],
+      "escalation_verification_profiles": [
+        "quick",
+        "run_fast_checks"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280559+00:00"
+    },
+    "runtime-verification": {
+      "id": "runtime-verification",
+      "name": "Runtime Verification",
+      "description": "Engineering Runtime self-verification",
+      "category": "architectural",
+      "maturity": "operational",
+      "implementation_surfaces": [],
+      "affected_by_paths": [],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "",
+          "test_kind": "unit",
+          "capability_id": "runtime-verification",
+          "covers_functions": [],
+          "description": "architectural tests for runtime-verification"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "runtime",
+          "profile_name": "runtime",
+          "command": "bash .github/scripts/run_runtime_verification.sh",
+          "estimated_duration_seconds": 120,
+          "scopes": [
+            "runtime"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_runtime_verification",
+          "profile_name": "run_runtime_verification",
+          "command": "bash .github/scripts/run_runtime_verification.sh",
+          "estimated_duration_seconds": 120,
+          "scopes": [
+            "runtime"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::architectural::runtime-verification",
+          "evidence_kind": "architectural",
+          "component_id": "runtime",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::runtime-verification::coverage",
+          "name": "Coverage Regression Strengthening for Runtime Verification",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "runtime-verification"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_runtime_verification.sh",
+      "minimum_verification_profile": "runtime",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_runtime_verification.sh",
+        "bash .github/scripts/run_runtime_verification.sh"
+      ],
+      "escalation_verification_profiles": [
+        "runtime",
+        "run_runtime_verification"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280611+00:00"
+    },
+    "golden-regression": {
+      "id": "golden-regression",
+      "name": "Golden Regression",
+      "description": "Golden dataset regression",
+      "category": "capability",
+      "maturity": "operational",
+      "implementation_surfaces": [],
+      "affected_by_paths": [],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "",
+          "test_kind": "unit",
+          "capability_id": "golden-regression",
+          "covers_functions": [],
+          "description": "capability tests for golden-regression"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "golden",
+          "profile_name": "golden",
+          "command": "bash .github/scripts/run_golden_tests.sh",
+          "estimated_duration_seconds": 600,
+          "scopes": [
+            "golden"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_golden_tests",
+          "profile_name": "run_golden_tests",
+          "command": "bash .github/scripts/run_golden_tests.sh",
+          "estimated_duration_seconds": 600,
+          "scopes": [
+            "golden"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::capability::golden-regression",
+          "evidence_kind": "capability",
+          "component_id": "backend/tests/golden",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::golden-regression::coverage",
+          "name": "Coverage Regression Strengthening for Golden Regression",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "golden-regression"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_golden_tests.sh",
+      "minimum_verification_profile": "golden",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_golden_tests.sh",
+        "bash .github/scripts/run_golden_tests.sh"
+      ],
+      "escalation_verification_profiles": [
+        "golden",
+        "run_golden_tests"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280661+00:00"
+    },
+    "mutation-analysis": {
+      "id": "mutation-analysis",
+      "name": "Mutation Analysis",
+      "description": "Mutation testing for critical modules",
+      "category": "mutation",
+      "maturity": "operational",
+      "implementation_surfaces": [],
+      "affected_by_paths": [],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "backend/tests/unit/engines",
+          "test_kind": "mutation",
+          "capability_id": "mutation-analysis",
+          "covers_functions": [],
+          "description": "mutation tests for mutation-analysis"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "mutation",
+          "profile_name": "mutation",
+          "command": "bash .github/scripts/run_mutation_selective.sh",
+          "estimated_duration_seconds": 600,
+          "scopes": [
+            "mutation"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_mutation_selective",
+          "profile_name": "run_mutation_selective",
+          "command": "bash .github/scripts/run_mutation_selective.sh",
+          "estimated_duration_seconds": 600,
+          "scopes": [
+            "mutation"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::mutation::mutation-analysis",
+          "evidence_kind": "mutation",
+          "component_id": "backend/src/engines",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::mutation-analysis::coverage",
+          "name": "Coverage Regression Strengthening for Mutation Analysis",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "mutation-analysis"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_mutation_selective.sh",
+      "minimum_verification_profile": "mutation",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_mutation_selective.sh",
+        "bash .github/scripts/run_mutation_selective.sh"
+      ],
+      "escalation_verification_profiles": [
+        "mutation",
+        "run_mutation_selective"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280802+00:00"
+    },
+    "e2e-tests": {
+      "id": "e2e-tests",
+      "name": "End-to-End Tests",
+      "description": "End-to-end browser tests",
+      "category": "integration",
+      "maturity": "operational",
+      "implementation_surfaces": [],
+      "affected_by_paths": [],
+      "transitive_capabilities": [],
+      "test_mappings": [
+        {
+          "test_path": "frontend/tests/e2e",
+          "test_kind": "integration",
+          "capability_id": "e2e-tests",
+          "covers_functions": [],
+          "description": "integration tests for e2e-tests"
+        }
+      ],
+      "workflow_mappings": [
+        {
+          "workflow_id": "playwright",
+          "profile_name": "playwright",
+          "command": "bash .github/scripts/run_playwright_tests.sh",
+          "estimated_duration_seconds": 1800,
+          "scopes": [
+            "playwright"
+          ],
+          "is_minimum": false,
+          "escalation_order": 1
+        },
+        {
+          "workflow_id": "run_playwright_tests",
+          "profile_name": "run_playwright_tests",
+          "command": "bash .github/scripts/run_playwright_tests.sh",
+          "estimated_duration_seconds": 1800,
+          "scopes": [
+            "playwright"
+          ],
+          "is_minimum": false,
+          "escalation_order": 2
+        }
+      ],
+      "measurement_mappings": [],
+      "evidence_mappings": [
+        {
+          "evidence_id": "ev::integration::e2e-tests",
+          "evidence_kind": "integration",
+          "component_id": "frontend/e2e",
+          "measurement_record": null,
+          "classification": "derived",
+          "fingerprint": "",
+          "is_authoritative": false,
+          "reusable": true,
+          "invalidation_triggers": [
+            "source_change",
+            "config_change"
+          ]
+        }
+      ],
+      "invalidation_mappings": [
+        {
+          "rule_id": "R-SRC-001",
+          "description": "Production source change for component X invalidates evidence only for X (other components unaffected).",
+          "scope": "component",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-002",
+          "description": "Production source change inside a shared module used by multiple capabilities invalidates the capability-level evidence (transitive impact).",
+          "scope": "capability",
+          "triggers_on": "source_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SRC-003",
+          "description": "Source change to a test file (e.g. strengthening) invalidates the test evidence only, not production measurement.",
+          "scope": "evidence",
+          "triggers_on": "test_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-001",
+          "description": "Mutation config or selection config change invalidates the affected task's evidence only.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CFG-002",
+          "description": "Toolchain version change invalidates population-level mutation evidence \u2014 measurement is not comparable across toolchains.",
+          "scope": "component",
+          "triggers_on": "toolchain_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-001",
+          "description": "Dependency manifest change without version bump does not invalidate (assumed transparent).",
+          "scope": "evidence",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-DEP-002",
+          "description": "Dependency version bump in mutation-sensitive packages (mutmut, pytest, coverage) invalidates toolchain evidence.",
+          "scope": "component",
+          "triggers_on": "dependency_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-001",
+          "description": "Adding a new component to the population creates a new measurement requirement; existing evidence is unaffected.",
+          "scope": "evidence",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-POP-002",
+          "description": "Removing a component from the population invalidates only that component's evidence.",
+          "scope": "component",
+          "triggers_on": "population_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-CAP-001",
+          "description": "Capability-to-component mapping change invalidates evidence only for affected mappings.",
+          "scope": "evidence",
+          "triggers_on": "capability_mapping_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-SCHEMA-001",
+          "description": "Evidence schema change invalidates evidence only (interpretation re-run required).",
+          "scope": "evidence",
+          "triggers_on": "evidence_schema_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-ENV-001",
+          "description": "Environment change (Python version, OS) invalidates toolchain-comparable evidence at population level.",
+          "scope": "component",
+          "triggers_on": "environment_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-INFRA-001",
+          "description": "Verification infrastructure change (e.g. mutmut version pinned to a different release) invalidates evidence only for tasks depending on the changed infra.",
+          "scope": "task",
+          "triggers_on": "infra_change",
+          "affected_evidence": []
+        },
+        {
+          "rule_id": "R-TASK-001",
+          "description": "A task whose command or script changed invalidates only that task's evidence.",
+          "scope": "task",
+          "triggers_on": "config_change",
+          "affected_evidence": []
+        }
+      ],
+      "strengthening_mechanisms": [
+        {
+          "mechanism_id": "strengthen::e2e-tests::coverage",
+          "name": "Coverage Regression Strengthening for End-to-End Tests",
+          "description": "Add tests for uncovered branches/lines",
+          "trigger_condition": "coverage_decrease",
+          "applies_to": [
+            "e2e-tests"
+          ],
+          "steps": [
+            "Identify uncovered branches/lines from coverage measurement",
+            "Determine behavioral importance of uncovered code",
+            "Propose targeted test additions",
+            "Validate coverage improvement",
+            "Record strengthening decision"
+          ],
+          "requires_human_authorization": false,
+          "produces_evidence": [
+            "coverage_improvement",
+            "new_tests"
+          ]
+        }
+      ],
+      "certification_conditions": [],
+      "missing": [
+        "no_measurement_truth",
+        "no_certification_criteria"
+      ],
+      "minimum_verification_command": "bash .github/scripts/run_playwright_tests.sh",
+      "minimum_verification_profile": "playwright",
+      "escalation_verification_commands": [
+        "bash .github/scripts/run_playwright_tests.sh",
+        "bash .github/scripts/run_playwright_tests.sh"
+      ],
+      "escalation_verification_profiles": [
+        "playwright",
+        "run_playwright_tests"
+      ],
+      "metadata": {},
+      "generated_at": "2026-08-31T02:54:11.280876+00:00"
+    }
+  }
+}

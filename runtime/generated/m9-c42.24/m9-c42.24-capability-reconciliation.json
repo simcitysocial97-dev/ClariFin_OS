@@ -1,0 +1,126 @@
+{
+  "title": "M9-C42.24 — Capability-Level Reconciliation",
+  "generated_at": "2026-08-25T18:58:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "methodology": "Map each mutation component to its verified capabilities, then classify verification confidence per capability.",
+  "capabilities": [
+    {
+      "capability": "loan-engine",
+      "production_component": "loan_engine",
+      "tests": ["tests/unit/engines/loan", "tests/properties/loan_engine"],
+      "coverage_pct": 98.7,
+      "mutation_score": 84.0,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — comprehensive unit + property tests, strong mutation, high coverage"
+    },
+    {
+      "capability": "reconciliation",
+      "production_component": "reconciliation_engine",
+      "tests": ["tests/unit/engines/reconciliation", "tests/properties/reconciliation", "tests/capability/reconciliation"],
+      "coverage_pct": 85.1,
+      "mutation_score": 80.7,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — multi-layer tests (unit + property + capability), strong mutation"
+    },
+    {
+      "capability": "ledger",
+      "production_component": "ledger_audit_engine",
+      "tests": ["tests/unit/engines/ledger_audit_engine.py"],
+      "coverage_pct": 93.5,
+      "mutation_score": 56.8,
+      "classification": "behaviorally weak capability",
+      "verification_confidence": "MEDIUM — high coverage but weak mutation; tests exercise code but lack strict assertions. 82 survivors classified C/B."
+    },
+    {
+      "capability": "api-contracts",
+      "production_component": "credit_card_engine",
+      "tests": ["tests/unit/engines/credit_card", "tests/properties/credit_card_engine", "tests/capability/credit_cards"],
+      "coverage_pct": 72.5,
+      "mutation_score": 75.6,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — good coverage-mutation correlation, comprehensive test suite"
+    },
+    {
+      "capability": "migrations",
+      "production_component": "account_engine",
+      "tests": ["tests/unit/engines/account", "tests/capability/account_management"],
+      "coverage_pct": 98.9,
+      "mutation_score": 89.1,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — near-perfect coverage and mutation"
+    },
+    {
+      "capability": "runtime-verification",
+      "production_component": "balance_engine",
+      "tests": ["tests/unit/engines/balance_engine.py"],
+      "coverage_pct": 49.1,
+      "mutation_score": 94.7,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — low coverage but exceptional mutation discrimination; tests target critical paths"
+    },
+    {
+      "capability": "golden-regression",
+      "production_component": "cashflow_engine",
+      "tests": ["tests/properties/cashflow"],
+      "coverage_pct": 100.0,
+      "mutation_score": 74.4,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — post-C42.23 strengthening: 78 genuine mutants killed, 44 equivalent/unreachable remaining"
+    },
+    {
+      "capability": "mutation-analysis",
+      "production_component": "financial_events",
+      "tests": ["tests/unit/engines/financial_events", "tests/properties/financial_events", "tests/capability/financial_events"],
+      "coverage_pct": 87.7,
+      "mutation_score": 64.5,
+      "classification": "moderate capability",
+      "verification_confidence": "MEDIUM — discovery repair succeeded (no_tests 29->0), but 250 survivors include genuine gaps (A). C42.22 repair incomplete for behaviour_engine affects overall verification graph."
+    },
+    {
+      "capability": "e2e-tests",
+      "production_component": "recommendation_engine",
+      "tests": ["tests/unit/engines/recommendation", "tests/capability/recommendations"],
+      "coverage_pct": 95.9,
+      "mutation_score": 63.5,
+      "classification": "moderate capability",
+      "verification_confidence": "MEDIUM — 16 genuine gaps killed by C42.23 tests, but 103 survivors remain including ~20 genuine (A)."
+    },
+    {
+      "capability": "financial-calculations",
+      "production_component": "common_calculations",
+      "tests": ["tests/unit/test_calculations.py"],
+      "coverage_pct": 98.8,
+      "mutation_score": 56.4,
+      "classification": "behaviorally weak capability",
+      "verification_confidence": "MEDIUM — high coverage but weak mutation; survivors are equivalent/intentional."
+    },
+    {
+      "capability": "money-domain",
+      "production_component": "core_domain_money",
+      "tests": ["tests/unit/test_money.py", "tests/properties/test_money_invariants.py", "tests/invariants/test_money.py"],
+      "coverage_pct": 100.0,
+      "mutation_score": 82.4,
+      "classification": "strong capability",
+      "verification_confidence": "HIGH — 100% coverage, strong mutation, comprehensive invariant tests"
+    },
+    {
+      "capability": "behaviour-analysis",
+      "production_component": "behaviour_engine",
+      "tests": ["tests/unit/engines/behaviour", "tests/properties/behaviour"],
+      "coverage_pct": 73.7,
+      "mutation_score": 28.8,
+      "classification": "discovery-limited capability",
+      "verification_confidence": "LOW — 2835 no_tests (39% of population) indicates severe discovery gap. C42.22 repair not implemented. Effective mutation score on evaluated population: 1262 / (1262 + 3116) = 28.8%."
+    }
+  ],
+  "unmapped_capabilities": [
+    {
+      "component": "transaction_intelligence",
+      "reason": "No capability registration in canonical set. Tests exist in tests/capability/transaction_intelligence/ but not bound to mutation scope."
+    },
+    {
+      "component": "financial_intelligence",
+      "reason": "No capability registration in canonical set. Tests exist in tests/capability/forecasting/ but not bound to mutation scope."
+    }
+  ]
+}

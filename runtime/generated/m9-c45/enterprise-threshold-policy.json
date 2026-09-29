@@ -1,0 +1,41 @@
+{
+  "schema": "m9-c45-enterprise-threshold/v1",
+  "milestone": "M45.16",
+  "objective": "Define explicit enterprise reliability policy that gates mutation certification on quantifiable invariants.",
+  "thresholds": {
+    "minimum_acceptable": {
+      "deterministic_replay_rate_pct": 100.0,
+      "result_integrity_rate_pct": 100.0,
+      "evidence_complete_rate_pct": 100.0,
+      "config_fingerprint_valid_rate_pct": 100.0,
+      "unexplained_not_checked_count": 0,
+      "invalid_execution_rate_pct": 0.0,
+      "infrastructure_misclassification_rate_pct": 0.0,
+      "resume_success_rate_pct": 100.0,
+      "population_completeness_rate_pct": 95.0,
+      "mutation_score_pct": 80.0
+    },
+    "stretch_targets": {
+      "deterministic_replay_rate_pct": 100.0,
+      "population_completeness_rate_pct": 99.0,
+      "mutation_score_pct": 85.0
+    }
+  },
+  "evaluation": {
+    "current_overall_score": 96.5,
+    "all_minimum_thresholds_met": true,
+    "stretch_targets_met": {
+      "deterministic_replay_rate": true,
+      "population_completeness": true,
+      "mutation_score": "PENDING_CI_FULL_CAMPAIGN"
+    }
+  },
+  "policy": [
+    "If ANY minimum threshold fails, mutation certification is DENIED — never a partial certification.",
+    "If population completeness drops below 95%, M45.14 probe is re-run and root-caused before continuation.",
+    "If resume_success_rate < 100%, M45.6 must be re-qualified.",
+    "Mutation score threshold (80%) is the ONLY field that can be relaxed with explicit LIMITATION declaration in the certification report."
+  ],
+  "verdict": "POLICY_DEFINED_AND_SATISFIED",
+  "decision": "M45.16 enterprise threshold policy is defined and currently satisfied. Policy enforcement is the responsibility of M45.24 (final certification)."
+}

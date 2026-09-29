@@ -1,0 +1,14 @@
+{
+  "run_id": "run::state::H",
+  "timestamp": "2026-09-04T23:07:16.731922+00:00",
+  "state": "H_unmapped",
+  "expected": "FAIL_CLOSED / UNMAPPED_REVIEW",
+  "payload": {
+    "state": "H_unmapped",
+    "expected": "FAIL_CLOSED / UNMAPPED_REVIEW",
+    "task": "exec::state::H::unmapped",
+    "execution_command": ".venv/bin/python -m pytest backend/tests/invariants -q --junit-xml=runtime/generated/m9-c50.13/junit-invariant-__unmapped_target__.xml",
+    "executable": "executable"
+  },
+  "task_identity": "exec::state::H::unmapped"
+}

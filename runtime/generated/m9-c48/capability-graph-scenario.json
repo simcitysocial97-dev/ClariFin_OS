@@ -1,0 +1,86 @@
+{
+  "edges": [
+    {
+      "source_kind": "file",
+      "source": "src/engines/loan_engine/new.py",
+      "capability_id": "loan-engine",
+      "severity": "required",
+      "rationale": "renamed from src/engines/loan_engine/old.py"
+    },
+    {
+      "source_kind": "file",
+      "source": "src/engines/loan_engine/old.py",
+      "capability_id": "INVALIDATED",
+      "severity": "diagnostic",
+      "rationale": "old identity invalidated by rename"
+    },
+    {
+      "source_kind": "file",
+      "source": "src/engines/loan_engine/gone.py",
+      "capability_id": "DELETED",
+      "severity": "diagnostic",
+      "rationale": "deleted capability loan-engine"
+    },
+    {
+      "source_kind": "file",
+      "source": "src/engines/credit_card_engine/cards.py",
+      "capability_id": "credit-card-engine",
+      "severity": "required",
+      "rationale": "changed file"
+    },
+    {
+      "source_kind": "file",
+      "source": "src/some_truly_unknown/orphan.py",
+      "capability_id": "UNMAPPED",
+      "severity": "blocking",
+      "rationale": "production file change with no capability mapping"
+    },
+    {
+      "source_kind": "symbol",
+      "source": "src/engines/loan_engine/new.py::calc_payment",
+      "capability_id": "loan-engine",
+      "severity": "required",
+      "rationale": "function change"
+    },
+    {
+      "source_kind": "endpoint",
+      "source": "POST /loans",
+      "capability_id": "loan-engine",
+      "severity": "required",
+      "rationale": "changed endpoint"
+    },
+    {
+      "source_kind": "endpoint",
+      "source": "GET /unknown",
+      "capability_id": "UNMAPPED",
+      "severity": "blocking",
+      "rationale": "changed endpoint has no capability mapping"
+    }
+  ],
+  "unmapped": [
+    {
+      "kind": "modified",
+      "old_path": null,
+      "new_path": "src/some_truly_unknown/orphan.py"
+    }
+  ],
+  "deleted_capabilities": [
+    "loan-engine"
+  ],
+  "renamed_paths": [
+    [
+      "src/engines/loan_engine/old.py",
+      "src/engines/loan_engine/new.py"
+    ]
+  ],
+  "unresolved_symbols": [],
+  "affected_capability_ids": [
+    "loan-engine",
+    "INVALIDATED",
+    "DELETED",
+    "credit-card-engine",
+    "UNMAPPED"
+  ],
+  "generated_at": "2026-09-04T02:36:49+00:00",
+  "schema": "m9-c48/capability-resolution@1"
+}

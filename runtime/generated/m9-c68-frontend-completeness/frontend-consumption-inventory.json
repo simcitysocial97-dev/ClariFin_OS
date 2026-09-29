@@ -1,0 +1,422 @@
+{
+  "consumed_paths": [
+    "/api/analytics",
+    "/api/cards",
+    "/api/cashflow/monthly?months=:param",
+    "/api/dashboard/summary",
+    "/api/investments",
+    "/api/investments/:param",
+    "/api/loans",
+    "/api/loans/:param",
+    "/api/loans/:param/prepayment-simulation",
+    "/api/loans/:param/schedule",
+    "/api/networth",
+    "/api/overview",
+    "/api/overview?:param",
+    "/api/reconciliation",
+    "/api/reconciliation/:param/confirm",
+    "/api/reconciliation/:param/reject",
+    "/api/reconciliation/pending",
+    "/api/reconciliation/scan",
+    "/api/v1/accounts",
+    "/api/v1/accounts/:param",
+    "/api/v1/behaviour/wellness-score",
+    "/api/v1/reconciliation",
+    "/platform/architecture",
+    "/platform/capabilities/:param",
+    "/platform/diagnostics/detail/:param",
+    "/platform/errors",
+    "/platform/evidence",
+    "/platform/framework",
+    "/platform/history/compare?current=:param&baseline=:param",
+    "/platform/runs/:param",
+    "/platform/v1/architecture/:param",
+    "/platform/v1/architecture/authority/:param",
+    "/platform/v1/capabilities/:param",
+    "/platform/v1/capabilities/:param/graph",
+    "/platform/v1/change/intelligence",
+    "/platform/v1/errors/:param",
+    "/platform/v1/events?limit=:param",
+    "/platform/v1/evidence",
+    "/platform/v1/evidence/:param",
+    "/platform/v1/executions/:param",
+    "/platform/v1/executions/:param/stream",
+    "/platform/v1/framework/integrity",
+    "/platform/v1/health",
+    "/platform/v1/history/runs/:param",
+    "/platform/v1/runs/:param",
+    "/platform/v1/runs?page=:param&page_size=:param",
+    "/platform/v1/tasks/:param/cancel",
+    "/platform/v1/verification/recommendation",
+    "/platform/v1/verification/run",
+    "/platform/v1/verification/run/affected",
+    "/platform/v1/verification/run/full",
+    "/platform/v1/verification/run/group",
+    "/platform/verification",
+    "/platform/verification/:param",
+    "/platform/verification/history/:param",
+    "/platform/verification/run/:param"
+  ],
+  "map": {
+    "/api/v1/accounts": {
+      "source": "hook:use-accounts.ts",
+      "urls": [
+        "/api/v1/accounts",
+        "/api/v1/accounts"
+      ]
+    },
+    "/api/v1/accounts/:param": {
+      "source": "hook:use-accounts.ts",
+      "urls": [
+        "/api/v1/accounts/${id}",
+        "/api/v1/accounts/${id}"
+      ]
+    },
+    "/api/v1/behaviour/wellness-score": {
+      "source": "hook:use-behavior-score.ts",
+      "urls": [
+        "/api/v1/behaviour/wellness-score"
+      ]
+    },
+    "/platform/v1/health": {
+      "source": "hook:use-platform-health.ts",
+      "urls": [
+        "/platform/v1/health",
+        "/platform/v1/health"
+      ]
+    },
+    "/api/overview": {
+      "source": "hook:use-overview.ts",
+      "urls": [
+        "/api/overview"
+      ]
+    },
+    "/platform/v1/capabilities/:param": {
+      "source": "hook:use-platform-capabilities.ts",
+      "urls": [
+        "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}",
+        "/platform/v1/capabilities/${capabilityId}"
+      ]
+    },
+    "/platform/v1/capabilities/:param/graph": {
+      "source": "hook:use-platform-capabilities.ts",
+      "urls": [
+        "/platform/v1/capabilities/${encodeURIComponent(capabilityId!)}/graph"
+      ]
+    },
+    "/api/analytics": {
+      "source": "hook:use-analytics.ts",
+      "urls": [
+        "/api/analytics"
+      ]
+    },
+    "/platform/v1/verification/recommendation": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/recommendation"
+      ]
+    },
+    "/platform/v1/verification/run": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run",
+        "/platform/v1/verification/run"
+      ]
+    },
+    "/platform/v1/verification/run/group": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/group"
+      ]
+    },
+    "/platform/v1/verification/run/affected": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/affected"
+      ]
+    },
+    "/platform/v1/verification/run/full": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/verification/run/full"
+      ]
+    },
+    "/platform/v1/tasks/:param/cancel": {
+      "source": "hook:use-verification-center.ts",
+      "urls": [
+        "/platform/v1/tasks/${taskId}/cancel"
+      ]
+    },
+    "/platform/v1/events?limit=:param": {
+      "source": "hook:use-platform-events.ts",
+      "urls": [
+        "/platform/v1/events?limit=${limit}"
+      ]
+    },
+    "/platform/v1/runs?page=:param&page_size=:param": {
+      "source": "hook:use-platform-runs.ts",
+      "urls": [
+        "/platform/v1/runs?page=${page}&page_size=${page_size}"
+      ]
+    },
+    "/platform/v1/runs/:param": {
+      "source": "hook:use-platform-runs.ts",
+      "urls": [
+        "/platform/v1/runs/${encodeURIComponent(runId!)}"
+      ]
+    },
+    "/platform/v1/architecture/authority/:param": {
+      "source": "hook:use-platform-architecture.ts",
+      "urls": [
+        "/platform/v1/architecture/authority/${encodeURIComponent(name!)}"
+      ]
+    },
+    "/platform/v1/architecture/:param": {
+      "source": "hook:use-platform-architecture.ts",
+      "urls": [
+        "/platform/v1/architecture/${kind}"
+      ]
+    },
+    "/api/reconciliation": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation"
+      ]
+    },
+    "/api/reconciliation/pending": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/pending"
+      ]
+    },
+    "/api/reconciliation/scan": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/scan"
+      ]
+    },
+    "/api/reconciliation/:param/confirm": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/${id}/confirm"
+      ]
+    },
+    "/api/reconciliation/:param/reject": {
+      "source": "hook:use-reconciliation.ts",
+      "urls": [
+        "/api/reconciliation/${id}/reject"
+      ]
+    },
+    "/api/cashflow/monthly?months=:param": {
+      "source": "hook:use-cashflow.ts",
+      "urls": [
+        "/api/cashflow/monthly?months=${months}"
+      ]
+    },
+    "/platform/v1/framework/integrity": {
+      "source": "hook:use-platform-diagnostics.ts",
+      "urls": [
+        "/platform/v1/framework/integrity",
+        "/platform/v1/framework/integrity",
+        "/platform/v1/framework/integrity"
+      ]
+    },
+    "/api/overview?:param": {
+      "source": "hook:use-query-finance.ts",
+      "urls": [
+        "/api/overview?${query}"
+      ]
+    },
+    "/api/cards": {
+      "source": "hook:use-cards.ts",
+      "urls": [
+        "/api/cards"
+      ]
+    },
+    "/platform/v1/errors/:param": {
+      "source": "hook:use-platform-errors.ts",
+      "urls": [
+        "/platform/v1/errors/${window}"
+      ]
+    },
+    "/api/dashboard/summary": {
+      "source": "hook:use-dashboard-metrics.ts",
+      "urls": [
+        "/api/dashboard/summary"
+      ]
+    },
+    "/api/networth": {
+      "source": "hook:use-networth.ts",
+      "urls": [
+        "/api/networth",
+        "/api/networth"
+      ]
+    },
+    "/api/investments": {
+      "source": "hook:use-investments.ts",
+      "urls": [
+        "/api/investments",
+        "/api/investments"
+      ]
+    },
+    "/api/investments/:param": {
+      "source": "hook:use-investments.ts",
+      "urls": [
+        "/api/investments/${id}",
+        "/api/investments/${id}"
+      ]
+    },
+    "/platform/v1/executions/:param/stream": {
+      "source": "hook:use-live-execution.ts",
+      "urls": [
+        "/platform/v1/executions/${encodeURIComponent(executionId)}/stream"
+      ]
+    },
+    "/api/loans": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans",
+        "/api/loans"
+      ]
+    },
+    "/api/loans/:param/schedule": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${loanId}/schedule"
+      ]
+    },
+    "/api/loans/:param/prepayment-simulation": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${loanId}/prepayment-simulation"
+      ]
+    },
+    "/api/loans/:param": {
+      "source": "hook:use-loans.ts",
+      "urls": [
+        "/api/loans/${id}",
+        "/api/loans/${id}"
+      ]
+    },
+    "/api/v1/reconciliation": {
+      "source": "capability:use-reconciliation-capability.ts",
+      "urls": [
+        "/api/v1/reconciliation"
+      ]
+    },
+    "/platform/framework": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/framework",
+        "/platform/framework"
+      ]
+    },
+    "/platform/verification": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification",
+        "/platform/verification"
+      ]
+    },
+    "/platform/architecture": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/architecture"
+      ]
+    },
+    "/platform/diagnostics/detail/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/diagnostics/detail/${encodeURIComponent(item.id)}"
+      ]
+    },
+    "/platform/verification/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/${encodeURIComponent(cap)}",
+        "/platform/verification/${encodeURIComponent(cap.id)}"
+      ]
+    },
+    "/platform/v1/evidence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/evidence"
+      ]
+    },
+    "/platform/v1/evidence/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/evidence/${selectedId}"
+      ]
+    },
+    "/platform/capabilities/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/capabilities/${encodeURIComponent(cap.id)}",
+        "/platform/capabilities/${encodeURIComponent(cap)}"
+      ]
+    },
+    "/platform/history/compare?current=:param&baseline=:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/history/compare?current=${encodeURIComponent(runId)}&baseline=${baseline}"
+      ]
+    },
+    "/platform/verification/history/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/history/${run.id}"
+      ]
+    },
+    "/platform/runs/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/runs/${encodeURIComponent(run.id)}"
+      ]
+    },
+    "/platform/v1/change/intelligence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/change/intelligence"
+      ]
+    },
+    "/platform/verification/run/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/verification/run/${encodeURIComponent(rec)}",
+        "/platform/verification/run/${encodeURIComponent(v)}",
+        "/platform/verification/run/${encodeURIComponent(capId)}",
+        "/platform/verification/run/${encodeURIComponent(cap.id)}"
+      ]
+    },
+    "/platform/v1/executions/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/executions/${encodeURIComponent(executionId!)}"
+      ]
+    },
+    "/platform/v1/history/runs/:param": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/v1/history/runs/${runId}"
+      ]
+    },
+    "/platform/errors": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/errors"
+      ]
+    },
+    "/platform/evidence": {
+      "source": "page:page.tsx",
+      "urls": [
+        "/platform/evidence"
+      ]
+    }
+  }
+}

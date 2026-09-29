@@ -1,0 +1,49 @@
+{
+  "schema": "m9-c42.37-ci-live-emission-certification/v1",
+  "generated_at": "2026-08-26T18:47:11.230096+00:00",
+  "repository_sha": "f632e28f7a92a66799fda2c4c23323ca73a38858",
+  "emission_status": {
+    "mutation_workflow": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/.github/workflows/mutation.yml",
+      "exists": false,
+      "currently_emits_canonical_evidence": false,
+      "gap": "No CIEvidenceRecord emission step in mutation.yml workflow \u2014 only produces mutation-summary.json artifact",
+      "severity": "HIGH"
+    },
+    "backend_workflow": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/.github/workflows/backend-verify.yml",
+      "exists": false,
+      "currently_emits_canonical_evidence": false,
+      "gap": "No CIEvidenceRecord emission step in backend-verify.yml workflow",
+      "severity": "MEDIUM"
+    },
+    "frontend_workflow": {
+      "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/.github/workflows/frontend-verify.yml",
+      "exists": false,
+      "currently_emits_canonical_evidence": false,
+      "gap": "No CIEvidenceRecord emission step in frontend-verify.yml workflow",
+      "severity": "MEDIUM"
+    }
+  },
+  "canonical_logic_present": true,
+  "canonical_logic_modules": [
+    "ci_evidence.py:CIEvidenceRecord (schema m9-ci-evidence/v1)",
+    "ci_evidence.py:save_ci_evidence() / load_ci_evidence()",
+    "ci_evidence.py:build_ci_bindings() \u2192 CIBinding with derivation source",
+    "ci_evidence.py:validate_and_decide() \u2192 CIDriftReport + CIReuseDecision",
+    "ci_evidence.py:ingest_ci_evidence() \u2192 ExecutionEvidence (unified model)",
+    "ci_evidence.py:semantic_equivalence() \u2192 EquivalenceReport (6 dimensions)",
+    "ci_evidence.py:COMMAND_MATCHERS (14 enumerated matchers)"
+  ],
+  "simulated_emission_test": {
+    "input_artifact": "N/A",
+    "records_emitted": 0,
+    "validations": [],
+    "ingestion_results": [],
+    "semantic_equivalence_tests": []
+  },
+  "live_workflow_emission": false,
+  "live_workflow_emission_blocked_by": "GitHub Actions environment not available for live workflow execution; canonical logic tested via simulation",
+  "implementation_path": "Add to .github/workflows/mutation.yml after the mutation step: python runtime/verify.py ci-emit --workflow mutation.yml --job ${{ github.job }} --run-id ${{ github.run_id }}",
+  "validation_method": "Local simulation with real mutation-summary.json artifact; CIEvidenceRecord constructed \u2192 validated \u2192 ingested \u2192 semantic equivalence checked"
+}

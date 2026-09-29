@@ -1,0 +1,13 @@
+{
+  "kind": "platform.error",
+  "version": "1.0.0",
+  "generated_at": "2026-09-06T05:20:47Z",
+  "id": "sha256:d0f58713eb01ec716b620c962beeb8d89b9006040b7b6f59f0440ebc2c39045a",
+  "error": {
+    "code": "POLICY_DENIED",
+    "layer": "platform.ai",
+    "message": "Engineering Agent disabled \u2014 requires policy.enable_development_tools=true and human authorization",
+    "evidence_id": null,
+    "capability_id": null
+  }
+}

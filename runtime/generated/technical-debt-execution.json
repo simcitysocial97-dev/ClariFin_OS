@@ -1,0 +1,142 @@
+{
+  "schema": "technical-debt-execution/v1",
+  "generated_at": "2026-08-06T16:44:05.329896Z",
+  "program": "18.0",
+  "total_items": 8,
+  "summary": {
+    "deletions": 3,
+    "migrations": 2,
+    "implementations": 1,
+    "consolidations": 1,
+    "test_additions": 1
+  },
+  "execution_queue": [
+    {
+      "id": "DELETE-duplicate-behaviour-ownership",
+      "severity": "LOW",
+      "owner": "engineering",
+      "type": "deletion",
+      "target": "backend/src/engines/behavior_engine.py (legacy) vs backend/src/engines/behaviour_engine/ (canonical)",
+      "affected_engine": "none",
+      "dependencies": [],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git checkout -- <path>",
+      "expected_certification_impact": "none",
+      "priority": 1,
+      "effort": "MINIMAL",
+      "risk": "LOW"
+    },
+    {
+      "id": "DELETE-unused-base_service",
+      "severity": "LOW",
+      "owner": "engineering",
+      "type": "deletion",
+      "target": "backend/src/services/base_service.py",
+      "affected_engine": "none",
+      "dependencies": [],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git checkout -- <path>",
+      "expected_certification_impact": "none",
+      "priority": 1,
+      "effort": "MINIMAL",
+      "risk": "LOW"
+    },
+    {
+      "id": "DELETE-orphan-frontend-financial-types",
+      "severity": "LOW",
+      "owner": "engineering",
+      "type": "deletion",
+      "target": "frontend/types/financial.ts",
+      "affected_engine": "none",
+      "dependencies": [],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git checkout -- <path>",
+      "expected_certification_impact": "none",
+      "priority": 1,
+      "effort": "MINIMAL",
+      "risk": "LOW"
+    },
+    {
+      "id": "MIGRATE-insight_generator.py",
+      "severity": "MEDIUM",
+      "owner": "engineering",
+      "type": "migration",
+      "target": "backend/src/engines/insight_generator.py",
+      "affected_engine": "insight_generator",
+      "dependencies": [
+        "DELETE-cashflow_engine-parked"
+      ],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git revert commit",
+      "expected_certification_impact": "none",
+      "priority": 2,
+      "effort": "MODERATE",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "MIGRATE-nudge_engine.py",
+      "severity": "MEDIUM",
+      "owner": "engineering",
+      "type": "migration",
+      "target": "backend/src/engines/nudge_engine.py",
+      "affected_engine": "nudge_engine",
+      "dependencies": [
+        "DELETE-cashflow_engine-parked"
+      ],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git revert commit",
+      "expected_certification_impact": "none",
+      "priority": 2,
+      "effort": "MODERATE",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "WORKSPACE-GAPS",
+      "severity": "MEDIUM",
+      "owner": "engineering",
+      "type": "implementation",
+      "target": "frontend workspaces without backend capability",
+      "affected_engine": "multiple",
+      "dependencies": [
+        "MIGRATE-insight_generator",
+        "MIGRATE-nudge_engine"
+      ],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git revert commit",
+      "expected_certification_impact": "none",
+      "priority": 3,
+      "effort": "MODERATE",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "WORKSPACE-ROUTER-CONSOLIDATION",
+      "severity": "LOW",
+      "owner": "engineering",
+      "type": "consolidation",
+      "target": "backend/src/routers/*_workspace.py",
+      "affected_engine": "multiple",
+      "dependencies": [],
+      "verification_command": "python3 runtime/verify.py quick",
+      "rollback_strategy": "git revert commit",
+      "expected_certification_impact": "none",
+      "priority": 4,
+      "effort": "MODERATE",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "TEST-ADD-INTERACTION",
+      "severity": "MEDIUM",
+      "owner": "engineering",
+      "type": "test_addition",
+      "target": "backend/tests/integration/",
+      "affected_engine": "multiple",
+      "dependencies": [],
+      "verification_command": "python3 runtime/verify.py backend",
+      "rollback_strategy": "git revert commit",
+      "expected_certification_impact": "none",
+      "priority": 5,
+      "effort": "MODERATE",
+      "risk": "LOW"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "phase": "M9-C42.19",
+  "title": "Mutation Completion & Coverage Gate Reconciliation — Baseline",
+  "timestamp": "2026-08-24T19:37:23+05:30",
+  "execution_mode": "investigation_and_completion_only",
+  "full_campaign_started": false,
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_sha": "5170e0b30ef5e308f2055661a0839e2966a721d4",
+    "head_subject": "M9-C42.17: Mutation Effectiveness Engineering & Multi-Engine Campaign — CERTIFIED WITH EXPLICIT LIMITATIONS",
+    "tree_sha": "6d36707b9cf0e625516f24236aa9434127c2e208",
+    "recent_commits": [
+      "5170e0b3 M9-C42.17: Mutation Effectiveness Engineering & Multi-Engine Campaign",
+      "d6d3624b M9-C42.16: Complete clean baseline & mutation readiness closure",
+      "571e351c M9-C42.16: Add norecursedirs for _m4_exit_probe probe",
+      "d43603fe M9-C42.16: Fix ruff exclude for mutation_infra/mutants and test_probe.py",
+      "7374e99a M9-C42.16: Fix formatting, config, and test issues"
+    ]
+  },
+  "working_tree_state": {
+    "clean": false,
+    "modified_tracked": [
+      "backend/pyproject.toml",
+      "backend/tests/generated/mutation/mutation-summary.json",
+      "progress.md"
+    ],
+    "untracked_m9_c42_18_artifacts": [
+      "runtime/generated/m9-c42.18-baseline.json",
+      "runtime/generated/m9-c42.18-baseline.md",
+      "runtime/generated/m9-c42.18-certification.json",
+      "runtime/generated/m9-c42.18-certification.md",
+      "runtime/generated/m9-c42.18-coverage-reconciliation.json",
+      "runtime/generated/m9-c42.18-coverage-reconciliation.md",
+      "runtime/generated/m9-c42.18-mutation-accounting.json",
+      "runtime/generated/m9-c42.18-mutation-accounting.md",
+      "runtime/generated/m9-c42.18-test-effectiveness-reconciliation.json",
+      "runtime/generated/m9-c42.18-test-effectiveness-reconciliation.md"
+    ],
+    "unrelated_modifications_present": false,
+    "backend_src_clean": true,
+    "notes": [
+      "backend/pyproject.toml is dirty because the mutation runner rewrites the [tool.mutmut] block per target and restores the PRE-RUN block on exit. The pre-run block at session start was a per-engine (loan_engine) block left by an earlier M9-C42.18 run, so restoration re-installed a per-engine block rather than the committed one.",
+      "backend/pyproject.toml also contained DUPLICATED rendered comment headers (6 stacked '# Rendered from canonical ENGINE_SELECTION' banners). Cause: render_mutmut_config_block() emits comment lines ABOVE '[tool.mutmut]', while write_backend_mutmut_config() substitutes a regex anchored at '[tool.mutmut]'. Comments therefore accumulate on every run. Cosmetic only — TOML semantics unaffected.",
+      "backend/tests/generated/mutation/mutation-summary.json is a SINGLE-SLOT file overwritten by every run; it is not a per-engine ledger."
+    ]
+  },
+  "m9_c42_18_artifacts_verified": {
+    "all_ten_present": true,
+    "baseline": true,
+    "certification": true,
+    "coverage_reconciliation": true,
+    "mutation_accounting": true,
+    "test_effectiveness_reconciliation": true,
+    "prior_decision": "CONDITIONAL — SPECIFIC BLOCKERS REMAIN"
+  },
+  "environment": {
+    "os": "linux",
+    "shell": "bash",
+    "cpu_count": 4,
+    "memory_total_gb": 7,
+    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "pytest": "9.1.1",
+    "pytest_cov": "7.1.0",
+    "coverage": "7.15.2",
+    "mutmut": "3.7.0",
+    "mutmut_pinned": "3.7.0",
+    "mutmut_version_matches_pin": true,
+    "hypothesis": "6.161.4",
+    "site_packages": "/home/vasantha/.local/lib/python3.12/site-packages"
+  },
+  "coverage_configuration_as_found": {
+    "config_file": "backend/.coveragerc",
+    "source": "src",
+    "branch": true,
+    "fail_under": 40,
+    "precision": 2,
+    "show_missing": true,
+    "threshold_changed_by_this_phase": false,
+    "source_files_excluded_by_this_phase": false,
+    "tests_excluded_by_this_phase": false,
+    "pyproject_toml_has_coverage_settings": false,
+    "ci_workflow_enforces_backend_coverage": false
+  },
+  "mutation_configuration_as_found": {
+    "contract_file": "runtime/foundation/verification/mutation_contract.py",
+    "runner_file": "runtime/foundation/verification/mutation_runner.py",
+    "cli": "python3 runtime/verify.py mutation --target <engine>",
+    "default_runtime_seconds": {"smoke": 600, "target": 1800, "full": 5400},
+    "default_max_children": 0,
+    "threshold_percent": 80,
+    "threshold_changed_by_this_phase": false,
+    "engines_in_contract": [
+      "account_engine", "balance_engine", "behaviour_engine", "credit_card_engine",
+      "ledger_audit_engine", "loan_engine", "reconciliation_engine"
+    ]
+  },
+  "mutation_state_as_found": {
+    "live_mutmut_cache_scope": "loan_engine",
+    "live_results_reproduced": {
+      "engine": "loan_engine",
+      "total": 1273,
+      "killed": 834,
+      "survived": 152,
+      "timeout": 3,
+      "no_tests": 4,
+      "not_checked": 280,
+      "suspicious": 0,
+      "identity_holds": true,
+      "note": "Exactly reproduces the M9-C42.18 loan figures from the live cache, confirming M9-C42.18 loan evidence was reproducible."
+    },
+    "mutation_summary_json_as_found": {
+      "target": "credit_card_engine",
+      "mutants_generated": 0,
+      "evidence_complete": false,
+      "execution_status": "PASS",
+      "duration_seconds": 91,
+      "note": "STALE/ANOMALOUS: reports execution_status=PASS with a zero mutant population. Root cause identified in this phase as the post-run reporting-context defect (see mutation-completion artifact)."
+    }
+  },
+  "gate_g0_baseline": {
+    "verdict": "PASS",
+    "criteria": {
+      "head_recorded": true,
+      "m9_c42_18_artifacts_verified": true,
+      "environment_recorded": true,
+      "no_unrelated_modifications": true,
+      "no_code_modified_during_inspection": true,
+      "prior_evidence_reproducible": true
+    }
+  }
+}

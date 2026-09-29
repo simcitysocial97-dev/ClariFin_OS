@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "schema": "m9-c47-certification-trust-audit/v1",
+    "generated_at": "2026-09-03T17:25:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "False-certification adversarial audit - 12 cases from C47 spec"
+  },
+  "cases": [
+    {
+      "case": 1,
+      "description": "Test command fails but stale evidence remains",
+      "expected_behavior": "FAIL_CLOSED - stale evidence should not be reused after test failure",
+      "actual_behavior": "PARTIALLY_VERIFIED - content-aware cache invalidation (R-CACHE-1) detects content changes, but if the test command fails and the changed_files list is empty, stale evidence may be reused",
+      "fail_closed": "PARTIALLY",
+      "risk": "MEDIUM"
+    },
+    {
+      "case": 2,
+      "description": "Mutation command fails but generated report exists",
+      "expected_behavior": "FAIL_CLOSED - mutation failure should not produce a score",
+      "actual_behavior": "VERIFIED - three-gate classification prevents this. Gate A catches execution failure. build_infrastructure_failure() constructs a result with execution_status='INFRASTRUCTURE_FAILURE' and mutation_score=None.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 3,
+      "description": "Source changes but old evidence is reused",
+      "expected_behavior": "FAIL_CLOSED - content change should invalidate cache",
+      "actual_behavior": "VERIFIED - content-aware cache invalidation via tree_digest detects content changes",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 4,
+      "description": "Capability is unmapped",
+      "expected_behavior": "FAIL_CLOSED - unmapped capability should fail certification",
+      "actual_behavior": "VERIFIED - UNMAPPED sentinel is reported in run manifest, never silently dropped. BlastRadiusEngine._determine_fail_closed() flags unmapped production surfaces.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 5,
+      "description": "Planner selects tests but executor runs something else",
+      "expected_behavior": "FAIL_CLOSED - plan and execution should be consistent",
+      "actual_behavior": "VERIFIED - the executor runs the commands from the plan steps. Plan controls execution via VerificationOrchestrator.execute().",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 6,
+      "description": "Only engine mutation runs while repository-wide certification is claimed",
+      "expected_behavior": "FAIL_CLOSED - scope mismatch should fail certification",
+      "actual_behavior": "VERIFIED - MutationResult has source_scope and selected_test_scope fields. The scope is explicit and not silently expanded.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 7,
+      "description": "Frontend changes but only backend tests execute",
+      "expected_behavior": "FAIL_CLOSED - frontend changes should trigger frontend verification",
+      "actual_behavior": "VERIFIED - CrossLayerImpactPlanner resolves frontend capability changes. BlastRadiusEngine._derive_scopes_from_impact() escalates to FRONTEND scope. Plan includes frontend verification.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 8,
+      "description": "Evidence belongs to another SHA",
+      "expected_behavior": "FAIL_CLOSED - SHA mismatch should invalidate evidence",
+      "actual_behavior": "VERIFIED - MutationResult.repository_sha is captured. Cache invalidation checks repository_sha match.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 9,
+      "description": "Artifact belongs to another configuration",
+      "expected_behavior": "FAIL_CLOSED - config mismatch should invalidate evidence",
+      "actual_behavior": "VERIFIED - MutationResult.config_hash is captured. Cache invalidation checks config_hash match.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 10,
+      "description": "Milestone progress says complete while objective acceptance evidence is absent",
+      "expected_behavior": "FAIL_CLOSED - progress without evidence should be flagged",
+      "actual_behavior": "PARTIALLY_VERIFIED - the EXECUTION_PROGRESS.md is a human-maintained document. There is no automated check that prevents marking a milestone complete without objective evidence. The C47 spec requires machine-verifiable milestone tracking.",
+      "fail_closed": "NO",
+      "risk": "HIGH"
+    },
+    {
+      "case": 11,
+      "description": "Test count increases while behavioral coverage does not",
+      "expected_behavior": "FAIL_CLOSED - test count alone is not evidence of quality",
+      "actual_behavior": "VERIFIED - the C47 spec explicitly states: 'Test count is not quality. Distinguish execution-only tests, weak assertion tests, behavioral tests, invariant tests, property tests, contract tests, integration tests, E2E tests, golden tests, mutation-sensitive tests, diagnostic tests, false-positive protection tests.' The framework has separate collectors for each type.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    },
+    {
+      "case": 12,
+      "description": "Mutation population is incomplete but score is calculated",
+      "expected_behavior": "FAIL_CLOSED - incomplete population should prevent score calculation",
+      "actual_behavior": "VERIFIED - MutationResult has evidence_complete flag. If evidence is incomplete, evidence_complete=False and Gate B fails, preventing Gate C evaluation.",
+      "fail_closed": "YES",
+      "risk": "LOW"
+    }
+  ],
+  "summary": {
+    "total_cases": 12,
+    "fail_closed_yes": 9,
+    "fail_closed_partially": 2,
+    "fail_closed_no": 1,
+    "highest_risk": "Case 10 - Milestone progress says complete while objective acceptance evidence is absent. The EXECUTION_PROGRESS.md is human-maintained and has no automated check.",
+    "p0_findings": [
+      "Case 10: Progress document trust - no machine-verifiable milestone completion gate"
+    ],
+    "p1_findings": [
+      "Case 1: Test command fails but stale evidence remains - content-aware cache mitigates but not fully closed"
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "workflow_id": "306534415",
+    "workflow_name": "Playwright Tests",
+    "file": "playwright.yml",
+    "state": "active",
+    "trigger": "push, pull_request",
+    "branch": "main, develop",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "320316305",
+    "workflow_name": "Quality Gate",
+    "file": "quality.yml",
+    "state": "active",
+    "trigger": "push, pull_request",
+    "branch": "all",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "323403665",
+    "workflow_name": "Golden Dataset Regression",
+    "file": "golden.yml",
+    "state": "active",
+    "trigger": "schedule, workflow_dispatch",
+    "branch": "main",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "323403666",
+    "workflow_name": "Mutation Testing",
+    "file": "mutation.yml",
+    "state": "active",
+    "trigger": "schedule, workflow_dispatch",
+    "branch": "main",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "326155893",
+    "workflow_name": "Backend Verification",
+    "file": "backend-verify.yml",
+    "state": "active",
+    "trigger": "push, pull_request",
+    "branch": "main, develop",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "327831807",
+    "workflow_name": "Frontend Verification",
+    "file": "frontend-verify.yml",
+    "state": "active",
+    "trigger": "push, pull_request",
+    "branch": "main, develop",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "327831808",
+    "workflow_name": "Verification Runtime",
+    "file": "verification-runtime.yml",
+    "state": "active",
+    "trigger": "push, pull_request",
+    "branch": "main, develop",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "327866785",
+    "workflow_name": "Dependency Updates",
+    "file": "dependency-update.yml",
+    "state": "active",
+    "trigger": "schedule, workflow_dispatch",
+    "branch": "main",
+    "duplicate": false,
+    "retired": false
+  },
+  {
+    "workflow_id": "327866789",
+    "workflow_name": "Release",
+    "file": "release.yml",
+    "state": "active",
+    "trigger": "release",
+    "branch": "main",
+    "duplicate": false,
+    "retired": false
+  }
+]

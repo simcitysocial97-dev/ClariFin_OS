@@ -1,0 +1,2343 @@
+{
+  "schema": "m9-c43-source-capability-mapping/v1",
+  "generated_at": "2026-09-02T23:38:41.685595+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "total_source_files_mapped": 242,
+  "mapping": {
+    "api.py": {
+      "path": "api.py",
+      "component": "api.py",
+      "subcomponent": null,
+      "capabilities": [
+        "api.py"
+      ],
+      "layer": "api.py"
+    },
+    "health.py": {
+      "path": "health.py",
+      "component": "health.py",
+      "subcomponent": null,
+      "capabilities": [
+        "health.py"
+      ],
+      "layer": "health.py"
+    },
+    "__init__.py": {
+      "path": "__init__.py",
+      "component": "__init__.py",
+      "subcomponent": null,
+      "capabilities": [
+        "__init__.py"
+      ],
+      "layer": "__init__.py"
+    },
+    "ingest.py": {
+      "path": "ingest.py",
+      "component": "ingest.py",
+      "subcomponent": null,
+      "capabilities": [
+        "ingest.py"
+      ],
+      "layer": "ingest.py"
+    },
+    "logger.py": {
+      "path": "logger.py",
+      "component": "logger.py",
+      "subcomponent": null,
+      "capabilities": [
+        "logger.py"
+      ],
+      "layer": "logger.py"
+    },
+    "startup.py": {
+      "path": "startup.py",
+      "component": "startup.py",
+      "subcomponent": null,
+      "capabilities": [
+        "startup.py"
+      ],
+      "layer": "startup.py"
+    },
+    "errors.py": {
+      "path": "errors.py",
+      "component": "errors.py",
+      "subcomponent": null,
+      "capabilities": [
+        "errors.py"
+      ],
+      "layer": "errors.py"
+    },
+    "config.py": {
+      "path": "config.py",
+      "component": "config.py",
+      "subcomponent": null,
+      "capabilities": [
+        "config.py"
+      ],
+      "layer": "config.py"
+    },
+    "structural/layout_analyzer.py": {
+      "path": "structural/layout_analyzer.py",
+      "component": "structural",
+      "subcomponent": "layout_analyzer.py",
+      "capabilities": [
+        "structural"
+      ],
+      "layer": "structural"
+    },
+    "structural/__init__.py": {
+      "path": "structural/__init__.py",
+      "component": "structural",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "structural"
+      ],
+      "layer": "structural"
+    },
+    "common/__init__.py": {
+      "path": "common/__init__.py",
+      "component": "common",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "common"
+      ],
+      "layer": "common"
+    },
+    "common/enrichment.py": {
+      "path": "common/enrichment.py",
+      "component": "common",
+      "subcomponent": "enrichment.py",
+      "capabilities": [
+        "common"
+      ],
+      "layer": "common"
+    },
+    "common/formatting.py": {
+      "path": "common/formatting.py",
+      "component": "common",
+      "subcomponent": "formatting.py",
+      "capabilities": [
+        "common"
+      ],
+      "layer": "common"
+    },
+    "common/parsing.py": {
+      "path": "common/parsing.py",
+      "component": "common",
+      "subcomponent": "parsing.py",
+      "capabilities": [
+        "common"
+      ],
+      "layer": "common"
+    },
+    "common/calculations.py": {
+      "path": "common/calculations.py",
+      "component": "common",
+      "subcomponent": "calculations.py",
+      "capabilities": [
+        "common"
+      ],
+      "layer": "common"
+    },
+    "routers/financial_events.py": {
+      "path": "routers/financial_events.py",
+      "component": "routers",
+      "subcomponent": "financial_events.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/export.py": {
+      "path": "routers/export.py",
+      "component": "routers",
+      "subcomponent": "export.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/reconciliation_workspace.py": {
+      "path": "routers/reconciliation_workspace.py",
+      "component": "routers",
+      "subcomponent": "reconciliation_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/dashboard.py": {
+      "path": "routers/dashboard.py",
+      "component": "routers",
+      "subcomponent": "dashboard.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/reconciliation.py": {
+      "path": "routers/reconciliation.py",
+      "component": "routers",
+      "subcomponent": "reconciliation.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/health.py": {
+      "path": "routers/health.py",
+      "component": "routers",
+      "subcomponent": "health.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/__init__.py": {
+      "path": "routers/__init__.py",
+      "component": "routers",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/cashflow.py": {
+      "path": "routers/cashflow.py",
+      "component": "routers",
+      "subcomponent": "cashflow.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/cashflow_workspace.py": {
+      "path": "routers/cashflow_workspace.py",
+      "component": "routers",
+      "subcomponent": "cashflow_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/loans_workspace.py": {
+      "path": "routers/loans_workspace.py",
+      "component": "routers",
+      "subcomponent": "loans_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/investments_workspace.py": {
+      "path": "routers/investments_workspace.py",
+      "component": "routers",
+      "subcomponent": "investments_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/loans.py": {
+      "path": "routers/loans.py",
+      "component": "routers",
+      "subcomponent": "loans.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/investments.py": {
+      "path": "routers/investments.py",
+      "component": "routers",
+      "subcomponent": "investments.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/forecast.py": {
+      "path": "routers/forecast.py",
+      "component": "routers",
+      "subcomponent": "forecast.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/import_router.py": {
+      "path": "routers/import_router.py",
+      "component": "routers",
+      "subcomponent": "import_router.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/credit_cards.py": {
+      "path": "routers/credit_cards.py",
+      "component": "routers",
+      "subcomponent": "credit_cards.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/managed_accounts.py": {
+      "path": "routers/managed_accounts.py",
+      "component": "routers",
+      "subcomponent": "managed_accounts.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/credit_cards_workspace.py": {
+      "path": "routers/credit_cards_workspace.py",
+      "component": "routers",
+      "subcomponent": "credit_cards_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/financial_intelligence.py": {
+      "path": "routers/financial_intelligence.py",
+      "component": "routers",
+      "subcomponent": "financial_intelligence.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/banks.py": {
+      "path": "routers/banks.py",
+      "component": "routers",
+      "subcomponent": "banks.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/networth.py": {
+      "path": "routers/networth.py",
+      "component": "routers",
+      "subcomponent": "networth.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/behaviour.py": {
+      "path": "routers/behaviour.py",
+      "component": "routers",
+      "subcomponent": "behaviour.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/accounts.py": {
+      "path": "routers/accounts.py",
+      "component": "routers",
+      "subcomponent": "accounts.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/cards_statements.py": {
+      "path": "routers/cards_statements.py",
+      "component": "routers",
+      "subcomponent": "cards_statements.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/behaviour_workspace.py": {
+      "path": "routers/behaviour_workspace.py",
+      "component": "routers",
+      "subcomponent": "behaviour_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/transactions.py": {
+      "path": "routers/transactions.py",
+      "component": "routers",
+      "subcomponent": "transactions.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/audit.py": {
+      "path": "routers/audit.py",
+      "component": "routers",
+      "subcomponent": "audit.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/networth_workspace.py": {
+      "path": "routers/networth_workspace.py",
+      "component": "routers",
+      "subcomponent": "networth_workspace.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "routers/members.py": {
+      "path": "routers/members.py",
+      "component": "routers",
+      "subcomponent": "members.py",
+      "capabilities": [
+        "routers"
+      ],
+      "layer": "routers"
+    },
+    "models/loan.py": {
+      "path": "models/loan.py",
+      "component": "models",
+      "subcomponent": "loan.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/investment.py": {
+      "path": "models/investment.py",
+      "component": "models",
+      "subcomponent": "investment.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/base.py": {
+      "path": "models/base.py",
+      "component": "models",
+      "subcomponent": "base.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/dashboard.py": {
+      "path": "models/dashboard.py",
+      "component": "models",
+      "subcomponent": "dashboard.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/account_link.py": {
+      "path": "models/account_link.py",
+      "component": "models",
+      "subcomponent": "account_link.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/reconciliation.py": {
+      "path": "models/reconciliation.py",
+      "component": "models",
+      "subcomponent": "reconciliation.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/loan_payment.py": {
+      "path": "models/loan_payment.py",
+      "component": "models",
+      "subcomponent": "loan_payment.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/credit_card_foreclosure.py": {
+      "path": "models/credit_card_foreclosure.py",
+      "component": "models",
+      "subcomponent": "credit_card_foreclosure.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/loan_simulation.py": {
+      "path": "models/loan_simulation.py",
+      "component": "models",
+      "subcomponent": "loan_simulation.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/__init__.py": {
+      "path": "models/__init__.py",
+      "component": "models",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/credit_card_emi.py": {
+      "path": "models/credit_card_emi.py",
+      "component": "models",
+      "subcomponent": "credit_card_emi.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/credit_card.py": {
+      "path": "models/credit_card.py",
+      "component": "models",
+      "subcomponent": "credit_card.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/institution.py": {
+      "path": "models/institution.py",
+      "component": "models",
+      "subcomponent": "institution.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/financial_event.py": {
+      "path": "models/financial_event.py",
+      "component": "models",
+      "subcomponent": "financial_event.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/transaction.py": {
+      "path": "models/transaction.py",
+      "component": "models",
+      "subcomponent": "transaction.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/statement.py": {
+      "path": "models/statement.py",
+      "component": "models",
+      "subcomponent": "statement.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/loan_analysis.py": {
+      "path": "models/loan_analysis.py",
+      "component": "models",
+      "subcomponent": "loan_analysis.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/account.py": {
+      "path": "models/account.py",
+      "component": "models",
+      "subcomponent": "account.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/financial_goal.py": {
+      "path": "models/financial_goal.py",
+      "component": "models",
+      "subcomponent": "financial_goal.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/behaviour.py": {
+      "path": "models/behaviour.py",
+      "component": "models",
+      "subcomponent": "behaviour.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/account_balance.py": {
+      "path": "models/account_balance.py",
+      "component": "models",
+      "subcomponent": "account_balance.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "models/credit_card_statement.py": {
+      "path": "models/credit_card_statement.py",
+      "component": "models",
+      "subcomponent": "credit_card_statement.py",
+      "capabilities": [
+        "models"
+      ],
+      "layer": "models"
+    },
+    "utils/__init__.py": {
+      "path": "utils/__init__.py",
+      "component": "utils",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "utils"
+      ],
+      "layer": "utils"
+    },
+    "data/__init__.py": {
+      "path": "data/__init__.py",
+      "component": "data",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "data"
+      ],
+      "layer": "data"
+    },
+    "engines/balance_engine.py": {
+      "path": "engines/balance_engine.py",
+      "component": "engines",
+      "subcomponent": "balance_engine.py",
+      "capabilities": [
+        "balance_engine.py"
+      ],
+      "layer": "engines"
+    },
+    "engines/cashflow_engine.py": {
+      "path": "engines/cashflow_engine.py",
+      "component": "engines",
+      "subcomponent": "cashflow_engine.py",
+      "capabilities": [
+        "cashflow_engine.py"
+      ],
+      "layer": "engines"
+    },
+    "engines/__init__.py": {
+      "path": "engines/__init__.py",
+      "component": "engines",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "__init__.py"
+      ],
+      "layer": "engines"
+    },
+    "engines/ledger_audit_engine.py": {
+      "path": "engines/ledger_audit_engine.py",
+      "component": "engines",
+      "subcomponent": "ledger_audit_engine.py",
+      "capabilities": [
+        "ledger_audit_engine.py"
+      ],
+      "layer": "engines"
+    },
+    "engines/reconciliation_engine.py": {
+      "path": "engines/reconciliation_engine.py",
+      "component": "engines",
+      "subcomponent": "reconciliation_engine.py",
+      "capabilities": [
+        "reconciliation_engine.py"
+      ],
+      "layer": "engines"
+    },
+    "core/__init__.py": {
+      "path": "core/__init__.py",
+      "component": "core",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "repositories/member_repository.py": {
+      "path": "repositories/member_repository.py",
+      "component": "repositories",
+      "subcomponent": "member_repository.py",
+      "capabilities": [
+        "member_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/networth_repository.py": {
+      "path": "repositories/networth_repository.py",
+      "component": "repositories",
+      "subcomponent": "networth_repository.py",
+      "capabilities": [
+        "networth_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/liquidity_pattern_repository.py": {
+      "path": "repositories/liquidity_pattern_repository.py",
+      "component": "repositories",
+      "subcomponent": "liquidity_pattern_repository.py",
+      "capabilities": [
+        "liquidity_pattern_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/bank_repository.py": {
+      "path": "repositories/bank_repository.py",
+      "component": "repositories",
+      "subcomponent": "bank_repository.py",
+      "capabilities": [
+        "bank_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/base.py": {
+      "path": "repositories/base.py",
+      "component": "repositories",
+      "subcomponent": "base.py",
+      "capabilities": [
+        "base"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/alert_repository.py": {
+      "path": "repositories/alert_repository.py",
+      "component": "repositories",
+      "subcomponent": "alert_repository.py",
+      "capabilities": [
+        "alert_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/loan_payment_repository.py": {
+      "path": "repositories/loan_payment_repository.py",
+      "component": "repositories",
+      "subcomponent": "loan_payment_repository.py",
+      "capabilities": [
+        "loan_payment_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/transaction_repository.py": {
+      "path": "repositories/transaction_repository.py",
+      "component": "repositories",
+      "subcomponent": "transaction_repository.py",
+      "capabilities": [
+        "transaction_intelligence"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/financial_event_repository.py": {
+      "path": "repositories/financial_event_repository.py",
+      "component": "repositories",
+      "subcomponent": "financial_event_repository.py",
+      "capabilities": [
+        "financial_events"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/account_balance_repository.py": {
+      "path": "repositories/account_balance_repository.py",
+      "component": "repositories",
+      "subcomponent": "account_balance_repository.py",
+      "capabilities": [
+        "account_balance_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/__init__.py": {
+      "path": "repositories/__init__.py",
+      "component": "repositories",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "__init__"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/transaction_classification_repository.py": {
+      "path": "repositories/transaction_classification_repository.py",
+      "component": "repositories",
+      "subcomponent": "transaction_classification_repository.py",
+      "capabilities": [
+        "transaction_classification_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/credit_card_statement_repository.py": {
+      "path": "repositories/credit_card_statement_repository.py",
+      "component": "repositories",
+      "subcomponent": "credit_card_statement_repository.py",
+      "capabilities": [
+        "credit_card_statement_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/institution_repository.py": {
+      "path": "repositories/institution_repository.py",
+      "component": "repositories",
+      "subcomponent": "institution_repository.py",
+      "capabilities": [
+        "institution_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/account_repository.py": {
+      "path": "repositories/account_repository.py",
+      "component": "repositories",
+      "subcomponent": "account_repository.py",
+      "capabilities": [
+        "account_management"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/reconciliation_audit_repository.py": {
+      "path": "repositories/reconciliation_audit_repository.py",
+      "component": "repositories",
+      "subcomponent": "reconciliation_audit_repository.py",
+      "capabilities": [
+        "reconciliation_audit_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/cashflow_repository.py": {
+      "path": "repositories/cashflow_repository.py",
+      "component": "repositories",
+      "subcomponent": "cashflow_repository.py",
+      "capabilities": [
+        "cashflow_tracking"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/pattern_repository.py": {
+      "path": "repositories/pattern_repository.py",
+      "component": "repositories",
+      "subcomponent": "pattern_repository.py",
+      "capabilities": [
+        "pattern_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/financial_goal_repository.py": {
+      "path": "repositories/financial_goal_repository.py",
+      "component": "repositories",
+      "subcomponent": "financial_goal_repository.py",
+      "capabilities": [
+        "financial_goal_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/loan_repository.py": {
+      "path": "repositories/loan_repository.py",
+      "component": "repositories",
+      "subcomponent": "loan_repository.py",
+      "capabilities": [
+        "debt_management"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/statement_repository.py": {
+      "path": "repositories/statement_repository.py",
+      "component": "repositories",
+      "subcomponent": "statement_repository.py",
+      "capabilities": [
+        "statements"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/import_mapping_repository.py": {
+      "path": "repositories/import_mapping_repository.py",
+      "component": "repositories",
+      "subcomponent": "import_mapping_repository.py",
+      "capabilities": [
+        "import_mapping_repository"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/behaviour_repository.py": {
+      "path": "repositories/behaviour_repository.py",
+      "component": "repositories",
+      "subcomponent": "behaviour_repository.py",
+      "capabilities": [
+        "pattern_analysis"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/investment_repository.py": {
+      "path": "repositories/investment_repository.py",
+      "component": "repositories",
+      "subcomponent": "investment_repository.py",
+      "capabilities": [
+        "investments"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/reconciliation_repository.py": {
+      "path": "repositories/reconciliation_repository.py",
+      "component": "repositories",
+      "subcomponent": "reconciliation_repository.py",
+      "capabilities": [
+        "reconciliation"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/credit_card_repository.py": {
+      "path": "repositories/credit_card_repository.py",
+      "component": "repositories",
+      "subcomponent": "credit_card_repository.py",
+      "capabilities": [
+        "credit_cards"
+      ],
+      "layer": "repositories"
+    },
+    "repositories/account_link_repository.py": {
+      "path": "repositories/account_link_repository.py",
+      "component": "repositories",
+      "subcomponent": "account_link_repository.py",
+      "capabilities": [
+        "account_link_repository"
+      ],
+      "layer": "repositories"
+    },
+    "services/export_service.py": {
+      "path": "services/export_service.py",
+      "component": "services",
+      "subcomponent": "export_service.py",
+      "capabilities": [
+        "data_export"
+      ],
+      "layer": "services"
+    },
+    "services/statement_service.py": {
+      "path": "services/statement_service.py",
+      "component": "services",
+      "subcomponent": "statement_service.py",
+      "capabilities": [
+        "statements"
+      ],
+      "layer": "services"
+    },
+    "services/reconciliation_service.py": {
+      "path": "services/reconciliation_service.py",
+      "component": "services",
+      "subcomponent": "reconciliation_service.py",
+      "capabilities": [
+        "reconciliation"
+      ],
+      "layer": "services"
+    },
+    "services/base.py": {
+      "path": "services/base.py",
+      "component": "services",
+      "subcomponent": "base.py",
+      "capabilities": [
+        "base"
+      ],
+      "layer": "services"
+    },
+    "services/import_service.py": {
+      "path": "services/import_service.py",
+      "component": "services",
+      "subcomponent": "import_service.py",
+      "capabilities": [
+        "data_import"
+      ],
+      "layer": "services"
+    },
+    "services/bank_service.py": {
+      "path": "services/bank_service.py",
+      "component": "services",
+      "subcomponent": "bank_service.py",
+      "capabilities": [
+        "bank_management"
+      ],
+      "layer": "services"
+    },
+    "services/financial_events_service.py": {
+      "path": "services/financial_events_service.py",
+      "component": "services",
+      "subcomponent": "financial_events_service.py",
+      "capabilities": [
+        "financial_events"
+      ],
+      "layer": "services"
+    },
+    "services/financial_intelligence_service.py": {
+      "path": "services/financial_intelligence_service.py",
+      "component": "services",
+      "subcomponent": "financial_intelligence_service.py",
+      "capabilities": [
+        "financial_intelligence"
+      ],
+      "layer": "services"
+    },
+    "services/dashboard_service.py": {
+      "path": "services/dashboard_service.py",
+      "component": "services",
+      "subcomponent": "dashboard_service.py",
+      "capabilities": [
+        "dashboard"
+      ],
+      "layer": "services"
+    },
+    "services/__init__.py": {
+      "path": "services/__init__.py",
+      "component": "services",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "__init__"
+      ],
+      "layer": "services"
+    },
+    "services/networth_service.py": {
+      "path": "services/networth_service.py",
+      "component": "services",
+      "subcomponent": "networth_service.py",
+      "capabilities": [
+        "net_worth"
+      ],
+      "layer": "services"
+    },
+    "services/audit_service.py": {
+      "path": "services/audit_service.py",
+      "component": "services",
+      "subcomponent": "audit_service.py",
+      "capabilities": [
+        "audit_service"
+      ],
+      "layer": "services"
+    },
+    "services/loans_workspace_service.py": {
+      "path": "services/loans_workspace_service.py",
+      "component": "services",
+      "subcomponent": "loans_workspace_service.py",
+      "capabilities": [
+        "loans_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/cashflow_service.py": {
+      "path": "services/cashflow_service.py",
+      "component": "services",
+      "subcomponent": "cashflow_service.py",
+      "capabilities": [
+        "cashflow_tracking"
+      ],
+      "layer": "services"
+    },
+    "services/investments_workspace_service.py": {
+      "path": "services/investments_workspace_service.py",
+      "component": "services",
+      "subcomponent": "investments_workspace_service.py",
+      "capabilities": [
+        "investments_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/credit_card_service.py": {
+      "path": "services/credit_card_service.py",
+      "component": "services",
+      "subcomponent": "credit_card_service.py",
+      "capabilities": [
+        "credit_cards"
+      ],
+      "layer": "services"
+    },
+    "services/loan_simulation_service.py": {
+      "path": "services/loan_simulation_service.py",
+      "component": "services",
+      "subcomponent": "loan_simulation_service.py",
+      "capabilities": [
+        "loan_simulation"
+      ],
+      "layer": "services"
+    },
+    "services/loan_service.py": {
+      "path": "services/loan_service.py",
+      "component": "services",
+      "subcomponent": "loan_service.py",
+      "capabilities": [
+        "debt_management"
+      ],
+      "layer": "services"
+    },
+    "services/reconciliation_workspace_service.py": {
+      "path": "services/reconciliation_workspace_service.py",
+      "component": "services",
+      "subcomponent": "reconciliation_workspace_service.py",
+      "capabilities": [
+        "reconciliation_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/account_service.py": {
+      "path": "services/account_service.py",
+      "component": "services",
+      "subcomponent": "account_service.py",
+      "capabilities": [
+        "account_management"
+      ],
+      "layer": "services"
+    },
+    "services/member_service.py": {
+      "path": "services/member_service.py",
+      "component": "services",
+      "subcomponent": "member_service.py",
+      "capabilities": [
+        "member_management"
+      ],
+      "layer": "services"
+    },
+    "services/credit_cards_workspace_service.py": {
+      "path": "services/credit_cards_workspace_service.py",
+      "component": "services",
+      "subcomponent": "credit_cards_workspace_service.py",
+      "capabilities": [
+        "credit_cards_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/recommendation_service.py": {
+      "path": "services/recommendation_service.py",
+      "component": "services",
+      "subcomponent": "recommendation_service.py",
+      "capabilities": [
+        "recommendation_service"
+      ],
+      "layer": "services"
+    },
+    "services/investment_service.py": {
+      "path": "services/investment_service.py",
+      "component": "services",
+      "subcomponent": "investment_service.py",
+      "capabilities": [
+        "investments"
+      ],
+      "layer": "services"
+    },
+    "services/behaviour_service.py": {
+      "path": "services/behaviour_service.py",
+      "component": "services",
+      "subcomponent": "behaviour_service.py",
+      "capabilities": [
+        "pattern_analysis"
+      ],
+      "layer": "services"
+    },
+    "services/transaction_intelligence_service.py": {
+      "path": "services/transaction_intelligence_service.py",
+      "component": "services",
+      "subcomponent": "transaction_intelligence_service.py",
+      "capabilities": [
+        "transaction_intelligence"
+      ],
+      "layer": "services"
+    },
+    "services/forecast_service.py": {
+      "path": "services/forecast_service.py",
+      "component": "services",
+      "subcomponent": "forecast_service.py",
+      "capabilities": [
+        "forecasting"
+      ],
+      "layer": "services"
+    },
+    "services/transaction_service.py": {
+      "path": "services/transaction_service.py",
+      "component": "services",
+      "subcomponent": "transaction_service.py",
+      "capabilities": [
+        "transaction_service"
+      ],
+      "layer": "services"
+    },
+    "services/behaviour_workspace_service.py": {
+      "path": "services/behaviour_workspace_service.py",
+      "component": "services",
+      "subcomponent": "behaviour_workspace_service.py",
+      "capabilities": [
+        "behaviour_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/loan_analysis_service.py": {
+      "path": "services/loan_analysis_service.py",
+      "component": "services",
+      "subcomponent": "loan_analysis_service.py",
+      "capabilities": [
+        "loan_analysis"
+      ],
+      "layer": "services"
+    },
+    "services/networth_workspace_service.py": {
+      "path": "services/networth_workspace_service.py",
+      "component": "services",
+      "subcomponent": "networth_workspace_service.py",
+      "capabilities": [
+        "networth_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "services/cashflow_workspace_service.py": {
+      "path": "services/cashflow_workspace_service.py",
+      "component": "services",
+      "subcomponent": "cashflow_workspace_service.py",
+      "capabilities": [
+        "cashflow_workspace_service"
+      ],
+      "layer": "services"
+    },
+    "extraction/__init__.py": {
+      "path": "extraction/__init__.py",
+      "component": "extraction",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/csv_importer.py": {
+      "path": "extraction/csv_importer.py",
+      "component": "extraction",
+      "subcomponent": "csv_importer.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/camelot_extractor.py": {
+      "path": "extraction/camelot_extractor.py",
+      "component": "extraction",
+      "subcomponent": "camelot_extractor.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/validator.py": {
+      "path": "extraction/validator.py",
+      "component": "extraction",
+      "subcomponent": "validator.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/table_extractor.py": {
+      "path": "extraction/table_extractor.py",
+      "component": "extraction",
+      "subcomponent": "table_extractor.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/transaction_parser.py": {
+      "path": "extraction/transaction_parser.py",
+      "component": "extraction",
+      "subcomponent": "transaction_parser.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/hybrid_extractor.py": {
+      "path": "extraction/hybrid_extractor.py",
+      "component": "extraction",
+      "subcomponent": "hybrid_extractor.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/column_mapper.py": {
+      "path": "extraction/column_mapper.py",
+      "component": "extraction",
+      "subcomponent": "column_mapper.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/categorizer.py": {
+      "path": "extraction/categorizer.py",
+      "component": "extraction",
+      "subcomponent": "categorizer.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/metadata_extractor.py": {
+      "path": "extraction/metadata_extractor.py",
+      "component": "extraction",
+      "subcomponent": "metadata_extractor.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "extraction/statement_extractor.py": {
+      "path": "extraction/statement_extractor.py",
+      "component": "extraction",
+      "subcomponent": "statement_extractor.py",
+      "capabilities": [
+        "extraction"
+      ],
+      "layer": "extraction"
+    },
+    "orchestration/__init__.py": {
+      "path": "orchestration/__init__.py",
+      "component": "orchestration",
+      "subcomponent": "__init__.py",
+      "capabilities": [
+        "orchestration"
+      ],
+      "layer": "orchestration"
+    },
+    "orchestration/statement_orchestrator.py": {
+      "path": "orchestration/statement_orchestrator.py",
+      "component": "orchestration",
+      "subcomponent": "statement_orchestrator.py",
+      "capabilities": [
+        "orchestration"
+      ],
+      "layer": "orchestration"
+    },
+    "engines/transaction_intelligence/detector_result.py": {
+      "path": "engines/transaction_intelligence/detector_result.py",
+      "component": "engines",
+      "subcomponent": "transaction_intelligence",
+      "capabilities": [
+        "transaction_intelligence",
+        "cash_conversion"
+      ],
+      "layer": "engines"
+    },
+    "engines/transaction_intelligence/__init__.py": {
+      "path": "engines/transaction_intelligence/__init__.py",
+      "component": "engines",
+      "subcomponent": "transaction_intelligence",
+      "capabilities": [
+        "transaction_intelligence",
+        "cash_conversion"
+      ],
+      "layer": "engines"
+    },
+    "engines/transaction_intelligence/cc_payment_detector.py": {
+      "path": "engines/transaction_intelligence/cc_payment_detector.py",
+      "component": "engines",
+      "subcomponent": "transaction_intelligence",
+      "capabilities": [
+        "transaction_intelligence",
+        "cash_conversion"
+      ],
+      "layer": "engines"
+    },
+    "engines/transaction_intelligence/cash_conversion_detector.py": {
+      "path": "engines/transaction_intelligence/cash_conversion_detector.py",
+      "component": "engines",
+      "subcomponent": "transaction_intelligence",
+      "capabilities": [
+        "transaction_intelligence",
+        "cash_conversion"
+      ],
+      "layer": "engines"
+    },
+    "engines/transaction_intelligence/loan_emi_detector.py": {
+      "path": "engines/transaction_intelligence/loan_emi_detector.py",
+      "component": "engines",
+      "subcomponent": "transaction_intelligence",
+      "capabilities": [
+        "transaction_intelligence",
+        "cash_conversion"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/utilization.py": {
+      "path": "engines/credit_card_engine/utilization.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/__init__.py": {
+      "path": "engines/credit_card_engine/__init__.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/interest.py": {
+      "path": "engines/credit_card_engine/interest.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/emi.py": {
+      "path": "engines/credit_card_engine/emi.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/metrics.py": {
+      "path": "engines/credit_card_engine/metrics.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/foreclosure.py": {
+      "path": "engines/credit_card_engine/foreclosure.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/billing.py": {
+      "path": "engines/credit_card_engine/billing.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/credit_card_engine/outstanding.py": {
+      "path": "engines/credit_card_engine/outstanding.py",
+      "component": "engines",
+      "subcomponent": "credit_card_engine",
+      "capabilities": [
+        "credit_cards",
+        "billing",
+        "emi_calculation"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_events/__init__.py": {
+      "path": "engines/financial_events/__init__.py",
+      "component": "engines",
+      "subcomponent": "financial_events",
+      "capabilities": [
+        "financial_events",
+        "event_lineage"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_events/lineage_walker.py": {
+      "path": "engines/financial_events/lineage_walker.py",
+      "component": "engines",
+      "subcomponent": "financial_events",
+      "capabilities": [
+        "financial_events",
+        "event_lineage"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/models.py": {
+      "path": "engines/financial_intelligence/models.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/intelligence.py": {
+      "path": "engines/financial_intelligence/intelligence.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/__init__.py": {
+      "path": "engines/financial_intelligence/__init__.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/scenario.py": {
+      "path": "engines/financial_intelligence/scenario.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/goal_planner.py": {
+      "path": "engines/financial_intelligence/goal_planner.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/utils.py": {
+      "path": "engines/financial_intelligence/utils.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/optimization.py": {
+      "path": "engines/financial_intelligence/optimization.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/financial_intelligence/forecasting.py": {
+      "path": "engines/financial_intelligence/forecasting.py",
+      "component": "engines",
+      "subcomponent": "financial_intelligence",
+      "capabilities": [
+        "financial_intelligence",
+        "forecasting",
+        "optimization"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/__init__.py": {
+      "path": "engines/account_engine/__init__.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/dormant.py": {
+      "path": "engines/account_engine/dormant.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/cashflow.py": {
+      "path": "engines/account_engine/cashflow.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/balance.py": {
+      "path": "engines/account_engine/balance.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/lifecycle.py": {
+      "path": "engines/account_engine/lifecycle.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/metrics.py": {
+      "path": "engines/account_engine/metrics.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/account_engine/history.py": {
+      "path": "engines/account_engine/history.py",
+      "component": "engines",
+      "subcomponent": "account_engine",
+      "capabilities": [
+        "account_management",
+        "cashflow_tracking"
+      ],
+      "layer": "engines"
+    },
+    "engines/recommendation_engine/__init__.py": {
+      "path": "engines/recommendation_engine/__init__.py",
+      "component": "engines",
+      "subcomponent": "recommendation_engine",
+      "capabilities": [
+        "recommendations"
+      ],
+      "layer": "engines"
+    },
+    "engines/recommendation_engine/recommendations.py": {
+      "path": "engines/recommendation_engine/recommendations.py",
+      "component": "engines",
+      "subcomponent": "recommendation_engine",
+      "capabilities": [
+        "recommendations"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/core.py": {
+      "path": "engines/behaviour_engine/core.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/__init__.py": {
+      "path": "engines/behaviour_engine/__init__.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/income.py": {
+      "path": "engines/behaviour_engine/income.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/cashflow.py": {
+      "path": "engines/behaviour_engine/cashflow.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/temporal.py": {
+      "path": "engines/behaviour_engine/temporal.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/lifestyle.py": {
+      "path": "engines/behaviour_engine/lifestyle.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/utils.py": {
+      "path": "engines/behaviour_engine/utils.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/resilience.py": {
+      "path": "engines/behaviour_engine/resilience.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/insights.py": {
+      "path": "engines/behaviour_engine/insights.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/patterns.py": {
+      "path": "engines/behaviour_engine/patterns.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/debt.py": {
+      "path": "engines/behaviour_engine/debt.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/wellness.py": {
+      "path": "engines/behaviour_engine/wellness.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/account.py": {
+      "path": "engines/behaviour_engine/account.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/profile.py": {
+      "path": "engines/behaviour_engine/profile.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/credit_dependency.py": {
+      "path": "engines/behaviour_engine/credit_dependency.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/savings.py": {
+      "path": "engines/behaviour_engine/savings.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/stress.py": {
+      "path": "engines/behaviour_engine/stress.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/behaviour_engine/nudges.py": {
+      "path": "engines/behaviour_engine/nudges.py",
+      "component": "engines",
+      "subcomponent": "behaviour_engine",
+      "capabilities": [
+        "pattern_analysis",
+        "financial_health",
+        "nudges"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/models.py": {
+      "path": "engines/loan_engine/models.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/amortization.py": {
+      "path": "engines/loan_engine/amortization.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/prepayment.py": {
+      "path": "engines/loan_engine/prepayment.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/__init__.py": {
+      "path": "engines/loan_engine/__init__.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/emi.py": {
+      "path": "engines/loan_engine/emi.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/metrics.py": {
+      "path": "engines/loan_engine/metrics.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/utils.py": {
+      "path": "engines/loan_engine/utils.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/foreclosure.py": {
+      "path": "engines/loan_engine/foreclosure.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "engines/loan_engine/floating_rate.py": {
+      "path": "engines/loan_engine/floating_rate.py",
+      "component": "engines",
+      "subcomponent": "loan_engine",
+      "capabilities": [
+        "debt_management",
+        "loan_analysis",
+        "prepayment"
+      ],
+      "layer": "engines"
+    },
+    "core/dtos/reconciliation_dto.py": {
+      "path": "core/dtos/reconciliation_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/statement_dto.py": {
+      "path": "core/dtos/statement_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/__init__.py": {
+      "path": "core/dtos/__init__.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/forecast_dto.py": {
+      "path": "core/dtos/forecast_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/account_dto.py": {
+      "path": "core/dtos/account_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/loans_dto.py": {
+      "path": "core/dtos/loans_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/behaviour_dto.py": {
+      "path": "core/dtos/behaviour_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/accounts_dto.py": {
+      "path": "core/dtos/accounts_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/cashflow_dto.py": {
+      "path": "core/dtos/cashflow_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/dashboard_dto.py": {
+      "path": "core/dtos/dashboard_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/investments_dto.py": {
+      "path": "core/dtos/investments_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/credit_cards_dto.py": {
+      "path": "core/dtos/credit_cards_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/analytics_dto.py": {
+      "path": "core/dtos/analytics_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/net_worth_dto.py": {
+      "path": "core/dtos/net_worth_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/dtos/transaction_dto.py": {
+      "path": "core/dtos/transaction_dto.py",
+      "component": "core",
+      "subcomponent": "dtos",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/health.py": {
+      "path": "core/db/health.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/__init__.py": {
+      "path": "core/db/__init__.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/schema.py": {
+      "path": "core/db/schema.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/transaction.py": {
+      "path": "core/db/transaction.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/connection.py": {
+      "path": "core/db/connection.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/db/config.py": {
+      "path": "core/db/config.py",
+      "component": "core",
+      "subcomponent": "db",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/domain/__init__.py": {
+      "path": "core/domain/__init__.py",
+      "component": "core",
+      "subcomponent": "domain",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/domain/money.py": {
+      "path": "core/domain/money.py",
+      "component": "core",
+      "subcomponent": "domain",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/behaviour_mapper.py": {
+      "path": "core/mappers/behaviour_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/reconciliation_mapper.py": {
+      "path": "core/mappers/reconciliation_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/account_mapper.py": {
+      "path": "core/mappers/account_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/__init__.py": {
+      "path": "core/mappers/__init__.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/statement_mapper.py": {
+      "path": "core/mappers/statement_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/credit_card_mapper.py": {
+      "path": "core/mappers/credit_card_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/dashboard_mapper.py": {
+      "path": "core/mappers/dashboard_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/investment_mapper.py": {
+      "path": "core/mappers/investment_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/cashflow_mapper.py": {
+      "path": "core/mappers/cashflow_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/loan_mapper.py": {
+      "path": "core/mappers/loan_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/analytics_mapper.py": {
+      "path": "core/mappers/analytics_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/forecast_mapper.py": {
+      "path": "core/mappers/forecast_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/transaction_mapper.py": {
+      "path": "core/mappers/transaction_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    },
+    "core/mappers/networth_mapper.py": {
+      "path": "core/mappers/networth_mapper.py",
+      "component": "core",
+      "subcomponent": "mappers",
+      "capabilities": [
+        "core"
+      ],
+      "layer": "core"
+    }
+  },
+  "capability_summary": {
+    "discover.blast-radius": 1,
+    "discover.capability-for": 1,
+    "discover.capability-graph": 1,
+    "discover.capability-inventory": 1,
+    "discover.latent-capability-audit": 1,
+    "discover.resolve-capabilities": 1,
+    "discover.what-should-i-run": 1,
+    "plan.control-plane": 1,
+    "plan.deep-contract": 1,
+    "plan.execution-plan": 1,
+    "plan.local-gate": 1,
+    "plan.tier-plan": 1,
+    "evidence.pipeline-plan": 1,
+    "exec.environment-check": 1,
+    "exec.evidence-execute": 1,
+    "exec.execution-evidence": 1,
+    "exec.orchestrator": 1,
+    "quality.black": 1,
+    "quality.mypy": 1,
+    "quality.pytest": 1,
+    "quality.ruff": 1,
+    "measure.coverage": 1,
+    "measure.mutation": 1,
+    "measure.mutation-inventory": 1,
+    "measure.truth-report": 1,
+    "diagnose.bypass-audit": 1,
+    "diagnose.failure-attribution": 1,
+    "diagnose.intelligence": 1,
+    "strengthen.capability-pipeline": 1,
+    "strengthen.forensic": 1,
+    "strengthen.survivor-intel": 1,
+    "evidence.config-authority": 1,
+    "evidence.execution-status": 1,
+    "evidence.inspect-truth": 1,
+    "evidence.knowledge-base": 1,
+    "evidence.reconcile": 1,
+    "evidence.reconcile-pipeline": 1,
+    "evidence.workspace-status": 1,
+    "certify.api-contracts": 1,
+    "certify.audit": 1,
+    "certify.contract-governance": 1,
+    "certify.evidence-pipeline": 1,
+    "certify.integrity": 1,
+    "exec.profile.quick": 1,
+    "exec.profile.backend": 1,
+    "exec.profile.frontend": 1,
+    "exec.profile.contracts": 1,
+    "exec.profile.property": 1,
+    "exec.profile.integration": 1,
+    "exec.profile.migration": 1,
+    "exec.profile.repository": 1,
+    "exec.profile.full": 1,
+    "exec.profile.runtime": 1,
+    "exec.profile.golden": 1,
+    "exec.profile.playwright": 1
+  }
+}

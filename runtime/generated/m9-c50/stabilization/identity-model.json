@@ -1,0 +1,26 @@
+{
+  "schema": "m9-c50/stabilization/identity-model@1",
+  "generated_at": "2026-09-04T22:55:24.534123+00:00",
+  "task_identity_inputs": [
+    "change_identity",
+    "capability_identity",
+    "verification_kind",
+    "target",
+    "verification_policy"
+  ],
+  "evidence_identity_inputs": [
+    "execution_id",
+    "artifact_sha256",
+    "environment_identity",
+    "evidence_kind"
+  ],
+  "environment_identity_inputs": [
+    "python",
+    "cwd",
+    "fingerprint_toolchain",
+    "fingerprint_config"
+  ],
+  "namespace": "runtime.verification",
+  "hash_algorithm": "sha256-truncated-16",
+  "deterministic": true
+}

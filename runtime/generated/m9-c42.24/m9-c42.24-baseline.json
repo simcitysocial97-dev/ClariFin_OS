@@ -1,0 +1,97 @@
+{
+  "title": "M9-C42.24 — Baseline Lock",
+  "generated_at": "2026-08-25T15:48:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "milestone": "M24.1",
+  "repository_identity": {
+    "root": "/home/vasantha/AI-Projects/ClariFin_OS",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_sha": "6bb27a89b64f0582dea1ef393487143f3cc33400",
+    "parent_sha": "94f47ef97740061f67b729b61a40fb9895a4af88",
+    "working_tree_changes": 6,
+    "working_tree_note": "Untracked C42.23 strengthening tests (5 files) + modified progress.md. All test files are NEW (untracked), not modifications to existing test modules. No production source changes.",
+    "backend_src_changed_since_c42_21": false,
+    "backend_src_diff_check": "git diff HEAD -- backend/src is empty; no production source modifications in C42.23 strengthening"
+  },
+  "environment": {
+    "python": "Python 3.12.3",
+    "pytest": "pytest 9.1.1",
+    "mutmut": "mutmut, version 3.7.0 (pinned in root pyproject.toml)",
+    "coverage": "7.15.2",
+    "hypothesis": "6.161.4",
+    "cpus": 4,
+    "ram_gb": 7.6,
+    "kernel": "Linux 7.0.0-28-generic x86_64",
+    "env_check_consistent": true,
+    "forbidden_venvs": [],
+    "smoke_gate": "PASS (Gate A + Gate B, not_checked=0, 6 mutants: 2 killed / 2 survived-by-design / 2 no_tests)"
+  },
+  "population_identity": {
+    "authorized_components": [
+      "credit_card_engine",
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "recommendation_engine",
+      "core_domain_money",
+      "common_calculations"
+    ],
+    "authorized_component_count": 12,
+    "deferred_components": [
+      {
+        "component": "transaction_intelligence",
+        "status": "DEFERRED — ENTRY GATE",
+        "predecessor_status": "DEFERRED — TEST-STRENGTHENING GATE (C42.21)"
+      },
+      {
+        "component": "financial_intelligence",
+        "status": "DEFERRED — ENTRY GATE",
+        "predecessor_status": "DEFERRED — TEST-STRENGTHENING GATE (C42.21)"
+      }
+    ],
+    "population_authority": "ENGINE_SELECTION in runtime/foundation/verification/mutation_contract.py — 12 components; intelligence components deliberately absent",
+    "reconciliation_against_c42_21": "IDENTICAL — 12 components, same names, same tiers (P0/P1); no scope drift"
+  },
+  "strengthening_input": {
+    "c42_22": {
+      "scope": "Discovery repair only — behaviour_engine + financial_events",
+      "behaviour_no_tests_before": 2835,
+      "financial_events_no_tests_before": 29,
+      "actions": "Test selection extension claimed for behaviour (NOT implemented); TestInternalHelpers added for financial_events",
+      "test_changes": "behaviour: test_metrics.py + test_integration.py + pattern_analysis capability (NOT in ENGINE_SELECTION); financial_events: TestInternalHelpers class"
+    },
+    "c42_23": {
+      "scope": "Bounded behavioral test strengthening across 6 components",
+      "new_tests_total": 42,
+      "components_touched": ["cashflow_engine", "recommendation_engine", "common_calculations", "credit_card_engine", "reconciliation_engine", "ledger_audit_engine", "loan_engine"],
+      "test_files_added": [
+        "tests/properties/cashflow/test_behavioral_strengthening.py",
+        "tests/unit/engines/recommendation/test_recommendation_strengthening.py",
+        "tests/unit/test_calculations_strengthening.py",
+        "tests/unit/engines/credit_card/test_interest_strengthening.py",
+        "tests/unit/engines/reconciliation/test_reconciliation_strengthening.py"
+      ],
+      "cashflow_full_local_result": "50 -> 128 killed (29.1% -> 74.4%); 44 survivors classified B/C",
+      "ledger_result": "82 survivors classified C/B (no new tests; reachable contract already covered)",
+      "production_logic_changed": false
+    }
+  },
+  "mutation_configuration": {
+    "tool": "mutmut 3.7.0 (pinned in root pyproject.toml)",
+    "config_file": "backend/pyproject.toml [tool.mutmut] — rendered per-run from mutation_contract.ENGINE_SELECTION",
+    "runner": "python3 -m pytest (via .venv/bin/mutmut)",
+    "selection_method": "explicit-pytest-path (mutmut pytest_add_cli_args_test_selection); no silent full-suite fallback",
+    "evidence_ordering": "R2 architectural fix active; per-engine config rendered and restored after each run",
+    "execution": "Local full campaign (dev-iteration) + targeted per-component runs for C42.24 analysis",
+    "safety": "dirty-worktree refusal (D5 override available), signal+atexit config restore, backend/src hash verification, mutants/+.mutmut-cache cleared on scope change"
+  },
+  "scope_unchanged_from_c42_21": true,
+  "production_code_changed": false,
+  "tests_changed_count": 42,
+  "hard_gate_status": "PASS — 12-component population identity reconciled; deferred components explicit and unchanged"
+}

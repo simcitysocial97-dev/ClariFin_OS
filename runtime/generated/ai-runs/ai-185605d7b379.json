@@ -1,0 +1,52 @@
+{
+  "id": "ai-185605d7b379",
+  "symptom": "test failure",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "CANCELLED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "build failure"
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-09-06T03:58:32.818006Z",
+      "completed_at": null,
+      "evidence_id": null,
+      "duration_ms": null
+    }
+  ],
+  "created_at": "2026-09-06T03:58:32.807902Z",
+  "updated_at": "2026-09-06T03:58:32.840750Z",
+  "completed_at": "2026-09-06T03:58:32.840750Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-cf7c3eea82fa",
+      "event_type": "run_created",
+      "run_id": "ai-185605d7b379",
+      "timestamp": "2026-09-06T03:58:32.808722Z",
+      "payload": {
+        "symptom": "test failure",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-87b19d3fb5ed",
+      "event_type": "step_started",
+      "run_id": "ai-185605d7b379",
+      "timestamp": "2026-09-06T03:58:32.819117Z",
+      "payload": {
+        "step": 1,
+        "tool": "run_diagnostic",
+        "arguments": {
+          "symptom": "build failure"
+        }
+      }
+    }
+  ]
+}

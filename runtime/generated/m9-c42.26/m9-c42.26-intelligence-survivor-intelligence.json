@@ -1,0 +1,114 @@
+{
+  "title": "M9-C42.26 — Intelligence Survivor Intelligence & Production Anomaly Boundary",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-survivor-intelligence",
+  "milestone": "M26.7 + M26.8",
+  "principle": "Do not immediately generate more tests because transaction_intelligence=70.2% and financial_intelligence=73.0%. Classify survivors. Preserve documented anomalies.",
+
+  "transaction_intelligence_survivors": {
+    "total_survived": 437,
+    "survival_rate_pct": 29.8,
+    "anomaly_records": [
+      {
+        "id": "TXN-E1",
+        "location": "cash_conversion_detector.detect() unknown-provider selection, lines 227-235",
+        "class": "E (ambiguity)",
+        "classification": "DESIGN/CONTRACT QUESTION",
+        "evidence": "_calculate_fee_bps(debit_amount_paise, credit_amount_paise - 225) — subtracts 225 (a basis-points value) from a paise amount. Effectively shifts fee by 22500/debit bps rather than selecting credit closest to 225 bps fee.",
+        "disposition": "AMBIGUOUS — recorded; behavior pinned by tests; no production change in C42.25; non-goal carried into C42.26. Future defect-verification gate required to determine intended behavior.",
+        "artifact": "runtime/generated/m9-c42.25/transaction/inventory.json (module=cash_conversion_detector, anomalies[0])"
+      },
+      {
+        "id": "TXN-C1",
+        "location": "_hungarian_inline (lines 130-157)",
+        "class": "C (defensive/unreachable)",
+        "classification": "UNREACHABLE CODE",
+        "evidence": "Defined but never called from detect() or any production path (grep-verified).",
+        "disposition": "NOT deleted (non-goal: no production-code removal). Tested as isolated pure helper. Documented as unwired.",
+        "artifact": "runtime/generated/m9-c42.25/transaction/inventory.json"
+      },
+      {
+        "id": "TXN-C2",
+        "location": "cc_payment_detector.detect_cc_payment loose-match branch (lines 288-300)",
+        "class": "C (defensive/unreachable)",
+        "classification": "UNREACHABLE CODE",
+        "evidence": "Inside 'not has_keyword and not has_card_pattern' the additional 'and not has_card_pattern' guard is tautologically true; the branch always returns None when statement_row is None — dead condition but reachable control flow.",
+        "disposition": "Recorded; tests exercise the branch as-is. No production change in C42.25; carried into C42.26.",
+        "artifact": "runtime/generated/m9-c42.25/transaction/inventory.json"
+      }
+    ],
+    "remaining_survivor_classes": {
+      "note": "Without per-mutant breakdown in C42.25 targeted smoke, the remaining 437 survivors distribute across (a) equivalent mutants (e.g., commutatively equivalent arithmetic in pure-function detectors), (b) defensive guards that handle None/empty inputs, (c) test-surface that did not cover a specific micro-branch (e.g., specific date-format combinations), and (d) infra artifacts (e.g., mutmut duplicates). C42.25 inventory and module analysis (in transaction/inventory.json) provide module-level classification, not per-mutant. A per-mutant survivor dump was not produced in C42.25's targeted smoke. Per-mutant survivor analysis is a potential C42.27+ follow-up IF behavior-driven prioritization is required, NOT required by C42.26.",
+      "priority": "LOW — pending: (1) defect-verification gate for TXN-E1, (2) equivalent-mutant inventory pass for pure-function detectors, (3) capability-matrix integration in M26.9."
+    }
+  },
+
+  "financial_intelligence_survivors": {
+    "total_survived": 1000,
+    "survival_rate_pct": 27.0,
+    "anomaly_records": [
+      {
+        "id": "FIN-E1",
+        "location": "scenario.compare_scenario FOIR risk branch, lines 344-352",
+        "class": "E (ambiguity)",
+        "classification": "PRODUCTION DEFECT CANDIDATE",
+        "evidence": "Condition `float(FOIR_WARNING_THRESHOLD) < scenario_val <= float(FOIR_WARNING_THRESHOLD)` is mathematically impossible (always False), so a negative foir change ALWAYS appends 'FOIR increased above safe threshold' to risks even when it actually decreased.",
+        "disposition": "AMBIGUOUS — recorded; behavior pinned by tests; no production change in C42.25; carried into C42.26. Future defect-verification gate required.",
+        "artifact": "runtime/generated/m9-c42.25/financial/inventory.json"
+      },
+      {
+        "id": "FIN-E2",
+        "location": "optimization.optimize_goal_prioritization.deadline_score, lines 392-403",
+        "class": "E (info — dead helper)",
+        "classification": "UNREACHABLE CODE",
+        "evidence": "deadline_score() is defined but never used (comment: 'computed but unused; kept for future refinement'); its try-body returns 0 unconditionally. Dead helper inside production.",
+        "disposition": "NOT deleted (non-goal). Not directly tested. Documented as unwired.",
+        "artifact": "runtime/generated/m9-c42.25/financial/inventory.json"
+      },
+      {
+        "id": "FIN-E3",
+        "location": "intelligence.py (and other locations) error handlers catching (ValueError, TypeError) but missing decimal.InvalidOperation",
+        "class": "Production defect (E)",
+        "classification": "PRODUCTION DEFECT CANDIDATE",
+        "evidence": "Three locations catch (ValueError, TypeError) but miss decimal.InvalidOperation — non-numeric strings in confidence/wellness fields propagate errors instead of being normalized to safe defaults.",
+        "disposition": "Recorded; behavior pinned by tests; no production change in C42.25. Future defect-verification gate required.",
+        "artifact": "progress.md (M9-C42.25 Production Anomalies section)"
+      },
+      {
+        "id": "FIN-E4",
+        "location": "intelligence._compute_health_score falsy-coalescing logic",
+        "class": "Production defect (E)",
+        "classification": "PRODUCTION DEFECT CANDIDATE",
+        "evidence": "debt_cycle_score=0 -> defaults to 50; cashflow_stability=0 -> defaults to 0.5. Falsy values silently substituted with defaults rather than explicit None handling.",
+        "disposition": "Recorded; behavior pinned by tests; no production change in C42.25. Future defect-verification gate required.",
+        "artifact": "progress.md (M9-C42.25 Production Anomalies section)"
+      },
+      {
+        "id": "FIN-E5",
+        "location": "optimization.optimize_surplus_allocation.expected_impact.total_allocated_paise",
+        "class": "Production metric defect (E)",
+        "classification": "PRODUCTION DEFECT CANDIDATE",
+        "evidence": "total_allocated_paise excludes the investment slice from the sum (the allocation adds up correctly in practice, but the reported metric doesn't).",
+        "disposition": "Recorded; behavior pinned by tests; no production change in C42.25. Future defect-verification gate required.",
+        "artifact": "progress.md (M9-C42.25 Production Anomalies section)"
+      }
+    ],
+    "remaining_survivor_classes": {
+      "note": "Without per-mutant breakdown in C42.25 targeted smoke, the remaining 1000 survivors distribute across equivalent mutants (e.g., Decimal/ratio arithmetic with multiple equivalent normalizations), defensive guards, and test-surface micro-branches. Module-level classification is in financial/inventory.json. Per-mutant survivor analysis is a C42.27+ follow-up IF required.",
+      "priority": "LOW — pending defect-verification gates for FIN-E1, E3, E4, E5; FIN-E2 is documented as dead code."
+    }
+  },
+
+  "production_anomaly_boundary_decision": {
+    "milestone": "M26.8",
+    "decision": "Do NOT fix any of TXN-E1, TXN-C1, TXN-C2, FIN-E1, FIN-E2, FIN-E3, FIN-E4, FIN-E5 in C42.26.",
+    "rationale": "These remain production findings, not automatic test/code fixes. A separate defect-verification gate must establish: (1) reproducibility, (2) intended behavior, (3) impact, (4) minimal production fix, (5) regression test, (6) architectural ownership. None of these have been established for any of the eight anomalies.",
+    "non_goal_preserved": true,
+    "scope_creep_prevented": "Adding production fixes mid-mutation-certification phase would invalidate baselines and conflate measurement work with defect remediation. The mutation system is for measuring the test system, not for fixing it."
+  },
+
+  "test_gap_review": {
+    "principle": "Do not generate new tests merely because survivors exist. For pure-function detectors, many survivors are equivalent mutants (commutative arithmetic, tautological guards) or defensive input handling. Generating more tests against these would not improve behavioral fault detection.",
+    "verdict": "No automatic test generation triggered. Survivor classification deferred to per-mutant dump in C42.27+ if required."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-01T13:31:33.299302+00:00",
+  "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+  "assessment": {
+    "can_emit": true,
+    "artifacts_persisted": true,
+    "mutation_ingested": true,
+    "coverage_ingested": false,
+    "test_results_ingested": true,
+    "sha_bound": true,
+    "fingerprints_captured": true,
+    "deterministic_reconstruction": true,
+    "implementation_verified": true,
+    "workflow_config_verified": true,
+    "live_execution_verified": false,
+    "live_execution_available": false,
+    "limitation": "Live GitHub Actions execution is not available in the local environment. Implementation and workflow configuration are verified locally; live execution requires actual GitHub Actions runner."
+  }
+}

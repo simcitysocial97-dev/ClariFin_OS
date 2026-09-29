@@ -1,0 +1,86 @@
+{
+  "id": "ai-7afe2f982090",
+  "symptom": "test failure",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "CANCELLED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "build failure"
+      },
+      "result": {
+        "kind": "platform.diagnostic_result",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T13:28:28Z",
+        "id": "sha256:0e3e449914ae6fd4d7bbdfc56db58edf1fdbe6a1037f507739cfc456bbea4b2c",
+        "data": {
+          "symptom": "build failure",
+          "error_code": null,
+          "capability_id": null,
+          "level": "L1",
+          "fact": "no_match",
+          "evidence": [],
+          "affected_capability": null,
+          "recommendation": [
+            {
+              "action": "run_full_verification",
+              "target": "all"
+            }
+          ],
+          "generated_at": "2026-09-06T13:28:28Z"
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T13:28:25.068497Z",
+      "completed_at": "2026-09-06T13:28:28.642774Z",
+      "evidence_id": "sha256:0e3e449914ae6fd4d7bbdfc56db58edf1fdbe6a1037f507739cfc456bbea4b2c",
+      "duration_ms": 3574
+    }
+  ],
+  "created_at": "2026-09-06T13:28:25.064473Z",
+  "updated_at": "2026-09-06T13:28:28.647022Z",
+  "completed_at": "2026-09-06T13:28:28.647022Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-8455d4d80ead",
+      "event_type": "run_created",
+      "run_id": "ai-7afe2f982090",
+      "timestamp": "2026-09-06T13:28:25.064815Z",
+      "payload": {
+        "symptom": "test failure",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-d48f2aa0c8a4",
+      "event_type": "step_started",
+      "run_id": "ai-7afe2f982090",
+      "timestamp": "2026-09-06T13:28:25.068921Z",
+      "payload": {
+        "step": 1,
+        "tool": "run_diagnostic",
+        "arguments": {
+          "symptom": "build failure"
+        }
+      }
+    },
+    {
+      "event_id": "audit-d24436741af8",
+      "event_type": "step_completed",
+      "run_id": "ai-7afe2f982090",
+      "timestamp": "2026-09-06T13:28:28.643080Z",
+      "payload": {
+        "step": 1,
+        "tool": "run_diagnostic",
+        "success": true,
+        "evidence_id": "sha256:0e3e449914ae6fd4d7bbdfc56db58edf1fdbe6a1037f507739cfc456bbea4b2c",
+        "duration_ms": 3574
+      }
+    }
+  ]
+}

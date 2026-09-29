@@ -1,0 +1,90 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.8 Deferred Intelligence Readiness",
+  "generated_at": "2026-08-25T06:43:28.244032+00:00",
+  "run_id": "m9-c42.21",
+  "deferred_components": [
+    {
+      "component": "transaction_intelligence",
+      "status": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+      "source_location": "backend/src/engines/transaction_intelligence/",
+      "current_coverage_pct": 24.3,
+      "current_test_surface": {
+        "unit_tests": 0,
+        "property_tests": 3,
+        "capability_tests": 2,
+        "contract_tests": 0,
+        "integration_tests": 0,
+        "total_collected": 5
+      },
+      "verification_gaps": [
+        "NO UNIT TEST SUITE \u2014 entire engine lacks direct unit test bindings",
+        "76% of statements have no direct test coverage (coverage 24.3%)",
+        "Property tests (3) and capability tests (2) provide only indirect exercise",
+        "Mutation would yield ~76% no_tests mutants (discovery gap)",
+        "No capability mapping in verified capability set (M9-C42.20 scope: capability mapping not established)"
+      ],
+      "capability_mapping": {
+        "mapped_to": "UNMAPPED",
+        "note": "Not present in canonical capability set (loan-engine, reconciliation, ledger, api-contracts, migrations, runtime-verification, golden-regression, mutation-analysis, e2e-tests). Requires new capability registration or mapping to existing."
+      },
+      "mutation_readiness_conditions": [
+        "Create unit test suite: tests/unit/engines/transaction_intelligence/ with \u226550 tests covering core functions",
+        "Strengthen property tests: expand from 3 to \u226520 property tests with exact-value assertions",
+        "Add capability tests: tests/capability/transaction_intelligence/ with scenario coverage",
+        "Establish capability mapping in canonical verification architecture",
+        "Achieve \u226570% direct coverage before mutation entry",
+        "Verify test-discovery quality: pytest collection must find all test modules"
+      ],
+      "estimated_mutants_if_mutated_now": "~367 (from C42.20 estimate), of which ~280 would be no_tests"
+    },
+    {
+      "component": "financial_intelligence",
+      "status": "DEFERRED \u2014 TEST-STRENGTHENING GATE",
+      "source_location": "backend/src/engines/financial_intelligence/",
+      "current_coverage_pct": 35.2,
+      "current_test_surface": {
+        "unit_tests": 0,
+        "property_tests": 0,
+        "capability_tests": 0,
+        "contract_tests": 0,
+        "integration_tests": 0,
+        "total_collected": 9,
+        "note": "9 tests collected but classification unclear \u2014 likely indirect from other test suites"
+      },
+      "verification_gaps": [
+        "NO DIRECT TEST SUITE \u2014 all 9 tests are indirect exercise from other engines",
+        "64.8% of 807 statements have no direct test coverage",
+        "No property tests, no capability tests, no unit tests",
+        "Mutation would yield ~65% no_tests mutants",
+        "No capability mapping in verified capability set"
+      ],
+      "capability_mapping": {
+        "mapped_to": "UNMAPPED",
+        "note": "Not in canonical capability set. Core financial intelligence functions (forecasting, risk scoring, portfolio analysis) need dedicated capability registration."
+      },
+      "mutation_readiness_conditions": [
+        "Create unit test suite: tests/unit/engines/financial_intelligence/ with \u2265100 tests (807 stmts)",
+        "Create property test suite: tests/properties/financial_intelligence/ with \u226530 property tests",
+        "Create capability tests: tests/capability/financial_intelligence/ with scenario coverage",
+        "Establish capability mapping in canonical verification architecture",
+        "Achieve \u226570% direct coverage before mutation entry",
+        "Verify test-discovery quality"
+      ],
+      "estimated_mutants_if_mutated_now": "~807 (from C42.20 estimate), of which ~525 would be no_tests"
+    }
+  ],
+  "cross_deferred_patterns": [
+    "Both are CORE production components (not infrastructure) but completely lack direct test surfaces.",
+    "Both are unmapped in the canonical capability architecture \u2014 requires capability registration before they can enter mutation profile.",
+    "Test-strengthening must precede mutation; mutation is not a test-generation tool for these engines.",
+    "Estimated combined population: ~1,174 mutants (would add 10% to campaign size)."
+  ],
+  "recommended_sequence": [
+    "1. Register capabilities for transaction_intelligence and financial_intelligence in canonical capability registry",
+    "2. Build unit test suites (parallel effort \u2014 these are the biggest gaps)",
+    "3. Add property tests for statistical/numeric invariants",
+    "4. Add capability tests for end-to-end scenarios",
+    "5. Achieve \u226570% coverage with direct tests",
+    "6. Enter mutation population in next campaign (M9-C42.22+)"
+  ]
+}

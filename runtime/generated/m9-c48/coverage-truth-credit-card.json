@@ -1,0 +1,25 @@
+{
+  "artifact_path": "runtime/generated/m9-c48/coverage-truth-credit-card.json",
+  "artifact_sha256": "3e4e3628fb3362aded04f17098643a5a64c65b69741178a61678db6636925378",
+  "branch_percent": null,
+  "branches_covered": 0,
+  "branches_total": 0,
+  "configuration": {
+    "max_runtime": 300
+  },
+  "coverage_tool": "coverage.py",
+  "coverage_version": "Coverage.py, version 7.15.2 with C extension",
+  "duration_seconds": 5,
+  "exit_code": 0,
+  "line_percent": 12.96,
+  "lines_covered": 1333,
+  "lines_total": 10286,
+  "measurement_id": "cov-91a7db60a6ac",
+  "pytest_version": "pytest 9.1.1",
+  "python_version": "3.12.3",
+  "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+  "source_scope": "backend/src",
+  "test_scope": "tests/unit/engines/credit_card_engine",
+  "timestamp": "2026-09-04T03:12:36+00:00",
+  "tree_sha": "df3b2bf9dd003675db655a635f92c811ad4ca03d"
+}

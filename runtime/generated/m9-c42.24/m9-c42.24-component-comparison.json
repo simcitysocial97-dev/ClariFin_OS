@@ -1,0 +1,126 @@
+{
+  "title": "M9-C42.24 — Component Comparison: C42.21 vs C42.24",
+  "generated_at": "2026-08-25T18:30:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "baseline_reference": "m9-c42.21",
+  "methodology": "Per-component targeted mutation runs on current branch (6bb27a89) vs C42.21 baseline (3a37fab34). Population identity preserved: 12 components, same source paths, same test selections.",
+  "aggregate": {
+    "c42_21": {
+      "generated": 11730,
+      "killed": 4419,
+      "survived": 4438,
+      "no_tests": 2868,
+      "timeout": 4,
+      "not_checked": 0,
+      "evaluated": 8862,
+      "mutation_score": 49.9
+    },
+    "c42_24": {
+      "generated": 11730,
+      "killed": 4658,
+      "survived": 4228,
+      "no_tests": 2839,
+      "timeout": 5,
+      "not_checked": 0,
+      "evaluated": 8891,
+      "mutation_score": 52.4
+    },
+    "delta": {
+      "generated": 0,
+      "killed": 239,
+      "survived": -210,
+      "no_tests": -29,
+      "timeout": 1,
+      "not_checked": 0,
+      "mutation_score": 2.5
+    }
+  },
+  "components": [
+    {
+      "component": "cashflow_engine",
+      "c42_21": {"generated": 172, "killed": 50, "survived": 122, "no_tests": 0, "timeout": 0, "score": 29.1},
+      "c42_24": {"generated": 172, "killed": 128, "survived": 44, "no_tests": 0, "timeout": 0, "score": 74.4},
+      "delta": {"killed": 78, "survived": -78, "score": 45.3},
+      "explanation": "C42.23 Batch 2: 10 behavioral tests (test_behavioral_strengthening.py) killed 78 genuine Class-A mutants. Largest improvement in the campaign."
+    },
+    {
+      "component": "recommendation_engine",
+      "c42_21": {"generated": 282, "killed": 163, "survived": 119, "no_tests": 0, "timeout": 0, "score": 57.8},
+      "c42_24": {"generated": 282, "killed": 179, "survived": 103, "no_tests": 0, "timeout": 0, "score": 63.5},
+      "delta": {"killed": 16, "survived": -16, "score": 5.7},
+      "explanation": "C42.23 Batch 3: 9 new tests (test_recommendation_strengthening.py) killed 16 additional genuine mutants."
+    },
+    {
+      "component": "common_calculations",
+      "c42_21": {"generated": 376, "killed": 212, "survived": 164, "no_tests": 0, "timeout": 0, "score": 56.4},
+      "c42_24": {"generated": 376, "killed": 212, "survived": 164, "no_tests": 0, "timeout": 0, "score": 56.4},
+      "delta": {"killed": 0, "survived": 0, "score": 0.0},
+      "explanation": "C42.23 Batch 4: 4 boundary tests added but killed no additional mutants. Existing tests already covered the behavioral contract. Class C."
+    },
+    {
+      "component": "credit_card_engine",
+      "c42_21": {"generated": 582, "killed": 440, "survived": 142, "no_tests": 0, "timeout": 0, "score": 75.6},
+      "c42_24": {"generated": 582, "killed": 440, "survived": 142, "no_tests": 0, "timeout": 0, "score": 75.6},
+      "delta": {"killed": 0, "survived": 0, "score": 0.0},
+      "explanation": "C42.23 Batch 4: 9 interest-invariant tests added but killed no additional mutants. Existing tests already covered the behavioral contract. Class C."
+    },
+    {
+      "component": "reconciliation_engine",
+      "c42_21": {"generated": 368, "killed": 296, "survived": 72, "no_tests": 0, "timeout": 0, "score": 80.4},
+      "c42_24": {"generated": 368, "killed": 297, "survived": 71, "no_tests": 0, "timeout": 0, "score": 80.7},
+      "delta": {"killed": 1, "survived": -1, "score": 0.3},
+      "explanation": "C42.23 Batch 5: 10 scoring tests killed 1 additional mutant. Marginal improvement; most survivors already covered by existing tests."
+    },
+    {
+      "component": "loan_engine",
+      "c42_21": {"generated": 1273, "killed": 1066, "survived": 200, "no_tests": 4, "timeout": 3, "score": 84.0},
+      "c42_24": {"generated": 1273, "killed": 1066, "survived": 200, "no_tests": 4, "timeout": 3, "score": 84.0},
+      "delta": {"killed": 0, "survived": 0, "no_tests": 0, "timeout": 0, "score": 0.0},
+      "explanation": "C42.23: 0 new tests (conservative decision). 5 nondeterministic mutants preserved as reproducibility evidence. Stable within 83.8-84.0% band."
+    },
+    {
+      "component": "ledger_audit_engine",
+      "c42_21": {"generated": 190, "killed": 108, "survived": 82, "no_tests": 0, "timeout": 0, "score": 56.8},
+      "c42_24": {"generated": 190, "killed": 108, "survived": 82, "no_tests": 0, "timeout": 0, "score": 56.8},
+      "delta": {"killed": 0, "survived": 0, "score": 0.0},
+      "explanation": "C42.23 Batch 3: 0 new tests. 82 survivors classified C/B (reachable contract already covered). No material change."
+    },
+    {
+      "component": "balance_engine",
+      "c42_21": {"generated": 285, "killed": 272, "survived": 13, "no_tests": 0, "timeout": 0, "score": 95.4},
+      "c42_24": {"generated": 285, "killed": 270, "survived": 13, "no_tests": 0, "timeout": 2, "score": 94.7},
+      "delta": {"killed": -2, "survived": 0, "timeout": 2, "score": -0.7},
+      "explanation": "2 timeout mutants (nondeterministic). Score variance within expected band. No regression in behavioral coverage."
+    },
+    {
+      "component": "account_engine",
+      "c42_21": {"generated": 183, "killed": 163, "survived": 20, "no_tests": 0, "timeout": 0, "score": 89.1},
+      "c42_24": {"generated": 183, "killed": 163, "survived": 20, "no_tests": 0, "timeout": 0, "score": 89.1},
+      "delta": {"killed": 0, "survived": 0, "score": 0.0},
+      "explanation": "Stable. No new tests in C42.23. Strong engine."
+    },
+    {
+      "component": "core_domain_money",
+      "c42_21": {"generated": 102, "killed": 84, "survived": 18, "no_tests": 0, "timeout": 0, "score": 82.4},
+      "c42_24": {"generated": 102, "killed": 84, "survived": 18, "no_tests": 0, "timeout": 0, "score": 82.4},
+      "delta": {"killed": 0, "survived": 0, "score": 0.0},
+      "explanation": "Stable. No new tests in C42.23. Strong engine."
+    },
+    {
+      "component": "financial_events",
+      "c42_21": {"generated": 704, "killed": 398, "survived": 277, "no_tests": 29, "timeout": 0, "score": 59.0},
+      "c42_24": {"generated": 704, "killed": 454, "survived": 250, "no_tests": 0, "timeout": 0, "score": 64.5},
+      "delta": {"killed": 56, "survived": -27, "no_tests": -29, "score": 5.5},
+      "explanation": "C42.22 Batch 1 discovery repair: TestInternalHelpers (7 helper tests) eliminated all 29 no_tests. 56 additional mutants killed by new tests. Discovery + behavioral improvement."
+    },
+    {
+      "component": "behaviour_engine",
+      "c42_21": {"generated": 7213, "killed": 1262, "survived": 3116, "no_tests": 2835, "timeout": 0, "score": 28.8},
+      "c42_24": {"generated": 7213, "killed": 1262, "survived": 3116, "no_tests": 2835, "timeout": 0, "score": 28.8},
+      "c42_24_b": {"generated": 7213, "killed": 1875, "survived": 3383, "no_tests": 1955, "timeout": 0, "score": 35.7},
+      "delta_c42_21_to_c42_24": {"killed": 0, "survived": 0, "no_tests": 0, "score": 0.0},
+      "delta_c42_24_to_c42_24_b": {"killed": 613, "survived": 267, "no_tests": -880, "score": 6.9},
+      "explanation": "C42.24-B remediation: Built direct test suites for untested behaviour_engine modules (test_credit_dependency.py, test_temporal.py). no_tests reduced 2835 -> 1955 (-880). Score improved 28.8% -> 35.7%. Remaining 1955 no_tests are genuine gaps in partially-covered modules (insights 50.8%, utils 58.3%, nudges 68.1%, profile 70.5%)."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "m9-c53-resource-efficiency/v1",
+  "generated_at": "2026-09-01T11:16:07.136824+00:00",
+  "note": "Targeted execution model: affected work + reused evidence - unnecessary campaigns",
+  "targeted_scope": "capability-scoped generation and validation",
+  "no_repository_wide_campaigns": true
+}

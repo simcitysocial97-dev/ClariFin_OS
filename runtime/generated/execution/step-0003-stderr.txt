@@ -1,0 +1,27 @@
+All done! ✨ 🍰 ✨
+458 files would be left unchanged.
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/loan/test_c39_regression.py
+
+Oh no! 💥 💔 💥
+1 file would be reformatted, 458 files would be left unchanged.
+All done! ✨ 🍰 ✨
+460 files would be left unchanged.
+All done! ✨ 🍰 ✨
+460 files would be left unchanged.
+All done! ✨ 🍰 ✨
+460 files would be left unchanged.
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/mutation_infra/mutants/probe.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/loan_engine/test_floating_rate_properties.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_behavior_engine.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/behavior/test_stress.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/balance_engine.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/credit_card/test_credit_card_engine.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/ledger_audit_engine.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/engines/reconciliation/test_reconciliation.py
+
+Oh no! 💥 💔 💥
+8 files would be reformatted, 459 files would be left unchanged.
+All done! ✨ 🍰 ✨
+491 files would be left unchanged.
+All done! ✨ 🍰 ✨
+509 files would be left unchanged.

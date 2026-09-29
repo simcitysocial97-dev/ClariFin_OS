@@ -1,0 +1,79 @@
+{
+  "id": "ai-f42e2948462e",
+  "symptom": "test health inspect",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "COMPLETED",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "inspect_health",
+      "arguments": {},
+      "result": {
+        "kind": "platform.health_snapshot",
+        "version": "1.0.0",
+        "generated_at": "2026-09-06T04:50:55Z",
+        "id": "sha256:187aac439edba2fc2d297443a75a66a88121ac0008a453001c78873cd2beb306",
+        "data": {
+          "platform": "UNHEALTHY",
+          "backend": "HEALTHY",
+          "frontend": "HEALTHY",
+          "database": "HEALTHY",
+          "architecture": "SAFE",
+          "verification": "CURRENT",
+          "evidence": "VALID",
+          "ai": "READY",
+          "domains": [
+            {
+              "name": "Verification",
+              "status": "UNHEALTHY",
+              "last_check": "2026-09-06T04:50:55Z",
+              "source": "/platform/v1/verification",
+              "detail": "runs=2 passed=0 failed=0"
+            },
+            {
+              "name": "EventStore",
+              "status": "HEALTHY",
+              "last_check": "2026-09-06T04:50:55Z",
+              "source": "EngineeringEventStore",
+              "detail": "events=4"
+            }
+          ]
+        }
+      },
+      "error": null,
+      "started_at": "2026-09-06T04:50:55.402219Z",
+      "completed_at": "2026-09-06T04:50:55.475403Z",
+      "evidence_id": "sha256:187aac439edba2fc2d297443a75a66a88121ac0008a453001c78873cd2beb306",
+      "duration_ms": 73
+    }
+  ],
+  "created_at": "2026-09-06T04:50:55.396027Z",
+  "updated_at": "2026-09-06T04:50:55.475403Z",
+  "completed_at": "2026-09-06T04:50:55.475403Z",
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-39a98d7ec9a7",
+      "event_type": "run_created",
+      "run_id": "ai-f42e2948462e",
+      "timestamp": "2026-09-06T04:50:55.396414Z",
+      "payload": {
+        "symptom": "test health inspect",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-e84cc5fe53a3",
+      "event_type": "step_started",
+      "run_id": "ai-f42e2948462e",
+      "timestamp": "2026-09-06T04:50:55.402642Z",
+      "payload": {
+        "step": 1,
+        "tool": "inspect_health",
+        "arguments": {}
+      }
+    }
+  ]
+}

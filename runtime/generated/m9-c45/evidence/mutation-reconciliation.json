@@ -1,0 +1,183 @@
+{
+  "schema": "m9-c45-mutation-reconciliation/v1",
+  "generated_at": "2026-08-29T17:30:00Z",
+  "repository_sha": "219cf55738d51e7d49b3d3ef7b49af73973436a5",
+  "method": "Mathematical reconciliation of C43 full-campaign evidence (16905 generated, 11925 killed, 70.6%) + authoritative behaviour_engine re-measurement (C43.7: 7213 generated, 6021 killed, 1189 survived, 83.5%). No full campaign executed this session.",
+  "repository_wide_reconciliation": {
+    "generated": 16905,
+    "killed": 13193,
+    "survived": 3703,
+    "score_pct": 78.04,
+    "threshold_pct": 80.0,
+    "additional_kills_needed_for_80_pct": 331,
+    "math": "0.80 * 16905 = 13524; 13524 - 13193 = 331 new kills required (from non-behaviour components; behaviour_engine is ACHIEVED at 83.5% and NOT to be optimized further per anti-drift rule)"
+  },
+  "determinations": [
+    {
+      "component": "behaviour_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "AUTHORITATIVE_MEASURED (C43.7) + durable per-run catalog (M45.2 enriches on next run)",
+      "predominant_class": "measured survivors = 1189; not reclassified (component ACHIEVED)",
+      "weakness_cause": "n/a (threshold met)",
+      "addressable_with_targeted_test": false,
+      "targeted_verification_sufficient": "n/a",
+      "fresh_measurement_required": false,
+      "verdict": "ACHIEVED — excluded from M45.5 engineering effort (anti-drift)"
+    },
+    {
+      "component": "financial_intelligence",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED (no per-mutant inventory) — fresh targeted measurement required to convert to MEASURED; M45.2 durable intel records persist on the run",
+      "predominant_class": "A-heavy: 1000 survived, ~909 Class-A / 60 B / 16 C / 15 E (derived)",
+      "weakness_cause": "missing behavioral tests (planning/optimization invariants not asserted) + 5 production-defect candidates FIN-E1..E5 (human authorization required; will not be artificially killed)",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": true,
+      "verdict": "HIGHEST PRIORITY — 1000 survivors; ~331 kills needed repo-wide; Class-A pool of 909 means 331+ targeted kills is arithmetically achievable here alone with honest tests"
+    },
+    {
+      "component": "transaction_intelligence",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED — fresh targeted measurement required",
+      "predominant_class": "A-heavy: 437 survived, ~380 Class-A / 40 B / 12 C / 5 E (derived)",
+      "weakness_cause": "missing detector behavior tests + TXN-E1 design ambiguity (human review required)",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": true,
+      "verdict": "PRIORITY 2 — second largest non-behaviour pool"
+    },
+    {
+      "component": "financial_events",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED — fresh targeted measurement required if strengthened",
+      "predominant_class": "A-heavy: 250 survived, ~200 Class-A (derived)",
+      "weakness_cause": "missing event-lineage behavior tests",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "if selected for M45.5",
+      "verdict": "PRIORITY 3 (fallback if top-2 do not yield 331+ kills)"
+    },
+    {
+      "component": "common_calculations",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED — fresh targeted measurement required",
+      "predominant_class": "A: 164 survived, ~130 A / 20 B / 10 C / 4 E (derived)",
+      "weakness_cause": "missing rounding/numeric-boundary tests + C43-E1 production defect (human authorization required)",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "if selected for M45.5",
+      "verdict": "PRIORITY 4 — also multi-capability (affects all financial engines); small targeted run (single source file)"
+    },
+    {
+      "component": "ledger_audit_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED — fresh targeted measurement required if strengthened",
+      "predominant_class": "A: 82 survived, ~70 Class-A (derived); ledger capability coverage is WEAK (1 test)",
+      "weakness_cause": "weak assertions (single test); audit-logic boundaries unasserted",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "if selected for M45.5",
+      "verdict": "PRIORITY 5 — small pool, fast targeted run, weak-capability signal"
+    },
+    {
+      "component": "loan_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "MEASURED (C42.17 inventory, C43-adjusted) — 207 survivors (168 A / 25 B / 14 E derived for C43)",
+      "predominant_class": "A + E-heavy (14 E candidates)",
+      "weakness_cause": "measured inventory exists; Class-E candidates require human authorization; small Class-A residual",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if tests are added",
+      "verdict": "PRIORITY 6 — reuse measurement unless Class-A residuals selected"
+    },
+    {
+      "component": "credit_card_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "MEASURED (C42.17 inventory) — 142 survivors (44 A / 99 B / 1 E)",
+      "predominant_class": "B-heavy (99 equivalent) + 44 Class-A",
+      "weakness_cause": "large equivalent-mutant cohort limits realistic headroom; remaining A = boundary gaps; 1 E",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if tests are added",
+      "verdict": "PRIORITY 7 — do NOT chase B; only genuine Class-A boundaries are valid work"
+    },
+    {
+      "component": "recommendation_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED (103 survivors, 80 A / 18 B / 3 E)",
+      "predominant_class": "A: decision-rule comparisons/constants",
+      "weakness_cause": "missing decision-boundary tests",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 8 — small pool"
+    },
+    {
+      "component": "reconciliation_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "MEASURED (C42.17 inventory, C43-adjusted) — 71 survivors (69 A / 3 E)",
+      "predominant_class": "A (69)",
+      "weakness_cause": "confidence-constant boundaries; 3 E candidates",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 9"
+    },
+    {
+      "component": "cashflow_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED (44 survivors, 35 A / 7 B / 2 C)",
+      "predominant_class": "A + B",
+      "weakness_cause": "projection-math boundaries; some equivalent rounding",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 10 — small pool"
+    },
+    {
+      "component": "account_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "MEASURED (C42.17 inventory) — 20 survivors (17 A / 3 B)",
+      "predominant_class": "A",
+      "weakness_cause": "dormancy/boundary defaults",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 11 — small pool"
+    },
+    {
+      "component": "core_domain_money",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED (18 survivors, 14 A / 4 B)",
+      "predominant_class": "A (comparison/rounding)",
+      "weakness_cause": "money-type boundary comparisons",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 12 — small pool"
+    },
+    {
+      "component": "balance_engine",
+      "evidence_reusable": true,
+      "survivor_intel_available": "DERIVED (15 survivors, 10 A / 5 B)",
+      "predominant_class": "A + B",
+      "weakness_cause": "comparison boundaries; some equivalent message-only",
+      "addressable_with_targeted_test": true,
+      "targeted_verification_sufficient": true,
+      "fresh_measurement_required": "only if selected",
+      "verdict": "PRIORITY 13 — smallest measured-relevant pool"
+    }
+  ],
+  "production_defect_boundary": {
+    "c43_e1": "common_calculations.compute_is_large (avg*250000) — OPEN; mutants pinned to broken behavior will NOT be artificially killed; human authorization required to fix production",
+    "class_e_candidates": ["TXN-E1", "FIN-E1", "FIN-E2", "FIN-E3", "FIN-E4", "FIN-E5"],
+    "policy": "C42.26 M26.8 boundary preserved: Class-E enters Defect Ledger; only human-authorized production changes may resolve; their mutants remain classified, not artificially killed"
+  },
+  "reconciliation_conclusion": {
+    "gap_to_80_pct": "331 additional kills (13193 -> 13524 of 16905)",
+    "achievable_with_honest_tests": true,
+    "rational": "331 kills are needed from ~1500+ derived Class-A survivors concentrated in financial_intelligence (909 A) and transaction_intelligence (380 A); targeted behavioral tests on genuine invariants can in principle yield 331+ kills. Equivalent (B) and defect-pinned (E) survivors MUST NOT be chased.",
+    "fresh_measurement_required_for_plan": "targeted runs on financial_intelligence (and transaction_intelligence if needed) to obtain per-mutant durable intel before writing tests (M45.2 makes the intel durable; C42.28 bridge validates kills with targeted re-runs, not full campaigns)",
+    "final_full_campaign_trigger": "M45.9 final-certification measurement checkpoint ONLY (formal trigger FINAL_CERTIFICATION_MILESTONE), after strengthening + workflow convergence (M45.7) + targeted verification (M45.8)"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "baseline_ok": true,
+  "candidate_id": "real-1",
+  "generated_at": "2026-09-04T02:54:09+00:00",
+  "mutant_id": "m-foo-1",
+  "mutant_killed": true,
+  "promoted": true,
+  "regression_free": true,
+  "source_file": "src/foo.py",
+  "steps": [
+    {
+      "detail": "survivor m-real",
+      "state": "discovered",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "classification=behavioral_gap",
+      "state": "classified",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "diagnose target behaviour",
+      "state": "diagnosed",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "id=real-1 bytes=46",
+      "state": "generated",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "syntax_ok=True",
+      "state": "validated",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "runtime/generated/m9-c48/test-strengthening/real-1.py",
+      "state": "deployed",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "baseline_ok=True tail=ok",
+      "state": "executed",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "mutant_killed=True tail=ok",
+      "state": "mutant_killed",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "regression_free=True",
+      "state": "regression_checked",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    },
+    {
+      "detail": "evidence written",
+      "state": "evidenced",
+      "timestamp": "2026-09-04T02:54:09+00:00"
+    }
+  ],
+  "syntax_ok": true
+}

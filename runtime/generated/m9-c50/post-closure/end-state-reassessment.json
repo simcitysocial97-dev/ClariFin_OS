@@ -1,0 +1,131 @@
+{
+  "schema": "m9-c50/post-closure/end-state-reassessment@1",
+  "generated_at": "2026-09-04T20:05:00+00:00",
+  "purpose": "Rebuild the final end-state matrix from primary repository evidence; classify each domain by implementation and validation status.",
+  "classification_taxonomy": ["PROVEN", "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN", "BLOCKED", "UNSUPPORTED", "NOT_APPLICABLE"],
+  "domains": [
+    {
+      "domain": "Control Plane (Single Canonical Authority)",
+      "classification": "PROVEN",
+      "evidence_basis": "ControlPlane class is single (test_self_verification.test_single_control_plane_class), all 85 legacy tokens delegate via migration_map (cli/no-duplicate-authority.json), test_m9_c49_canonical_cli 23/23 pass.",
+      "remaining_gap": "None at architectural level."
+    },
+    {
+      "domain": "CLI Surface (9 Canonical Commands)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 1 cli/canonical-mapping.json enumerated, no-duplicate-authority.json 0 unrouted, AD-1.1 documented.",
+      "remaining_gap": "None."
+    },
+    {
+      "domain": "Obligation Integrity",
+      "classification": "PROVEN",
+      "evidence_basis": "obligation_reconciliation.py gates check()/run() verdicts; 6 Phase-2 tests pass; live model validation 4 scenarios.",
+      "remaining_gap": "None."
+    },
+    {
+      "domain": "Planning (Obligation → Task Mapping)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 4 stop-gate4-evidence.json live probe 10/10 executable.",
+      "remaining_gap": "None at the mapping level."
+    },
+    {
+      "domain": "Executors (10/10 Real Adapters)",
+      "classification": "PROVEN_AT_REGISTRATION",
+      "evidence_basis": "ADAPTERS dict has 10 kinds; Phase 4 probe shows executability in isolation. Each adapter's command target exists per audit.",
+      "remaining_gap": "Phase 11 operational scenarios do NOT invoke executor adapters in real runs (only plan() is called). Real end-to-end execution through the pipeline has not been independently demonstrated for any capability."
+    },
+    {
+      "domain": "Capability Resolution",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 3 24 tests pass; rename/move/deletion/unmapped all covered.",
+      "remaining_gap": "10 evidence-kind violations persist — see below."
+    },
+    {
+      "domain": "Evidence-Kind Vocabulary (Closed)",
+      "classification": "UNSUPPORTED",
+      "evidence_basis": "capability_catalog.EVIDENCE_KINDS is closed. 10 capabilities advertise evidence kinds NOT in the vocabulary. Live verify.py inspect capabilities emits WARNING lines: 'capability_graph', 'latent_capability_audit', 'execution_evidence', 'bypass_risk_analysis', 'configuration_authority_report', 'knowledge_report'.",
+      "remaining_gap": "DECLARED REMEDIATION OPTIONS ARE: (a) add to EVIDENCE_KINDS — explicit vocabulary expansion requires governing-document amendment; (b) remap capabilities to existing evidence kinds — requires architectural refactor of those capabilities. Neither has been performed. Report acknowledges this as Remaining Limitation #3."
+    },
+    {
+      "domain": "Cache (Correctness + Invalidation)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 5 stop-gate5-evidence.json 12 tests + Phase 9 stale evidence tests prove correctness.",
+      "remaining_gap": "Cache EFFECTIVENESS (hit rate) is 16% — see operational-authenticity. Correctness and effectiveness are distinct dimensions."
+    },
+    {
+      "domain": "Reconciliation (Deterministic Closure)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 2 obligation reconciliation gates certification.",
+      "remaining_gap": "None."
+    },
+    {
+      "domain": "Mutation Architecture (Lifecycle Converged)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 6 stop-gate6-evidence.json 8 conditions, 15 tests pass, mutation_runner via strengthen, MutationOrchestrator NON_CANONICAL bounded.",
+      "remaining_gap": "None at architectural level. Sustained operation requires longitudinal mutation campaigns."
+    },
+    {
+      "domain": "Frontend / Cross-Layer Governance",
+      "classification": "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN",
+      "evidence_basis": "Phase 7 disposition JSON classifies 112 findings; JSDoc annotations added. 0 genuine violations claimed.",
+      "remaining_gap": "Disposition is documentation + annotation, not runtime enforcement. A future scenario introducing a real frontend arithmetic violation would not be caught by the JSDoc — it is a documentary posture, not an architectural guard."
+    },
+    {
+      "domain": "CI Canonicalization",
+      "classification": "PARTIALLY_PROVEN",
+      "evidence_basis": "Phase 8 10/10 verification workflows use verify.py check at the YAML execution level; 7 comment-only fixes applied.",
+      "remaining_gap": "Phase 11 scenario_15_ci_equivalent_execution hangs beyond pytest-timeout=60s when invoking subprocess 'python runtime/verify.py check' — so CI-equivalent local execution is NOT independently verified to complete. The CI↔local equivalence is asserted but not observably validated in this session."
+    },
+    {
+      "domain": "Failure-Mode / Fail-Closed",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 9 15 tests pass across stale, config, planner/exec, legacy bypass, partial, cache corruption, duplicate.",
+      "remaining_gap": "None."
+    },
+    {
+      "domain": "Self-Verification",
+      "classification": "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN",
+      "evidence_basis": "Phase 10 35 tests pass. Suite asserts single-class, registered adapters, known mappings, closed vocabulary, cache keys, CI canonical.",
+      "remaining_gap": "Negative-detection tests only check that detection names exist in code, not that detection actually fires on injected violations. test_framework_detects_duplicate_authority_violation instantiates two ControlPlane objects and asserts same class — proves class singularity, not detection."
+    },
+    {
+      "domain": "Operational Validation",
+      "classification": "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN",
+      "evidence_basis": "Test suite 15/16 pass under pytest-timeout. Scenarios 1-14 and 16 invoke ControlPlane.plan().",
+      "remaining_gap": "54 run-record JSONs have plan_identity=null, execution_identity=null, evidence_identities=[]; no scenario reached the executor pipeline in any recorded run. Scenario 15 hangs. The '24 operational runs' claim is unfounded (count mismatch with disk reality).",
+      "classification_pinned_to": "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN — tests exist and mostly pass at the planning level; recorded operational history is decoupled from real execution lineage."
+    },
+    {
+      "domain": "Sustained-in-Operation",
+      "classification": "UNSUPPORTED",
+      "evidence_basis": "Single-session execution; no longitudinal evidence; cache hit rate 16% indicates operational instability persists.",
+      "remaining_gap": "Requires multi-session operation with accumulating evidence history to satisfy the SUSTAINED_IN_OPERATION definition."
+    },
+    {
+      "domain": "Certifiable",
+      "classification": "UNSUPPORTED",
+      "evidence_basis": "No certification policy defined.",
+      "remaining_gap": "Requires certification-policy definition and satisfaction; current session explicitly notes policy undefined."
+    },
+    {
+      "domain": "Governance (No Duplicate Authority)",
+      "classification": "PROVEN",
+      "evidence_basis": "Phase 12 41 tests pass; single planning/execution/capability/evidence/mutation authorities asserted.",
+      "remaining_gap": "Negative detection is structural only (see Self-Verification)."
+    },
+    {
+      "domain": "Working-Tree Discipline",
+      "classification": "BLOCKED",
+      "evidence_basis": "87 uncommitted files (Phase 0 captured 44); Phase 12 left the tree dirty.",
+      "remaining_gap": "Required: commit C50 implementation + test suites + evidence per working-tree-governance.json commit strategy before any completion claim is defensible."
+    }
+  ],
+  "summary": {
+    "PROVEN": 9,
+    "IMPLEMENTED_NOT_OPERATIONALLY_PROVEN": 4,
+    "BLOCKED": 1,
+    "UNSUPPORTED": 3,
+    "PARTIALLY_PROVEN": 1,
+    "NOT_APPLICABLE": 0
+  }
+}

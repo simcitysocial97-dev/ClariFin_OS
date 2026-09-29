@@ -1,0 +1,22 @@
+{
+  "program": "Program E — Quality Gate Root Cause Isolation",
+  "workflow": "Quality Gate",
+  "ci_run_id": "31203946933",
+  "ci_run_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31203946933",
+  "commit": "08fdea463d9a36d05685c1bb63053dd1b9ca1e5a",
+  "profile": "quick",
+  "exact_failing_verifier": {
+    "step_id": "step-0001",
+    "name": "bash .github/scripts/run_fast_checks.sh",
+    "status": "failed",
+    "duration_seconds": 19.1,
+    "failure_title": "ImportError: No module named 'src.core.db'",
+    "failure_message": "ModuleNotFoundError: No module named 'src.core.db'",
+    "stack_trace": "File \"/tmp/clarifin-ci-sim/backend/tests/fixtures/database.py\", line 24, in <module>\n    from src.core.db.schema import create_all, run_migrations, verify_schema\nImportError: Error importing plugin \"tests.fixtures.database\": No module named 'src.core.db'",
+    "verification_step": "Check 4/6: Unit tests (pytest tests/unit/)",
+    "owning_script": ".github/scripts/run_fast_checks.sh",
+    "owning_module": "pytest 8.3.0 (test runner) / tests.fixtures.database (plugin loader)"
+  },
+  "root_cause_classification": "Repository cleanliness",
+  "primary_root_cause": "backend/src/core/db/schema.py (and the entire backend/src/core/db/ package) exists on the developer workstation but is not tracked in git. The .gitignore rule 'src/' (line 89) causes git to ignore the backend/src/core/db/ directory. GitHub Actions checks out the committed state, which lacks these files, causing pytest to fail during plugin loading with ImportError: No module named 'src.core.db'."
+}

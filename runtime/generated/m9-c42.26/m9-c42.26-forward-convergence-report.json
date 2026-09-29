@@ -1,0 +1,95 @@
+{
+  "title": "M9-C42.26 — Forward Convergence Decision",
+  "generated_at": "2026-08-26T07:50:00+05:30",
+  "run_id": "m9-c42.26-forward-convergence",
+  "milestone": "M26.15",
+  "principle": "Do not automatically proceed to more mutation strengthening. The mutation system has now done what it was supposed to do: measure the effectiveness of the test system and expose where the verification architecture is weak. The next phase should shift toward the broader architecture gaps already discovered.",
+
+  "summary": {
+    "mutation_system_status": "MATURE for measurement; population expansion certified; trajectory reconciled",
+    "do_not_become_the_project": "Mutation is a measurement tool, not the deliverable. Continued mutation score chasing is a misallocation.",
+    "next_phase_focus": "Verification architecture convergence (C42.27+), not more mutation"
+  },
+
+  "candidate_next_phases_ranked": [
+    {
+      "rank": 1,
+      "phase": "C42.27 — Verification Graph + Planner Hardening",
+      "rationale": "Integration of intelligence components as graph nodes, planner fail-safe behavior, profile certification. Already identified in M9-C42.25 forward convergence. The mutation evidence surfaces WHERE the verification system is weak; the next step is structural hardening of the verification system itself.",
+      "scope": "verification architecture, not mutation",
+      "depends_on": ["M9-C42.26 (this phase)"],
+      "evidence_basis": "M9-C42.25 forward-convergence-report.json + M9-C42.21 forward-architecture-scan"
+    },
+    {
+      "rank": 2,
+      "phase": "C42.28 — Unified Evidence Architecture",
+      "rationale": "Implement EvidenceReuse, ComponentMeasurement, PopulationSnapshot, DerivedAggregate, MeasurementInvalidation as first-class concepts. Without this, every future population expansion requires manual baseline integrity re-establishment and may falsely rerun expensive campaigns. M26.12 explicitly recorded this as a forward dependency.",
+      "scope": "verification framework",
+      "depends_on": ["M9-C42.26", "C42.27 (partial — graph nodes needed)"],
+      "evidence_basis": "m9-c42.26-cadence-and-architecture.json (M26.12 section)"
+    },
+    {
+      "rank": 3,
+      "phase": "C42.29 — Bounded Behaviour-Engine Test Strengthening",
+      "rationale": "Behaviour engine is the only PRIORITY capability (35.7%, 1955 no_tests in partially-covered modules, 3383 survivors). A bounded strengthening pass on partially-covered behaviour_engine modules would close genuine test gaps. This is the highest-value remaining mutation-system work IF further mutation work is needed.",
+      "scope": "test strengthening + targeted mutation",
+      "depends_on": ["C42.27 (verification graph) so that test-strengthening is properly integrated"],
+      "evidence_basis": "m9-c42.26-cross-dimension-reconciliation.json (behaviour-analysis = PRIORITY)"
+    },
+    {
+      "rank": 4,
+      "phase": "Defect-verification gate (separate) for the 8 documented anomalies",
+      "rationale": "TXN-E1, TXN-C1, TXN-C2, FIN-E1, FIN-E2, FIN-E3, FIN-E4, FIN-E5. Each requires: reproducibility, intended behavior, impact, minimal production fix, regression test, architectural ownership. None of these have been established.",
+      "scope": "production defect triage (not mutation-system work)",
+      "depends_on": ["Architectural ownership assignment (separate workstream)"],
+      "evidence_basis": "m9-c42.26-intelligence-survivor-intelligence.json + m9-c42.26-cross-dimension-reconciliation.json"
+    },
+    {
+      "rank": 5,
+      "phase": "CI gating for mutation",
+      "rationale": "C42.25 forward-convergence mentioned CI enforcement for intelligence components. Per M26.11 cadence, this is best implemented as a periodic convergence checkpoint, not a per-PR gate (which would slow PRs without proportional value).",
+      "scope": "CI infrastructure",
+      "depends_on": ["Unified Evidence Architecture (so that CI can reason about evidence validity)"],
+      "evidence_basis": "m9-c42.26-cadence-and-architecture.json (M26.11)"
+    },
+    {
+      "rank": 6,
+      "phase": "Historical / delta verification",
+      "rationale": "Verification evidence archive with delta queries. Useful but not blocking.",
+      "scope": "verification framework",
+      "depends_on": ["Unified Evidence Architecture"],
+      "evidence_basis": "M9-C42.21 forward-architecture-scan"
+    },
+    {
+      "rank": 7,
+      "phase": "Profile certification",
+      "rationale": "Per-profile certification of mutation outcomes. Useful for the 14-component population matrix to drive profile-level decisions.",
+      "scope": "verification framework",
+      "depends_on": ["Unified Evidence Architecture"],
+      "evidence_basis": "M9-C42.21 forward-architecture-scan"
+    },
+    {
+      "rank": 8,
+      "phase": "Controlled self-maintaining verification",
+      "rationale": "Long-term goal. Auto-discovery, auto-strengthening, auto-certification. Requires all prior phases.",
+      "scope": "verification framework (long-term)",
+      "depends_on": ["Unified Evidence Architecture", "Verification Graph", "CI gating", "Profile certification"],
+      "evidence_basis": "M9-C42.21 forward-architecture-scan"
+    }
+  ],
+
+  "do_not_do": [
+    "Run a full 14-component mutation campaign as a follow-up to C42.26. The mathematical reconciliation IS the deliverable.",
+    "Generate more tests to push 60.3% toward 80%. Aggregate score is not the objective.",
+    "Convert TXN-E1, FIN-E1, FIN-E3, FIN-E4, FIN-E5 into silent production fixes without a defect-verification gate.",
+    "Delete TXN-C1 or FIN-E2 (dead code) without an explicit removal decision.",
+    "Add a 4th 'all components' C42.27 phase that re-measures everything. Use targeted mutation on the priority capability (behaviour_engine) instead, with a clear population fingerprint delta."
+  ],
+
+  "what_changed_in_mutation_evidence": {
+    "12_component_evidence": "Reused, frozen, mathematically integrated",
+    "2_intelligence_components": "Newly admitted with C42.25 evidence; certified",
+    "14_component_aggregate": "Reconciled (60.3%); NOT measured",
+    "next_measurement_need": "Only when one of the M26.10 trigger conditions is met"
+  }
+}

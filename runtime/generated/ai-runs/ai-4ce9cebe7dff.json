@@ -1,0 +1,13 @@
+{
+  "id": "ai-4ce9cebe7dff",
+  "symptom": "regression test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-19T15:51:34.011627Z",
+  "updated_at": "2026-09-19T15:51:34.011627Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

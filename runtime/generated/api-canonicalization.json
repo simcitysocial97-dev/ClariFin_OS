@@ -1,0 +1,346 @@
+{
+  "schema": "api-canonicalization/v1",
+  "generated_at": "2026-08-06T16:30:15.360110Z",
+  "program": "17.0",
+  "summary": {
+    "total_routers": 28,
+    "naming_issues": 7,
+    "rest_issues": 0,
+    "dto_issues": 0,
+    "mapper_issues": 0,
+    "response_issues": 0,
+    "workspace_issues": 7
+  },
+  "routers": [
+    {
+      "path": "routers/financial_events.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/export.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/reconciliation_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/dashboard.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/reconciliation.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/health.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/cashflow.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/cashflow_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/loans_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/investments_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/loans.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/investments.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/forecast.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/import_router.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/credit_cards.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/managed_accounts.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/credit_cards_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/financial_intelligence.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/banks.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/networth.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/behaviour.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/accounts.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/cards_statements.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/behaviour_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/transactions.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/audit.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    },
+    {
+      "path": "routers/networth_workspace.py",
+      "naming_consistent": false,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": false
+    },
+    {
+      "path": "routers/members.py",
+      "naming_consistent": true,
+      "rest_consistent": true,
+      "dto_consistent": true,
+      "mapper_consistent": true,
+      "response_consistent": true,
+      "workspace_consistent": true
+    }
+  ],
+  "naming_issues": [
+    {
+      "router": "routers/reconciliation_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/cashflow_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/loans_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/investments_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/credit_cards_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/behaviour_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/networth_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    }
+  ],
+  "rest_issues": [],
+  "dto_issues": [],
+  "mapper_issues": [],
+  "response_issues": [],
+  "workspace_issues": [
+    {
+      "router": "routers/reconciliation_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/cashflow_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/loans_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/investments_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/credit_cards_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/behaviour_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    },
+    {
+      "router": "routers/networth_workspace.py",
+      "issue": "workspace_suffix",
+      "recommendation": "Consider consolidating into main router"
+    }
+  ]
+}

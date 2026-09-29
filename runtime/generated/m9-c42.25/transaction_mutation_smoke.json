@@ -1,0 +1,13 @@
+{
+  "engine": "transaction_intelligence",
+  "counts": {
+    "killed": 1028,
+    "survived": 437,
+    "no_tests": 0,
+    "timeout": 0,
+    "suspicious": 0,
+    "not_checked": 0
+  },
+  "score": 70.2,
+  "total_mutants": 1465
+}

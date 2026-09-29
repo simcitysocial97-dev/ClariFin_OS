@@ -1,0 +1,76 @@
+{
+  "schema": "engine-migration-wave1/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 2 - Canonical Engine Migration",
+  "total_engines_analyzed": 13,
+  "summary": {
+    "executed": 0,
+    "deferred": 2,
+    "already_migrated": 0
+  },
+  "engines_analyzed": [
+    {
+      "engine": "insight_generator",
+      "path": "backend/src/engines/insight_generator.py",
+      "convergence_status": "orphan",
+      "canonical_implementation": null,
+      "migration_path": "migrate_to_behaviour_engine",
+      "confidence": "HIGH",
+      "ownership_verification": {
+        "canonical_provider_evidence": "engine-convergence.json reports canonical_implementation=null",
+        "import_graph_evidence": "engine-normalization.json shows import_references=1 (importer: behaviour_engine/core.py)",
+        "execution_graph_evidence": "engine-topology.json shows 0 services, 0 routers, 0 capabilities, 0 endpoints",
+        "dependency_graph_evidence": "behaviour_engine/core.py imports generate_behavioral_insights and generate_summary_text from insight_generator"
+      },
+      "decision": "DEFERRED",
+      "decision_reason": "Ownership ambiguous. canonical_implementation=null. behaviour_engine/core.py imports from insight_generator but this is a backward-compatibility re-export, not canonical ownership. Program 19.0 explicitly prohibits automatic merge of insight_generator without canonical ownership evidence.",
+      "rollback_available": true,
+      "rollback_method": "git revert commit (no commit made - no changes)"
+    },
+    {
+      "engine": "nudge_engine",
+      "path": "backend/src/engines/nudge_engine.py",
+      "convergence_status": "orphan",
+      "canonical_implementation": null,
+      "migration_path": "migrate_to_behaviour_engine",
+      "confidence": "HIGH",
+      "ownership_verification": {
+        "canonical_provider_evidence": "engine-convergence.json reports canonical_implementation=null",
+        "import_graph_evidence": "engine-normalization.json shows import_references=1 (importer: behaviour_engine/core.py)",
+        "execution_graph_evidence": "engine-topology.json shows 0 services, 0 routers, 0 endpoints, 1 test file",
+        "dependency_graph_evidence": "behaviour_engine/core.py imports generate_nudges and get_top_nudge from nudge_engine"
+      },
+      "decision": "DEFERRED",
+      "decision_reason": "Ownership ambiguous. canonical_implementation=null. behaviour_engine/core.py imports from nudge_engine but this is a backward-compatibility re-export, not canonical ownership. Additionally, behaviour_engine/core.py imports both insight_generator and nudge_engine, meaning migration of nudge_engine depends on insight_generator migration completing first (STEP-004 depends on STEP-003). Program 19.0 explicitly prohibits automatic merge of nudge_engine without canonical ownership evidence.",
+      "rollback_available": true,
+      "rollback_method": "git revert commit (no commit made - no changes)",
+      "dependency_on": "STEP-003 (insight_generator migration) - DEFERRED"
+    },
+    {
+      "engine": "behavior_engine.py",
+      "path": "backend/src/engines/behavior_engine.py",
+      "convergence_status": "parked",
+      "canonical_implementation": null,
+      "migration_path": "retired",
+      "confidence": "HIGH",
+      "ownership_verification": {
+        "canonical_provider_evidence": "engine-normalization.json reports migration_status=PARKED_LEGACY, replaces=behaviour_engine/",
+        "import_graph_evidence": "deletion-validation.json shows runtime_imports=0, dynamic_imports=0",
+        "execution_graph_evidence": "engine-topology.json shows import_references=0 for parked facades",
+        "dependency_graph_evidence": "repository-cleanup-executed.json preserves this file due to 52 test_references and 51 documentation_references"
+      },
+      "decision": "NOT DELETED - PRESERVED",
+      "decision_reason": "While runtime imports are zero, the file has 52 test references (tests directly import from src.engines.behavior_engine) and 51 documentation references. Phase 6 (Repository Cleanup) requires zero test references and zero documentation references for safe deletion. Cannot delete without first updating tests to import from behaviour_engine instead. This requires Phase 5 test alignment, which only occurs for migrated artifacts. Since this engine is parked (not migrated), preservation is mandated.",
+      "rollback_available": true,
+      "rollback_method": "git checkout -- backend/src/engines/behavior_engine.py"
+    }
+  ],
+  "additional_notes": [
+    "All engine ownership decisions are backed by engine-convergence.json and engine-topology.json canonical evidence.",
+    "No engine was moved, merged, or deleted during Wave 1 execution.",
+    "The behaviour_engine/core.py backward-compatibility imports (lines 959-967) remain in place.",
+    "insight_generator.py and nudge_engine.py files remain at their original paths.",
+    "behavior_engine.py (parked legacy) remains at its original path."
+  ]
+}

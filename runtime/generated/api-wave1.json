@@ -1,0 +1,66 @@
+{
+  "schema": "api-wave1/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 4 - API Canonicalization",
+  "total_issues": 26,
+  "summary": {
+    "executed": 0,
+    "deferred": 26,
+    "removed_duplicate_registrations": 0,
+    "normalized_ownership": 0,
+    "removed_obsolete_registrations": 0
+  },
+  "analysis": [
+    {
+      "category": "workspace_router_consolidation",
+      "count": 7,
+      "items": [
+        "routers/behaviour_workspace.py",
+        "routers/cashflow_workspace.py",
+        "routers/loans_workspace.py",
+        "routers/investments_workspace.py",
+        "routers/credit_cards_workspace.py",
+        "routers/reconciliation_workspace.py",
+        "routers/networth_workspace.py"
+      ],
+      "decision": "DEFERRED",
+      "decision_reason": "Program 19.0 Phase 4 explicitly forbids: router restructuring, URL changes, request/response changes. Consolidating workspace routers into main routers would require either URL changes or router restructuring, both forbidden. Additionally, the workspace routers serve distinct /api/v1/<entity> paths consumed by frontend workspace pages (e.g., frontend/app/behaviour/workspace-page.tsx calls /api/v1/behaviour). No duplicate registrations exist - each workspace router has a unique path. No obsolete registrations found."
+    },
+    {
+      "category": "unreachable_router_removal",
+      "count": 19,
+      "items": [
+        "routers/financial_events.py",
+        "routers/export.py",
+        "routers/reconciliation_workspace.py",
+        "routers/health.py",
+        "routers/__init__.py",
+        "routers/cashflow.py",
+        "routers/cashflow_workspace.py",
+        "routers/loans_workspace.py",
+        "routers/investments_workspace.py",
+        "routers/investments.py",
+        "routers/forecast.py",
+        "routers/credit_cards_workspace.py",
+        "routers/banks.py",
+        "routers/networth.py",
+        "routers/cards_statements.py",
+        "routers/behaviour_workspace.py",
+        "routers/transactions.py",
+        "routers/networth_workspace.py",
+        "routers/members.py"
+      ],
+      "decision": "DEFERRED",
+      "decision_reason": "Runtime reachability analysis marks these as 'never_reachable' in the capability execution graph. However, these routers are consumed by frontend workspace pages via HTTP API calls (e.g., frontend/app/cashflow/ calls /api/cashflow). Removing them would break frontend functionality. Program 19.0 Phase 4 forbids URL changes and request/response changes. The unreachable classification is about backend capability chain traversal, not actual frontend API usage. No action taken."
+    }
+  ],
+  "additional_notes": [
+    "No duplicate registrations found - all 28 routers have unique paths.",
+    "No obsolete registrations found - all routers are registered in api.py and consumed by frontend.",
+    "No URL changes made.",
+    "No request/response schema changes made.",
+    "No router restructuring performed.",
+    "All existing API endpoints preserved."
+  ]
+}

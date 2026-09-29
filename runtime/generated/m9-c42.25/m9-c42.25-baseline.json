@@ -1,0 +1,167 @@
+{
+  "title": "M9-C42.25 — Frozen Baseline Manifest (Intelligence Strengthening Entry)",
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T00:33:00+05:30",
+  "phase": "M9-C42.25 — Deferred Intelligence Strengthening & Repository-Wide Mutation Entry Readiness",
+  "predecessor": "M9-C42.24-B — CERTIFIED (12-component population)",
+  "purpose": "Lock the C42.24-B certified state before any intelligence test-surface work. Nothing in this file may be overwritten; all new measurements belong under runtime/generated/m9-c42.25/.",
+  "repository": {
+    "commit_sha": "6bb27a89b64f0582dea1ef393487143f3cc33400",
+    "commit_subject": "M9-C42.22: Evidence-driven test strengthening — discovery repair + behavioral scaffolding",
+    "tree_sha_at_entry": "60a4a87728ed2f78f27aa110d0d053a85434c04c",
+    "parent_sha": "94f47ef9 (M9-C42.21: Full mutation campaign measurement & convergence certification)",
+    "note": "C42.23/C42.24/C42.24-B work exists as uncommitted working-tree changes on top of 6bb27a89; the C42.24-B full campaign was executed and certified at tree sha 60a4a877. Those artifacts live untouched in runtime/generated/m9-c42.23/ and runtime/generated/m9-c42.24/."
+  },
+  "environment": {
+    "python": "Python 3.12.3",
+    "pytest": "pytest 9.1.1",
+    "mutmut": "mutmut, version 3.7.0",
+    "coverage": "Coverage.py 7.15.2 with C extension",
+    "venv": ".venv (repository root, canonical per AGENTS.md)",
+    "platform": "linux"
+  },
+  "c42_24_b_certified_state": {
+    "source_artifacts": [
+      "runtime/generated/m9-c42.24/m9-c42.24-full-campaign.json",
+      "runtime/generated/m9-c42.24/m9-c42.24-certification.json",
+      "runtime/generated/m9-c42.24/m9-c42.24-intelligence-readiness.json"
+    ],
+    "full_campaign_run_id": "mut-fd981fd0301a-updated",
+    "counts": {
+      "mutants_generated": 11730,
+      "killed": 5277,
+      "survived": 4494,
+      "no_tests": 1959,
+      "timeout": 5,
+      "suspicious": 0,
+      "not_checked": 0,
+      "evaluated": 9776
+    },
+    "mutation_score_pct": 54.0,
+    "score_formula": "5277 / (5277 + 4494 + 5) * 100 = 54.0%",
+    "repository_coverage_pct": 65.56,
+    "repository_coverage_threshold_pct": 40,
+    "component_population": [
+      "credit_card_engine",
+      "account_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "reconciliation_engine",
+      "loan_engine",
+      "behaviour_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine"
+    ],
+    "excluded_components": [
+      "transaction_intelligence (DEFERRED — this phase)",
+      "financial_intelligence (DEFERRED — this phase)"
+    ],
+    "gates": {
+      "G1_population_integrity": "PASS",
+      "G2_evidence_completeness": "PASS",
+      "G3_discovery_integrity": "PASS",
+      "G4_strengthening_causality": "PASS",
+      "G5_strong_engine_stability": "PASS",
+      "G6_no_hidden_infrastructure_failure": "PASS",
+      "G7_deferred_intelligence_decision": "PASS",
+      "G8_coverage_reconciliation": "PASS",
+      "G9_survivor_closure": "PASS",
+      "G10_forward_convergence": "PASS"
+    },
+    "survivor_intelligence_artifacts": [
+      "runtime/generated/m9-c42.22 discovery analysis (committed)",
+      "runtime/generated/m9-c42.23/m9-c42.23-survivor-reclassification.json",
+      "runtime/generated/m9-c42.24/m9-c42.24-survivor-reconciliation.json"
+    ]
+  },
+  "intelligence_components_at_entry": {
+    "transaction_intelligence": {
+      "source_location": "backend/src/engines/transaction_intelligence/",
+      "modules": {
+        "__init__.py": {"statements": 5, "coverage_pct_at_entry": 100.0},
+        "detector_result.py": {"statements": 18, "coverage_pct_at_entry": 100.0},
+        "cash_conversion_detector.py": {"statements": 174, "coverage_pct_at_entry": 10.4},
+        "cc_payment_detector.py": {"statements": 85, "coverage_pct_at_entry": 19.8},
+        "loan_emi_detector.py": {"statements": 85, "coverage_pct_at_entry": 14.0}
+      },
+      "total_statements": 367,
+      "direct_coverage_pct_measured_at_entry": 17.5,
+      "measurement": "coverage.py run --source=src/engines/transaction_intelligence over all currently binding test paths (integration/orchestration, integration/cross_capability, properties/credit_cards, properties+capability transaction_intelligence)",
+      "c42_24_reported_coverage_pct": 29.1,
+      "coverage_note": "C42.24 readiness used a broader indirect test scope; 17.5% is the strict direct+indirect binding-path measurement reused as the C42.25 baseline.",
+      "test_counts_at_entry": {
+        "direct_unit_tests": 0,
+        "property_tests": 3,
+        "property_tests_binding": "NONE — tautological (assert on hypothesis-generated values, never call production code)",
+        "capability_tests": 2,
+        "capability_tests_binding": "smoke import + golden dataset load only"
+      },
+      "mutation_status": "DEFERRED — not in ENGINE_SELECTION"
+    },
+    "financial_intelligence": {
+      "source_location": "backend/src/engines/financial_intelligence/",
+      "modules": {
+        "__init__.py": {"statements": 8, "coverage_pct_at_entry": 100.0},
+        "models.py": {"statements": 67, "coverage_pct_at_entry": 100.0},
+        "utils.py": {"statements": 84, "coverage_pct_at_entry": 68.6},
+        "forecasting.py": {"statements": 109, "coverage_pct_at_entry": 69.0},
+        "goal_planner.py": {"statements": 137, "coverage_pct_at_entry": 20.1},
+        "intelligence.py": {"statements": 109, "coverage_pct_at_entry": 8.3},
+        "optimization.py": {"statements": 201, "coverage_pct_at_entry": 4.0},
+        "scenario.py": {"statements": 92, "coverage_pct_at_entry": 8.2}
+      },
+      "total_statements": 807,
+      "statement_count_verification": "807 statements — matches the historical ~807 figure from C42.24 verification",
+      "direct_coverage_pct_measured_at_entry": 29.9,
+      "measurement": "coverage.py run --source=src/engines/financial_intelligence over all currently binding test paths (properties/forecasting, capability/forecasting, integration/orchestration, meta/test_change_intelligence, invariants/forecast.py)",
+      "c42_24_reported_coverage_pct": 35.4,
+      "test_counts_at_entry": {
+        "direct_unit_tests": 0,
+        "property_tests": 9,
+        "property_tests_binding": "REAL — bind forecasting.py, goal_planner.py, utils.py (9 collected; C42.24 counted 0 because they live under the forecasting path)",
+        "capability_tests": 2,
+        "capability_tests_binding": "smoke import + golden dataset load only"
+      },
+      "mutation_status": "DEFERRED — not in ENGINE_SELECTION"
+    }
+  },
+  "test_selection_configuration_at_entry": {
+    "source": "runtime/foundation/verification/mutation_contract.py ENGINE_SELECTION",
+    "engines_count": 12,
+    "full_scope_config_sha256": "215bf082079e390d3817f0c864a1674d8bab4b60ce880ac2b7fe2fc974257f3f",
+    "snapshot": "runtime/generated/m9-c42.25/engine-selection-snapshot.json",
+    "intelligence_entries": "NONE — both intelligence components intentionally withheld until this phase's readiness gates pass"
+  },
+  "capability_mappings_at_entry": {
+    "registry": "backend/tests/generated/capability-registry.yaml (generated by tools/development/check_coverage.py; canonical source runtime/foundation/verification/verification.yaml)",
+    "transaction_intelligence": {
+      "test_domain_registered": true,
+      "path": "tests/capability/transaction_intelligence",
+      "engine_imports": [],
+      "maps_to": [],
+      "note": "Registered as test-domain only; production engine binding empty"
+    },
+    "financial_intelligence": {
+      "test_domain_registered": "partial — via 'forecasting' test domain",
+      "path": "tests/capability/forecasting",
+      "note": "No dedicated financial_intelligence capability id exists; forecasting domain covers only forecasting.py surface. Recorded for M25.5 reconciliation."
+    }
+  },
+  "preserved_artifacts": [
+    "runtime/generated/m9-c42.21* (original mutation baseline, 11,730 population definition)",
+    "runtime/generated/m9-c42.22 discovery analysis & strengthening taxonomy (committed)",
+    "runtime/generated/m9-c42.23/ (42-test behavioral strengthening)",
+    "runtime/generated/m9-c42.24/ (52.4% authoritative measurement, 54.0% C42.24-B re-measurement, 12-component certification)"
+  ],
+  "non_goals_acknowledged": [
+    "No mutation of intelligence components before readiness gates pass",
+    "No re-run of 11,730-mutant campaign in this phase (bounded smoke only)",
+    "No changes to certified mutation infrastructure or ENGINE_SELECTION until readiness is certified",
+    "No removal of production code or existing tests",
+    "No artificial tests for count quotas; readiness indicators are gates not targets",
+    "No changes to the 40% repository coverage threshold"
+  ]
+}

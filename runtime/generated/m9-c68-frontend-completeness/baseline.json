@@ -1,0 +1,44 @@
+{
+  "milestone": "M9-C68",
+  "phase": "baseline",
+  "timestamp": "2026-09-21T02:45:00Z",
+  "git": {
+    "commit": "23e4b661",
+    "branch": "m9c9-merge-authorization-resolution",
+    "status": "clean_after_fixes"
+  },
+  "baseline_state": {
+    "typescript_errors_before": 29,
+    "typescript_errors_after": 0,
+    "fixes_applied": [
+      "frontend/__tests__/use-accounts.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-cards.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-cashflow.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-dashboard-metrics.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-investments.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-loans.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-overview.test.ts: fixed malformed import block",
+      "frontend/__tests__/use-reconciliation.test.ts: fixed malformed import block",
+      "frontend/lib/hooks/__tests__/use-platform-status.test.ts: removed unused import"
+    ],
+    "lint_errors": 0,
+    "lint_warnings": 173,
+    "backend_unit_tests": 2950,
+    "backend_test_status": "passed",
+    "runtime_integrity": "HEALTHY",
+    "verification_success_rate": "0.0% (17 failed runs - historical)"
+  },
+  "backend_endpoint_summary": {
+    "total": 190,
+    "user_facing": 112,
+    "platform_facing": 76,
+    "infrastructure": 2
+  },
+  "frontend_route_count": 34,
+  "frontend_hook_count": 26,
+  "c67_artifacts_referenced": [
+    "runtime/generated/m9-c67-platform-api/endpoint-contract.json",
+    "runtime/generated/m9-c67-platform-console/api-consumption-matrix.json",
+    "runtime/generated/m9-c67-platform-console/route-inventory.json"
+  ]
+}

@@ -125,45 +125,68 @@ mutants/
 # ═══════════════════════════════════════════════════════════
 # RUNTIME GENERATED — POLICY
 #
-# Policy: generated runtime output is ignored by default. Only the
-# explicitly identified canonical evidence and contract/reference
-# artifacts below remain version-controlled.
+# Policy: the regenerable bulk of runtime output is ignored; milestone
+# certification evidence and the contract/reference artifacts below stay
+# version-controlled.
 #
-# Before this rule the ignore list enumerated individual files and
-# directories, and three `!runtime/generated/m9-c64*` negations were
-# scattered through it. That inverted the policy: ~4,400 regenerable
-# files were tracked while the handful of genuinely canonical
-# artifacts survived only because someone remembered to write an
-# exception. Ignoring the subtree and re-including the canonical set
-# makes an unlisted artifact ignored, which is the safe default.
+# Correction history. The first pass at this policy excluded the whole subtree
+# and re-included a hand-picked list of six milestone directories (151 files),
+# on the reasoning that anything else was regenerable output. That was wrong,
+# and CI proved it: 90 runtime tests failed with missing evidence — m9-c55
+# certification artifacts, m9-c42.28/.29/.30 baselines and scenarios, m9-c48
+# governance records, and a family of top-level certification JSONs. Those tests
+# read that material as *inputs*, and no bootstrap step regenerates it. The
+# repository also keeps hand-written scenario and certification scripts under
+# runtime/generated/ (38 .py files) which the tests execute by path.
 #
-# Anything added to the "canonical" list below must be justified as
-# committed provenance/evidence or as a contract baseline that CI
-# reads as an input. Regenerable output does not belong there.
+# So the line is not "canonical directory vs everything else". It is:
+#
+#   ignored  = bulk regenerable output, identified by what it IS
+#   tracked  = milestone evidence, baselines, scenarios, certification records
+#              and the scripts that produce or check them
+#
+# The ignored set is expressed as a type filter rather than an allow-list,
+# because every excluded class is a build artifact with an unambiguous
+# signature, and because an allow-list silently swallows anything a new
+# milestone commits.
+#
+# Before this rule ~4,568 files were tracked, of which 2,870 were diffs, logs and
+# caches. Those are still untracked; the ~2,680 evidence and script files are
+# tracked again.
 # ═══════════════════════════════════════════════════════════
-# The subtree is excluded by its immediate children rather than the directory
-# itself: git never descends into an excluded directory, so `runtime/generated/`
-# would make every `!` exception below unreachable for any *new* file. Matching
-# `/*` keeps the canonical set genuinely re-includable.
-/runtime/generated/*
+# The ignored set is expressed purely as type filters. The subtree itself is
+# never excluded, because git does not descend into an excluded directory — a
+# `runtime/generated/` rule plus `!` exceptions would make every exception
+# unreachable for any *new* file, which is exactly the trap the first attempt at
+# this policy fell into. Ignoring by file signature instead means the ~2,680
+# evidence and script files stay tracked, an unlisted artifact is tracked by
+# default, and only the bulk is ever ignored.
+#
+# ── Regenerable bulk: mutation survivor diffs ──
+# One .diff per surviving mutant, rewritten by every mutation campaign. They
+# prove nothing across commits and dominate the subtree at 2,038 files.
+*.diff
 
-# ── Canonical committed evidence (C64 forensic convergence) ──
-# Forensic reconstruction evidence and provenance for the C64
-# runtime-framework convergence milestones.
-!/runtime/generated/m9-c64-r-runtime-pipeline-forensic-validation/
-!/runtime/generated/m9-c64-r2-runtime-pipeline-attribution-reconciliation/
-!/runtime/generated/m9-c64-runtime-framework-final-convergence/
-!/runtime/generated/m9-c64-final-runtime-command-ci-convergence/
+# ── Regenerable bulk: logs and captured command output ──
+# Per-run command output; 832 files, all rewritten.
+*.log
+*.log.txt
+*.stdout
+*.stderr
+runtime/generated/logs/
 
-# ── Canonical committed evidence (M9-C71 mutation trust) ──
-# The mutation-measurement trust certification bundle. Self-describing
-# final certification and its supporting evidence. Written by
-# runtime/foundation/verification/mutation_trust.py, which reads it
-# back only to print it, so it is provenance rather than an input.
-!/runtime/generated/m9-c71-mutation-trust/
+# ── Regenerable bulk: caches, bytecode and mutation scratch space ──
+__pycache__/
+*.pyc
+runtime/generated/**/mutants/
+runtime/generated/**/.mutmut-cache/
+runtime/generated/**/symbol-cache.json
+runtime/generated/**/symbol-test-map.json
 
-# ── Canonical committed evidence (M9-C66 certification forensics) ──
-!/runtime/generated/m9-c66-certification-forensics/
+# ── Regenerable bulk: runtime snapshots ──
+# Cached platform/health snapshots, rewritten on every read. Their TTL and
+# build cost are managed in runtime/platform/cache.py.
+runtime/generated/platform/snapshot.json
 
 # ── Contract / reference artifacts ──
 # frontend/generated/openapi-current.json is the committed API contract

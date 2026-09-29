@@ -1,0 +1,22 @@
+{
+  "schema": "runtime-simplification/v1",
+  "generated_at": "2026-08-06T15:11:31.355094+00:00",
+  "modules_retired": 6,
+  "duplicated_algorithms_removed": 9,
+  "duplicated_graph_traversals_removed": 1,
+  "duplicated_ownership_lookups_removed": 1,
+  "duplicated_test_inference_removed": 1,
+  "legacy_lines_removed": 1065,
+  "canonical_platform_lines": 4819,
+  "maintenance_reduction": {
+    "intelligence_modules_before": 7,
+    "intelligence_modules_after": 1,
+    "duplicate_change_analyzers_eliminated": 1,
+    "duplicate_risk_scorers_eliminated": 1,
+    "duplicate_repair_planners_eliminated": 1
+  },
+  "execution_improvement": {
+    "canonical_analysis_seconds": 0.0109,
+    "note": "single provider read + shared resolver; no duplicated CrossLayerImpactPlanner runs per command"
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "schema": "capability-completion/v1",
+  "generated_at": "2026-08-06T16:31:11.933430Z",
+  "program": "17.0",
+  "total_capabilities": 6,
+  "summary": {
+    "complete": 6,
+    "incomplete": 0
+  },
+  "chains": [
+    {
+      "capability": "useAccountsCapability",
+      "engine": "backend/src/engines/account_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "accounts"
+        ],
+        "components": 12,
+        "page": true
+      },
+      "tests": 2,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/behaviour_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "behaviour"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 5,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useCreditCardsCapability",
+      "engine": "backend/src/engines/credit_card_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "cards"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 7,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useLoansCapability",
+      "engine": "backend/src/engines/loan_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "loans"
+        ],
+        "components": 11,
+        "page": true
+      },
+      "tests": 10,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/recommendation_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "behaviour"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 2,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useReconciliationCapability",
+      "engine": "backend/src/engines/reconciliation_engine.py",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "reconciliation"
+        ],
+        "components": 11,
+        "page": true
+      },
+      "tests": 4,
+      "status": "Complete",
+      "missing": []
+    }
+  ],
+  "frontend_workspaces": [
+    "__tests__",
+    "accounts",
+    "behaviour",
+    "cards",
+    "cashflow",
+    "command-center",
+    "dashboard",
+    "forecast",
+    "investments",
+    "loans",
+    "net-worth",
+    "reconciliation",
+    "settings",
+    "transactions"
+  ],
+  "workspace_gaps": [
+    "__tests__",
+    "cashflow",
+    "command-center",
+    "dashboard",
+    "forecast",
+    "investments",
+    "net-worth",
+    "settings",
+    "transactions"
+  ],
+  "missing_backend": [],
+  "missing_frontend": []
+}

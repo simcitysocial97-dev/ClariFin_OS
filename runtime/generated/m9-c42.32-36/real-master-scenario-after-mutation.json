@@ -1,0 +1,248 @@
+{
+  "schema": "m9-diagnostic-report/v1",
+  "report_id": "diag::f90eaeb58d59",
+  "source_record_id": "forensic::3d3a4cb673de",
+  "repository_sha": "084359346b3b14792c5bd38e159932f6c42922fd",
+  "generated_at": "2026-08-26T09:07:46.876798+00:00",
+  "q1_what_changed": {
+    "file_count": 1,
+    "files_by_kind": {
+      "source": [
+        "backend/src/engines/credit_card_engine/risk.py"
+      ],
+      "test": [],
+      "config": [],
+      "verification_infrastructure": [],
+      "dependency_toolchain": [],
+      "other": []
+    },
+    "changed_components": [
+      "credit_card"
+    ],
+    "changed_capabilities": [
+      "credit-card-risk"
+    ]
+  },
+  "q2_what_is_affected": {
+    "sources": [
+      "backend/src/engines/credit_card_engine/risk.py"
+    ],
+    "components": [
+      "credit_card"
+    ],
+    "capabilities": [
+      "credit-card-risk"
+    ],
+    "affected_verification_tasks": [
+      "credit_card_engine"
+    ],
+    "affected_evidence": [
+      "account_engine",
+      "balance_engine",
+      "behaviour_engine",
+      "cashflow_engine",
+      "common_calculations",
+      "core_domain_money",
+      "credit_card_engine",
+      "financial_events",
+      "financial_intelligence",
+      "ledger_audit_engine",
+      "loan_engine",
+      "recommendation_engine",
+      "reconciliation_engine",
+      "transaction_intelligence"
+    ]
+  },
+  "q3_valid_evidence": {
+    "reused": [
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "revalidated": [],
+    "invalidated": [
+      "credit_card_engine"
+    ],
+    "unavailable": [],
+    "ci_reused": [],
+    "ci_unavailable": []
+  },
+  "q4_required_execution": {
+    "authority": "EvidenceAwarePlanner (C42.27) \u2014 agent never invents scope",
+    "required_tasks": [
+      "credit_card_engine"
+    ],
+    "task_count": 1,
+    "excluded_by_planner": []
+  },
+  "q5_actual_execution": {
+    "planned_count": 1,
+    "executable_count": 0,
+    "executed": [],
+    "skipped": [
+      "credit_card_engine"
+    ],
+    "blocked": [],
+    "failed": [],
+    "ci_executed": []
+  },
+  "q6_what_happened": {
+    "failure_count": 0,
+    "by_kind": {},
+    "machine_readable_distinctions": {
+      "verification_failure": "verification ran and found a defect",
+      "infrastructure_failure": "verification could not execute correctly",
+      "evidence_failure": "execution occurred but evidence could not be captured",
+      "scope_failure": "executor exceeded authorized scope",
+      "configuration_failure": "task not representable under current configuration",
+      "certification_failure": "criteria unsatisfied despite complete evidence"
+    }
+  },
+  "q7_what_was_not_tested": {
+    "excluded_capabilities": [],
+    "covered_by_reused_evidence": [
+      "account_engine",
+      "loan_engine",
+      "reconciliation_engine",
+      "behaviour_engine",
+      "balance_engine",
+      "ledger_audit_engine",
+      "cashflow_engine",
+      "financial_events",
+      "core_domain_money",
+      "common_calculations",
+      "recommendation_engine",
+      "transaction_intelligence",
+      "financial_intelligence"
+    ],
+    "unavailable_evidence": [],
+    "deferred_components": [
+      "credit_card_engine"
+    ],
+    "outside_population_components": [],
+    "blocked_tasks": []
+  },
+  "q8_uncertainties": [
+    {
+      "kind": "stale_evidence",
+      "subject": "credit_card_engine",
+      "detail": "prior evidence invalidated and not yet replaced by fresh measurement",
+      "gates_certification": true,
+      "recommendation": "run the planner-selected targeted verification"
+    }
+  ],
+  "q9_verdict": {
+    "verdict": "INSUFFICIENT_EVIDENCE",
+    "rationale": "credit_card_engine: prior evidence invalidated and not yet replaced by fresh measurement",
+    "prior_decision": {
+      "certifiable": false,
+      "rationale": "NOT certifiable: 1 invalidated component(s)",
+      "aggregate_label": "MATHEMATICALLY_RECONCILED",
+      "aggregate_result": 59.6771
+    },
+    "aggregate_label": "MATHEMATICALLY_RECONCILED",
+    "aggregate_result": 59.6771,
+    "deterministic": true
+  },
+  "record_validation": {
+    "record_id": "forensic::3d3a4cb673de",
+    "complete": true,
+    "missing": [],
+    "silently_empty": [],
+    "stages": [
+      {
+        "stage": "change",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "detected changes (files/kinds)"
+      },
+      {
+        "stage": "affected_graph_nodes",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "affected sources/capabilities resolved via the graph"
+      },
+      {
+        "stage": "invalidations",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "evidence invalidated under the C42.27 rule set"
+      },
+      {
+        "stage": "reused_evidence",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "prior evidence reused after fingerprint validation"
+      },
+      {
+        "stage": "selected_tasks",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "the planner's minimum defensible selection"
+      },
+      {
+        "stage": "executed_tasks",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "tasks actually dispatched by the executor"
+      },
+      {
+        "stage": "execution_results",
+        "present": true,
+        "explicitly_empty": true,
+        "detail": "explicitly empty: no task produced an execution result"
+      },
+      {
+        "stage": "new_evidence",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "freshly measured evidence"
+      },
+      {
+        "stage": "derived_evidence",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "mathematically derived aggregates"
+      },
+      {
+        "stage": "failures",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "failures classified by the closed taxonomy"
+      },
+      {
+        "stage": "uncertainties",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "residual uncertainty (first-class)"
+      },
+      {
+        "stage": "certification_decision",
+        "present": true,
+        "explicitly_empty": false,
+        "detail": "final defensible verdict"
+      }
+    ]
+  },
+  "explainability": {
+    "why_did_you_run_this": "planner selected 1 task(s): credit_card_engine; these were invalidated by the change or lacked evidence",
+    "why_did_you_not_run_that": "13 component(s) had reusable evidence with intact fingerprints; running them would violate the minimum-defensible-execution principle",
+    "which_evidence_did_you_reuse": "account_engine, loan_engine, reconciliation_engine, behaviour_engine, balance_engine, ledger_audit_engine, cashflow_engine, financial_events, core_domain_money, common_calculations, recommendation_engine, transaction_intelligence, financial_intelligence",
+    "why_was_that_evidence_still_valid": "no invalidation rule fired: source/test/config/toolchain/population fingerprints unchanged since measurement",
+    "what_evidence_became_invalid": "credit_card_engine",
+    "what_failed": "nothing failed",
+    "was_the_failure_actually_a_verification_failure": "no failures occurred",
+    "what_remains_unverified": "deferred: credit_card_engine",
+    "what_prevents_certification": "credit_card_engine: prior evidence invalidated and not yet replaced by fresh measurement"
+  }
+}

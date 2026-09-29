@@ -1,0 +1,13 @@
+{
+  "id": "ai-c750cc883500",
+  "symptom": "test",
+  "mode": "MANUAL",
+  "capability_id": null,
+  "status": "PENDING",
+  "steps": [],
+  "created_at": "2026-09-06T03:58:31.779508Z",
+  "updated_at": "2026-09-06T03:58:31.779508Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": []
+}

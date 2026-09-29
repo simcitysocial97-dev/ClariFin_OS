@@ -1,0 +1,33 @@
+{
+  "run_id": "m9-c42.25",
+  "generated_at": "2026-08-26T05:00:00+05:30",
+  "title": "M9-C42.25 \u2014 Forward Convergence Scan",
+  "integration_requirements": {
+    "transaction_intelligence": {
+      "ENGINE_SELECTION_entry_required": "Add transaction_intelligence to ENGINE_SELECTION with source_paths + test_selection",
+      "verification_profile_required": "transaction_intelligence profile in verification.yaml (if not exists)",
+      "coverage_artifact": "runtime/generated/m9-c42.25/transaction/coverage.json",
+      "mutation_artifact": "runtime/generated/m9-c42.25/transaction/mutation-smoke.json",
+      "capability_registry_update": "Already applied \u2014 tests/capability/transaction_intelligence bound",
+      "engine_topology_refresh": "Regenerate runtime/generated/engine-topology.json to reflect new test bindings"
+    },
+    "financial_intelligence": {
+      "ENGINE_SELECTION_entry_required": "Add financial_intelligence to ENGINE_SELECTION",
+      "verification_profile_required": "financial_intelligence profile in verification.yaml",
+      "coverage_artifact": "runtime/generated/m9-c42.25/financial/coverage.json",
+      "mutation_artifact": "runtime/generated/m9-c42.25/financial/mutation-smoke.json",
+      "capability_registry_update": "Already applied \u2014 tests/capability/financial_intelligence bound",
+      "engine_topology_refresh": "Regenerate runtime/generated/engine-topology.json to reflect new test bindings"
+    }
+  },
+  "downstream_phases_consumed_by": [
+    "M9-C42.26: Both components enter mutation population \u2192 authoritative re-measurement",
+    "M9-C42.27: Verification Graph + Planner hardening (integrate intelligence coverage as nodes)",
+    "M9-C42.28: Unified Evidence Architecture (include m9-c42.25 artifacts)",
+    "CI enforcement: Add transaction_intelligence + financial_intelligence to CI mutation targets"
+  ],
+  "architecture_decisions_recorded": [
+    "pyproject.toml duplicate-tool-section bug fixed permanently (canonical fix, not workaround)",
+    "Capability registries regenerated from canonical sources \u2014 drift documented"
+  ]
+}

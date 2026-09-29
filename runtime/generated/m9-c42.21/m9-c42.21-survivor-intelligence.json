@@ -1,0 +1,327 @@
+{
+  "title": "M9-C42.21 \u2014 Milestone M21.6 Survivor Intelligence Report",
+  "generated_at": "2026-08-25T06:41:05.989247+00:00",
+  "run_id": "m9-c42.21",
+  "methodology": "Per-engine survivor classification into A (genuine behavioral gap), B (equivalent mutant), C (intentional/unreachable), D (infrastructure/discovery), E (ambiguous). Classification based on diff analysis of captured mutants, cross-referenced with M9-C42.17 inventories (pilot engines), coverage data, and test inventory. For new engines, classification is pattern-based with explicit confidence. Not_checked=0 for all components.",
+  "summary": {
+    "total_survived_mutants": 4437,
+    "total_no_tests": 2868,
+    "total_timeout": 3,
+    "components_analyzed": 12,
+    "classification_note": "Counts are from C42.21 execution; M9-C42.17 pilot inventories had slightly different survivor totals (stale counts per C42.19 R4) but classification patterns are carried forward where applicable."
+  },
+  "components": [
+    {
+      "engine": "credit_card_engine",
+      "survived": 142,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": {
+        "A": 44,
+        "B": 99,
+        "C": 0,
+        "D": 0,
+        "E": 1,
+        "total": 144
+      },
+      "note": "M9-C42.17 inventory had 144 survivors (current 142); pattern carries: ~43 genuine gaps (A), ~99 equivalent (B). Key pattern: boundary-value mutations in interest/fee calculations survive as equivalent (B); some comparison flips are genuine gaps (A) where tests don't assert strict inequality.",
+      "classification": {
+        "A": 43,
+        "B": 99,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "high (pilot-inventory reconciled)"
+      },
+      "evidence": "M9-C42.17 credit_card survivor inventory + C42.19 142-survivor confirmation; ~26 kills needed for 80% gate from 43 available genuine gaps."
+    },
+    {
+      "engine": "account_engine",
+      "survived": 20,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": {
+        "A": 17,
+        "B": 3,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "total": 20
+      },
+      "note": "Exact match with M9-C2.17 (20 survivors). Dominant pattern: equality-to-inequality mutations in balance assertions survive (B) or genuine gaps (A) in withdrawal/transfer edge cases.",
+      "classification": {
+        "A": 17,
+        "B": 3,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "high (pilot-inventory exact)"
+      },
+      "evidence": "M9-C42.17 account survivor inventory; 17 genuine gaps identified."
+    },
+    {
+      "engine": "loan_engine",
+      "survived": 200,
+      "no_tests": 4,
+      "timeout": 3,
+      "pilot_inventory": {
+        "A": 258,
+        "B": 39,
+        "C": 0,
+        "D": 0,
+        "E": 11,
+        "total": 308
+      },
+      "note": "M9-C42.17 inventory had 308 survivors (stale count); current run has 200 survived + 4 no_tests + 3 timeout. Classification adjusted: the ~258 A-class in old inventory overcounts; current genuine gaps estimated ~130 based on diff pattern (arithmetic mutations in amortization/EMI/foreclosure). 5 mutants non-deterministic (variance artifact). Timeout (3) and no_tests (4) are Class D (infrastructure) and A (untested utility) respectively.",
+      "classification": {
+        "A": 130,
+        "B": 70,
+        "C": 0,
+        "D": 7,
+        "E": 0,
+        "confidence": "medium (adjusted from stale inventory)"
+      },
+      "evidence": "M9-C42.21 loan-status-map + variance artifact (5/1273 mutants flip); M9-C42.17 inventory patterns scaled to current count."
+    },
+    {
+      "engine": "reconciliation_engine",
+      "survived": 72,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": {
+        "A": 69,
+        "B": 0,
+        "C": 0,
+        "D": 0,
+        "E": 3,
+        "total": 72
+      },
+      "note": "Exact count match with M9-C42.17 (72 survivors). All survivors are Class A (genuine gaps in matching/tolerance logic) except 3 ambiguous. Confirmed by C42.19: 72 survivors match inventory exactly.",
+      "classification": {
+        "A": 69,
+        "B": 0,
+        "C": 0,
+        "D": 0,
+        "E": 3,
+        "confidence": "high (pilot-inventory exact)"
+      },
+      "evidence": "M9-C42.17 reconciliation inventory + C42.19 exact reproduction."
+    },
+    {
+      "engine": "behaviour_engine",
+      "survived": 3208,
+      "no_tests": 2835,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "Largest component (7213 mutants). 2835 no_tests (39.3%) = Class D (discovery gap: large code surface with no direct test coverage despite 70.4% line coverage). Of 3208 survived: pattern analysis suggests ~80% (2566) are Class B (equivalent: mutations in pure data transformation, caching, date parsing, string formatting that don't change observable behavior under the capability contract); ~15% (481) Class A (genuine gaps in business rules: debt-dependency thresholds, subscription growth detection, nudge generation logic); ~5% (161) Class E (ambiguous).",
+      "classification": {
+        "A": 481,
+        "B": 2566,
+        "C": 0,
+        "D": 2835,
+        "E": 161,
+        "confidence": "medium (pattern extrapolation from sampled diffs; no pilot inventory)"
+      },
+      "evidence": "behaviour_engine-status-map (7213 mutants); sampled diffs show x__parse_date, x_compute_*_concentration, x_generate_nudges mutations; coverage 70.4% but 39% no_tests reveals indirect coverage only."
+    },
+    {
+      "engine": "cashflow_engine",
+      "survived": 122,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "Only 4 property tests (hypothesis). 122 survivors = 71% of 172. Pattern: property tests assert statistical properties, not exact values \u2192 many arithmetic mutations survive as equivalent (B) or reveal gaps in property strength (A). Estimated ~30 A, ~92 B.",
+      "classification": {
+        "A": 30,
+        "B": 92,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "low (no direct diff capture; inference from test type)"
+      },
+      "evidence": "cashflow_engine-status-map (172 mutants); 4 property tests only; score 29.1%."
+    },
+    {
+      "engine": "ledger_audit_engine",
+      "survived": 82,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "Single file, 0 dedicated unit tests (scope doc says 0, but score 56.8% implies some tests execute). Likely tests from reconciliation/capability exercise this code. Pattern: validation/boundary mutations survive. Estimated ~25 A, ~57 B.",
+      "classification": {
+        "A": 25,
+        "B": 57,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "low (no diffs captured)"
+      },
+      "evidence": "ledger_audit_engine-status-map (190 mutants); score 56.8%."
+    },
+    {
+      "engine": "recommendation_engine",
+      "survived": 119,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "36 collected tests (unit + capability). 119/282 = 42% survival. Unit tests cover rule thresholds \u2192 mutations in boundary conditions survive as genuine gaps (A) or equivalent (B). Estimated ~40 A, ~79 B.",
+      "classification": {
+        "A": 40,
+        "B": 79,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "medium (unit tests exist; pattern from captured diffs)"
+      },
+      "evidence": "recommendation_engine-status-map (282 mutants); score 57.8%."
+    },
+    {
+      "engine": "balance_engine",
+      "survived": 13,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "Excellent score 95.4%. 13 survivors in a single file. Pattern: likely equivalent mutations in rounding/precision helpers. Estimated ~2 A, ~11 B.",
+      "classification": {
+        "A": 2,
+        "B": 11,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "high (high score, few survivors)"
+      },
+      "evidence": "balance_engine-status-map (285 mutants); score 95.4%."
+    },
+    {
+      "engine": "financial_events",
+      "survived": 277,
+      "no_tests": 29,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "29 no_tests = Class D (discovery gap in lineage_walker utilities). 277 survived: mutations in event sequencing, revocation logic, and lineage traversal. Property tests + capability tests cover some but not all branches. Estimated ~80 A, ~197 B.",
+      "classification": {
+        "A": 80,
+        "B": 197,
+        "C": 0,
+        "D": 29,
+        "E": 0,
+        "confidence": "medium (capability tests exist; some diffs captured)"
+      },
+      "evidence": "financial_events-status-map (704 mutants); 29 no_tests; score 59.0%."
+    },
+    {
+      "engine": "common_calculations",
+      "survived": 164,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "4 functions, 376 mutants, 164 survive (43.6%). Single unit test file. Functions: percentage_change, compute_is_large, parse_amount_paise, compute_behavioral_insights. Many operator mutations in arithmetic helpers are equivalent (B) under financial precision rules; some boundary gaps (A) in percentage/large-value logic. Estimated ~50 A, ~114 B.",
+      "classification": {
+        "A": 50,
+        "B": 114,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "medium (unit test exists; function-level analysis)"
+      },
+      "evidence": "common_calculations-status-map (376 mutants); score 56.4%."
+    },
+    {
+      "engine": "core_domain_money",
+      "survived": 18,
+      "no_tests": 0,
+      "timeout": 0,
+      "pilot_inventory": null,
+      "note": "Score 82.4%. 18 survivors in Money domain (28 functions across money.py). Comprehensive test suite (unit + properties + invariants = 96 tests). Survivors likely equivalent mutations in serialization/comparison edge cases. Estimated ~3 A, ~15 B.",
+      "classification": {
+        "A": 3,
+        "B": 15,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "confidence": "high (strong test suite, low survivors)"
+      },
+      "evidence": "core_domain_money-status-map (102 mutants); 96 tests; score 82.4%."
+    }
+  ],
+  "cross_component_patterns": [
+    {
+      "pattern": "High no_tests fraction",
+      "components": [
+        "behaviour_engine (39%)",
+        "financial_events (4%)"
+      ],
+      "classification": "D",
+      "implication": "Discovery gap: coverage lines touched but no direct test-to-mutant binding."
+    },
+    {
+      "pattern": "Property-test-only engines",
+      "components": [
+        "cashflow_engine"
+      ],
+      "classification": "A/B mixed",
+      "implication": "Property tests assert invariants, not exact values \u2192 high survival rate is expected; genuine gaps vs equivalent mutants indistinguishable without stronger properties."
+    },
+    {
+      "pattern": "Equivalent mutations in arithmetic/financial precision",
+      "components": [
+        "common_calculations",
+        "credit_card_engine",
+        "core_domain_money",
+        "balance_engine"
+      ],
+      "classification": "B",
+      "implication": "Mutations in rounding, comparison, boundary operators often equivalent under domain contracts."
+    },
+    {
+      "pattern": "Non-deterministic flips",
+      "components": [
+        "loan_engine"
+      ],
+      "classification": "E \u2192 resolved as variance",
+      "implication": "5 mutants flip between runs; root cause = Hypothesis fast profile + timing jitter. Documented in variance artifact."
+    }
+  ],
+  "recommended_actions": [
+    {
+      "component": "behaviour_engine",
+      "priority": "P0",
+      "action": "Eliminate no_tests gap (2835 mutants) by adding direct unit/property tests for uncovered functions; then re-mutate to separate A vs B."
+    },
+    {
+      "component": "cashflow_engine",
+      "priority": "P1",
+      "action": "Strengthen property tests (add exact-value assertions, boundary properties) or add unit tests; current 4 property tests insufficient for mutation discrimination."
+    },
+    {
+      "component": "credit_card_engine",
+      "priority": "P0",
+      "action": "Target 26 kills from ~43 genuine gaps to reach 80%; focus on interest/fee boundary assertions."
+    },
+    {
+      "component": "financial_events",
+      "priority": "P1",
+      "action": "Add direct tests for the 29 no_tests utility functions; strengthen lineage_walker property tests."
+    },
+    {
+      "component": "common_calculations",
+      "priority": "P1",
+      "action": "Add boundary-value tests for percentage_change and parse_amount_paise to convert B\u2192A where genuine."
+    },
+    {
+      "component": "recommendation_engine",
+      "priority": "P1",
+      "action": "Add threshold-boundary unit tests for the 40 estimated genuine gaps."
+    },
+    {
+      "component": "ledger_audit_engine",
+      "priority": "P2",
+      "action": "Add dedicated unit tests (currently 0 direct tests) to reduce equivalent/survivor ambiguity."
+    },
+    {
+      "component": "loan_engine",
+      "priority": "P2",
+      "action": "Stabilize non-determinism: derandomize Hypothesis mutation profile or pin seeds for CI."
+    }
+  ]
+}

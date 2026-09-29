@@ -1,0 +1,52 @@
+{
+  "id": "ai-f93e1e12fcac",
+  "symptom": "test",
+  "mode": "ASSISTED",
+  "capability_id": null,
+  "status": "RUNNING",
+  "steps": [
+    {
+      "step_number": 1,
+      "tool_name": "run_diagnostic",
+      "arguments": {
+        "symptom": "test"
+      },
+      "result": null,
+      "error": "git fetch origin main failed (exit 128). Set VERIFICATION_OFFLINE=1 to skip fetch for local-only verification. Error: fatal: unable to access 'https://github.com/simcitysocial97-dev/ClariFin_OS.git/': Could not resolve host: github.com",
+      "started_at": "2026-09-19T07:31:20.815479Z",
+      "completed_at": "2026-09-19T07:31:21.597476Z",
+      "evidence_id": null,
+      "duration_ms": 781
+    }
+  ],
+  "created_at": "2026-09-19T07:31:20.798183Z",
+  "updated_at": "2026-09-19T07:31:21.597476Z",
+  "completed_at": null,
+  "error": null,
+  "audit_trail": [
+    {
+      "event_id": "audit-7e4c159e7ae3",
+      "event_type": "run_created",
+      "run_id": "ai-f93e1e12fcac",
+      "timestamp": "2026-09-19T07:31:20.799072Z",
+      "payload": {
+        "symptom": "test",
+        "mode": "ASSISTED",
+        "capability_id": null
+      }
+    },
+    {
+      "event_id": "audit-043bc32ba552",
+      "event_type": "step_started",
+      "run_id": "ai-f93e1e12fcac",
+      "timestamp": "2026-09-19T07:31:20.816545Z",
+      "payload": {
+        "step": 1,
+        "tool": "run_diagnostic",
+        "arguments": {
+          "symptom": "test"
+        }
+      }
+    }
+  ]
+}

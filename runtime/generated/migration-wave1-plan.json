@@ -1,0 +1,140 @@
+{
+  "schema": "migration-wave1-plan/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 1 - Migration DAG Validation",
+  "source_of_truth": [
+    "runtime/generated/repository-migration-dag.json",
+    "runtime/generated/engine-convergence.json",
+    "runtime/generated/deletion-validation.json",
+    "runtime/generated/technical-debt-execution.json"
+  ],
+  "validation_results": {
+    "total_dag_steps": 7,
+    "completed_steps": 2,
+    "pending_steps": 5,
+    "circular_dependencies": 0,
+    "dependency_violations": 0,
+    "steps_validated": 7
+  },
+  "step_analysis": [
+    {
+      "id": "STEP-001",
+      "action": "deleted",
+      "target": "backend/src/services/base_service.py",
+      "status": "completed",
+      "executable": false,
+      "reason": "Already completed in Program 18. File does not exist. Deleted: 2026-08-06",
+      "verification": "python3 runtime/verify.py quick",
+      "verification_result": "PASS (file absent, zero importers)"
+    },
+    {
+      "id": "STEP-002",
+      "action": "deleted",
+      "target": "frontend/types/financial.ts",
+      "status": "completed",
+      "executable": false,
+      "reason": "Already completed in Program 18. File does not exist. Deleted: 2026-08-06",
+      "verification": "python3 runtime/verify.py quick",
+      "verification_result": "PASS (file absent, zero importers)"
+    },
+    {
+      "id": "STEP-003",
+      "action": "merge_engine",
+      "target": "backend/src/engines/insight_generator.py",
+      "prerequisites": ["STEP-001", "STEP-002"],
+      "prerequisites_met": true,
+      "status": "deferred",
+      "executable": false,
+      "reason": "Ownership ambiguous: engine-convergence.json reports canonical_implementation=null for insight_generator. Engine-topology.json shows import_references=1 (importer: behaviour_engine/core.py only). Program 19.0 prohibits automatic merge of insight_generator without canonical ownership evidence.",
+      "canonical_evidence": {
+        "engine_convergence_status": "orphan",
+        "canonical_implementation": null,
+        "migration_path": "migrate_to_behaviour_engine",
+        "confidence": "HIGH",
+        "import_references": 1,
+        "importer_files": ["backend/src/engines/behaviour_engine/core.py"]
+      }
+    },
+    {
+      "id": "STEP-004",
+      "action": "merge_engine",
+      "target": "backend/src/engines/nudge_engine.py",
+      "prerequisites": ["STEP-001", "STEP-002", "STEP-003"],
+      "prerequisites_met": false,
+      "status": "blocked",
+      "executable": false,
+      "reason": "Blocked by STEP-003 which is deferred. Additionally, ownership ambiguous: engine-convergence.json reports canonical_implementation=null for nudge_engine. Program 19.0 prohibits automatic merge of nudge_engine without canonical ownership evidence.",
+      "canonical_evidence": {
+        "engine_convergence_status": "orphan",
+        "canonical_implementation": null,
+        "migration_path": "migrate_to_behaviour_engine",
+        "confidence": "HIGH",
+        "import_references": 1,
+        "importer_files": ["backend/src/engines/behaviour_engine/core.py"]
+      }
+    },
+    {
+      "id": "STEP-005",
+      "action": "create_workspace",
+      "target": "frontend/app/__tests__/",
+      "prerequisites": [],
+      "prerequisites_met": true,
+      "status": "deferred",
+      "executable": false,
+      "reason": "Would create placeholder workspace without backend capability. Program 19.0 Phase 3 prohibits: no placeholder workspaces, no synthetic capability creation. Workspace __tests__ is not backed by any canonical capability or ownership evidence.",
+      "canonical_evidence": {
+        "workspace_completion_gaps": ["__tests__"],
+        "missing_capability": true,
+        "missing_router": true,
+        "missing_ownership": true,
+        "frontend_exists": false
+      }
+    },
+    {
+      "id": "STEP-006",
+      "action": "consolidate_routers",
+      "target": "backend/src/routers/*_workspace.py",
+      "prerequisites": [],
+      "prerequisites_met": true,
+      "status": "deferred",
+      "executable": false,
+      "reason": "Program 19.0 Phase 4 explicitly forbids: router restructuring. The API convergence items call for consolidation of 7 workspace routers, but this constitutes router restructuring which is forbidden. Each workspace router serves a distinct /api/v1/<entity> path consumed by frontend workspace pages. Consolidating would be API redesign.",
+      "canonical_evidence": {
+        "api_convergence_items": 26,
+        "workspace_routers_to_consolidate": 7,
+        "risk": "MEDIUM",
+        "forbidden_action": "router restructuring"
+      }
+    },
+    {
+      "id": "STEP-007",
+      "action": "add_tests",
+      "target": "backend/tests/integration/",
+      "prerequisites": [],
+      "prerequisites_met": true,
+      "status": "deferred",
+      "executable": false,
+      "reason": "Outside Wave 1 scope. No repository artifacts were migrated (STEP-003/004 deferred). Phase 5 only updates tests for already-migrated artifacts. Creating new integration tests is test addition, not test alignment. Deferring to a future program with test modernization scope.",
+      "canonical_evidence": {
+        "test_modernization_items": 1,
+        "missing_integration_tests": 10,
+        "verification_command": "python3 runtime/verify.py backend"
+      }
+    }
+  ],
+  "executable_tasks": [],
+  "deferred_tasks": [
+    "STEP-003 (merge insight_generator.py - ownership ambiguous)",
+    "STEP-004 (merge nudge_engine.py - ownership ambiguous + blocked)",
+    "STEP-005 (create __tests__ workspace - placeholder/synthetic)",
+    "STEP-006 (consolidate workspace routers - forbidden restructuring)",
+    "STEP-007 (add integration tests - outside Wave 1 scope)"
+  ],
+  "already_completed": [
+    "STEP-001 (deleted base_service.py)",
+    "STEP-002 (deleted financial.ts)"
+  ],
+  "decision": "Wave 1 proceeds with validation only. All pending DAG steps are deferred due to ownership ambiguity, forbidden actions, or out-of-scope operations. No migrations executed. No files modified. Runtime certification preserved.",
+  "next_wave": "Wave 2 should resolve ownership ambiguity for insight_generator and nudge_engine before reattempting STEP-003/004."
+}

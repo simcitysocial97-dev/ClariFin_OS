@@ -1,0 +1,23 @@
+{
+  "certification": "M9-C41 Full Browser Matrix",
+  "generated_at": "2026-08-20T21:40:00+05:30",
+  "head": "aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f",
+  "tree": "c43d6d20162735079e46d923a762644c771f44e4",
+  "playwright_config_projects": ["chromium", "firefox", "webkit", "mobile-chrome", "mobile-safari", "tablet"],
+  "server_ownership": {
+    "rule": "C38.6 / C41.18 — Playwright owns port 3000 via `npm start` (next start, server mode)",
+    "reuse_existing_server": false,
+    "backend_ownership": "global-setup.ts starts uvicorn on :8000 (or reuses if healthy)",
+    "status": "PRESERVED — no second frontend server started during certification"
+  },
+  "matrix": [
+    {"project": "chromium", "viewport": "1280x720", "ci_available": true, "local_available": true, "c41_status": "REPRODUCED (213 pass / 7 fail / 13 skip)", "certification": "LOCALLY REPRODUCED"},
+    {"project": "firefox", "viewport": "1280x720", "ci_available": true, "local_available": true, "c41_status": "NOT RUN in C41 (full-matrix run interrupted after chromium to prioritize defect forensics)", "certification": "NOT CERTIFIED"},
+    {"project": "webkit", "viewport": "1280x720", "ci_available": true, "local_available": true, "c41_status": "NOT RUN in C41", "certification": "NOT CERTIFIED"},
+    {"project": "mobile-chrome", "viewport": "Pixel 5 (393x851)", "ci_available": true, "local_available": true, "c41_status": "NOT RUN in C41", "certification": "NOT CERTIFIED"},
+    {"project": "mobile-safari", "viewport": "iPhone 12 (390x844)", "ci_available": true, "local_available": true, "c41_status": "NOT RUN in C41", "certification": "NOT CERTIFIED"},
+    {"project": "tablet", "viewport": "iPad Pro (1024x1366)", "ci_available": true, "local_available": true, "c41_status": "NOT RUN in C41", "certification": "NOT CERTIFIED"}
+  ],
+  "note": "The CI authoritative environment (playwright.yml matrix shards one project per job) is the canonical browser environment. Local C41 work reproduced chromium only; firefox/webkit/mobile/tablet require either local execution or CI matrix completion. Per C41 §17, matrix reduction is forbidden and NOT CERTIFIED is reported where not executed.",
+  "status": "CONDITIONAL — chromium reproduced; 5 projects NOT CERTIFIED"
+}

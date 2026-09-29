@@ -1,0 +1,41 @@
+{
+  "schema": "m9-c44-cache-report/v1",
+  "generated_at": "2026-09-03T00:31:53.733168+00:00",
+  "cache_location": "runtime/generated/m9-c44/cache",
+  "cache_key_schema": "canonical_mutant_id (sha256 of revision|file|hash|function|line|operator|orig|mut[:20]))",
+  "cache_entry_fields": [
+    "canonical_mutant_id",
+    "source_file",
+    "source_hash",
+    "configuration_fingerprint",
+    "result_state",
+    "execution",
+    "discovered_at",
+    "last_verified_at",
+    "verified",
+    "invalidation_reason"
+  ],
+  "invalidation_rules": {
+    "source_changes": "invalidate_all(reason='source_changed') \u2014 source hash no longer matches",
+    "test_changes": "invalidate_all(reason='test_changed') \u2014 test selection fingerprint changed",
+    "test_config_changes": "invalidate_all(reason='test_config_changed') \u2014 pytest configuration altered",
+    "dependency_changes": "invalidate_all(reason='dependency_changed') \u2014 pyproject.toml dependencies modified",
+    "backend_changes": "invalidate_all(reason='backend_changed') \u2014 mutation backend or version changed",
+    "policy_changes": "invalidate_all(reason='policy_changed') \u2014 timeout/workers/operators changed",
+    "timeout_changes": "invalidate_all(reason='timeout_changed') \u2014 timeout policy altered",
+    "profile_changes": "invalidate_all(reason='profile_changed') \u2014 verification profile changed",
+    "environment_changes": "invalidate_all(reason='environment_changed') \u2014 Python/platform changed"
+  },
+  "stale_cache_policy": "INVALIDATED rather than silently reused",
+  "relationship_to_mutmut_cache": "mutmut's .mutmut-cache is NEVER the source of truth. It may be used as a discovery hint only. The canonical cache (this module) is authoritative.",
+  "cache_operations": [
+    "get(mutant_id, config_fp, source_hash) -> CacheEntry | None",
+    "put(candidate, config_fp, result_state, execution, verified) -> None",
+    "invalidate(mutant_id, reason) -> None",
+    "invalidate_all(reason) -> int",
+    "invalidate_by_source(source_file, reason) -> int",
+    "clear() -> None",
+    "stats() -> dict",
+    "get_or_skip(candidate, config_fp, placeholder_state) -> (was_cached, entry)"
+  ]
+}

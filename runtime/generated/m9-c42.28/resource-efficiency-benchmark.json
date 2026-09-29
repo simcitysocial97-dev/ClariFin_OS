@@ -1,0 +1,12 @@
+{
+  "name": "single_engine_change_vs_full_campaign",
+  "full_campaign_components": 14,
+  "planner_selected_components": 1,
+  "full_campaign_cost_units": 840,
+  "planner_selected_cost_units": 60,
+  "saved_cost_units": 780,
+  "saved_fraction": 0.9286,
+  "cost_basis": "Per-component 60-minute mutation budget; sum of all 14 components = full campaign; 1 component = planner-selected for the canonical single-engine-change scenario (Scenario B). Cost basis matches the C42.25/C42.26 cost model.",
+  "certification_confidence_preserved": true,
+  "notes": "Avoided 13/14 = 92.86% of the full mutation cost without reducing certification confidence. The avoided work would have re-measured 13 components whose evidence remained valid under the C42.27 invalidation rules."
+}

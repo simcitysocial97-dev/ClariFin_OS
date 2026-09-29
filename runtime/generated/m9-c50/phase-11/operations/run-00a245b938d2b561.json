@@ -1,0 +1,21 @@
+{
+  "run_id": "00a245b938d2b561",
+  "timestamp": "2026-09-25T14:51:42.953686+00:00",
+  "repository_sha": "779a4628951b2edb3e15fb8a89f441087caf3e67",
+  "scenario": "unmapped_change",
+  "changed_files": [
+    "/tmp/tmpibjazmli.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [
+    "unmapped-review"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "blocked_unmapped",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

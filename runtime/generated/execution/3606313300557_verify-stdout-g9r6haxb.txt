@@ -1,0 +1,198 @@
+>> pytest tests/contract (parallel, phase=contract)
+>> pytest tests/invariants (parallel, phase=invariants)
+>> pytest tests/properties (parallel, phase=properties)
+>> pytest tests/unit/engines (parallel, phase=unit-engines)
+--- phase: contract ---
+EE...................................................................... [ 44%]
+........................................................................ [ 89%]
+.................                                                        [100%]
+==================================== ERRORS ====================================
+_____________ ERROR at setup of test_get__api_v1_accounts_contract _____________
+../../../.local/lib/python3.12/site-packages/pytest_asyncio/plugin.py:924: in pytest_fixture_setup
+    return (yield)
+            ^^^^^
+tests/fixtures/client.py:25: in test_client
+    from src.api import app
+src/api.py:49: in <module>
+    from src.routers import (
+src/routers/__init__.py:3: in <module>
+    from . import (
+src/routers/accounts.py:34: in <module>
+    from src.services.account_service import AccountService
+src/services/__init__.py:18: in <module>
+    from src.services.import_service import ImportService
+src/services/import_service.py:10: in <module>
+    from src.extraction.categorizer import categorize
+src/extraction/__init__.py:17: in <module>
+    from .camelot_extractor import CamelotExtractor
+src/extraction/camelot_extractor.py:18: in <module>
+    import camelot
+../../../.local/lib/python3.12/site-packages/camelot/__init__.py:5: in <module>
+    from .io import read_pdf
+../../../.local/lib/python3.12/site-packages/camelot/io.py:7: in <module>
+    from pypdf._utils import StrByteType
+../../../.local/lib/python3.12/site-packages/pypdf/__init__.py:10: in <module>
+    from ._crypt_providers import crypt_provider
+../../../.local/lib/python3.12/site-packages/pypdf/_crypt_providers/__init__.py:31: in <module>
+    from pypdf._crypt_providers._cryptography import (
+../../../.local/lib/python3.12/site-packages/pypdf/_crypt_providers/_cryptography.py:31: in <module>
+    from cryptography.hazmat.primitives import padding
+../../../.local/lib/python3.12/site-packages/cryptography/hazmat/primitives/padding.py:10: in <module>
+    from cryptography.hazmat.bindings._rust import (
+E   Failed: Timeout (>60.0s) from pytest-timeout.
+____________ ERROR at setup of test_post__api_v1_accounts_contract _____________
+../../../.local/lib/python3.12/site-packages/pytest_asyncio/plugin.py:924: in pytest_fixture_setup
+    return (yield)
+            ^^^^^
+tests/fixtures/client.py:25: in test_client
+    from src.api import app
+src/api.py:49: in <module>
+    from src.routers import (
+src/routers/__init__.py:3: in <module>
+    from . import (
+src/routers/audit.py:7: in <module>
+    from src.services import AuditService
+src/services/__init__.py:18: in <module>
+    from src.services.import_service import ImportService
+src/services/import_service.py:10: in <module>
+    from src.extraction.categorizer import categorize
+src/extraction/__init__.py:17: in <module>
+    from .camelot_extractor import CamelotExtractor
+src/extraction/camelot_extractor.py:18: in <module>
+    import camelot
+../../../.local/lib/python3.12/site-packages/camelot/__init__.py:5: in <module>
+    from .io import read_pdf
+../../../.local/lib/python3.12/site-packages/camelot/io.py:9: in <module>
+    from .handlers import PDFHandler
+../../../.local/lib/python3.12/site-packages/camelot/handlers.py:18: in <module>
+    from .core import TableList
+../../../.local/lib/python3.12/site-packages/camelot/core.py:17: in <module>
+    import pandas as pd
+../../../.local/lib/python3.12/site-packages/pandas/__init__.py:46: in <module>
+    from pandas.core.api import (
+../../../.local/lib/python3.12/site-packages/pandas/core/api.py:46: in <module>
+    from pandas.core.groupby import (
+../../../.local/lib/python3.12/site-packages/pandas/core/groupby/__init__.py:1: in <module>
+    from pandas.core.groupby.generic import (
+../../../.local/lib/python3.12/site-packages/pandas/core/groupby/generic.py:64: in <module>
+    from pandas.core.frame import DataFrame
+../../../.local/lib/python3.12/site-packages/pandas/core/frame.py:64: in <module>
+    from pandas.errors.cow import (
+E   Failed: Timeout (>60.0s) from pytest-timeout.
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_contract
+ERROR tests/contract/generated/test_accounts.py::test_post__api_v1_accounts_contract
+159 passed, 1 warning, 2 errors in 419.12s (0:06:59)
+<< contract: fail (exit=1, 444s)
+--- phase: invariants ---
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 1 warning in 143.57s (0:02:23)
+<< invariants: pass (exit=0, 444s)
+--- phase: properties ---
+..........F............................................................. [ 34%]
+......................................F................................. [ 69%]
+..............................................................           [100%]
+=================================== FAILURES ===================================
+_______ TestBehaviourEngineProperties.test_financial_stress_index_bounds _______
+tests/properties/behaviour/test_engine_properties.py:194: in test_financial_stress_index_bounds
+    @settings(max_examples=20)
+               ^^^^^^^
+E   hypothesis.errors.FailedHealthCheck: Input generation is slow: Hypothesis only generated 5 valid inputs after 5.33 seconds.
+E   
+E                    count | fraction |    slowest draws (seconds)
+E     transactions |    5  |    100%  |   0.005,  0.006,  0.007,  0.015,  5.293
+E   
+E   This could be for a few reasons:
+E   1. This strategy could be generating too much data per input. Try decreasing the amount of data generated, for example by decreasing the minimum size of collection strategies like st.lists().
+E   2. Some other expensive computation could be running during input generation. For example, if @st.composite or st.data() is interspersed with an expensive computation, HealthCheck.too_slow is likely to trigger. If this computation is unrelated to input generation, move it elsewhere. Otherwise, try making it more efficient, or disable this health check if that is not possible.
+E   
+E   If you expect input generation to take this long, you can disable this health check with @settings(suppress_health_check=[HealthCheck.too_slow]). See https://hypothesis.readthedocs.io/en/latest/reference/api.html#hypothesis.HealthCheck for details.
+---------------------------------- Hypothesis ----------------------------------
+You can reproduce this failure by adding @seed(216047747427490134277658849795280804782) to this test, or by running pytest with --hypothesis-seed=216047747427490134277658849795280804782.
+_______ TestPrepaymentPenaltyProperties.test_prepayment_penalty_rounding _______
+  + Exception Group Traceback (most recent call last):
+  |   File "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/lending/test_engine_properties.py", line 297, in test_prepayment_penalty_rounding
+  |     principal_paise=st.integers(min_value=100000, max_value=10000000),
+  |            ^^^^^^^
+  |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 2297, in wrapped_test
+  |     raise the_error_hypothesis_found
+  | hypothesis.errors.FlakyFailure: Hypothesis test_prepayment_penalty_rounding(self=<tests.properties.lending.test_engine_properties.TestPrepaymentPenaltyProperties object at 0x79014879b080>, principal_paise=1634815, annual_rate_bps=1800, tenure_months=297, prepayment_paise=10000, prepayment_penalty_bps=105) produces unreliable results: Failed on the first call but did not on a subsequent one (1 sub-exception)
+  | Failing test case: test_prepayment_penalty_rounding(
+  |     self=,
+  |     principal_paise=,
+  |     annual_rate_bps=,
+  |     tenure_months=,
+  |     prepayment_paise=,
+  |     prepayment_penalty_bps=,
+  | )
+  | Unreliable test timings! On an initial run, this test took 6985.83ms, which exceeded the deadline of 1000.00ms, but on a subsequent run it took 7.11 ms, which did not. If you expect this sort of variability in your test timings, consider turning deadlines off for this test by setting deadline=None.
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 1223, in _execute_once_for_engine
+    |     result = self.execute_once(data)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 1161, in execute_once
+    |     result = self.test_runner(data, run)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 828, in default_executor
+    |     return function(data)
+    |            ^^^^^^^^^^^^^^
+    |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 1118, in run
+    |     return test(*args, **kwargs)
+    |            ^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/properties/lending/test_engine_properties.py", line 297, in test_prepayment_penalty_rounding
+    |     principal_paise=st.integers(min_value=100000, max_value=10000000),
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/vasantha/.local/lib/python3.12/site-packages/hypothesis/core.py", line 1050, in test
+    |     raise DeadlineExceeded(
+    | hypothesis.errors.DeadlineExceeded: Test took 6985.83ms, which exceeds the deadline of 1000.00ms. If you expect test cases to take this long, you can use @settings(deadline=...) to either set a higher deadline, or to disable it with deadline=None.
+    +------------------------------------
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/properties/forecasting/test_engine_properties.py::TestForecastEngineProperties::test_goal_achievability_deterministic
+  /home/vasantha/.local/lib/python3.12/site-packages/hypothesis/strategies/_internal/core.py:1872: HypothesisDeprecationWarning: 0.1 cannot be exactly represented as a decimal with places=None
+    min_value = _as_finite_decimal(min_value, "min_value", allow_infinity, places)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/properties/behaviour/test_engine_properties.py::TestBehaviourEngineProperties::test_financial_stress_index_bounds
+FAILED tests/properties/lending/test_engine_properties.py::TestPrepaymentPenaltyProperties::test_prepayment_penalty_rounding
+2 failed, 204 passed, 2 warnings in 91.58s (0:01:31)
+<< properties: fail (exit=1, 444s)
+--- phase: unit-engines ---
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 46%]
+........................................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 92%]
+....................................                                     [100%]
+=============================== warnings summary ===============================
+../../../.local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/vasantha/.local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+468 passed, 1 warning in 97.82s (0:01:37)
+<< unit-engines: pass (exit=0, 444s)
+
+Phase summary: /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/backend/backend-verification.json
+  contract       fail  exit=1 444s
+  invariants     pass  exit=0 444s
+  properties     fail  exit=1 444s
+  unit-engines   pass  exit=0 444s

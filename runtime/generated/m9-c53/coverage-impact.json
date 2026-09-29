@@ -1,0 +1,11 @@
+{
+  "schema": "m9-c53-coverage-impact/v1",
+  "generated_at": "2026-09-01T11:16:07.134198+00:00",
+  "note": "Coverage impact is measured independently from mutation impact",
+  "coverage_dimension": "measured_via_focused_execution_and_behavioral_relevance",
+  "certification_impact": {
+    "impact": "pending",
+    "dimension_improved": "none_yet",
+    "note": "candidate awaiting human authorization: no certification impact until authorized"
+  }
+}

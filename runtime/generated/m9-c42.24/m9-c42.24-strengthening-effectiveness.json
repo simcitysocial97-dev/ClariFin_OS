@@ -1,0 +1,94 @@
+{
+  "title": "M9-C42.24 — Strengthening Effectiveness Analysis",
+  "generated_at": "2026-08-25T18:40:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "methodology": "Classify each C42.23 strengthening batch using the authoritative C42.24 remeasurement. Categories: A (Proven behavioral improvement), B (Discovery improvement), C (Stability/no material change), D (Unexpected regression), E (Measurement anomaly).",
+  "batches": [
+    {
+      "batch": "Batch 2 — Cashflow Engine",
+      "component": "cashflow_engine",
+      "tests_added": 10,
+      "test_file": "tests/properties/cashflow/test_behavioral_strengthening.py",
+      "c42_21_score": 29.1,
+      "c42_24_score": 74.4,
+      "delta": 45.3,
+      "mutants_killed_by_new_tests": 78,
+      "classification": "A — Proven behavioral improvement",
+      "causal_explanation": "10 behavioral tests (property-based) killed 78 genuine Class-A mutants in cashflow_engine. This is the highest-impact strengthening batch in the campaign. The tests exercise financial invariants (conservation of money, non-negativity, identity preservation) that were previously untested."
+    },
+    {
+      "batch": "Batch 3 — Ledger Audit + Recommendation",
+      "component": "ledger_audit_engine",
+      "tests_added": 0,
+      "c42_21_score": 56.8,
+      "c42_24_score": 56.8,
+      "delta": 0.0,
+      "classification": "C — Stability/no material change",
+      "causal_explanation": "0 new tests added. 82 survivors classified C/B (reachable contract already covered). No behavioral gap identified; existing tests already exercise the relevant contract."
+    },
+    {
+      "batch": "Batch 3 — Recommendation Engine",
+      "component": "recommendation_engine",
+      "tests_added": 9,
+      "test_file": "tests/unit/engines/recommendation/test_recommendation_strengthening.py",
+      "c42_21_score": 57.8,
+      "c42_24_score": 63.5,
+      "delta": 5.7,
+      "mutants_killed_by_new_tests": 16,
+      "classification": "A — Proven behavioral improvement",
+      "causal_explanation": "9 new tests killed 16 genuine behavioral mutants in recommendation_engine. The tests validate recommendation scoring, ranking stability, and category filtering contracts."
+    },
+    {
+      "batch": "Batch 4 — Common Calculations + Credit Card",
+      "component": "common_calculations",
+      "tests_added": 4,
+      "test_file": "tests/unit/test_calculations_strengthening.py",
+      "c42_21_score": 56.4,
+      "c42_24_score": 56.4,
+      "delta": 0.0,
+      "classification": "C — Stability/no material change",
+      "causal_explanation": "4 boundary tests added but killed no additional mutants. Existing tests already cover the relevant boundary conditions. The new tests provide regression safety but do not improve mutation effectiveness."
+    },
+    {
+      "batch": "Batch 4 — Credit Card Engine",
+      "component": "credit_card_engine",
+      "tests_added": 9,
+      "test_file": "tests/unit/engines/credit_card/test_interest_strengthening.py",
+      "c42_21_score": 75.6,
+      "c42_24_score": 75.6,
+      "delta": 0.0,
+      "classification": "C — Stability/no material change",
+      "causal_explanation": "9 interest-invariant tests added but killed no additional mutants. The existing credit_card test suite already exercises interest/fee calculations with sufficient granularity. The new tests provide invariant documentation but do not expose new behavioral gaps."
+    },
+    {
+      "batch": "Batch 5 — Reconciliation + Loan",
+      "component": "reconciliation_engine",
+      "tests_added": 10,
+      "test_file": "tests/unit/engines/reconciliation/test_reconciliation_strengthening.py",
+      "c42_21_score": 80.4,
+      "c42_24_score": 80.7,
+      "delta": 0.3,
+      "mutants_killed_by_new_tests": 1,
+      "classification": "B/C — Marginal discovery improvement",
+      "causal_explanation": "10 scoring tests killed 1 additional mutant. Most reconciliation survivors are equivalent or intentional. The marginal improvement suggests the new tests provide slight additional discrimination but the engine is already near its behavioral coverage ceiling."
+    },
+    {
+      "batch": "Batch 5 — Loan Engine",
+      "component": "loan_engine",
+      "tests_added": 0,
+      "c42_21_score": 84.0,
+      "c42_24_score": 84.0,
+      "delta": 0.0,
+      "classification": "C — Stability/no material change",
+      "causal_explanation": "0 new tests (conservative decision per C42.23). Loan engine is strong at 84%. 5 nondeterministic mutants preserved as reproducibility evidence. No behavioral gaps identified."
+    }
+  ],
+  "summary": {
+    "total_new_tests": 42,
+    "class_a_batches": 2,
+    "class_b_c_batches": 4,
+    "class_d_regressions": 0,
+    "class_e_anomalies": 0,
+    "overall_effectiveness": "MIXED — 2 batches produced genuine behavioral improvement (cashflow, recommendation); 4 batches were already adequately tested. The 42-test strengthening program was not universally effective but achieved the highest-impact improvement in the weakest component (cashflow)."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "bounded_execution_artifact_exists": true,
+  "bounded_execution_duration": 6.585784,
+  "bounded_execution_exit_code": 0,
+  "ci_path": "execute_task(ExecutableVerificationTask) -> ExecutionEvidence",
+  "execution_id": "runtime.verification::exec::d97fca632cdd1da2",
+  "generated_at": "2026-09-05T02:58:38.332884+00:00",
+  "local_path": "execute_task(ExecutableVerificationTask) -> ExecutionEvidence",
+  "path_equivalent": true,
+  "repository": {
+    "branch": "m9c9-merge-authorization-resolution",
+    "sha": "4c2e9d86046c5bc7ff1656bf6423d489b24a7cde"
+  },
+  "schema": "m9-c50/final-freeze/ci-semantic-parity@1",
+  "verdict": "ci_local_parity_established"
+}

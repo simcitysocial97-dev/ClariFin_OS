@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "schema": "m9-c47-planner-audit/v1",
+    "generated_at": "2026-09-03T17:20:00Z",
+    "repository_sha": "35a31f50a0352e407b0936f50a7d7fe80206c16a",
+    "scope": "Verification planner (VerificationPlanner + CrossLayerImpactPlanner)"
+  },
+  "planner_uses": {
+    "changed_files": "VERIFIED - passed via PlanningContext.changed_files",
+    "changed_symbols": "UNVERIFIED - not directly used by the planner. The planner works at the file level, not the symbol level.",
+    "capabilities": "VERIFIED - used via VerificationRegistry.get_all_capabilities() and CapabilityContractRegistry",
+    "dependency_graph": "VERIFIED - used via RepositoryGraphService in _resolve_capabilities() (line 382-388: 'TODO Program 7: implement graph-based capability resolution. For now, skip endpoint-based capability resolution.')",
+    "verification_profiles": "VERIFIED - used via profiles.py:get_profile()",
+    "criticality": "PARTIALLY_VERIFIED - VerificationRequirement has severity field but the planner does not filter by severity",
+    "historical_evidence": "VERIFIED - used via EvidenceReuse and decide_reuse() in capability_resolver.py",
+    "cached_evidence": "VERIFIED - VerificationCache.replay() is used by orchestrator",
+    "mutation_evidence": "VERIFIED - used via ENGINE_SELECTION in mutation_contract.py",
+    "test_surfaces": "VERIFIED - used via VerificationRegistry.get_scripts_by_scope() and get_scripts_by_capability()",
+    "cross_layer_dependencies": "VERIFIED - CrossLayerImpactPlanner uses _find_chain() and _resolve_via_provider()"
+  },
+  "planner_classification": {
+    "REAL": "VERIFIED - the planner is a real, executable planning engine that produces VerificationPlan objects",
+    "PARTIAL": false,
+    "STATIC": false,
+    "HARDCODED": "PARTIALLY - capability hierarchy and scope merging logic is hardcoded in _merge_scopes() and category_order in _resolve_dependencies()",
+    "DUPLICATED": "PARTIALLY - the planner exists in both VerificationPlanner (planner/planner.py) and in the VerificationRegistry (registry/registry.py). The VerificationRegistry contains hardcoded default workflows/scripts/capabilities that are also defined in verification.yaml.",
+    "UNWIRED": false
+  },
+  "planner_execution_chain": {
+    "1_collect_changed_files": "VerificationOrchestrator.collect_changed_files() - git diff with PR boundary detection",
+    "2_analyze_cross_layer": "VerificationOrchestrator.analyze_cross_layer() - CrossLayerImpactPlanner.analyze_cross_layer_impact()",
+    "3_generate_plan": "VerificationOrchestrator.generate_plan() - VerificationPlanner.plan() with PlanningContext",
+    "4_plan_execution": "VerificationPlanner._resolve_scopes_from_files() -> _merge_scopes() -> _resolve_capabilities() -> _resolve_modules() -> _collect_requirements() -> _build_targets() -> _resolve_dependencies() -> _resolve_workflows_and_scripts() -> _build_steps()",
+    "5_execute": "VerificationOrchestrator.execute() - runs steps via Executor",
+    "6_aggregate": "VerificationOrchestrator.aggregate_evidence() - EvidenceAggregator.aggregate()"
+  },
+  "plan_vs_execution": {
+    "plan_controls_execution": "VERIFIED - the plan steps are executed in order by the orchestrator",
+    "deduplication": "VERIFIED - _build_steps() deduplicates by command, preserving first occurrence and remapping dependencies",
+    "identity_preservation": "VERIFIED - VEA-2 Phase 2 M3 stamps unit_id and provenance onto each step",
+    "unmapped_handling": "VERIFIED - UNMAPPED sentinel is reported in the run manifest, never silently dropped"
+  },
+  "bounded_profile_semantics": {
+    "bounded_profiles": ["playwright", "golden", "mutation", "integration"],
+    "respect_requested_scope": "VERIFIED - bounded profiles do NOT expand execution beyond their declared tasks (C5.1 correction)",
+    "non_bounded_profiles": "backend, frontend, contracts, runtime, repository, full - these DO expand with blast-radius"
+  },
+  "findings": {
+    "symbol_level_planning": "NOT IMPLEMENTED - the planner works at the file level, not the symbol level. This is a gap for the ultimate end state.",
+    "graph_based_capability_resolution": "TODO - line 382-388 in planner.py: 'TODO Program 7: implement graph-based capability resolution. For now, skip endpoint-based capability resolution.' This means endpoint-based capability resolution is NOT implemented.",
+    "severity_filtering": "NOT IMPLEMENTED - the planner does not filter by VerificationRequirement.severity",
+    "capability_to_workflow_mapping": "VERIFIED - uses VerificationRegistry.get_workflow_for_unit() and resolve_unit_workflow()"
+  },
+  "conclusion": {
+    "status": "PARTIALLY_VERIFIED",
+    "classification": "REAL (not static, not hardcoded-only, not duplicated-authority, not unwired)",
+    "notes": "The planner is a real, executable planning engine. It uses changed files, capabilities, dependency graph, verification profiles, and cross-layer dependencies. It does NOT use changed symbols (works at file level only). Graph-based capability resolution is TODO. Severity filtering is NOT implemented. Bounded profile semantics are properly implemented (C5.1 correction). Plan output controls actual execution with identity preservation."
+  }
+}

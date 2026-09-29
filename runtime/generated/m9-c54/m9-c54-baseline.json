@@ -1,0 +1,20 @@
+{
+  "schema": "m9-c54/workflow-convergence/v1",
+  "generated_at": "2026-09-11T04:18:27.335967+00:00",
+  "repository_sha": "543917c3529012c7a3148a3fea3a25f0ec9d0bba",
+  "workflow_count": 14,
+  "total_jobs": 15,
+  "total_steps": 147,
+  "verification_steps": 29,
+  "certified_modules_preserved": [
+    "runtime/foundation/verification/ci_evidence.py",
+    "runtime/foundation/verification/evidence_contract.py",
+    "runtime/foundation/verification/gap_classification.py",
+    "runtime/foundation/verification/generation_engine.py",
+    "runtime/foundation/verification/candidate_validation.py",
+    "runtime/foundation/verification/blast_radius.py",
+    "runtime/foundation/verification/capability_discovery.py",
+    "runtime/foundation/verification/measurement_truth.py",
+    "runtime/foundation/verification/authorization_boundary.py"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "blast-radius/v1",
+  "generated_at": "2026-08-06T15:06:39.116594+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "graphs": [
+    "ownership",
+    "execution",
+    "dependency"
+  ],
+  "propagation": "reverse edges (dependents), evidence-backed",
+  "max_depth": 6,
+  "seeds": [],
+  "direct_impact": [],
+  "indirect_impact": [],
+  "verification_impact": [],
+  "user_visible_impact": [],
+  "developer_impact": [],
+  "counts": {
+    "seeds": 0,
+    "direct": 0,
+    "indirect": 0,
+    "verification": 0,
+    "user_visible": 0,
+    "developer": 0,
+    "by_kind": {}
+  },
+  "unresolved_nodes": [],
+  "traversal": {
+    "nodes_visited": 0,
+    "edges_followed": 0,
+    "graphs_traversed": [
+      "dependency",
+      "execution",
+      "ownership"
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "program": "Program E — Quality Gate Root Cause Isolation",
+  "investigation_artifacts": [
+    {
+      "artifact": "runtime/generated/verification-report.md",
+      "source": "local (stale cache)",
+      "note": "Local report shows 'passed' but was generated from a previous run with cached changed_files from commit 22ed278d. The current HEAD (08fdea46) has a different changed file set."
+    },
+    {
+      "artifact": "runtime/generated/verification-cache.json",
+      "source": "local",
+      "note": "Cache contains last_commit=22ed278d, not the current HEAD. Cache is stale."
+    },
+    {
+      "artifact": ".github/workflows/quality.yml",
+      "source": "git",
+      "note": "Workflow runs 'python runtime/verify.py quick'. Step 'Run quick verification' failed with exit code 1."
+    },
+    {
+      "artifact": "runtime/foundation/verification/orchestrator.py",
+      "source": "git",
+      "note": "_collect_changed_files() uses 'git diff --name-only HEAD'. Returns 2 files in CI after bootstrap."
+    },
+    {
+      "artifact": "runtime/foundation/verification/planner/planner.py",
+      "source": "git",
+      "note": "_merge_scopes() correctly limits QUICK to [QUICK]. _collect_requirements() filters by allowed scopes. Planner selects 1 target (quick-run) and 1 step (run_fast_checks.sh)."
+    },
+    {
+      "artifact": "runtime/foundation/verification/registry/registry.py",
+      "source": "git",
+      "note": "Registry maps 'quick' capability to workflow 'quick' (bash .github/scripts/run_fast_checks.sh)."
+    },
+    {
+      "artifact": ".github/scripts/run_fast_checks.sh",
+      "source": "git",
+      "note": "Runs ruff, black, mypy, pytest tests/unit/, tests/architecture/, tests/meta/. Uses 'set -euo pipefail' but failures inside 'if' blocks are caught and recorded in FAILED_CHECKS."
+    },
+    {
+      "artifact": "backend/tests/conftest.py",
+      "source": "git",
+      "note": "Registers pytest_plugins = ['tests.fixtures.database', ...]. Loading this plugin triggers ImportError when src.core.db.schema is missing."
+    },
+    {
+      "artifact": "backend/tests/fixtures/database.py",
+      "source": "git",
+      "note": "Line 24: 'from src.core.db.schema import create_all, run_migrations, verify_schema'. This import fails in CI because schema.py is not in git."
+    },
+    {
+      "artifact": "backend/src/db.py",
+      "source": "git",
+      "note": "Also imports 'from src.core.db.schema import ...'. This file exists in git but depends on schema.py which is missing."
+    },
+    {
+      "artifact": ".gitignore",
+      "source": "git",
+      "note": "Line 89: 'src/' — this pattern matches 'backend/src/' at any level, causing the entire backend/src/core/db/ package to be ignored by git."
+    },
+    {
+      "artifact": "backend/src/core/db/schema.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "32KB file exists locally but is NOT tracked in git. Never committed. Last modified 2026-08-07 20:22."
+    },
+    {
+      "artifact": "backend/src/core/db/__init__.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "Exists locally but NOT tracked in git."
+    },
+    {
+      "artifact": "backend/src/core/db/connection.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "Exists locally but NOT tracked in git."
+    },
+    {
+      "artifact": "backend/src/core/db/config.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "Exists locally but NOT tracked in git."
+    },
+    {
+      "artifact": "backend/src/core/db/transaction.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "Exists locally but NOT tracked in git."
+    },
+    {
+      "artifact": "backend/src/core/db/health.py",
+      "source": "local filesystem (untracked, ignored)",
+      "note": "Exists locally but NOT tracked in git."
+    },
+    {
+      "artifact": "CI run 31203946933 logs",
+      "source": "gh run view 31203946933 --log-failed",
+      "note": "Shows 'Changed files: 2', 'Verification FAILED', 'Passed: 0', 'Failed: 1', 'Duration: 19.1s'. No detailed error in log because output is captured by Executor."
+    },
+    {
+      "artifact": "temp clone simulation",
+      "source": "/tmp/clarifin-ci-sim (clean clone at 08fdea46)",
+      "note": "Reproduced exact failure: 'Changed files: 2', 'Passed: 0', 'Failed: 1'. Direct execution of run_fast_checks.sh shows ImportError."
+    }
+  ],
+  "evidence_summary": "The developer workstation has backend/src/core/db/schema.py and related files present on disk, but these files were never committed to git. The .gitignore rule 'src/' (line 89) causes git to ignore backend/src/core/db/. In CI, the clean checkout lacks these files, causing pytest to fail when loading tests.fixtures.database plugin."
+}

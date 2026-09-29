@@ -1,0 +1,83 @@
+{
+  "schema": "engineering-risk/v1",
+  "generated_at": "2026-08-06T15:06:39.120193+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "overall": {
+    "level": "High",
+    "score": 10,
+    "aggregation": "mean of dimension scores, floored by the worst dimension level so a single High dimension is never masked",
+    "confidence": 1.0,
+    "confidence_basis": [
+      "0/0 in-scope changed paths resolved to canonical entities",
+      "16 platform (runtime/) path(s) excluded from scope",
+      "0 unresolved graph node(s) during propagation",
+      "0 verification unit(s) selected from evidence"
+    ]
+  },
+  "dimensions": [
+    {
+      "name": "Architectural Risk",
+      "level": "Low",
+      "score": 0,
+      "evidence": [
+        "no engine ownership root or entry point changed"
+      ]
+    },
+    {
+      "name": "Regression Risk",
+      "level": "Low",
+      "score": 0,
+      "evidence": [
+        "0 entities are indirectly impacted across 3 canonical graphs",
+        "impact by kind: {}"
+      ]
+    },
+    {
+      "name": "Dependency Risk",
+      "level": "Low",
+      "score": 0,
+      "evidence": [
+        "changed entities have no recorded dependents in the dependency graph"
+      ]
+    },
+    {
+      "name": "Coverage Risk",
+      "level": "High",
+      "score": 60,
+      "evidence": [
+        "every impacted engine has at least one recorded test",
+        "verification impact is empty and no suite was selected: nothing verifies this change"
+      ]
+    },
+    {
+      "name": "Ownership Risk",
+      "level": "Low",
+      "score": 0,
+      "evidence": [
+        "every changed path resolves to a canonical owner"
+      ]
+    },
+    {
+      "name": "Contract Risk",
+      "level": "Low",
+      "score": 0,
+      "evidence": [
+        "no endpoint or route declaration affected"
+      ]
+    },
+    {
+      "name": "CI Risk",
+      "level": "Low",
+      "score": 10,
+      "evidence": [
+        "no recurring CI failure recorded in engineering memory",
+        "1 recurring test failure signature(s) known"
+      ]
+    }
+  ],
+  "levels": [
+    "Low",
+    "Medium",
+    "High"
+  ]
+}

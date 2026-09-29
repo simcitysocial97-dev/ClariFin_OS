@@ -1,0 +1,67 @@
+{
+  "schema": "verification-plan/v1",
+  "generated_at": "2026-08-06T15:06:39.116803+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "selection_rule": "a suite is skipped only when the blast radius contains no impacted entity of the kind it verifies",
+  "selected": [],
+  "skipped": [
+    {
+      "id": "unit-targeted",
+      "category": "unit",
+      "reason": "no impacted engine has provider-recorded tests",
+      "justification": "blast radius contains no engine with tests"
+    },
+    {
+      "id": "contracts-schemathesis",
+      "category": "contract",
+      "reason": "no endpoint impacted",
+      "justification": "blast radius contains 0 entities of kind 'endpoint'"
+    },
+    {
+      "id": "backend-integration",
+      "category": "integration",
+      "reason": "no router, service or repository impacted",
+      "justification": "blast radius contains no backend wiring entities"
+    },
+    {
+      "id": "frontend-unit",
+      "category": "frontend",
+      "reason": "no frontend file impacted",
+      "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+    },
+    {
+      "id": "playwright-e2e",
+      "category": "e2e",
+      "reason": "no workspace impacted",
+      "justification": "blast radius contains 0 entities of kind 'workspace'"
+    },
+    {
+      "id": "runtime-self-test",
+      "category": "runtime",
+      "reason": "runtime unchanged",
+      "justification": "no directly changed entity has a runtime/ path"
+    },
+    {
+      "id": "mutation-run",
+      "category": "mutation",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it"
+    },
+    {
+      "id": "golden-regression",
+      "category": "golden",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it"
+    }
+  ],
+  "counts": {
+    "selected": 0,
+    "skipped": 8,
+    "unit_tests": 0
+  },
+  "estimated_seconds": 0,
+  "baseline_profile": "full",
+  "baseline_seconds": 900,
+  "savings_seconds": 900,
+  "fallback_profile": "graph"
+}

@@ -1,0 +1,116 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/vasantha/AI-Projects/ClariFin_OS
+configfile: pyproject.toml
+plugins: hypothesis-6.161.4, asyncio-1.4.0, schemathesis-4.17.0, cov-7.1.0, anyio-4.14.2, xdist-3.8.0, timeout-2.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 18 items
+
+runtime/tests/test_platform_api_phase7.py::TestVerificationEventEmission::test_run_emits_started_and_completed_events PASSED [  5%]
+runtime/tests/test_platform_api_phase7.py::TestVerificationEventEmission::test_emitted_events_have_execution_id_in_metadata PASSED [ 11%]
+runtime/tests/test_platform_api_phase7.py::TestVerificationEventEmission::test_emitted_events_have_capability_id_in_metadata PASSED [ 16%]
+runtime/tests/test_platform_api_phase7.py::TestVerificationEventEmission::test_run_without_capability_id_emits_events PASSED [ 22%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionDetailReconciliation::test_detail_finds_emitted_events PASSED [ 27%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionDetailReconciliation::test_detail_has_correct_status_for_completed_execution PASSED [ 33%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionDetailReconciliation::test_detail_has_terminal_state_from_event_type PASSED [ 38%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionDetailReconciliation::test_detail_for_unknown_execution_returns_none PASSED [ 44%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionDetailReconciliation::test_detail_envelope_round_trips_through_contract PASSED [ 50%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionStreamService::test_stream_event_shape PASSED [ 55%]
+runtime/tests/test_platform_api_phase7.py::TestExecutionStreamService::test_stream_event_contains_full_payload PASSED [ 61%]
+runtime/tests/test_platform_api_phase7.py::TestEventsStreamService::test_stream_event_shape PASSED [ 66%]
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered PASSED [ 72%]
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_events_stream_route_registered PASSED [ 77%]
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_detail_returns_404_for_unknown PASSED [ 83%]
+runtime/tests/test_platform_api_phase7.py::TestNoSyntheticProgress::test_detail_has_no_progress_field PASSED [ 88%]
+runtime/tests/test_platform_api_phase7.py::TestNoSyntheticProgress::test_stream_event_has_no_progress_field PASSED [ 94%]
+runtime/tests/test_platform_api_phase7.py::TestGate7Integration::test_full_lifecycle PASSED [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/account_dto.py:48: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/accounts_dto.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class AccountsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/behaviour_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class BehaviourDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/cashflow_dto.py:136: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CashflowSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/credit_cards_dto.py:186: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CreditCardsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DashboardSummaryDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:65: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class OverviewDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/dashboard_dto.py:100: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategoryBreakdownDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/forecast_dto.py:141: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ForecastDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/investments_dto.py:143: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class InvestmentsDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/loans_dto.py:191: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class LoansDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/net_worth_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class NetWorthDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:138: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:230: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationsListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/reconciliation_dto.py:270: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ReconciliationScanResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class MoneyDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:27: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionDTO(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class TransactionListResponse(BaseModel):
+
+runtime/tests/test_platform_api_phase7.py::TestHttpEndpointStructure::test_execution_stream_route_registered
+  /home/vasantha/AI-Projects/ClariFin_OS/backend/src/core/dtos/transaction_dto.py:84: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CategorySummaryDTO(BaseModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 18 passed, 21 warnings in 26.08s =======================

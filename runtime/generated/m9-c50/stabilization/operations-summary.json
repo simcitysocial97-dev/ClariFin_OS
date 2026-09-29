@@ -1,0 +1,144 @@
+{
+  "schema": "m9-c50/stabilization/operations-summary@1",
+  "generated_at": "2026-09-04T23:07:16.730325+00:00",
+  "states": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L"
+  ],
+  "results": {
+    "A": {
+      "state": "A_unchanged",
+      "expected": "NO_WORK / REUSE",
+      "decision": {
+        "decision": "INVALIDATE",
+        "reason": "prior evidence artifact missing: /home/vasantha/AI-Projects/ClariFin_OS/stabilization/no_artifact.bin",
+        "task_identity": "task::no_change",
+        "environment_identity": "runtime.verification::env::175cb3812e5d5cd2",
+        "prior_evidence_id": "ev::prior"
+      },
+      "lineage_complete": true
+    },
+    "B": {
+      "state": "B_backend_unit",
+      "expected": "real unit execution -> evidence -> reconciliation",
+      "task": "exec::state::invariant::money",
+      "execution_id": "runtime.verification::exec::182823246521e847",
+      "exit_code": 0,
+      "artifact_paths": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+      ],
+      "decision": {
+        "decision_id": "runtime.verification::dec::063a8d40b2583496",
+        "decided_at": "2026-09-04T23:05:13.704289+00:00",
+        "obligation_id": "obl::B::invariant",
+        "task_id": "exec::state::invariant::money",
+        "execution_id": "runtime.verification::exec::182823246521e847",
+        "evidence_id": "execution_id=runtime.verification::exec::182823246521e847; evidence_id=runtime.verification::ev::e01c6a77b510f620; artifact_sha256=82b3646549ad0e7c; environment_identity=runtime.verification::env::bf2aa18ab1b1a6ab",
+        "reconciliation_id": "rec::exec::state::invariant::money",
+        "status": "CERTIFIED",
+        "rationale": "task executed, evidence captured, lineage complete"
+      }
+    },
+    "C": {
+      "state": "C_property",
+      "expected": "real property verification",
+      "task": "exec::state::property::money",
+      "execution_id": "runtime.verification::exec::f9022778d06666ed",
+      "exit_code": 0,
+      "artifact_paths": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-property-money.xml"
+      ]
+    },
+    "D": {
+      "state": "D_contract",
+      "expected": "real contract verification",
+      "task": "exec::state::contract::",
+      "execution_id": "runtime.verification::exec::f37af9a9d7c55208",
+      "exit_code": 0,
+      "artifact_paths": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-contract-all.xml"
+      ]
+    },
+    "E": {
+      "state": "E_integration",
+      "expected": "real integration verification",
+      "task": "exec::state::invariant::money",
+      "execution_id": "runtime.verification::exec::182823246521e847",
+      "exit_code": 0,
+      "artifact_paths": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-invariant-money.xml"
+      ]
+    },
+    "F": {
+      "state": "F_frontend",
+      "expected": "real frontend verification (capability adapter)",
+      "task": "exec::state::capability::",
+      "execution_id": "runtime.verification::exec::4e629cd0adaf3cb1",
+      "exit_code": 0,
+      "artifact_paths": [
+        "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c50.13/junit-capability-all.xml"
+      ]
+    },
+    "G": {
+      "state": "G_mutation",
+      "expected": "real mutation path is executable",
+      "task": "exec::state::G::mutation",
+      "execution_command": ".venv/bin/python runtime/verify.py mutation --target account_engine --json",
+      "executable": "executable"
+    },
+    "H": {
+      "state": "H_unmapped",
+      "expected": "FAIL_CLOSED / UNMAPPED_REVIEW",
+      "task": "exec::state::H::unmapped",
+      "execution_command": ".venv/bin/python -m pytest backend/tests/invariants -q --junit-xml=runtime/generated/m9-c50.13/junit-invariant-__unmapped_target__.xml",
+      "executable": "executable"
+    },
+    "I": {
+      "state": "I_failure",
+      "expected": "FAILED (never CERTIFIED)",
+      "exit_code": 42,
+      "failure_kind": "verification_failure",
+      "decision_status": "FAILED"
+    },
+    "J": {
+      "state": "J_stale_evidence",
+      "expected": "INVALIDATE -> REEXECUTE",
+      "decision": {
+        "decision": "INVALIDATE",
+        "reason": "prior evidence artifact missing: /home/vasantha/AI-Projects/ClariFin_OS/stabilization/missing_artifact.bin",
+        "task_identity": "task::j",
+        "environment_identity": "env::j",
+        "prior_evidence_id": "ev::stale"
+      }
+    },
+    "K": {
+      "state": "K_reusable",
+      "expected": "REUSED",
+      "decision": {
+        "decision": "REUSE",
+        "reason": "task identity, environment identity, and evidence validity all match",
+        "task_identity": "task::k",
+        "environment_identity": "runtime.verification::env::175cb3812e5d5cd2",
+        "prior_evidence_id": "ev::reusable"
+      }
+    },
+    "L": {
+      "state": "L_self_verification",
+      "expected": "framework verifies its own runtime",
+      "faults_total": 10,
+      "faults_detected": 10,
+      "detection_rate": 1.0
+    }
+  },
+  "all_states_traversed_real_executor_boundary": false
+}

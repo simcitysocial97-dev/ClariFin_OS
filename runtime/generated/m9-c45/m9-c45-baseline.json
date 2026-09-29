@@ -1,0 +1,167 @@
+{
+  "schema": "m9-c45-baseline/v1",
+  "generated_at": "2026-09-03T00:43:21Z",
+  "milestone": "M9-C45",
+  "phase": "OPERATIONAL_QUALIFICATION",
+  "repository_state": {
+    "sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+    "branch": "m9c9-merge-authorization-resolution",
+    "tree_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+    "dirty_worktree": false,
+    "timestamp": "2026-09-03T00:43:21Z"
+  },
+  "environment": {
+    "python_version": "Python 3.12.3",
+    "python_source": "venv",
+    "python_path": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/python3",
+    "pytest_version": "pytest 9.1.1",
+    "pytest_source": "venv",
+    "mutmut_version": "mutmut, version 3.7.0",
+    "mutmut_source": "venv",
+    "pinned_mutmut": "3.7.0",
+    "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin",
+    "forbidden_venvs": [],
+    "environment_consistent": true,
+    "fingerprint": {
+      "python_version": "Python 3.12.3",
+      "python_source": "venv",
+      "pytest_version": "pytest 9.1.1",
+      "pytest_source": "venv",
+      "mutmut_version": "mutmut, version 3.7.0",
+      "mutmut_source": "venv",
+      "pinned_mutmut": "3.7.0",
+      "forbidden_venvs": [],
+      "venv_bin": "/home/vasantha/AI-Projects/ClariFin_OS/.venv/bin",
+      "ruff_version": "ruff 0.15.20",
+      "black_version": "black, 26.5.1 (compiled: yes)",
+      "mypy_version": "mypy 2.1.0 (compiled: yes)",
+      "coverage_version": "Coverage.py, version 7.15.2 with C extension",
+      "config_hashes": {
+        "pyproject_toml": "3cf415792af92927",
+        "ruff_toml": "missing",
+        "black": "embedded_in_pyproject",
+        "mypy": "7d8c8a0f9b11ca85"
+      },
+      "requirements_lock_hash": "a4b005556ccc95f6",
+      "repository_sha": "358a30f76f1624cd3d917cb639d471d6a86012e8",
+      "fingerprint_version": "1.0"
+    }
+  },
+  "verification_profile": {
+    "current_profile": null,
+    "available_profiles": ["quick", "backend", "frontend", "contracts", "graph", "full", "runtime", "golden", "playwright"],
+    "mutation_commands": ["mutation", "mutation --smoke", "mutation --target <engine>", "mutation --restore"]
+  },
+  "mutation_configuration": {
+    "canonical_entry_point": "runtime/verify.py mutation",
+    "mutation_runner_module": "runtime.foundation.verification.mutation_runner",
+    "mutation_contract_module": "runtime.foundation.verification.mutation_contract",
+    "env_module": "runtime.foundation.verification.env",
+    "pinned_mutmut_version": "3.7.0",
+    "default_runtimes": {
+      "smoke": 600,
+      "target": 1800,
+      "full": 5400
+    },
+    "engine_selection_config": "ENGINE_SELECTION in mutation_contract.py",
+    "selection_method": "canonical engine-aware selection via pyproject.toml",
+    "backend_config_path": "backend/pyproject.toml",
+    "generated_dir": "backend/tests/generated/mutation/",
+    "cache_dir": "backend/.mutmut-cache/",
+    "mutants_dir": "backend/mutants/"
+  },
+  "current_canonical_architecture": {
+    "control_plane": "verify.py mutation",
+    "orchestrator": "runtime.foundation.verification.mutation_runner.execute_mutation",
+    "adapter": "MutmutAdapter (implicit in mutation_runner.py)",
+    "backend": "mutmut 3.7.0",
+    "evidence_path": "backend/tests/generated/mutation/mutation-summary.json",
+    "measurement_truth_path": "backend/tests/generated/mutation/measurement-truth.json",
+    "survivor_intel_path": "backend/tests/generated/mutation/mutation-survivor-intel.json",
+    "cache_provenance_path": "backend/.mutmut-cache/provenance.json"
+  },
+  "direct_mutmut_paths": {
+    "shell_scripts": [
+      {
+        "path": ".github/scripts/run_mutation_selective.sh",
+        "purpose": "thin wrapper delegating to verify.py mutation",
+        "status": "legacy_compatibility"
+      },
+      {
+        "path": ".github/scripts/run_mutation_local_smoke.sh",
+        "purpose": "thin wrapper delegating to verify.py mutation --smoke",
+        "status": "legacy_compatibility"
+      },
+      {
+        "path": "scripts/verify.sh",
+        "purpose": "dispatcher with mutation/mutation-smoke commands",
+        "status": "legacy_compatibility"
+      }
+    ],
+    "ci_workflows": [
+      {
+        "path": ".github/workflows/mutation.yml",
+        "jobs": ["mutation-smoke", "mutation"],
+        "delegation": "both delegate to runtime/verify.py mutation",
+        "status": "canonical"
+      }
+    ]
+  },
+  "verify_py_mutation_path": {
+    "command": "python runtime/verify.py mutation",
+    "module": "runtime.foundation.verification.mutation_runner.run_mutation_cli",
+    "entry_point": "cmd_mutation() in verify.py:1333-1336",
+    "status": "canonical"
+  },
+  "workflow_definitions": {
+    "mutation_smoke": {
+      "command": "python runtime/verify.py mutation --smoke",
+      "purpose": "bounded infrastructure health check",
+      "timeout": "600s",
+      "scope": "backend/tests/mutation_infra/",
+      "status": "canonical"
+    },
+    "mutation_full": {
+      "command": "python runtime/verify.py mutation",
+      "purpose": "authoritative full campaign",
+      "timeout": "5400s (90min CI)",
+      "scope": "src/engines/",
+      "status": "canonical"
+    },
+    "mutation_target": {
+      "command": "python runtime/verify.py mutation --target <engine>",
+      "purpose": "incremental target campaign",
+      "timeout": "1800s",
+      "scope": "engine-specific",
+      "status": "canonical"
+    }
+  },
+  "m44_certification_reconciliation": {
+    "m44_architecture_status": "CERTIFIED",
+    "m44_31_status": "PENDING",
+    "m44_32_status": "PENDING", 
+    "m44_33_status": "DEFERRED",
+    "m44_35_status": "CERTIFIED",
+    "overall_m44_architecture": "CERTIFIED",
+    "m44_operational_qualification": "PENDING",
+    "m45_objective": "OPERATIONAL_QUALIFICATION",
+    "correction_applied": "M44.31 and M44.32 are not optional if required for enterprise operational reliability. M9-C45 must explicitly distinguish architectural certification from operational qualification.",
+    "certification_distinction": {
+      "architectural_certification": "Design and implementation of mutation execution architecture are complete",
+      "operational_qualification": "Architecture has been proven against real repository execution, interruption/recovery, CI execution, and canonical integration"
+    }
+  },
+  "known_issues": {
+    "mutmut_version": "3.7.0 pinned and consistent",
+    "python_312_syntax": "L-ARCH-001 — mutmut silently skips some Python 3.12+ syntax (requires investigation)",
+    "environment_drift": "None detected - canonical .venv is consistent",
+    "cache_staleness": "Cache provenance validation implemented in mutation_runner.py",
+    "source_restoration": "Safety context implemented with signal handlers and atexit cleanup"
+  },
+  "baseline_verdict": {
+    "status": "BASELINE_ESTABLISHED",
+    "architecture": "CERTIFIED",
+    "operational_qualification": "PENDING",
+    "next_step": "M45.1 — Canonical Path Enforcement Audit"
+  }
+}

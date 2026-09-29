@@ -1,0 +1,126 @@
+{
+  "title": "M9-C42.24 — Coverage Reconciliation",
+  "generated_at": "2026-08-25T18:55:00.000000+00:00",
+  "run_id": "m9-c42.24",
+  "repository_coverage_threshold_pct": 40,
+  "c42_21_full_suite_coverage_pct": 65.59,
+  "c42_24_full_suite_coverage_pct": 65.56,
+  "coverage_delta": -0.03,
+  "components": [
+    {
+      "component": "cashflow_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 100.0,
+      "mutation_score": 74.4,
+      "signal": "HIGH COVERAGE + STRONG MUTATION",
+      "note": "Coverage not separately tracked in C42.21 for this component. Current 100% coverage supports 74.4% mutation score."
+    },
+    {
+      "component": "recommendation_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 95.9,
+      "mutation_score": 63.5,
+      "signal": "HIGH COVERAGE + MODERATE MUTATION",
+      "note": "95.9% coverage but 63.5% mutation score. Gap indicates some tested paths lack behavioral assertions (coverage ≠ effectiveness)."
+    },
+    {
+      "component": "common_calculations",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 98.8,
+      "mutation_score": 56.4,
+      "signal": "HIGH COVERAGE + WEAK MUTATION",
+      "note": "98.8% coverage but only 56.4% mutation score. Classic case of coverage without behavioral discrimination. Survivors are equivalent/intentional."
+    },
+    {
+      "component": "credit_card_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 72.5,
+      "mutation_score": 75.6,
+      "signal": "MODERATE COVERAGE + STRONG MUTATION",
+      "note": "72.5% coverage with 75.6% mutation score. Better than expected; tests have strong behavioral discrimination."
+    },
+    {
+      "component": "reconciliation_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 85.1,
+      "mutation_score": 80.7,
+      "signal": "HIGH COVERAGE + STRONG MUTATION",
+      "note": "85.1% coverage with 80.7% mutation score. Strong correlation."
+    },
+    {
+      "component": "loan_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 98.7,
+      "mutation_score": 84.0,
+      "signal": "HIGH COVERAGE + STRONG MUTATION",
+      "note": "98.7% coverage with 84.0% mutation score. Strong engine with 5 nondeterministic survivors."
+    },
+    {
+      "component": "ledger_audit_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 93.5,
+      "mutation_score": 56.8,
+      "signal": "HIGH COVERAGE + WEAK MUTATION",
+      "note": "93.5% coverage but only 56.8% mutation score. Large gap indicates tests exercise code but lack strict assertions. 82 survivors classified C/B."
+    },
+    {
+      "component": "balance_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 49.1,
+      "mutation_score": 94.7,
+      "signal": "LOW COVERAGE + VERY STRONG MUTATION",
+      "note": "49.1% coverage but 94.7% mutation score. Excellent test discrimination despite low coverage; tests target critical paths with strict assertions."
+    },
+    {
+      "component": "account_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 98.9,
+      "mutation_score": 89.1,
+      "signal": "HIGH COVERAGE + STRONG MUTATION",
+      "note": "98.9% coverage with 89.1% mutation score. Strong correlation."
+    },
+    {
+      "component": "core_domain_money",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 100.0,
+      "mutation_score": 82.4,
+      "signal": "HIGH COVERAGE + STRONG MUTATION",
+      "note": "100% coverage with 82.4% mutation score. Strong correlation."
+    },
+    {
+      "component": "financial_events",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 87.7,
+      "mutation_score": 64.5,
+      "signal": "HIGH COVERAGE + MODERATE MUTATION",
+      "note": "87.7% coverage with 64.5% mutation score. 29 no_tests eliminated; remaining 250 survivors include genuine gaps (A)."
+    },
+    {
+      "component": "behaviour_engine",
+      "c42_21_coverage_pct": null,
+      "c42_24_coverage_pct": 73.7,
+      "mutation_score": 28.8,
+      "signal": "MODERATE COVERAGE + WEAK MUTATION",
+      "note": "73.7% coverage but only 28.8% mutation score. 2835 no_tests dominates. The coverage metric is inflated by __init__.py and trivial paths; effective behavioral coverage is much lower."
+    }
+  ],
+  "intelligence_components": [
+    {
+      "component": "transaction_intelligence",
+      "coverage_pct": 29.1,
+      "mutation_status": "NOT MUTATED",
+      "note": "Coverage well below 70% threshold. No direct test suite."
+    },
+    {
+      "component": "financial_intelligence",
+      "coverage_pct": 35.4,
+      "mutation_status": "NOT MUTATED",
+      "note": "Coverage well below 70% threshold. No direct test suite."
+    }
+  ],
+  "key_signals": [
+    "HIGH COVERAGE + WEAK MUTATION: common_calculations (98.8% / 56.4%), ledger_audit (93.5% / 56.8%), recommendation (95.9% / 63.5%) — tests exercise code but lack strict assertions",
+    "LOW COVERAGE + STRONG MUTATION: balance (49.1% / 94.7%) — tests target critical paths with excellent discrimination",
+    "MODERATE COVERAGE + WEAK MUTATION: behaviour (73.7% / 28.8%) — 2835 no_tests masks actual coverage quality"
+  ]
+}

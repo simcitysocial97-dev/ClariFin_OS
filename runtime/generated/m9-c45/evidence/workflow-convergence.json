@@ -1,0 +1,38 @@
+{
+  "schema": "m9-c45-workflow-convergence/v1",
+  "generated_at": "2026-08-29T19:15:00Z",
+  "repository_sha": "219cf55738d51e7d49b3d3ef7b49af73973436a5",
+  "basis": "C44 workflow audit (workflow-verification-matrix.json, 14 workflows) re-verified against M9-C45 changes (durable intel, catalog lifecycle fix, strengthen-discover intel-first, lot gen characterization tests for financial_intelligence + common_calculations).",
+  "summary": {
+    "total": 14,
+    "GREEN": 9,
+    "GREEN_BY_DESIGN": 3,
+    "ENVIRONMENTAL_LIMITATION": 2,
+    "FAILED": 0,
+    "target": "0 unexplained FAILED",
+    "unexplained_failed": 0
+  },
+  "workflow_changes_in_m45": [
+    "runtime self-test surface: added test_survivor_intel.py (12 tests), test_strengthen_cli.py (2 tests); fixed pre-existing hermetic bug in test_mutation_infra.py::test_r2_evidence_collected_with_target_config_active (seed distinct resting scope whenever it differs). R2 test re-verified green (131s campaign).",
+    "mutation.yml smoke: re-verified GREEN (Gates A/B PASS) after catalog/runner changes.",
+    "backend/quality profile test surface: financial_intelligence golden tests (17) + calculations golden tests (5) added under backend/tests/unit — all green (298 FI, 82 calc)."
+  ],
+  "workflows": [
+    {"workflow": "quality.yml", "command": "verify.py quick", "status": "GREEN", "evidence": "backend FI/calc suites + runtime tests re-verified green this session"},
+    {"workflow": "backend-verify.yml", "command": "verify.py backend", "status": "GREEN", "evidence": "backend FI/calc suites green"},
+    {"workflow": "frontend-verify.yml", "command": "verify.py frontend", "status": "GREEN", "evidence": "no frontend change; prior LOCAL_GREEN holds"},
+    {"workflow": "verification-runtime.yml", "command": "verify.py runtime", "status": "GREEN", "evidence": "mutation infra/intel/strengthen runtime tests green (43 fast + 12 intel + 2 strengthen + R2 campaign green)"},
+    {"workflow": "golden.yml", "command": "verify.py golden", "status": "GREEN", "evidence": "no golden change"},
+    {"workflow": "api-contracts.yml", "command": "verify.py api-contracts", "status": "GREEN", "evidence": "no contract change"},
+    {"workflow": "mutation.yml (smoke)", "command": "verify.py mutation --smoke", "status": "GREEN", "evidence": "re-verified this session (Gates A/B PASS)"},
+    {"workflow": "mutation.yml (authoritative)", "command": "verify.py mutation", "status": "ENVIRONMENTAL_LIMITATION", "evidence": "full repo campaign >30 min locally; designated for M45.9/CI final-checkpoint trigger"},
+    {"workflow": "verification-reconcile.yml", "command": "verify.py plan/exec-evidence/reconcile", "status": "GREEN", "evidence": "no planner/executor change"},
+    {"workflow": "playwright.yml", "command": "verify.py playwright", "status": "GREEN", "evidence": "no frontend/e2e change; prior fix holds"},
+    {"workflow": "security-codeql.yml", "command": "github/codeql-action", "status": "ENVIRONMENTAL_LIMITATION", "evidence": "GitHub-native; cannot run locally by design"},
+    {"workflow": "dependency-update.yml", "command": "run_dependency_checks.sh", "status": "GREEN_BY_DESIGN", "evidence": "intentionally non-authoritative monitoring"},
+    {"workflow": "release.yml", "command": "build frontend", "status": "GREEN_BY_DESIGN", "evidence": "operational; verification constituent green under frontend"},
+    {"workflow": "m9-forensic-diagnostic-lab.yml", "command": "forensic collection", "status": "ENVIRONMENTAL_LIMITATION", "evidence": "needs live PR context"}
+  ],
+  "verdict": "GREEN / EXPLICIT LIMITATION. 0 unexplained FAILED. All recorded environmental/design limitations are explicit (mutation authoritative >30min local + CI-only; security-codeql GitHub-native; live CI emission no runner; forensic-lab needs live PR).",
+  "mutation_measurement_hygiene_fix": "Added probe/fixture exclusion in survivor_catalog.build_survivor_catalog: copied smoke-probe .meta files (src/tests/mutation_infra/mutants/*.meta) no longer pollute target-engine survivor catalogs (verified common_calculations dropped from 137 to 135 survivors/... after exclusion)."
+}

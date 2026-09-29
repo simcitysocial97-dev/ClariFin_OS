@@ -1,0 +1,29 @@
+{
+  "schema": "m9-c55/dependency-reproducibility/v1",
+  "generated_at": "2026-09-01T19:56:25+00:00",
+  "backend_python": {
+    "lock_file_present": true,
+    "lock_packages_count": 109,
+    "pip_freeze_packages_count": 109,
+    "lock_vs_freeze_missing_from_lock": [],
+    "lock_vs_freeze_extra_in_lock": [],
+    "lock_vs_freeze_version_diffs": [],
+    "declared_vs_installed_missing": [],
+    "declared_vs_installed_version_mismatch": [],
+    "reproducible": true
+  },
+  "frontend_node": {
+    "package_json_present": true,
+    "package_lock_present": true,
+    "node_engine_declared": ">=24 <25",
+    "node_local": "v24.20.0",
+    "npm_declared": "11.19.0",
+    "npm_local": "11.19.0",
+    "npm_matches_declared": true,
+    "frontend_reproducible_via_ci": true,
+    "frontend_reproducible_locally": true,
+    "environmental_limitations": [
+      "live_github_actions_execution_unavailable"
+    ]
+  }
+}

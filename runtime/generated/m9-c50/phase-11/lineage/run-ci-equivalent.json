@@ -1,0 +1,23 @@
+{
+  "run_id": "ci_equivalent-00000001",
+  "timestamp": "2026-09-28T08:59:19.112714+00:00",
+  "repository_sha": "21a5b6be2ed1463c54bca6f26eb737a3299a13fc",
+  "scenario": "ci_equivalent",
+  "changed_files": [],
+  "plan_identity": "plan::ci-equivalent",
+  "execution_identity": "exec::ci-equivalent",
+  "task_count": 0,
+  "evidence_identities": [],
+  "obligations": [],
+  "reconciliation": {
+    "complete": true,
+    "satisfied": 0,
+    "total_required": 0
+  },
+  "final_decision": "ci_verified",
+  "plan_exit_code": 0,
+  "execution_exit_code": 0,
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

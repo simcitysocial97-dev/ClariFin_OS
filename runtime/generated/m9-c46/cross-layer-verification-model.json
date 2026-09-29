@@ -1,0 +1,109 @@
+{
+  "schema": "m9-c46-cross-layer-verification-model/v1",
+  "milestone": "M46.16",
+  "objective": "Define and implement cross-layer verification covering full-stack financial journey tests (frontend → API → service → DB → response → render)",
+  "generated_at": "2026-09-03T10:57:00Z",
+  "repository_sha": "1ffcd62fa56d67b9d4f1b9d56daf9d27b6e3f0d8",
+  "overview": "Cross-layer verification ensures end-to-end correctness of financial data flows across frontend hooks, API routes, services, repositories, and database layers. This validates that Zod schema validation, DTO transformations, and API contracts are consistent throughout the stack.",
+  "scope": {
+    "layers": [
+      "Frontend hooks (React Query + Zod validation)",
+      "API routes (FastAPI endpoints)",
+      "Services (business logic)",
+      "Repositories (data access)",
+      "Database (SQLite persistence)"
+    ],
+    "critical_journeys": [
+      "Account management: hook → API → account_service → account_repository → DB",
+      "Card display: hook → API → card_service → DB",
+      "Loan management: hook → API → loan_service → loan_repository → DB",
+      "Cashflow aggregation: hook → API → cashflow_service → DB",
+      "Dashboard metrics: hook → API → dashboard_service → cashflow_service → account_repository → DB",
+      "Reconciliation scan: hook → API → reconciliation_service → DB"
+    ]
+  },
+  "existing_coverage": {
+    "backend_integration": [
+      "backend/tests/integration/cross_capability/test_cross_capability.py - 6 tests covering orchestrator stages"
+    ],
+    "backend_e2e": [
+      "backend/tests/integration/e2e/test_upload_pipeline.py - 14 tests for CSV import pipeline",
+      "backend/tests/integration/e2e/test_statement_upload_pipeline.py - statement pipeline tests"
+    ],
+    "frontend_contracts": [
+      "frontend/__tests__/api-contracts/cards.contract.test.ts - API contract validation",
+      "frontend/__tests__/api-contracts/reconciliation.contract.test.ts - reconciliation API",
+      "frontend/__tests__/api-contracts/dashboard.contract.test.ts - dashboard API",
+      "frontend/__tests__/api-contracts/cashflow.contract.test.ts - cashflow API",
+      "frontend/__tests__/api-contracts/overview.contract.test.ts - overview API"
+    ]
+  },
+  "gap_analysis": {
+    "missing": [
+      "Full-stack journey tests that validate complete data flow from frontend hooks to DB",
+      "Schema consistency tests between backend DTOs and frontend Zod schemas",
+      "Round-trip validation tests (frontend → API → backend → API → frontend)",
+      "End-to-end financial calculation tests across all layers"
+    ],
+    "priority": "High - without cross-layer tests, schema drift between layers goes undetected"
+  },
+  "verification_criteria": [
+    {
+      "journey": "Account CRUD journey",
+      "frontend_hook": "useManagedAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount",
+      "api_endpoint": "/api/accounts/manage",
+      "service": "account_service",
+      "repository": "account_repository",
+      "validation": "Zod schema validates response at frontend layer"
+    },
+    {
+      "journey": "Loan management journey",
+      "frontend_hook": "useLoans, useLoanSchedule, usePrepaymentSimulation",
+      "api_endpoint": "/api/loans",
+      "service": "loan_service",
+      "repository": "loan_repository",
+      "validation": "LoanSchema matches frontend and backend"
+    },
+    {
+      "journey": "Dashboard metrics aggregation",
+      "frontend_hook": "useDashboardMetrics",
+      "api_endpoint": "/api/dashboard/summary",
+      "service": "dashboard_service → cashflow_service → account_repository",
+      "validation": "All paise calculations consistent across layers"
+    }
+  ],
+  "test_additions_required": [
+    {
+      "file": "backend/tests/integration/cross_layer/test_journey_account_crud.py",
+      "tests": 5,
+      "coverage": "Full account CRUD journey with schema validation"
+    },
+    {
+      "file": "backend/tests/integration/cross_layer/test_journey_loan_management.py",
+      "tests": 5,
+      "coverage": "Loan lifecycle with schedule and prepayment"
+    },
+    {
+      "file": "backend/tests/integration/cross_layer/test_journey_dashboard_metrics.py",
+      "tests": 5,
+      "coverage": "Dashboard aggregation from multiple sources"
+    },
+    {
+      "file": "frontend/__tests__/cross-layer/journey-cards.test.ts",
+      "tests": 5,
+      "coverage": "Card journey with API validation"
+    },
+    {
+      "file": "frontend/__tests__/cross-layer/journey-cashflow.test.ts",
+      "tests": 5,
+      "coverage": "Cashflow aggregation journey"
+    }
+  ],
+  "success_criteria": [
+    "All 5 critical journeys have end-to-end tests",
+    "Schema validation tested at both frontend (Zod) and backend (Pydantic) layers",
+    "API contract tests validate response shapes match across layers",
+    "Financial calculations verified to be consistent from DB to UI",
+    "Error propagation tested across all layers"
+  ]
+}

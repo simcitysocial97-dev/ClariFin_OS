@@ -1,0 +1,91 @@
+{
+  "milestone": "M9-C70",
+  "phase": "PHASE_0_FREEZE_C69_BASELINE",
+  "recorded_at": "2026-09-25T04:22:50Z",
+  "repository": {
+    "head_commit": "06bf5b12f1dbb70400ff14e76e38ffd019bf354b",
+    "tree_sha": "68432e3dd6c6ba8626a9201bce63ab5dfe3dec0a",
+    "branch": "m9c9-merge-authorization-resolution",
+    "head_equals_c69_certification_sha": true,
+    "c69_baseline_is_ancestor": true
+  },
+  "c69_certification": {
+    "certification_sha": "06bf5b12f1dbb70400ff14e76e38ffd019bf354b",
+    "commit_timestamp": "2026-09-25T03:46:53Z",
+    "evidence_timestamp": "2026-09-25T03:47:55Z",
+    "certification_file": "runtime/generated/m9-c69-integration-convergence/final-certification.json",
+    "markdown_file": "runtime/generated/m9-c69-integration-convergence/final-certification.md",
+    "source_control_state_at_c70_start": "DIRTY_INHERITED",
+    "initial_working_tree_status": [
+      "M runtime/generated/m9-c69-integration-convergence/final-certification.json",
+      "M runtime/generated/m9-c69-integration-convergence/final-certification.md"
+    ],
+    "initial_json_sha256": "32e20a712c486ddfab05b1f391795bc51574ceea70be7a2e3c1f259892a104b3",
+    "initial_markdown_sha256": "6e8bc74f1aa7c79cbcb6eae50f8fdd48d80745fb0c691ef915970aa759ed1bb5",
+    "reconciliation": {
+      "status": "RECONCILED_WITH_EXPLICIT_PROVENANCE",
+      "finding": "The inherited C69 working-tree certification named a non-Git tree identifier and mislabeled local time as UTC.",
+      "correction": "The tree identifier was replaced with git rev-parse 06bf5b12^{tree}; the evidence timestamp was normalized from the final-certification.md filesystem mtime.",
+      "original_values_preserved_in": "runtime/generated/m9-c70-workflow-convergence/baseline.json",
+      "certification_content_replaced": false
+    }
+  },
+  "baseline_evidence": {
+    "source": "C69 certification and commit message; no redundant full baseline suite was run during C70 Phase 0",
+    "backend": {
+      "collected_tests_current_tree": 3868,
+      "c69_unit_tests_passed": 2982,
+      "c69_unit_tests_failed": 0,
+      "c69_affected_integration_tests_passed": 79,
+      "c69_affected_integration_tests_failed": 0,
+      "c69_platform_api_tests_passed": 20,
+      "c69_platform_api_tests_failed": 0
+    },
+    "frontend": {
+      "c69_unit_tests_passed": 1367,
+      "c69_unit_tests_failed": 0,
+      "typescript_errors": 0,
+      "lint_errors": 0,
+      "lint_warnings": 172,
+      "build_success": true
+    },
+    "runtime": {
+      "command": ".venv/bin/python -m runtime.verify doctor",
+      "exit_code": 0,
+      "framework_integrity": "OPERATIONAL",
+      "framework_authority": "HEALTHY",
+      "canonical_command_surface": "coherent (9 operations, 7 inspect queries)",
+      "historical_local_runs": 17,
+      "historical_local_passed": 0,
+      "historical_local_failed": 17,
+      "historical_local_success_rate": 0.0,
+      "classification": "OBSERVATION_REQUIRING_C70_RECONCILIATION"
+    }
+  },
+  "environment_at_start": {
+    "python": "3.12.3",
+    "python_executable_policy": ".venv/bin/python",
+    "node": "v24.20.0",
+    "npm": "11.19.0",
+    "package_manager": "npm@11.19.0",
+    "canonical_frontend_typecheck_script": "npm --prefix frontend run type-check"
+  },
+  "c69_targets": {
+    "CONTRACT_MISMATCHES": 0,
+    "BROKEN_USER_FLOWS": 0,
+    "UNCLASSIFIED_FLOWS": 0,
+    "ACTIVE_TYPESCRIPT_ERRORS": 0,
+    "BUILD_ERRORS": 0,
+    "UNEXPLAINED_TEST_FAILURES": 0,
+    "UNEXPLAINED_COMMAND_DISCREPANCIES": 0,
+    "RUNTIME_AUTHORITY_DRIFT": 0
+  },
+  "inherited_boundaries": [
+    {
+      "classification": "BROWSER_ENVIRONMENT",
+      "item": "PLAYWRIGHT_BROWSER_UNAVAILABLE",
+      "c69_claim": "Playwright 1.63.0 requires browser revision 1243; local revision 1234; CI pins 1.58.2",
+      "c70_action": "RECHECK"
+    }
+  ]
+}

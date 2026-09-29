@@ -1,0 +1,221 @@
+{
+  "schema": "engine-convergence/v1",
+  "generated_at": "2026-08-06T16:30:47.879012Z",
+  "program": "17.0",
+  "total_engines": 13,
+  "summary": {
+    "canonical": 6,
+    "parked": 0,
+    "orphan": 2,
+    "internal": 5
+  },
+  "engines": [
+    {
+      "path": "backend/src/engines/account_engine",
+      "canonical_implementation": "backend/src/engines/account_engine",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "endpoints": 25,
+      "services": 1,
+      "routers": 2,
+      "components": 12,
+      "tests": 2,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/balance_engine.py",
+      "canonical_implementation": "backend/src/engines/balance_engine.py",
+      "legacy_wrapper": null,
+      "migration_path": "assign_capability",
+      "retirement_order": 3,
+      "status": "internal",
+      "capabilities": [],
+      "endpoints": 0,
+      "services": 1,
+      "routers": 1,
+      "components": 0,
+      "tests": 1,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/behaviour_engine",
+      "canonical_implementation": "backend/src/engines/behaviour_engine",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "endpoints": 11,
+      "services": 3,
+      "routers": 3,
+      "components": 10,
+      "tests": 5,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/credit_card_engine",
+      "canonical_implementation": "backend/src/engines/credit_card_engine",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "endpoints": 14,
+      "services": 1,
+      "routers": 1,
+      "components": 10,
+      "tests": 7,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/financial_events",
+      "canonical_implementation": "backend/src/engines/financial_events",
+      "legacy_wrapper": null,
+      "migration_path": "assign_capability",
+      "retirement_order": 3,
+      "status": "internal",
+      "capabilities": [],
+      "endpoints": 0,
+      "services": 1,
+      "routers": 1,
+      "components": 0,
+      "tests": 10,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/financial_intelligence",
+      "canonical_implementation": "backend/src/engines/financial_intelligence",
+      "legacy_wrapper": null,
+      "migration_path": "assign_capability",
+      "retirement_order": 3,
+      "status": "internal",
+      "capabilities": [],
+      "endpoints": 6,
+      "services": 1,
+      "routers": 1,
+      "components": 0,
+      "tests": 1,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/insight_generator.py",
+      "canonical_implementation": null,
+      "legacy_wrapper": "backend/src/engines/insight_generator.py",
+      "migration_path": "migrate_to_behaviour_engine",
+      "retirement_order": 2,
+      "status": "orphan",
+      "capabilities": [],
+      "endpoints": 0,
+      "services": 0,
+      "routers": 0,
+      "components": 0,
+      "tests": 0,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/ledger_audit_engine.py",
+      "canonical_implementation": "backend/src/engines/ledger_audit_engine.py",
+      "legacy_wrapper": null,
+      "migration_path": "assign_capability",
+      "retirement_order": 3,
+      "status": "internal",
+      "capabilities": [],
+      "endpoints": 1,
+      "services": 1,
+      "routers": 1,
+      "components": 0,
+      "tests": 1,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/loan_engine",
+      "canonical_implementation": "backend/src/engines/loan_engine",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "endpoints": 13,
+      "services": 4,
+      "routers": 1,
+      "components": 11,
+      "tests": 10,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/nudge_engine.py",
+      "canonical_implementation": null,
+      "legacy_wrapper": "backend/src/engines/nudge_engine.py",
+      "migration_path": "migrate_to_behaviour_engine",
+      "retirement_order": 2,
+      "status": "orphan",
+      "capabilities": [],
+      "endpoints": 0,
+      "services": 0,
+      "routers": 0,
+      "components": 0,
+      "tests": 1,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/recommendation_engine",
+      "canonical_implementation": "backend/src/engines/recommendation_engine",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "endpoints": 13,
+      "services": 2,
+      "routers": 2,
+      "components": 10,
+      "tests": 2,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/reconciliation_engine.py",
+      "canonical_implementation": "backend/src/engines/reconciliation_engine.py",
+      "legacy_wrapper": null,
+      "migration_path": "none",
+      "retirement_order": 0,
+      "status": "canonical",
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "endpoints": 6,
+      "services": 1,
+      "routers": 1,
+      "components": 11,
+      "tests": 4,
+      "confidence": "HIGH"
+    },
+    {
+      "path": "backend/src/engines/transaction_intelligence",
+      "canonical_implementation": "backend/src/engines/transaction_intelligence",
+      "legacy_wrapper": null,
+      "migration_path": "assign_capability",
+      "retirement_order": 3,
+      "status": "internal",
+      "capabilities": [],
+      "endpoints": 0,
+      "services": 1,
+      "routers": 0,
+      "components": 0,
+      "tests": 6,
+      "confidence": "HIGH"
+    }
+  ]
+}

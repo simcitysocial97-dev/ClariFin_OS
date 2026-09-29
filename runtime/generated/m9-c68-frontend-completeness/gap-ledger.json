@@ -1,0 +1,634 @@
+{
+  "generated_at": "2026-09-21T06:07:05.386646+00:00",
+  "total_unconsumed": 69,
+  "by_classification": {
+    "NEEDS_REVIEW": 16,
+    "INTERNAL": 8,
+    "CONSUMED_BY_CAPABILITY": 1,
+    "PLATFORM_INTERNAL": 38,
+    "LEGACY_ENDPOINT": 6
+  },
+  "gaps": [
+    {
+      "backend_endpoint": "GET /api/v1/institutions",
+      "normalized_path": "/api/v1/institutions",
+      "module": "accounts",
+      "endpoint_func": "list_institutions",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "POST /api/v1/institutions",
+      "normalized_path": "/api/v1/institutions",
+      "module": "accounts",
+      "endpoint_func": "create_institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/institutions/{institution_id}",
+      "normalized_path": "/api/v1/institutions/{institution_id}",
+      "module": "accounts",
+      "endpoint_func": "get_institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "PUT /api/v1/institutions/{institution_id}",
+      "normalized_path": "/api/v1/institutions/{institution_id}",
+      "module": "accounts",
+      "endpoint_func": "update_institution",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/audit/report",
+      "normalized_path": "/api/audit/report",
+      "module": "audit",
+      "endpoint_func": "api_audit_report",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Audit report endpoint not consumed by UI",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/profile",
+      "normalized_path": "/api/v1/behaviour/profile",
+      "module": "behaviour",
+      "endpoint_func": "get_financial_profile",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/debt-health",
+      "normalized_path": "/api/v1/behaviour/debt-health",
+      "module": "behaviour",
+      "endpoint_func": "get_debt_health",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/cashflow-health",
+      "normalized_path": "/api/v1/behaviour/cashflow-health",
+      "module": "behaviour",
+      "endpoint_func": "get_cashflow_health",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/patterns",
+      "normalized_path": "/api/v1/behaviour/patterns",
+      "module": "behaviour",
+      "endpoint_func": "get_patterns",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/recommendations",
+      "normalized_path": "/api/v1/behaviour/recommendations",
+      "module": "behaviour",
+      "endpoint_func": "get_recommendations",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/behaviour/monthly-report",
+      "normalized_path": "/api/v1/behaviour/monthly-report",
+      "module": "behaviour",
+      "endpoint_func": "get_monthly_report",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/cashflow/categories",
+      "normalized_path": "/api/cashflow/categories",
+      "module": "cashflow",
+      "endpoint_func": "get_cashflow_categories",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/cashflow/transactions",
+      "normalized_path": "/api/cashflow/transactions",
+      "module": "cashflow",
+      "endpoint_func": "get_cashflow_transactions",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Unconsumed endpoint",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "POST /api/financial-events/",
+      "normalized_path": "/api/financial-events/",
+      "module": "financial_events",
+      "endpoint_func": "create_event",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Financial events not directly consumed",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/financial-events/",
+      "normalized_path": "/api/financial-events/",
+      "module": "financial_events",
+      "endpoint_func": "list_events",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Financial events not directly consumed",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /api/financial-events/{event_id}",
+      "normalized_path": "/api/financial-events/{event_id}",
+      "module": "financial_events",
+      "endpoint_func": "get_event",
+      "classification": "NEEDS_REVIEW",
+      "reason": "Financial events not directly consumed",
+      "action": "implement_or_deprecate"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/cashflow-forecast",
+      "normalized_path": "/financial-intelligence/cashflow-forecast",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_cashflow_forecast",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/liquidity-forecast",
+      "normalized_path": "/financial-intelligence/liquidity-forecast",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_liquidity_forecast",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/credit-forecast",
+      "normalized_path": "/financial-intelligence/credit-forecast",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_credit_forecast",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/outlook",
+      "normalized_path": "/financial-intelligence/outlook",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_financial_outlook",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/report",
+      "normalized_path": "/financial-intelligence/report",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_financial_intelligence_report",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/priorities",
+      "normalized_path": "/financial-intelligence/priorities",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_financial_intelligence_priorities",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/recommendations",
+      "normalized_path": "/financial-intelligence/recommendations",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_financial_recommendations",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /financial-intelligence/recommendations/{recommendation_id}",
+      "normalized_path": "/financial-intelligence/recommendations/{recommendation_id}",
+      "module": "financial_intelligence",
+      "endpoint_func": "get_recommendation_details",
+      "classification": "INTERNAL",
+      "reason": "Backend-only endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/v1/net-worth",
+      "normalized_path": "/api/v1/net-worth",
+      "module": "networth_workspace",
+      "endpoint_func": "get_networth",
+      "classification": "CONSUMED_BY_CAPABILITY",
+      "reason": "Workspace endpoint consumed by capability hook",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/framework/self-tests",
+      "normalized_path": "/platform/v1/framework/self-tests",
+      "module": "platform",
+      "endpoint_func": "get_framework_self_tests",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence",
+      "normalized_path": "/platform/v1/evidence",
+      "module": "platform",
+      "endpoint_func": "list_evidence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence/{evidence_id}",
+      "normalized_path": "/platform/v1/evidence/{evidence_id}",
+      "module": "platform",
+      "endpoint_func": "get_evidence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/evidence/by-execution/{execution_id}",
+      "normalized_path": "/platform/v1/evidence/by-execution/{execution_id}",
+      "module": "platform",
+      "endpoint_func": "get_evidence_by_execution",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/evidence/compare",
+      "normalized_path": "/platform/v1/evidence/compare",
+      "module": "platform",
+      "endpoint_func": "post_evidence_compare",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/runs",
+      "normalized_path": "/platform/v1/history/runs",
+      "module": "platform",
+      "endpoint_func": "list_history_runs",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/runs/{run_id}",
+      "normalized_path": "/platform/v1/history/runs/{run_id}",
+      "module": "platform",
+      "endpoint_func": "get_history_run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/history/baselines",
+      "normalized_path": "/platform/v1/history/baselines",
+      "module": "platform",
+      "endpoint_func": "list_history_baselines",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/history/compare",
+      "normalized_path": "/platform/v1/history/compare",
+      "module": "platform",
+      "endpoint_func": "post_history_compare",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/cross-layer",
+      "normalized_path": "/platform/v1/cross-layer",
+      "module": "platform",
+      "endpoint_func": "get_cross_layer_graph",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/cross-layer/{capability_id}",
+      "normalized_path": "/platform/v1/cross-layer/{capability_id}",
+      "module": "platform",
+      "endpoint_func": "get_cross_layer_capability",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/backend",
+      "normalized_path": "/platform/v1/app/backend",
+      "module": "platform",
+      "endpoint_func": "get_app_backend",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/frontend",
+      "normalized_path": "/platform/v1/app/frontend",
+      "module": "platform",
+      "endpoint_func": "get_app_frontend",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/domain",
+      "normalized_path": "/platform/v1/app/domain",
+      "module": "platform",
+      "endpoint_func": "get_app_domain",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/financial",
+      "normalized_path": "/platform/v1/app/financial",
+      "module": "platform",
+      "endpoint_func": "get_app_financial",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/app/workflows",
+      "normalized_path": "/platform/v1/app/workflows",
+      "module": "platform",
+      "endpoint_func": "get_app_workflows",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/change/intelligence",
+      "normalized_path": "/platform/v1/change/intelligence",
+      "module": "platform",
+      "endpoint_func": "get_change_intelligence",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/diagnostics",
+      "normalized_path": "/platform/v1/diagnostics",
+      "module": "platform",
+      "endpoint_func": "get_diagnostics",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/mode",
+      "normalized_path": "/platform/v1/ai/mode",
+      "module": "platform",
+      "endpoint_func": "get_ai_mode",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs",
+      "normalized_path": "/platform/v1/ai/runs",
+      "module": "platform",
+      "endpoint_func": "post_ai_run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs",
+      "normalized_path": "/platform/v1/ai/runs",
+      "module": "platform",
+      "endpoint_func": "get_ai_runs",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs/{run_id}",
+      "normalized_path": "/platform/v1/ai/runs/{run_id}",
+      "module": "platform",
+      "endpoint_func": "get_ai_run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/cancel",
+      "normalized_path": "/platform/v1/ai/runs/{run_id}/cancel",
+      "module": "platform",
+      "endpoint_func": "post_ai_run_cancel",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/tools",
+      "normalized_path": "/platform/v1/ai/tools",
+      "module": "platform",
+      "endpoint_func": "get_ai_tools",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/tools/{tool_name}",
+      "normalized_path": "/platform/v1/ai/tools/{tool_name}",
+      "module": "platform",
+      "endpoint_func": "get_ai_tool",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/steps",
+      "normalized_path": "/platform/v1/ai/runs/{run_id}/steps",
+      "module": "platform",
+      "endpoint_func": "post_ai_step",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/providers",
+      "normalized_path": "/platform/v1/ai/providers",
+      "module": "platform",
+      "endpoint_func": "get_ai_providers",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/agents",
+      "normalized_path": "/platform/v1/ai/agents",
+      "module": "platform",
+      "endpoint_func": "get_ai_agents",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/agents/{agent_name}",
+      "normalized_path": "/platform/v1/ai/agents/{agent_name}",
+      "module": "platform",
+      "endpoint_func": "get_ai_agent",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/diagnose",
+      "normalized_path": "/platform/v1/ai/diagnose",
+      "module": "platform",
+      "endpoint_func": "post_ai_diagnose",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/financial/interpret",
+      "normalized_path": "/platform/v1/ai/financial/interpret",
+      "module": "platform",
+      "endpoint_func": "post_ai_financial_interpret",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/workflow/run",
+      "normalized_path": "/platform/v1/ai/workflow/run",
+      "module": "platform",
+      "endpoint_func": "post_ai_workflow_run",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/engineering/execute",
+      "normalized_path": "/platform/v1/ai/engineering/execute",
+      "module": "platform",
+      "endpoint_func": "post_ai_engineering_execute",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/runs/{run_id}/finalize",
+      "normalized_path": "/platform/v1/ai/runs/{run_id}/finalize",
+      "module": "platform",
+      "endpoint_func": "post_ai_run_finalize",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/runs/{run_id}/trace",
+      "normalized_path": "/platform/v1/ai/runs/{run_id}/trace",
+      "module": "platform",
+      "endpoint_func": "get_ai_run_trace",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/context/pack",
+      "normalized_path": "/platform/v1/context/pack",
+      "module": "platform",
+      "endpoint_func": "get_context_pack",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /platform/v1/ai/config",
+      "normalized_path": "/platform/v1/ai/config",
+      "module": "platform",
+      "endpoint_func": "get_ai_config",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /platform/v1/ai/config/provider",
+      "normalized_path": "/platform/v1/ai/config/provider",
+      "module": "platform",
+      "endpoint_func": "post_ai_config_provider",
+      "classification": "PLATFORM_INTERNAL",
+      "reason": "Platform console endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/accounts/manage",
+      "normalized_path": "/api/accounts/manage",
+      "module": "managed_accounts",
+      "endpoint_func": "api_get_managed_accounts",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "POST /api/accounts/manage",
+      "normalized_path": "/api/accounts/manage",
+      "module": "managed_accounts",
+      "endpoint_func": "api_create_managed_account",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "PUT /api/accounts/manage/{account_id}",
+      "normalized_path": "/api/accounts/manage/{account_id}",
+      "module": "managed_accounts",
+      "endpoint_func": "api_update_managed_account",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "DELETE /api/accounts/manage/{account_id}",
+      "normalized_path": "/api/accounts/manage/{account_id}",
+      "module": "managed_accounts",
+      "endpoint_func": "api_delete_managed_account",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/accounts/{account_id}/balance",
+      "normalized_path": "/api/accounts/{account_id}/balance",
+      "module": "managed_accounts",
+      "endpoint_func": "api_get_account_balance",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    },
+    {
+      "backend_endpoint": "GET /api/accounts/{account_id}/running-balance",
+      "normalized_path": "/api/accounts/{account_id}/running-balance",
+      "module": "managed_accounts",
+      "endpoint_func": "api_get_account_running_balance",
+      "classification": "LEGACY_ENDPOINT",
+      "reason": "Deprecated endpoint",
+      "action": "none"
+    }
+  ]
+}
