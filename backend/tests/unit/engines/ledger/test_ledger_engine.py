@@ -8,7 +8,6 @@ All monetary values in paise (integer).
 
 import sqlite3
 
-import pytest
 from src.engines.ledger_audit_engine import validate_ledger_integrity
 
 

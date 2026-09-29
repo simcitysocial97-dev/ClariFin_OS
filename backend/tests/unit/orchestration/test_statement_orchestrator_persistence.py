@@ -14,10 +14,8 @@ import sqlite3
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
-from src.core.db.schema import create_all
 from src.core.db.migrations._registry import apply_pending_migrations
+from src.core.db.schema import create_all
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 
 
@@ -110,7 +108,6 @@ def test_has_errors_true_when_stage_fails(tmp_path: Path) -> None:
 
 def test_migration_004_idempotent(tmp_path: Path) -> None:
     """Applying migration 004 twice: no error, identical schema."""
-    from src.core.db.migrations.m004_import_runs import migrate as m004
 
     db_path = str(tmp_path / "m08_mig.db")
     create_all(db_path)

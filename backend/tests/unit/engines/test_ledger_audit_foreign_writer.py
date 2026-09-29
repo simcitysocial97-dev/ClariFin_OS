@@ -27,7 +27,6 @@ stops reporting is detected.
 from __future__ import annotations
 
 import pytest
-
 from src.engines.ledger_audit_engine import validate_ledger_integrity
 
 # Recreate `transactions` with plain (non-generated) debit/credit columns and a
