@@ -15,6 +15,24 @@ UPLOAD_DIR = Path(__file__).parent.parent.parent / "data" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _resolve_upload_path(filename: str) -> Path:
+    """Return ``filename`` confined to :data:`UPLOAD_DIR`.
+
+    The name is reduced to its final component and the resolved parent is
+    compared against the resolved upload root, so neither ``../`` segments nor
+    an absolute path can escape. This is the single containment rule for every
+    handler in this module.
+    """
+
+    safe_name = Path(filename).name
+    if not safe_name or safe_name in {".", ".."}:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    candidate = UPLOAD_DIR / safe_name
+    if candidate.resolve().parent != UPLOAD_DIR.resolve():
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    return candidate
+
+
 class ImportExecute(BaseModel):
     """Pydantic model for import execute request."""
 
@@ -34,9 +52,7 @@ async def upload_statement(
         raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
     safe_filename = Path(filename).name
-    save_path = UPLOAD_DIR / safe_filename
-    if save_path.resolve().parent != UPLOAD_DIR.resolve():
-        raise HTTPException(status_code=400, detail="Invalid filename")
+    save_path = _resolve_upload_path(safe_filename)
     content = await file.read()
     if len(content) > settings.max_upload_size_bytes:
         raise HTTPException(status_code=413, detail="File exceeds maximum upload size")
@@ -60,9 +76,7 @@ async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail="Unsupported file type")
 
     safe_filename = Path(filename).name or "unknown"
-    save_path = UPLOAD_DIR / safe_filename
-    if save_path.resolve().parent != UPLOAD_DIR.resolve():
-        raise HTTPException(status_code=400, detail="Invalid filename")
+    save_path = _resolve_upload_path(safe_filename)
     content = await file.read()
     if len(content) > settings.max_upload_size_bytes:
         raise HTTPException(status_code=413, detail="File exceeds maximum upload size")
@@ -76,7 +90,11 @@ async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
 @router.post("/import/execute")
 def import_execute(data: ImportExecute) -> dict[str, Any]:
     """Execute CSV/Excel import."""
-    save_path = UPLOAD_DIR / data.filename
+    # `filename` is caller-controlled, so it is confined to UPLOAD_DIR exactly
+    # as the two upload handlers above do. Without this check a request could
+    # name `../../etc/passwd` and have the importer read a file outside the
+    # upload directory (CWE-22).
+    save_path = _resolve_upload_path(data.filename)
 
     if not save_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
