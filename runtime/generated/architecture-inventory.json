@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-29T08:13:51.782912",
-  "total_modules": 1522,
+  "generated_at": "2026-09-29T15:57:28.620273",
+  "total_modules": 1390,
   "type_counts": {
-    "Utility": 1077,
-    "Artifact Producer": 97,
+    "Utility": 942,
+    "Artifact Producer": 99,
     "Service": 52,
     "Engine Module": 48,
     "Workspace": 44,
@@ -21,6 +21,7 @@
     "Application": 2,
     "Artifact Consumer": 2,
     "Verification Profile": 2,
+    "Strategy": 1,
     "ViewModel": 1
   },
   "modules": [
@@ -249,6 +250,7 @@
         "cors_origins",
         "log_level",
         "log_format",
+        "expose_error_details",
         "max_upload_size_mb",
         "max_upload_size_bytes",
         "pdf_upload_extensions",
@@ -258,6 +260,7 @@
         "validate"
       ],
       "decorators": [
+        "property",
         "property",
         "property",
         "property",
@@ -1003,6 +1006,7 @@
         "ImportExecute"
       ],
       "functions": [
+        "_resolve_upload_path",
         "import_execute"
       ],
       "decorators": [
@@ -4216,6 +4220,7 @@
         "extract_card_number",
         "find_value_near",
         "calculate_bill_cycle",
+        "_redact_for_display",
         "fmt",
         "__init__",
         "_log",
@@ -7034,6 +7039,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "load",
         "save",
         "now",
@@ -7463,12 +7469,13 @@
     {
       "path": "runtime/platform/cache.py",
       "language": "python",
-      "node_type": "Utility",
+      "node_type": "Artifact Producer",
       "imports": [
         "__future__.annotations",
         "hashlib",
         "json",
         "logging",
+        "os",
         "threading",
         "time",
         "pathlib.Path",
@@ -7486,6 +7493,7 @@
         "_load_snapshot",
         "_save_snapshot",
         "_effective_ttl",
+        "_record_build_cost",
         "__init__",
         "_lock_for",
         "get",
@@ -8494,6 +8502,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "meta_for",
         "consumers_for",
         "owner_for",
@@ -8517,6 +8526,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "load",
         "first_docstring",
         "build"
@@ -8538,6 +8548,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "classify_importer",
         "camel_to_snake",
         "extract_service_modules",
@@ -8569,6 +8580,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "load_topology",
         "discover_frontend",
         "build",
@@ -8597,6 +8609,8 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
+        "_is_test_file",
         "should_exclude",
         "find_python_files",
         "find_ts_files",
@@ -8621,6 +8635,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "classify",
         "build"
       ],
@@ -8641,6 +8656,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "load_topology",
         "load_inventory",
         "router_endpoints",
@@ -8665,6 +8681,7 @@
       ],
       "classes": [],
       "functions": [
+        "_repo_root",
         "load",
         "build"
       ],
@@ -9053,7 +9070,7 @@
         "runtime.foundation.verification.executor_pipeline.reconcile",
         "runtime.foundation.verification.evidence_reuse.PopulationSnapshot",
         "runtime.foundation.verification.evidence_reuse.c42_26_population",
-        "importlib",
+        "runtime.foundation.verification.graph_inventory",
         "traceback"
       ],
       "classes": [
@@ -9155,7 +9172,7 @@
         "runtime.foundation.verification.executor_pipeline.build_forensic_record",
         "runtime.foundation.verification.executor_pipeline.collect_repo_fingerprints",
         "runtime.foundation.verification.executor_pipeline.reconcile",
-        "importlib.util"
+        "runtime.foundation.verification.graph_inventory"
       ],
       "classes": [],
       "functions": [
@@ -9916,6 +9933,7 @@
         "__future__.annotations",
         "json",
         "logging",
+        "re",
         "uuid",
         "datetime.UTC",
         "datetime.datetime",
@@ -9926,6 +9944,7 @@
         "AIOrchestrator"
       ],
       "functions": [
+        "_run_path",
         "__init__",
         "start_run",
         "get_run",
@@ -10870,17 +10889,19 @@
       "node_type": "Service",
       "imports": [
         "__future__.annotations",
+        "threading",
+        "time",
         "typing.Any",
         "runtime.foundation.verification.framework_integrity.ArtifactFreshnessDetector",
         "runtime.foundation.verification.framework_integrity.FrameworkIntegrityResult",
         "runtime.foundation.verification.framework_integrity.FrameworkSelfTests",
         "runtime.platform.api.contracts.framework_integrity",
         "runtime.platform.api.services._helpers.envelope",
-        "runtime.platform.api.services._helpers.now_iso",
         "runtime.foundation.verification.authority_drift_detector.run_authority_drift_detection"
       ],
       "classes": [],
       "functions": [
+        "_self_test_diagnostic",
         "build_framework_integrity",
         "build_framework_self_tests"
       ],
@@ -12677,6 +12698,36 @@
         "classmethod"
       ],
       "docstring": "VEA-5 M4/M5 \u2014 Plan Reconciliation + CI Reconciliation Gate.\n\nCloses the open risk identified in VEA-5 M0: when a developer's LOCAL plan\nand the CI/PR plan are compared, the *legitimate* differences (tier policy,\nenvironment) must be distinguished from *illegitimate* ones (a planning defect\nthat silently changed which units run). M5 extends this with a CI reconciliation\ngate that consumes **persisted** plan + execution-evidence artifacts, so the gate\nis deterministic and never reconstructs state from the end of a job.\n\nThe M4 invariant is deliberately NOT \"local == PR plan always\". The execution\nmodel (docs/verification/VEA5_EXECUTION_MODEL.md \u00a73-\u00a76, \u00a714) allows \u2014 by design \u2014\nlocal and PR to select different unit sets (e.g. PR selects targeted mutation for\na critical engine change while local keeps it behind the cost gate). What must\nhold is:\n\n    equivalent normalized inputs\n        + equivalent tier policy\n        -> deterministic equivalent plans (fingerprint-stable)\n\nand any divergence between two plans must be *explainable* by exactly one\nclassified cause:\n\n    * SAME_PLAN             \u2014 identical normalized fingerprints\n    * EXPECTED_TIER_DIFFERENCE \u2014 only tier-eligible units differ; both plans are\n                                 individually complete and internally valid\n    * ENVIRONMENT_DIVERGENCE   \u2014 same plan, but execution/evidence diverged\n    * PLANNING_DIVERGENCE      \u2014 an unexplained change in selected/excluded units\n                                 (a real defect to investigate)\n\nReconciliation is structural only: it compares *plans* and *recorded results*.\nIt never re-derives a plan from git and never assumes a cached PASS (that is the\ncache contract, M3). The output is a machine-readable ``ReconciliationReport``\nthat feeds the CI evidence identity spine:\n\n    commit -> change-set fingerprint -> tier -> plan fingerprint\n            -> unit_id -> provenance -> execution -> evidence\n            -> failure -> attribution -> verdict",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/verification/boundary_policy.py",
+      "language": "python",
+      "node_type": "Strategy",
+      "imports": [
+        "__future__.annotations",
+        "os",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "enum.Enum",
+        "typing.Any"
+      ],
+      "classes": [
+        "BoundaryClass",
+        "Strategy",
+        "BoundaryEvidence"
+      ],
+      "functions": [
+        "oversized_threshold",
+        "fallback_disabled",
+        "classify_boundary_size",
+        "select_strategy",
+        "build_evidence",
+        "to_dict",
+        "render"
+      ],
+      "decorators": [],
+      "docstring": "Boundary classification and the deterministic bounded fallback strategy.\n\nA verification boundary is the set of repository-relative files a run considers\nchanged. Small boundaries resolve to a focused plan: only the capabilities the\nchanged files touch are verified. That is the whole point of boundary-scoped\nverification, and it is what makes the common case cheap.\n\nVery large boundaries break that model. The plan grows with the boundary \u2014 a\n244-commit branch produced 246 tasks and roughly 50 minutes of execution \u2014 and\nthe only previous response was a warning printed to stderr followed by\n*continuing into that same plan*. A warning that does not change behaviour is\nnot a control, and a run that reports success after 50 minutes of expanding work\nis not a bounded strategy.\n\nThis module replaces the warning with a decision:\n\n    NORMAL      -> incremental verification of the affected capabilities\n    AT_LIMIT    -> incremental verification, recorded explicitly\n    OVERSIZED   -> deterministic bounded fallback: a fixed, whole-repository\n                   capability sweep with a known task count\n\nThe fallback is deterministic on purpose. It does not sample, does not truncate\nthe file list, and does not lower any threshold. It trades *focus* for\n*coverage*: instead of a large set of narrowly-scoped tasks it runs a smaller\nset of repository-wide capability checks. That is a real change in what is\nverified and it is reported as such, rather than being presented as equivalent.\n\nEvery run emits a :class:`BoundaryEvidence` record stating the boundary size, its\nclassification, the strategy selected, which capabilities were covered, and what\nscope was intentionally given up. A run that cannot describe its own scope is\nnot acceptable evidence.",
       "engine_name": ""
     },
     {
@@ -16786,7 +16837,7 @@
     {
       "path": "runtime/foundation/verification/control_plane_facade.py",
       "language": "python",
-      "node_type": "Utility",
+      "node_type": "Artifact Producer",
       "imports": [
         "__future__.annotations",
         "contextlib",
@@ -16797,6 +16848,11 @@
         "typing.Any",
         "runtime.foundation.intelligence.analyze",
         "runtime.foundation.intelligence.format_diagnostic",
+        "runtime.foundation.verification.boundary_policy.BoundaryEvidence",
+        "runtime.foundation.verification.boundary_policy.Strategy",
+        "runtime.foundation.verification.boundary_policy.build_evidence",
+        "runtime.foundation.verification.boundary_policy.classify_boundary_size",
+        "runtime.foundation.verification.boundary_policy.select_strategy",
         "runtime.foundation.verification.canonical_control_plane.CanonicalOperation",
         "runtime.foundation.verification.canonical_control_plane.canonical_help",
         "runtime.foundation.verification.canonical_control_plane.classification_for",
@@ -16806,6 +16862,8 @@
         "runtime.foundation.verification.control_plane.ControlPlanePlanner",
         "runtime.foundation.verification.evidence_planner.default_planner",
         "runtime.foundation.verification.execution_orchestrator.ExecutionOrchestrator",
+        "runtime.foundation.verification.execution_orchestrator.ExecutionPlan",
+        "runtime.foundation.verification.execution_orchestrator.ExecutionTaskSpec",
         "runtime.foundation.verification.measurement_truth_integration.get_measurement_truth_integrator",
         "runtime.foundation.verification.obligation.Capability",
         "runtime.foundation.verification.obligation.Change",
@@ -16819,7 +16877,6 @@
         "types.SimpleNamespace",
         "runtime.foundation.verification.orchestrator._get_current_commit",
         "runtime.foundation.verification.orchestrator._is_git_available",
-        "os",
         "subprocess",
         "time",
         "runtime.foundation.verification.env.child_process_env",
@@ -16831,7 +16888,6 @@
         "runtime.verify.record_execution_report",
         "time",
         "runtime.verify.record_execution_report",
-        "os",
         "datetime.UTC",
         "datetime.datetime",
         "runtime.foundation.verification.evidence_contract.ExecutionAttempt",
@@ -16841,8 +16897,6 @@
         "runtime.foundation.verification.reconciliation._load_plan_from_manifest",
         "runtime.foundation.verification.reconciliation.plan_fingerprint",
         "runtime.foundation.verification.reconciliation._load_plan_from_manifest",
-        "os",
-        "os",
         "runtime.foundation.verification.reconciliation.ReconciliationStatus",
         "runtime.foundation.verification.reconciliation.reconcile",
         "runtime.foundation.verification.reconciliation.save_reconciliation_report",
@@ -16852,6 +16906,9 @@
         "runtime.foundation.verification.framework_integrity.FrameworkIntegrityResult",
         "runtime.foundation.verification.framework_integrity.FrameworkSelfTests",
         "runtime.system.observability.health_report.EngineeringHealthReport",
+        "runtime.foundation.verification.boundary_policy.FALLBACK_PROFILE_ORDER",
+        "runtime.foundation.verification.profiles.get_profile",
+        "runtime.foundation.verification.profiles.list_profiles",
         "runtime.foundation.verification.coverage_measurement.measure_coverage_cli",
         "runtime.foundation.verification.env.main_env_check",
         "runtime.foundation.verification.mutation_shards.run_aggregate_cli",
@@ -16902,6 +16959,7 @@
         "_run_reconcile_cli",
         "_diagnose_framework",
         "doctor",
+        "_build_bounded_fallback_plan",
         "_plan_to_obligations",
         "_print_plan_obligations",
         "_print_execution_report",
@@ -23670,171 +23728,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/__tests__/use-cashflow.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-cashflow",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-cards.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-cards",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-overview.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-overview",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-accounts.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-accounts",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/simple.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-dashboard-metrics.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-dashboard-metrics",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-reconciliation.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-reconciliation",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-investments.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-investments",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/use-loans.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "react",
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../lib/hooks/use-loans",
-        "@/lib/api/gateway",
-        "./utils/createMockResponse"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/types/api-generated.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -26263,98 +26156,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/lib/__tests__/event-bus.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../event-bus"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/__tests__/notification-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../notification/runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/__tests__/event-bus-wiring.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../event-bus",
-        "../runtime/selection-runtime",
-        "../runtime/timeline-runtime",
-        "../runtime/navigation-runtime",
-        "../event-bus"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/__tests__/context-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../context/runtime",
-        "../runtime/selection-runtime",
-        "../runtime/timeline-runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/__tests__/scenario-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../scenario/runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/__tests__/gateway-invariance.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "fs",
-        "path",
-        "url"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/lib/command-center/layout.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -28086,79 +27887,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/lib/hooks/__tests__/use-platform-status.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/hooks/__tests__/use-platform-runs.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/hooks/__tests__/use-platform-workflows.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../use-platform-workflows"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/simulation/__tests__/runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../runtime",
-        "../simulators/cashflow-simulator",
-        "../simulators/net-worth-simulator",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/simulation/__tests__/comparison.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../comparison",
-        "../insight-builder",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/lib/simulation/simulators/loan-simulator.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -28287,203 +28015,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/lib/timeline/__tests__/timeline-experience.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../../timeline/segments",
-        "../../runtime/timeline-runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/command/__tests__/command-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../command-runtime",
-        "../runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/sort/__tests__/sort-logic.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/keyboard-registry.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../keyboard-registry",
-        "../interaction-types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/dock-manager.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../dock-manager",
-        "../dock-manager"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/test-alias-check.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/interaction/keyboard-engine"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/focus-engine.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../focus-engine",
-        "../focus-engine"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/pin-manager.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../pin-manager",
-        "../pin-manager"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/interaction-integration.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../keyboard-engine",
-        "../keyboard-registry",
-        "../focus-engine",
-        "../undo-manager",
-        "../drag-manager",
-        "../dock-manager",
-        "../pin-manager",
-        "../interaction-types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/drag-manager.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../drag-manager"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/test-utils2.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/utils"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/keyboard-engine.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../keyboard-engine",
-        "../interaction-types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/interaction/__tests__/undo-manager.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../undo-manager",
-        "../undo-manager"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/lib/renderers/adapters/transaction-adapter.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -28494,312 +28025,6 @@
       "classes": [
         "adaptTransaction"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/groups/__tests__/group-logic.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/navigation/__tests__/navigation-performance.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../persistence",
-        "../keyboard"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/navigation/__tests__/navigation.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../category-navigation",
-        "../merchant-navigation",
-        "../date-navigation",
-        "../account-navigation",
-        "../balance-navigation",
-        "../reconciliation-navigation",
-        "../import-navigation",
-        "../adjustment-navigation",
-        "../persistence",
-        "../error-handling",
-        "../keyboard",
-        "@/types/transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/utils/__tests__/format.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../format"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/mappers/__tests__/transaction-mapper.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../transaction-mapper",
-        "../../../types/transaction"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/evidence/__tests__/explainability.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../factories",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/design-system/__tests__/design-system.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/design-system/tokens",
-        "@/lib/design-system/spacing",
-        "@/lib/design-system/colors",
-        "@/lib/design-system/typography",
-        "@/lib/design-system/density",
-        "@/lib/design-system/elevations",
-        "@/lib/design-system/motion",
-        "@/lib/design-system/financial-semantics"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/capabilities/__tests__/use-net-worth-capability.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../use-net-worth-capability",
-        "@/lib/mappers/net-worth-mapper"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/capabilities/__tests__/contract-coverage.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../use-accounts-capability",
-        "../use-cashflow-capability",
-        "../use-credit-cards-capability",
-        "../use-loans-capability",
-        "../use-investments-capability",
-        "../use-reconciliation-capability",
-        "../use-behaviour-capability",
-        "../use-forecast-capability"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/capabilities/__tests__/contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../use-transaction-capability",
-        "../use-transaction-capability"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/capabilities/__tests__/performance.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/capabilities/__tests__/use-transaction-capability.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../use-transaction-capability",
-        "@/lib/api/client",
-        "@/lib/mappers/transaction-mapper"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/search/__tests__/search-logic.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../runtime",
-        "../health-engine",
-        "../spending-engine",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/spending-engine.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../spending-engine",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/investigative-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../investigative-runtime",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/executive-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../executive-runtime",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/health-engine.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../health-engine",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/intelligence/__tests__/passive-runtime.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../passive-runtime"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -29081,124 +28306,6 @@
       "classes": [
         "CardsGraphAdapter",
         "cardsGraphAdapter"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/graph/__tests__/graph-invocation.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../graph-invocation",
-        "@/lib/event-bus",
-        "@/components/os-shell/overlay-layer",
-        "../runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/workspace/__tests__/workspace-lifecycle.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../lru-cache",
-        "../workspace-snapshot",
-        "../workspace-lifecycle",
-        "../workspace-context",
-        "../workspace-snapshot"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/selection/__tests__/selection-logic.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/filters/__tests__/filter-logic.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/navigation-speed.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../../runtime/navigation-runtime",
-        "../../runtime/workspace-runtime",
-        "../../interaction/undo-manager"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/test-utils-ts.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/utils"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tools/__tests__/fvf.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../utils",
-        "../types",
-        "react",
-        "react",
-        "react",
-        "../types/api-generated",
-        "@tanstack/react-query",
-        "../types/api-generated"
-      ],
-      "classes": [
-        "Page",
-        "Page",
-        "Page",
-        "useData"
       ],
       "functions": [],
       "decorators": [],
@@ -29518,374 +28625,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/tests/.archive/app.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test",
-        "fs",
-        "path"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/edge-cases.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/financial-scenarios",
-        "../fixtures/financial-assertions"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/verification-center.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/performance.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/e2e-financial-logic.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/financial-scenarios",
-        "../fixtures/financial-assertions"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/transactions.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/platform-dashboard.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/health-check.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/dashboard.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/css-helpers"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/reconciliation.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/behavior.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/behavior-scoring.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/financial-scenarios",
-        "../fixtures/financial-assertions"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/css-integrity.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/css-helpers"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/navigation.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures",
-        "../fixtures/css-helpers"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/platform-c67.2.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test",
-        "not working"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/specs/visual-regression.spec.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "../fixtures/test-fixtures"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/comprehensive-reports.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "./report-generator"
-      ],
-      "classes": [
-        "ComprehensiveReports"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/financial-scenarios.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [],
-      "classes": [
-        "FinancialTransaction",
-        "Account",
-        "DebtLoopPattern",
-        "FinancialScenario",
-        "SeededRandom",
-        "generateDebtLoopScenario",
-        "calculateExpectedBalances",
-        "calculateNetCashflow",
-        "detectDebtLoops"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/report-generator.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/mode-helpers.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [
-        "DashboardMode",
-        "ModeState",
-        "MODE_STORAGE_KEY",
-        "APP_STORAGE_KEY"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/test-fixtures.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test",
-        "@playwright/test"
-      ],
-      "classes": [
-        "ConsoleMessage",
-        "NetworkError",
-        "PerformanceMetric",
-        "ErrorCollector",
-        "TestFixtures",
-        "test"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/financial-assertions.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test",
-        "./financial-scenarios"
-      ],
-      "classes": [
-        "assertLedgerIntegrity",
-        "assertTransferBalance",
-        "assertNetCashflow",
-        "assertCreditExtractionNotIncome",
-        "assertCreditCardOutstanding",
-        "assertCreditUtilization",
-        "assertNoNegativeUtilization",
-        "assertRiskScoreDelta",
-        "assertRiskScoreDeterminism",
-        "assertBehaviorRiskDelta",
-        "assertDebtLoopDetected",
-        "assertUIBackendMatch",
-        "assertNoInvalidValues",
-        "assertValidPercentage",
-        "assertResponseTime"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/seed-data.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/tests/e2e/fixtures/css-helpers.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@playwright/test"
-      ],
-      "classes": [
-        "LayoutMetrics",
-        "CSSValidationResult",
-        "ResponsiveBreakpoint",
-        "BREAKPOINTS",
-        "SIDEBAR_WIDTHS"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/dist/types/cache-life.d.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -30004,192 +28743,6 @@
         "./routes.js",
         "next/types.js",
         "next/server.js"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/utils/types.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [],
-      "classes": [
-        "MockResponse"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/utils/createMockResponse.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "./types"
-      ],
-      "classes": [
-        "createMockResponse",
-        "createMockErrorResponse",
-        "MOCK_RESPONSE"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/categories.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/analytics.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/overview.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/cards.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/cashflow.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/banks.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/platform-c67.2.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/statements.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/transactions.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/dashboard.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/behavior.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/__tests__/api-contracts/reconciliation.contract.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
       ],
       "classes": [],
       "functions": [],
@@ -30537,20 +29090,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/components/os-shell/__tests__/bottom-intelligence-shelf.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/intelligence/passive-runtime"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/primitives/kbd/index.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -30799,34 +29338,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/types/__tests__/invariants.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/types/__tests__/transaction-view-model.test.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/query-provider.tsx",
       "language": "typescript",
       "node_type": "Utility",
@@ -30972,71 +29483,6 @@
         "useTimeline",
         "useNavigation"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/accessibility.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../../../components/primitives/surface/surface",
-        "../../../components/primitives/card/card",
-        "../../../lib/interaction/focus-engine",
-        "../../../lib/interaction/keyboard-engine",
-        "@testing-library/react"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/responsiveness.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../../../components/primitives/surface/surface",
-        "../../../components/primitives/card/card",
-        "@testing-library/react"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "../../../components/primitives/surface/surface",
-        "../../../components/primitives/card/card",
-        "../../../components/primitives/chart/chart-container",
-        "@testing-library/react"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/validation/__tests__/test-utils.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@/lib/utils"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -35532,20 +33978,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/components/platform/health-badge.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@testing-library/react",
-        "@/components/platform/health-badge"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/platform/footer-bar.tsx",
       "language": "typescript",
       "node_type": "Utility",
@@ -35553,25 +33985,6 @@
       "classes": [
         "PlatformFooterBar"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/os-shell/__tests__/context-panel.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "@tanstack/react-query",
-        "../context-panel",
-        "@/lib/runtime/selection-runtime",
-        "@/lib/intelligence/passive-runtime",
-        "@/lib/runtime/runtime-types"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -35990,67 +34403,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/components/primitives/__tests__/data-display.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "@/components/primitives/data-display"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/primitives/__tests__/surface.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "@/components/primitives/surface/surface",
-        "@/components/primitives/surface/surface"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/primitives/__tests__/card.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "@/components/primitives/card/card"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/primitives/__tests__/chart-container.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "@/components/primitives/chart/chart-container"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/primitives/surface/surface.tsx",
       "language": "typescript",
       "node_type": "Utility",
@@ -36390,40 +34742,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/components/evidence/__tests__/evidence-drawer.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../evidence-drawer",
-        "@/lib/evidence/types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/evidence/__tests__/evidence-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../evidence-drawer",
-        "../evidence-list",
-        "../evidence-item",
-        "@/lib/evidence/types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/command-center/decision-feed/panel.tsx",
       "language": "typescript",
       "node_type": "Utility",
@@ -36540,190 +34858,6 @@
       "engine_name": ""
     },
     {
-      "path": "frontend/components/loading/__tests__/empty-state.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../empty-state"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/loading/__tests__/loading-spinner.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../loading-spinner"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/loading/__tests__/empty-state-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../empty-state"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/loading/__tests__/error-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../error-message"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/loading/__tests__/loading-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../loading-spinner",
-        "../skeleton-row"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/loading/__tests__/error-message.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../error-message"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/toolbar/__tests__/workspace-toolbar.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../workspace-toolbar"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/toolbar/__tests__/workspace-toolbar-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../workspace-toolbar"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/transaction-table/__tests__/transaction-table.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../transaction-table",
-        "@/types/transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/transaction-table/__tests__/pagination-controls.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../pagination-controls"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/transaction-table/__tests__/transaction-table-performance.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../transaction-table",
-        "@/types/transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/transaction-table/__tests__/virtualized-table.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../virtualized-table",
-        "@/types/transaction-view-model"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "frontend/components/graph/renderer/graph-renderer.tsx",
       "language": "typescript",
       "node_type": "Utility",
@@ -36736,59 +34870,6 @@
       "classes": [
         "GraphRenderer"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/graph/__tests__/graph-overlay.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../graph-overlay",
-        "@/lib/graph",
-        "@/lib/graph/graph-invocation",
-        "@/lib/event-bus",
-        "@/lib/graph/graph-invocation",
-        "@/lib/graph/types"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/graph/__tests__/graph-evidence-panel.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../graph-evidence-panel",
-        "@/lib/graph"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/components/graph/__tests__/graph-context-panel.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../graph-context-panel",
-        "@/lib/graph",
-        "@/lib/runtime/selection-runtime"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -36984,21 +35065,6 @@
       "classes": [
         "TransactionWorkspacePage"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/workspace-page.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "./workspace-page"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -37328,73 +35394,6 @@
       "classes": [
         "PlatformDashboardPage"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/__tests__/accessibility.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/__tests__/dark-mode.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/__tests__/responsive.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/__tests__/integration.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/app/transactions/__tests__/user-behavior.test.tsx",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "vitest",
-        "@testing-library/react",
-        "../workspace-page"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",

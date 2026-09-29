@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T08:13:54.761805",
+  "generated_at": "2026-09-29T15:57:37.061458",
   "basis": "architecture (engine-topology + ownership-graph), not filesystem",
   "entity_count": 56,
   "entities": {
@@ -3353,14 +3353,14 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/transaction_intelligence_service.py",
-        "service:backend/src/services/import_service.py",
         "service:backend/src/services/recommendation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/dashboard_service.py",
-        "service:backend/src/services/loan_simulation_service.py",
-        "service:backend/src/services/account_service.py",
         "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/account_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
@@ -3384,9 +3384,9 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/recommendation_service.py",
         "service:backend/src/services/dashboard_service.py",
         "service:backend/src/services/import_service.py",
-        "service:backend/src/services/recommendation_service.py",
         "service:backend/src/services/behaviour_service.py"
       ],
       "dependencies": [
@@ -3410,15 +3410,15 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/transaction_intelligence_service.py",
-        "service:backend/src/services/import_service.py",
         "service:backend/src/services/recommendation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/dashboard_service.py",
-        "service:backend/src/services/loan_simulation_service.py",
-        "service:backend/src/services/loan_service.py",
         "service:backend/src/services/behaviour_service.py",
-        "service:backend/src/services/credit_card_service.py"
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/credit_card_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
         "database:finance.db"
@@ -3464,12 +3464,12 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/financial_events_service.py",
         "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_simulation_service.py",
-        "service:backend/src/services/financial_intelligence_service.py",
-        "service:backend/src/services/financial_events_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
-        "service:backend/src/services/loan_service.py"
+        "service:backend/src/services/loan_service.py",
+        "service:backend/src/services/financial_intelligence_service.py"
       ],
       "dependencies": [
         "database:finance.db"
@@ -3538,9 +3538,9 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_simulation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
@@ -3564,9 +3564,9 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/loan_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_simulation_service.py"
       ],
       "dependencies": [
@@ -3590,13 +3590,13 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/transaction_intelligence_service.py",
-        "service:backend/src/services/import_service.py",
         "service:backend/src/services/recommendation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/dashboard_service.py",
-        "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
@@ -3620,9 +3620,9 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/recommendation_service.py",
         "service:backend/src/services/dashboard_service.py",
         "service:backend/src/services/import_service.py",
-        "service:backend/src/services/recommendation_service.py",
         "service:backend/src/services/behaviour_service.py"
       ],
       "dependencies": [
@@ -3646,10 +3646,10 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/dashboard_service.py",
         "service:backend/src/services/reconciliation_service.py",
-        "service:backend/src/services/behaviour_service.py",
-        "service:backend/src/services/import_service.py"
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/behaviour_service.py"
       ],
       "dependencies": [
         "database:finance.db"
@@ -3672,10 +3672,10 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/statement_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
@@ -3699,9 +3699,9 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
+        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/transaction_intelligence_service.py",
         "service:backend/src/services/loan_simulation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [
@@ -3725,13 +3725,13 @@
         "Encapsulate DB read/write for one aggregate."
       ],
       "consumers": [
-        "service:backend/src/services/transaction_intelligence_service.py",
-        "service:backend/src/services/import_service.py",
         "service:backend/src/services/recommendation_service.py",
-        "service:backend/src/services/loan_analysis_service.py",
         "service:backend/src/services/dashboard_service.py",
-        "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
         "service:backend/src/services/loan_service.py"
       ],
       "dependencies": [

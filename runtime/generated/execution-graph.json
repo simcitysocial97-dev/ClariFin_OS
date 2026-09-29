@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T08:13:54.745786",
+  "generated_at": "2026-09-29T15:57:36.941276",
   "description": "Execution graph: runtime call path. Traverses implementation modules. Distinct from ownership graph.",
   "node_count": 272,
   "edge_count": 236,

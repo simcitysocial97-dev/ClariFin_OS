@@ -118,6 +118,15 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+      - name: Runtime status
+        shell: bash
+        run: |
+          # Rule 9: the workflow summary records outcomes rather than the raw
+          # command surface. This is the cheap inspect query — it is not
+          # verification, and running it here does not duplicate
+          # verification-reconcile.yml.
+          .venv/bin/python -m runtime.verify status >> "$GITHUB_STEP_SUMMARY"
+
       - name: Quality summary
         if: always()
         shell: bash
@@ -126,5 +135,5 @@ jobs:
             echo "## Quality Gate"
             echo ""
             echo "- static checks: runtime verify quick (ruff, black, mypy, unit)"
-            echo "- frontend: tsc --noEmit + vitest"
+            echo "- frontend: eslint, tsc, vitest via run_frontend_verification.sh"
           } >> "$GITHUB_STEP_SUMMARY"

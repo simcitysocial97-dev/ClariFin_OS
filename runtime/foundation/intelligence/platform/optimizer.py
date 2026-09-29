@@ -131,6 +131,69 @@ def _baseline_seconds(profile_name: str = "full") -> int:
     return sum(t.estimated_duration_seconds for t in profile.tasks)
 
 
+#: Command shapes that run a whole directory, mapped to the repository-relative
+#: directory whose test files they therefore already execute.
+_FULL_SUITE_DIRS: tuple[tuple[str, str], ...] = (
+    ("backend/tests/unit", "backend/tests/unit/"),
+    ("backend/tests/integration", "backend/tests/integration/"),
+    ("frontend/src", "frontend/src/"),
+    ("frontend/tests", "frontend/tests/"),
+)
+
+
+def _drop_covered_targets(
+    selected: list[VerificationUnit],
+    skipped: list[SkippedSuite],
+) -> tuple[list[VerificationUnit], list[SkippedSuite]]:
+    """Remove targeted test files that a selected full suite already runs."""
+
+    covered: set[str] = set()
+    for unit in selected:
+        command = unit.command or ""
+        for needle, prefix in _FULL_SUITE_DIRS:
+            if needle in command:
+                covered.add(prefix)
+
+    if not covered:
+        return selected, skipped
+
+    kept: list[VerificationUnit] = []
+    for unit in selected:
+        if unit.id != "unit-targeted" or not unit.targets:
+            kept.append(unit)
+            continue
+        remaining = tuple(t for t in unit.targets if not t.startswith(tuple(covered)))
+        dropped = len(unit.targets) - len(remaining)
+        if remaining:
+            kept.append(
+                VerificationUnit(
+                    id=unit.id,
+                    category=unit.category,
+                    command="python3 -m pytest " + " ".join(remaining) + " -q",
+                    targets=remaining,
+                    reason=unit.reason,
+                    evidence=unit.evidence,
+                    estimated_seconds=max(15, 8 * len(remaining)),
+                    capabilities=unit.capabilities,
+                    impact_kinds=unit.impact_kinds,
+                    source=unit.source,
+                )
+            )
+        skipped.append(
+            SkippedSuite(
+                id=unit.id,
+                category=unit.category,
+                reason=f"{dropped} target(s) already run by a selected full suite",
+                justification=(
+                    "the blast radius was broad enough that the full suite was "
+                    "selected anyway; re-running these files would duplicate work "
+                    "and could make the optimized plan dearer than the baseline"
+                ),
+            )
+        )
+    return kept, skipped
+
+
 def optimize_verification(
     blast: BlastRadius,
     resolver: (
@@ -457,6 +520,19 @@ def optimize_verification(
                 ),
             )
         )
+
+    # --- Drop targeted units already covered by a selected full suite -----
+    # `unit-targeted` exists to *replace* a full unit suite with the subset that
+    # the blast radius implicates. When the blast radius is broad enough that
+    # the full suite is selected anyway, the targeted unit re-runs a subset of
+    # files the full suite already executes — 24 of 27 files for a single engine
+    # module, 192 s of duplicated work that made the "optimized" plan more
+    # expensive than the full profile it was supposed to beat.
+    #
+    # Covered files are removed from the targeted unit's target list; a unit left
+    # with nothing is dropped and recorded in `skipped`, so the plan still
+    # explains itself rather than silently losing a check.
+    selected, skipped = _drop_covered_targets(selected, skipped)
 
     fallback = "full" if blast.unresolved_nodes and not selected else "graph"
 

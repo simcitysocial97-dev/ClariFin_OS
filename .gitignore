@@ -200,6 +200,9 @@ runtime/generated/platform/snapshot.json
 runtime/generated/execution/
 runtime/generated/mutation-cache/
 runtime/generated/mutation-shards/
+# runtime/generated/ai-runs/ is the AI orchestrator's per-run state, one
+# JSON document per run, rewritten by every orchestrated run.
+runtime/generated/ai-runs/
 
 # ── Contract / reference artifacts ──
 # frontend/generated/openapi-current.json is the committed API contract

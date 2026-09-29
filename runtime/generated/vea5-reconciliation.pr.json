@@ -3,10 +3,8 @@
   "policy_version": "vea5-tier-policy-v1",
   "classification": {
     "status": "environment-divergence",
-    "reason": "CI execution recorded failure for selected units (unit-targeted-0)",
-    "diverging_units": [
-      "unit-targeted-0"
-    ],
+    "reason": "same plan but recorded execution/evidence diverged",
+    "diverging_units": [],
     "tier_differs": false,
     "environment_diverges": true,
     "planning_diverges": false
@@ -45,8 +43,8 @@
     "units": [
       {
         "unit_id": "unit-targeted-0",
-        "status": "fail",
-        "exit_code": 1,
+        "status": "pass",
+        "exit_code": 0,
         "evidence_ref": null
       }
     ]
