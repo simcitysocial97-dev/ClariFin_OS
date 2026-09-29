@@ -127,6 +127,31 @@ def _is_git_available() -> bool:
     return _is_git_available()
 
 
+def _summarise_capabilities(plan: ExecutionPlan) -> tuple[str, ...]:
+    """Names of the capabilities a plan covers, with unmapped ones collapsed.
+
+    Unmapped pseudo-capabilities are per-file ("unmapped:UNMAPPED:<path>"), so
+    listing them individually turns the boundary evidence into a wall of paths —
+    a 205-file boundary produced 30-odd of them and a single unreadable line.
+    They are summarised as a count instead; the obligation itself still names
+    every path.
+    """
+
+    real: set[str] = set()
+    unmapped = 0
+    for task in plan.tasks:
+        for cap in task.capabilities or (task.primary_capability,):
+            if not cap:
+                continue
+            if cap.startswith("unmapped:") and "UNMAPPED:" in cap:
+                unmapped += 1
+            else:
+                real.add(cap)
+    if unmapped:
+        real.add(f"unmapped:{unmapped} change(s) awaiting review")
+    return tuple(sorted(real))
+
+
 class ControlPlane:
     """
     The canonical verification control plane.
@@ -206,16 +231,7 @@ class ControlPlane:
                 else build_evidence(
                     boundary_size=len(changed_files),
                     strategy=strategy,
-                    capabilities_covered=tuple(
-                        sorted(
-                            {
-                                cap
-                                for t in execution_plan.tasks
-                                for cap in (t.capabilities or (t.primary_capability,))
-                                if cap
-                            }
-                        )
-                    ),
+                    capabilities_covered=_summarise_capabilities(execution_plan),
                     incremental_task_count=len(execution_plan.tasks),
                 ).render()
             ),
