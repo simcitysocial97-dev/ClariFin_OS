@@ -1013,7 +1013,7 @@ async def get_diagnostics(request: Request) -> JSONResponse:
     """
     nocache = _query_nocache(request)
 
-    def _build() -> dict:
+    def _build() -> dict[str, Any]:
         from runtime.platform.api.services._helpers import envelope, now_iso
         from runtime.platform.api.services.errors import build_errors_current
         from runtime.platform.diagnostics.engine import (
