@@ -365,6 +365,10 @@ class ExecutionPlan:
     # M9-C49: revalidation injections and persistent-evidence state.
     revalidation_sources: list[dict] = field(default_factory=list)
     reusable_measurements: list[dict] = field(default_factory=list)
+    #: Boundary classification and the strategy this plan was built under.
+    #: Present on every plan so a reader never has to infer the scope of a run
+    #: from a warning in a log. See runtime.foundation.verification.boundary_policy.
+    boundary_evidence: object | None = None
 
     def to_dict(self) -> dict:
         return {

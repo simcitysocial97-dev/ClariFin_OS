@@ -50,6 +50,13 @@ from runtime.foundation.intelligence import (
     analyze,
     format_diagnostic,
 )
+from runtime.foundation.verification.boundary_policy import (
+    BoundaryEvidence,
+    Strategy,
+    build_evidence,
+    classify_boundary_size,
+    select_strategy,
+)
 from runtime.foundation.verification.canonical_control_plane import (
     CanonicalOperation,
     canonical_help,
@@ -68,6 +75,8 @@ from runtime.foundation.verification.evidence_planner import (
 )
 from runtime.foundation.verification.execution_orchestrator import (
     ExecutionOrchestrator,
+    ExecutionPlan,
+    ExecutionTaskSpec,
 )
 from runtime.foundation.verification.measurement_truth_integration import (
     get_measurement_truth_integrator,
@@ -132,6 +141,7 @@ class ControlPlane:
         self.orchestrator = ExecutionOrchestrator()
         self.integrator = get_measurement_truth_integrator()
         self._evidence_planner = default_planner()
+        self._last_boundary_size = 0
 
     # ── CANONICAL PUBLIC OPERATIONS ────────────────────────────────────────
 
@@ -160,14 +170,6 @@ class ControlPlane:
             print(f" base={base_ref[:8]}", end="")
         print(f" files={len(changed_files)}")
 
-        max_warn = int(os.environ.get("VERIFY_MAX_CHANGED_FILES_WARN", 500))
-        if len(changed_files) > max_warn:
-            print(
-                f"[check] WARNING: boundary has {len(changed_files)} files "
-                f"(>{max_warn}); plan may be unbounded — set VERIFICATION_BASE_REF to narrow",
-                file=sys.stderr,
-            )
-
         if not changed_files and not _is_git_available():
             print("No changed files detected and git unavailable.", file=sys.stderr)
             return 1
@@ -184,6 +186,35 @@ class ControlPlane:
         # 4. Build executable execution plan using the canonical ExecutionOrchestrator
         execution_plan = self.orchestrator.build_execution_plan(changed_files)
 
+        # 4b. Classify the boundary and select a strategy. An oversized boundary
+        # does not get a warning followed by the same expanding plan; it gets a
+        # deterministic bounded fallback. The decision is always recorded.
+        boundary_class = classify_boundary_size(len(changed_files))
+        strategy = select_strategy(boundary_class)
+        self._last_boundary_size = len(changed_files)
+        if strategy is Strategy.BOUNDED_FALLBACK:
+            execution_plan.boundary_evidence = build_evidence(
+                boundary_size=len(changed_files),
+                strategy=strategy,
+                incremental_task_count=len(execution_plan.tasks),
+            )
+            execution_plan = self._build_bounded_fallback_plan()
+        print(
+            (
+                execution_plan.boundary_evidence.render()
+                if execution_plan.boundary_evidence is not None
+                else build_evidence(
+                    boundary_size=len(changed_files),
+                    strategy=strategy,
+                    capabilities_covered=tuple(
+                        sorted({t.capability_id for t in execution_plan.tasks})
+                    ),
+                    incremental_task_count=len(execution_plan.tasks),
+                ).render()
+            ),
+            file=sys.stderr,
+        )
+
         # 5. Execute, with an on_record hook so partial-progress is observable
         #    even if the run is interrupted.
         if not execution_plan.tasks and not getattr(
@@ -198,13 +229,6 @@ class ControlPlane:
         def _capture_record(rec):
             executed_task_ids.append(rec.task_id)
 
-        max_warn = int(os.environ.get("VERIFY_MAX_CHANGED_FILES_WARN", 500))
-        if len(changed_files) > max_warn:
-            print(
-                f"[check] WARNING: boundary has {len(changed_files)} files "
-                f"(>{max_warn}); plan may be unbounded — set VERIFICATION_BASE_REF to narrow",
-                file=sys.stderr,
-            )
         try:
             report = self.orchestrator.execute(
                 execution_plan,
@@ -602,7 +626,6 @@ class ControlPlane:
         ``vea5-execution-evidence/v2`` artifact with one unit record per selected
         unit in the plan, stamped with the caller-supplied status/exit/duration.
         """
-        import os
         from datetime import UTC, datetime
 
         from runtime.foundation.verification.evidence_contract import (
@@ -695,7 +718,6 @@ class ControlPlane:
 
     def _run_reconcile_cli_from_args(self, args: list[str]) -> int:
         """Reconciliation gate with explicit CLI-arg resolution (M5-D / M5-E)."""
-        import os
 
         plan_path = _find_arg("--plan", args, default=None)
         evidence_path = _find_arg("--evidence", args, default=None)
@@ -751,7 +773,6 @@ class ControlPlane:
           * LOCAL-vs-CI (``--local`` present): compares a local plan against a CI
             plan for structural equivalence (M4 / M5-B).
         """
-        import os
 
         from runtime.foundation.verification.reconciliation import (
             ReconciliationStatus,
@@ -908,6 +929,98 @@ class ControlPlane:
         return 0 if "FAIL" not in output and integrity.healthy else 1
 
     # ── INTERNAL HELPERS ────────────────────────────────────────────────────
+
+    def _build_bounded_fallback_plan(self) -> ExecutionPlan:
+        """Build the deterministic bounded fallback for an oversized boundary.
+
+        The incremental plan expands roughly linearly with the boundary, so a
+        repository-wide change produced hundreds of tasks and ~50 minutes of
+        execution. The fallback replaces that with a fixed, whole-repository
+        capability sweep: a known, small set of tasks whose count does not
+        depend on the boundary size.
+
+        Coverage is deliberately traded, not faked. The fallback does not
+        sample files, truncate the boundary, or relax any threshold. It verifies
+        a smaller number of *capabilities* completely instead of a large number
+        of narrow file-scoped checks, and the resulting plan records what was
+        given up so the run cannot be mistaken for equivalent verification.
+        """
+
+        from runtime.foundation.verification.boundary_policy import (
+            FALLBACK_PROFILE_ORDER,
+        )
+        from runtime.foundation.verification.profiles import (
+            get_profile,
+            list_profiles,
+        )
+
+        available = {p.name for p in list_profiles()}
+        selected = [name for name in FALLBACK_PROFILE_ORDER if name in available]
+        if not selected:
+            # No configured profile is usable. Refusing here is correct: an
+            # empty plan would report success without verifying anything.
+            raise RuntimeError(
+                "bounded fallback requested but none of "
+                f"{list(FALLBACK_PROFILE_ORDER)} is a configured profile "
+                f"(available: {sorted(available)})"
+            )
+
+        tasks: list[ExecutionTaskSpec] = []
+        covered: list[str] = []
+        for name in selected:
+            profile = get_profile(name)
+            for spec in profile.tasks:
+                task_id = f"bounded-fallback:{name}:{spec.id}"
+                tasks.append(
+                    ExecutionTaskSpec(
+                        task_id=task_id,
+                        source_task_id=spec.id,
+                        primary_capability=name,
+                        capabilities=(name,),
+                        verification_kind=str(
+                            getattr(spec, "category", None) or "capability"
+                        ),
+                        command=" ; ".join(spec.commands),
+                        profile=name,
+                        scope=str(getattr(spec, "scope", None) or name),
+                        is_mandatory=True,
+                        is_escalation=False,
+                        reason=(
+                            "Oversized verification boundary: repository-wide "
+                            "capability sweep in place of boundary-scoped "
+                            "expansion."
+                        ),
+                        origin="boundary-bounded-fallback",
+                        estimated_duration_seconds=getattr(
+                            spec, "estimated_duration_seconds", None
+                        ),
+                    )
+                )
+            covered.append(name)
+
+        evidence: BoundaryEvidence = build_evidence(
+            boundary_size=self._last_boundary_size,
+            strategy=Strategy.BOUNDED_FALLBACK,
+            capabilities_covered=tuple(covered),
+            intentionally_bounded_scope=(
+                "Per-file boundary-scoped expansion was replaced by a fixed "
+                f"repository sweep over {', '.join(covered)}. Capabilities "
+                "outside this set are not verified for this run, and the "
+                "boundary's individual file-to-capability attribution is not "
+                "used. The boundary itself is neither sampled nor truncated."
+            ),
+            fallback_task_count=len(tasks),
+        )
+
+        # Reuse the orchestrator's plan construction so the fingerprint, id and
+        # schema stay identical to an incremental plan; only the task list and
+        # the recorded evidence differ.
+        plan = self.orchestrator.build_execution_plan(())
+        plan.tasks = tasks
+        plan.affected_capabilities = list(covered)
+        plan.rationale = evidence.intentionally_bounded_scope
+        plan.boundary_evidence = evidence
+        return plan
 
     def _plan_to_obligations(
         self, plan: ControlPlanePlan, changed_files: list[str]
@@ -1149,7 +1262,6 @@ def _profile_task_timeout_seconds() -> int:
     Overridable via ``VERIFY_TASK_TIMEOUT_SECONDS`` (seconds) for bounded
     regression testing; otherwise ``max(600, 2 * task.estimated_duration)``.
     """
-    import os
 
     override = os.environ.get("VERIFY_TASK_TIMEOUT_SECONDS")
     if override:
