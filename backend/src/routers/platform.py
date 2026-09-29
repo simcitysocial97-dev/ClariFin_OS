@@ -122,10 +122,15 @@ def _to_platform_error(exc: Exception, layer: str) -> tuple[int, dict[str, Any]]
     """
 
     logger.exception("Platform API %s internal error: %s", layer, exc)
+    # The exception repr is logged, not returned. repr(exc) routinely carries
+    # filesystem paths, SQL fragments, connection strings and occasionally
+    # request data, so echoing it in the response body leaked internals to the
+    # caller (CWE-209). The layer is enough for a client to correlate with the
+    # server log, which has the full exception and traceback.
     err = PlatformError(
         code=PlatformErrorCode.INTERNAL,
         layer=layer,
-        message=f"Platform API {layer} internal error: {exc!r}",
+        message=f"Platform API {layer} internal error",
     )
     return 500, error_envelope(error=err)
 
