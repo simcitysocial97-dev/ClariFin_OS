@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import time
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -218,9 +219,42 @@ class TestGate4ProgrammaticAnswers:
         assert data["plan_fingerprint"]
 
     def test_what_happened_recently(self, client):
-        r = client.get("/platform/v1/events?limit=5&nocache=1")
-        body = r.json()
-        items = body["data"]["items"]
+        # The event store is append-only telemetry that accumulates from real
+        # verification runs. A clean CI checkout has none, so asserting on
+        # ambient history made this test pass locally and fail in CI. The test
+        # seeds a deterministic event instead, so it exercises the append->list
+        # path on any checkout, and the store is restored afterwards.
+        from runtime.system.observability.event_store import (
+            EVENT_STORE_PATH,
+            EngineeringEvent,
+            EngineeringEventStore,
+        )
+
+        store = EngineeringEventStore()
+        backup = (
+            EVENT_STORE_PATH.read_text(encoding="utf-8")
+            if EVENT_STORE_PATH.exists()
+            else None
+        )
+        store.append(
+            EngineeringEvent(
+                event_id="phase4-test-deterministic-event",
+                event_type="test.seeded_event",
+                timestamp=datetime(2026, 1, 1, tzinfo=UTC),
+                execution_context={"source": "test_platform_api_phase4"},
+                payload={"note": "seeded by the test so the list is non-empty"},
+            )
+        )
+        try:
+            r = client.get("/platform/v1/events?limit=5&nocache=1")
+            body = r.json()
+            items = body["data"]["items"]
+        finally:
+            if backup is None:
+                EVENT_STORE_PATH.unlink(missing_ok=True)
+            else:
+                EVENT_STORE_PATH.write_text(backup, encoding="utf-8")
+
         assert len(items) > 0
         # Each item has event_type and emitted_at.
         for item in items:
