@@ -270,9 +270,18 @@ class TestFrontendCapabilityResolution:
     def test_find_frontend_capability_by_absolute_path(self):
         """Can resolve frontend capability using absolute path."""
         planner = CrossLayerImpactPlanner()
-        result = planner._find_frontend_capability(
-            "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
+        # Derive the real path from the repository rather than hardcoding a
+        # developer-local absolute path that exists on no other machine,
+        # including CI. The assertion under test is the absolute-path branch,
+        # which any real absolute path exercises.
+        target = (
+            Path(__file__).resolve().parents[2]
+            / "frontend"
+            / "lib"
+            / "hooks"
+            / "use-accounts.ts"
         )
+        result = planner._find_frontend_capability(str(target))
 
         assert result is not None
         assert result["capability_id"] == "frontend:hook:frontend-accounts:accounts"
@@ -339,9 +348,9 @@ class TestContractDriftClassification:
         drifts = planner._cross_layer_graph.get("contract_drifts", [])
 
         valid_types = {
-            "missing_endpoint", 
-            "path_mismatch", 
-            "method_mismatch", 
+            "missing_endpoint",
+            "path_mismatch",
+            "method_mismatch",
             "schema_drift",
             "normalization_mismatch",
             "query_parameter",
