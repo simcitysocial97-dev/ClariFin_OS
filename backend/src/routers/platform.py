@@ -163,12 +163,7 @@ def _query_nocache(request: Request) -> bool:
 @router.get("/health")
 async def get_health(request: Request) -> JSONResponse:
     nocache = _query_nocache(request)
-    cached = snapshot.get("health", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
-    env = health.build_health_snapshot()
-    snapshot.put("health", env)
-    return _ok(env)
+    return _ok(snapshot.get_or_build("health", health.build_health_snapshot, nocache=nocache))
 
 
 # ---------------------------------------------------------------------------
@@ -210,11 +205,9 @@ async def get_framework_self_tests() -> JSONResponse:
 @router.get("/capabilities")
 async def list_capabilities(request: Request) -> JSONResponse:
     nocache = _query_nocache(request)
-    cached = snapshot.get("capabilities", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
-    env = capabilities.build_capability_list()
-    snapshot.put("capabilities", env)
+    env = snapshot.get_or_build(
+        "capabilities", capabilities.build_capability_list, nocache=nocache
+    )
     return _ok(env)
 
 
@@ -886,10 +879,11 @@ async def get_events(
     request: Request, limit: int = Query(default=100, ge=1, le=1000)
 ) -> JSONResponse:
     nocache = _query_nocache(request)
-    cached = snapshot.get("events", nocache=nocache)
-    if cached is None:
-        cached = events.build_events_list(limit=EVENTS_CACHE_LIMIT)
-        snapshot.put("events", cached)
+    cached = snapshot.get_or_build(
+        "events",
+        lambda: events.build_events_list(limit=EVENTS_CACHE_LIMIT),
+        nocache=nocache,
+    )
     data = dict(cached["data"])
     data["items"] = data["items"][:limit]
     data["count"] = len(data["items"])
@@ -987,11 +981,9 @@ async def get_workflows() -> JSONResponse:
 @router.get("/change/intelligence")
 async def get_change_intelligence(request: Request) -> JSONResponse:
     nocache = _query_nocache(request)
-    cached = snapshot.get("change", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
-    env = change.build_change_intelligence()
-    snapshot.put("change", env)
+    env = snapshot.get_or_build(
+        "change", change.build_change_intelligence, nocache=nocache
+    )
     return _ok(env)
 
 
@@ -1018,60 +1010,60 @@ async def get_diagnostics(request: Request) -> JSONResponse:
     intelligence which is relatively expensive).
     """
     nocache = _query_nocache(request)
-    cached = snapshot.get("diagnostics", nocache=nocache)
-    if cached is not None:
-        return _ok(cached)
 
-    from runtime.platform.api.services._helpers import envelope, now_iso
-    from runtime.platform.api.services.errors import build_errors_current
-    from runtime.platform.diagnostics.engine import (
-        diagnose,
+    def _build() -> dict:
+        from runtime.platform.api.services._helpers import envelope, now_iso
+        from runtime.platform.api.services.errors import build_errors_current
+        from runtime.platform.diagnostics.engine import (
+            diagnose,
+        )
+
+        errors_env = build_errors_current()
+        error_count = errors_env["data"]["count"]
+        items = errors_env["data"].get("items", [])
+
+        # Build a generic diagnostic summary from current errors.
+        facts: list[str] = []
+        evidence_ids: list[str] = []
+        affected_capabilities: list[str] = []
+        for item in items[:10]:
+            code = item.get("code", "")
+            layer = item.get("layer", "")
+            msg = item.get("message", "")
+            facts.append(f"{code} ({layer}): {msg[:100]}")
+            cap = item.get("affected_workflow") or item.get("id", "")
+            if cap:
+                affected_capabilities.append(str(cap)[:256])
+
+        level = "L0"
+        if error_count > 5:
+            level = "L3"
+        elif error_count > 0:
+            level = "L1"
+
+        diag_result = diagnose(symptom="platform_diagnostics_summary") or {}
+        recommendation = (diag_result.get("data") or {}).get("recommendation", [])
+
+        data = {
+            "summary": {
+                "active_errors": error_count,
+                "level": level,
+                "facts": facts[:5],
+                "affected_capabilities": list(set(affected_capabilities))[:10],
+                "recommendations": [
+                    {"action": r["action"], "target": r["target"]}
+                    for r in recommendation[:5]
+                ],
+            },
+            "classification": "UNHEALTHY" if error_count > 0 else "HEALTHY",
+            "evidence_count": len(evidence_ids),
+            "generated_at": now_iso(),
+        }
+        return envelope(kind="platform.diagnostic_summary", data=data)
+
+    return JSONResponse(
+        content=snapshot.get_or_build("diagnostics", _build, nocache=nocache)
     )
-
-    errors_env = build_errors_current()
-    error_count = errors_env["data"]["count"]
-    items = errors_env["data"].get("items", [])
-
-    # Build a generic diagnostic summary from current errors.
-    facts: list[str] = []
-    evidence_ids: list[str] = []
-    affected_capabilities: list[str] = []
-    for item in items[:10]:
-        code = item.get("code", "")
-        layer = item.get("layer", "")
-        msg = item.get("message", "")
-        facts.append(f"{code} ({layer}): {msg[:100]}")
-        cap = item.get("affected_workflow") or item.get("id", "")
-        if cap:
-            affected_capabilities.append(str(cap)[:256])
-
-    level = "L0"
-    if error_count > 5:
-        level = "L3"
-    elif error_count > 0:
-        level = "L1"
-
-    diag_result = diagnose(symptom="platform_diagnostics_summary") or {}
-    recommendation = (diag_result.get("data") or {}).get("recommendation", [])
-
-    data = {
-        "summary": {
-            "active_errors": error_count,
-            "level": level,
-            "facts": facts[:5],
-            "affected_capabilities": list(set(affected_capabilities))[:10],
-            "recommendations": [
-                {"action": r["action"], "target": r["target"]}
-                for r in recommendation[:5]
-            ],
-        },
-        "classification": "UNHEALTHY" if error_count > 0 else "HEALTHY",
-        "evidence_count": len(evidence_ids),
-        "generated_at": now_iso(),
-    }
-    env = envelope(kind="platform.diagnostic_summary", data=data)
-    snapshot.put("diagnostics", env)
-    return JSONResponse(content=env)
 
 
 @router.post("/diagnose")

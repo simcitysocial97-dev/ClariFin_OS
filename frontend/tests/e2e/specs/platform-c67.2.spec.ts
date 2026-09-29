@@ -98,14 +98,14 @@ async function gotoConsole(
 }
 
 const PAGES = [
-  { path: '/platform', label: 'Dashboard' },
-  { path: '/platform/health', label: 'Health' },
-  { path: '/platform/verification', label: 'Verification' },
-  { path: '/platform/diagnostics', label: 'Diagnostics' },
-  { path: '/platform/workflows', label: 'Workflows' },
-  { path: '/platform/capabilities', label: 'Capabilities' },
-  { path: '/platform/runs', label: 'Runs' },
-  { path: '/platform/evidence', label: 'Evidence' },
+  { path: '', label: 'Dashboard' },
+  { path: '/health', label: 'Health' },
+  { path: '/verification', label: 'Verification' },
+  { path: '/diagnostics', label: 'Diagnostics' },
+  { path: '/workflows', label: 'Workflows' },
+  { path: '/capabilities', label: 'Capabilities' },
+  { path: '/runs', label: 'Runs' },
+  { path: '/evidence', label: 'Evidence' },
 ];
 
 test.describe('Platform Console C67.2 — Page Routing', () => {

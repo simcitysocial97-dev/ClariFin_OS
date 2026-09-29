@@ -58,6 +58,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -138,6 +139,18 @@ class _SnapshotCache:
     def __init__(self) -> None:
         self._snap = _load_snapshot()
         self._last_refresh_ts = time.monotonic()
+        self._domain_locks: dict[str, threading.Lock] = {}
+        self._locks_guard = threading.Lock()
+
+    def _lock_for(self, domain: str) -> threading.Lock:
+        """Return the per-domain refresh lock, creating it on first use."""
+
+        with self._locks_guard:
+            lock = self._domain_locks.get(domain)
+            if lock is None:
+                lock = threading.Lock()
+                self._domain_locks[domain] = lock
+            return lock
 
     # ---- read ----
 
@@ -165,7 +178,10 @@ class _SnapshotCache:
         if ttl is None:
             # No TTL — only invalidate on explicit refresh.
             return False
-        age = time.monotonic() - entry.get("_c", 0.0)
+        created = entry.get("_c")
+        if not isinstance(created, (int, float)) or created <= 0:
+            return True
+        age = time.time() - created
         if age > ttl:
             return True
         # Also invalidate when the snapshot file's hash of the payload
@@ -182,7 +198,7 @@ class _SnapshotCache:
         entry = {
             "payload": payload,
             "hash": _hash_bytes(_canonical_json_bytes(payload)),
-            "_c": time.monotonic(),
+            "_c": time.time(),
             "_ts": _now_iso(),
         }
         self._snap.setdefault("domains", {})[domain] = entry
@@ -210,6 +226,33 @@ class _SnapshotCache:
         payload = builder()
         self.put(domain, payload)
         return payload
+
+    def get_or_build(self, domain: str, builder, *, nocache: bool = False) -> Any:
+        """Return a cached payload, computing it at most once per refresh.
+
+        A console page resolves several domains in parallel, so a cold or
+        expired TTL produced a thundering herd: every in-flight request ran
+        the same expensive builder, and ``health`` alone costs ~12 s of
+        repository scanning. Concurrent callers now block on one computation
+        and all receive its result, which is what the cache's documented
+        performance contract requires.
+        """
+
+        cached = self.get(domain, nocache=nocache)
+        if cached is not None:
+            return cached
+
+        with self._lock_for(domain):
+            # Another thread may have refreshed while this one waited. An
+            # explicit ``nocache`` request must still recompute, so the
+            # in-lock re-check is skipped for that caller.
+            if not nocache:
+                cached = self.get(domain)
+                if cached is not None:
+                    return cached
+            payload = builder()
+            self.put(domain, payload)
+            return payload
 
     def count(self) -> int:
         return len(self._snap.get("domains", {}))
