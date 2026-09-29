@@ -601,13 +601,29 @@ class ValidationGraph:
 
 
 def load_risk_rules() -> dict[str, Any]:
-    """Load risk rules from YAML file."""
+    """Load risk rules from the manually maintained YAML file.
+
+    The rules are hand-authored configuration, not a generated artifact:
+    `validation_audit.py` records this file's provenance as "Manual". It used to
+    live under `backend/tests/generated/`, where the M9-C64-R2 cleanup
+    (aab992ce) swept it up along with genuinely generated output — after which
+    nothing produced it, nothing tracked it, and the file simply did not exist,
+    so `load_risk_rules()` returned an empty rule set and every rule-dependent
+    validator silently classified everything as unmatched.
+
+    It now lives beside the module that reads it, in a tracked, non-generated
+    path. The legacy generated path is still consulted so any external producer
+    keeps working.
+    """
     import yaml
 
-    rules_path = GENERATED_DIR / "risk-rules.yaml"
-    if rules_path.exists():
-        with open(rules_path) as f:
-            return yaml.safe_load(f) or {"rules": []}
+    for rules_path in (
+        Path(__file__).resolve().parent / "risk-rules.yaml",
+        GENERATED_DIR / "risk-rules.yaml",
+    ):
+        if rules_path.exists():
+            with open(rules_path) as f:
+                return yaml.safe_load(f) or {"rules": []}
     return {"rules": []}
 
 
