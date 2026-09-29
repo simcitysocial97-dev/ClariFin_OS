@@ -1,13 +1,13 @@
 {
-  "run_id": "mutation_sensitive-64b17ce5",
-  "timestamp": "2026-09-28T08:59:19.112714+00:00",
-  "repository_sha": "21a5b6be2ed1463c54bca6f26eb737a3299a13fc",
+  "run_id": "mutation_sensitive-3a91c022",
+  "timestamp": "2026-09-29T09:12:35.701566+00:00",
+  "repository_sha": "f600b7a246e935bbf0f19d0f16d796088dbad3e9",
   "scenario": "mutation_sensitive",
   "changed_files": [
     "backend/src/engines/credit_card_engine/core.py"
   ],
-  "plan_identity": "plan::mutation_sensitive-137c06ab",
-  "execution_identity": "exec::mutation_sensitive-e21be4f4",
+  "plan_identity": "plan::mutation_sensitive-3cebe97d",
+  "execution_identity": "exec::mutation_sensitive-0e856bdc",
   "task_ids": [
     "exec-0001",
     "exec-0002",

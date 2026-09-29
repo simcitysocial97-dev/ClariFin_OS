@@ -188,6 +188,19 @@ runtime/generated/**/symbol-test-map.json
 # build cost are managed in runtime/platform/cache.py.
 runtime/generated/platform/snapshot.json
 
+# ── Regenerable bulk: per-run execution scratch ──
+# runtime/generated/execution/ is the executor's per-run results directory
+# (runtime/foundation/verification/executor.py:50) — per-task stdout/stderr and
+# per-task snapshots, rewritten by every verification run. CI preserves it by
+# *uploading* it as a workflow artifact, which is what a run's evidence is for;
+# versioning it in Git would commit one run's scratch into the next. The files
+# are named after task ids, which contain '::', and upload-artifact rejects
+# ':' in a path — so tracking them also broke Backend and Frontend Verification
+# on any run that produced a namespaced task id such as ci::parity::money.
+runtime/generated/execution/
+runtime/generated/mutation-cache/
+runtime/generated/mutation-shards/
+
 # ── Contract / reference artifacts ──
 # frontend/generated/openapi-current.json is the committed API contract
 # baseline that the API Contract Integrity gate diffs against

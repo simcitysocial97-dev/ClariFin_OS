@@ -1,2 +1,0 @@
-{"timestamp": "2026-08-23T18:36:01.373248+00:00", "event": "process_group_killed", "details": {"pgid": 961505, "signal": "SIGTERM+SIGKILL"}}
-{"timestamp": "2026-08-23T18:36:04.034299+00:00", "event": "process_group_killed", "details": {"pgid": 961514, "signal": "SIGTERM+SIGKILL"}}

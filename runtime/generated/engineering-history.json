@@ -1346,6 +1346,34 @@
           "quick-unit"
         ]
       }
+    },
+    {
+      "run_id": "29efa694-4e93-45d8-8991-49c5e2573465",
+      "timestamp": "2026-09-29T09:39:11.184239+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "<MagicMock name='run().stdout.strip()' id='124727759450288'>",
+      "branch": "<MagicMock name='run().stdout.strip()' id='124727759450288'>",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 0.00010438298340886831,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
     }
   ],
   "ci": [
@@ -2728,6 +2756,34 @@
       "failed": 0,
       "skipped": 0,
       "duration_seconds": 0.00012011700891889632,
+      "blast_radius": {},
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {
+        "tasks_executed": [
+          "quick-ruff",
+          "quick-black",
+          "quick-mypy",
+          "quick-unit"
+        ]
+      }
+    },
+    {
+      "run_id": "29efa694-4e93-45d8-8991-49c5e2573465",
+      "timestamp": "2026-09-29T09:39:11.184239+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "<MagicMock name='run().stdout.strip()' id='124727759450288'>",
+      "branch": "<MagicMock name='run().stdout.strip()' id='124727759450288'>",
+      "profile": "quick",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 0.00010438298340886831,
       "blast_radius": {},
       "evidence_count": 0,
       "cache_hit": false,

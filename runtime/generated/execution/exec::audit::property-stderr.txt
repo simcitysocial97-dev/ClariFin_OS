@@ -1,4 +1,0 @@
-ERROR: file or directory not found: backend/tests/invariants/money
-
-ERROR: file or directory not found: backend/tests/invariants/money
-
