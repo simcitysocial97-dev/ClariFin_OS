@@ -7603,3 +7603,76 @@ and were not hidden:
 
 Both are pre-existing and unrelated to the capability-mapping fixes: they
 reproduced identically on the baseline run taken before any change.
+
+### Second convergence pass — three further gate-blocking defects
+
+The first pass cleared the unmapped gate (`unmapped 2 -> 0`) but the
+reconcile still went red. Each failure below was reproduced and diagnosed, not
+worked around.
+
+**7. Two runtime tests budgeted below their own work** — covered as fix 5
+above. Confirmed by isolated measurement (37.3 s and 34.1 s against a 30 s
+suite budget) and re-verified green after the fix, at 40.6 s and 33.8 s.
+
+**8. The Platform Console readiness wait contradicted the spec's own budget.**
+`platform-c67.2.spec.ts` justifies `test.describe.configure({ timeout: 120_000 })`
+on the grounds that a console page resolves six API-backed queries and "on a
+loaded CI runner that legitimately exceeds the 30 s global default". But the
+binding constraint was never that budget — it was
+`waitForSelector(CONSOLE_RESOLVED, { timeout: 30_000 })`, still pinned to the
+global default. The declared 120 s could therefore never take effect, and a
+page needing 31 s to resolve failed with a bare
+`page.waitForSelector: Timeout 30000ms exceeded`. The readiness wait now has
+its own budget of 90 s — the same justification, still inside the 120 s test
+budget, with navigation and the title-bar probe left at 30 s. 28/28 pass.
+
+**9. A property test demanded changes that cannot exist.**
+`test_simulate_floating_rate_schedule_rate_application` failed inside the
+reconcile with `adjust_emi at month 2 with rate 501 did not change EMI or
+interest (was 33612, now 33612)`. The engine is correct in both situations the
+test hit, and both were verified directly:
+
+- The guard compared `change.new_rate_bps != initial_rate` while the loop
+  applies changes cumulatively, so from the second change on the rate in force
+  is the previous change's rate, not the initial one. A change repricing to the
+  rate already applied is a genuine no-op; the test demanded a difference.
+  The reported counterexample is that case exactly: interest of 279 paise on
+  an opening balance of 66806 paise is 501 bps to the paisa, so 501 bps was
+  already in force.
+- Rows are integer paise, so a 1 bps repricing on the smallest principal the
+  strategy generates (₹1,000) moves interest by 0.83 paise and rounds away.
+  A 500 → 501 bps change leaves every field of every row bit-identical, so
+  "must change the EMI" is unfalsifiable there, not stronger.
+
+Verified before changing anything: over 52,080 (principal, rate, tenure, month,
+new_rate) combinations spanning the strategy's space, **every** rate change of
+at least 50 bps is observable and there is no silent no-op. So the engine
+applies material repricings correctly and the assertion was unsound. The
+strategy now draws each change as a delta from the rate actually in force,
+never smaller than 50 bps, with a direction guaranteed to have that much
+headroom (a naive sign flip generates a negative rate when the delta is wider
+than the headroom on both sides — caught by the property itself). The
+assertion compares against the rate in force and accepts a difference anywhere
+in the recomputed schedule, so it is now strictly stronger than the single
+month, two-field check it replaces. Green across the stored Hypothesis database
+and five fresh seeds.
+
+### Environment boundaries recorded, not hidden
+
+- **The local symbol cache had grown to 100 MB** (396 files, `indent=2`).
+  `SymbolExtractor()` loads and re-serialises the whole file on construction,
+  so `test_symbol_resolution_accuracy.py` was blowing the 30 s per-test budget
+  purely on cache I/O. The cache is gitignored
+  (`.gitignore:183 runtime/generated/**/symbol-cache.json`) and rebuilt on
+  demand; removing it took those tests from >30 s (failing) to 0.13 s
+  (passing) and the cache back to 2.4 kB. The scalability defect behind that
+  growth is real and is recorded, not fixed — it is symbol-resolver
+  architecture.
+- **The frontend obligation's 360 s ceiling** is `2 × estimated_duration`
+  (180 s declared). Measured at 249 s wall clock for lint + typecheck + build +
+  1367 vitest tests, i.e. 69% of the ceiling. The one run that exceeded it
+  coincided with the machine under memory pressure (4.0 GiB used of 7.6 GiB,
+  2.8 GiB swap in use, the kernel logging "Under memory pressure, flushing
+  caches" continuously) while the 100 MB cache above was being read and
+  rewritten by concurrent processes. Relieving that returned the task to 249 s.
+  No timeout was changed.

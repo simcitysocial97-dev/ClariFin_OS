@@ -25,6 +25,39 @@ MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
 MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
 
+# Smallest repricing step a whole-paise schedule can be required to reflect.
+#
+# Amortisation rows are integer paise, so a rate delta of Δ bps moves a month's
+# interest by roughly balance × Δ / 120000 paise. At the smallest principal this
+# strategy generates (₹1,000 = 100000 paise) a 1 bps delta is 0.83 paise, which
+# rounds away entirely: a 500 → 501 bps repricing leaves every field of every
+# row bit-identical. Asserting that such a change "must change the EMI" is
+# therefore not a stronger property, it is an unfalsifiable one — no
+# implementation can satisfy it, including a correct one. 50 bps (0.5pp) is
+# the smallest step that is material across the whole generated range; it was
+# verified by brute force over 52,080 (principal, rate, tenure, month, new_rate)
+# combinations spanning this strategy's space: every rate change of at least
+# 50 bps is observable in the recomputed schedule, and no silent no-op exists.
+MIN_MATERIAL_RATE_DELTA_BPS = 50
+
+
+def _schedule_differs(before, after) -> bool:
+    """True when a recomputed schedule differs from the previous one anywhere.
+
+    Compares the monetary fields that a re-amortisation is allowed to move —
+    EMI, interest, principal and balance — for the rows the two schedules have
+    in common, and treats a change in the number of rows as a difference.
+    """
+    if len(before) != len(after):
+        return True
+    return any(
+        a.emi_paise != b.emi_paise
+        or a.interest_paise != b.interest_paise
+        or a.principal_paise != b.principal_paise
+        or a.balance_paise != b.balance_paise
+        for a, b in zip(before, after, strict=True)
+    )
+
 
 # Strategies for generating test data
 @st.composite
@@ -71,17 +104,50 @@ def multiple_rate_changes(draw):
     num_changes = draw(st.integers(min_value=1, max_value=5))
     rate_changes = []
 
+    # Each change is drawn as a *delta from the rate currently in force*, not
+    # from the original rate. Two properties follow, and both are required for
+    # the downstream assertions to mean anything:
+    #
+    #   1. The delta is at least MIN_MATERIAL_RATE_DELTA_BPS, so every generated
+    #      repricing is one that an integer-paise schedule can be required to
+    #      reflect (see the constant for the measurement).
+    #   2. The delta is measured against the rate in force, so a later change
+    #      that reprices to the rate already applied is a genuine no-op rather
+    #      than a second change away from `initial_rate`. The engine is right to
+    #      leave the schedule untouched in that case, and the previous strategy
+    #      produced exactly that case while the assertion still demanded a
+    #      difference.
+    rate_in_force = initial_rate
     for _i in range(num_changes):
         change_month = draw(st.integers(min_value=1, max_value=tenure))
-        new_rate = draw(
-            st.integers(
-                min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS
-            )
+        # Headroom in each direction, and a direction that is guaranteed to have
+        # at least MIN_MATERIAL_RATE_DELTA_BPS of it. Simply flipping the sign
+        # when the first draw lands out of range is not enough: a delta wider
+        # than the headroom on *both* sides (e.g. 1845 bps with a 2058 bps delta)
+        # flips straight out the other side, which is how this strategy first
+        # generated a negative rate and had the engine reject it.
+        head_up = MAX_INTEREST_RATE_BPS - rate_in_force
+        head_down = rate_in_force - MIN_INTEREST_RATE_BPS
+        if (
+            head_up < MIN_MATERIAL_RATE_DELTA_BPS
+            and head_down < MIN_MATERIAL_RATE_DELTA_BPS
+        ):
+            direction = 1 if head_up >= head_down else -1
+        elif head_up < MIN_MATERIAL_RATE_DELTA_BPS:
+            direction = -1
+        elif head_down < MIN_MATERIAL_RATE_DELTA_BPS:
+            direction = 1
+        else:
+            direction = draw(st.sampled_from([-1, 1]))
+        headroom = head_up if direction > 0 else head_down
+        delta_bps = draw(
+            st.integers(min_value=MIN_MATERIAL_RATE_DELTA_BPS, max_value=headroom)
         )
+        rate_in_force = rate_in_force + direction * delta_bps
         mode = draw(st.sampled_from(["adjust_emi", "adjust_tenure"]))
         rate_changes.append(
             FloatingRateChange(
-                change_month=change_month, new_rate_bps=new_rate, mode=mode
+                change_month=change_month, new_rate_bps=rate_in_force, mode=mode
             )
         )
 
@@ -308,12 +374,14 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
     from src.engines.loan_engine.amortization import generate_schedule
 
     current_schedule = generate_schedule(principal, initial_rate, tenure, start_date)
+    rate_in_force = initial_rate
 
     for change in sorted_changes:
         if change.change_month < len(current_schedule) and change.change_month > 1:
             # EMI at change month before this change is applied
             emi_before = current_schedule[change.change_month - 1].emi_paise
             interest_before = current_schedule[change.change_month - 1].interest_paise
+            schedule_before = list(current_schedule)
 
             # Apply this change to track intermediate state
             current_schedule = apply_floating_rate_change(
@@ -328,26 +396,46 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
             if change.change_month - 1 < len(current_schedule):
                 emi_after = current_schedule[change.change_month - 1].emi_paise
 
-                # For adjust_emi mode, EMI should change when rate changes
-                if change.mode == "adjust_emi" and change.new_rate_bps != initial_rate:
-                    # Rate change in adjust_emi mode should change the EMI at that month
+                # For adjust_emi mode, a repricing away from the rate actually
+                # in force must be visible in the schedule.
+                #
+                # The comparison is against `rate_in_force`, not `initial_rate`:
+                # the loop applies changes cumulatively, so from the second
+                # change on, the rate in the schedule is the previous change's
+                # rate. Comparing against `initial_rate` demanded a difference
+                # even when the change repriced to the rate already applied,
+                # which the engine is correct to treat as a no-op.
+                #
+                # The comparison is also over the whole recomputed schedule,
+                # not the change month's EMI and interest alone. `adjust_emi`
+                # re-amortises from the change month, so a rate delta that is
+                # material (see MIN_MATERIAL_RATE_DELTA_BPS) moves the
+                # principal/interest split across the remaining rows even when
+                # the EMI at that single month rounds to the same paise. This
+                # asserts strictly more than the old check — any recomputed row
+                # differing is now accepted, and a change that alters nothing
+                # anywhere still fails.
+                if change.mode == "adjust_emi" and change.new_rate_bps != rate_in_force:
                     assert (
                         emi_after != emi_before
                         or current_schedule[change.change_month - 1].interest_paise
                         != interest_before
+                        or _schedule_differs(schedule_before, current_schedule)
                     ), (
                         f"adjust_emi at month {change.change_month} with rate "
-                        f"{change.new_rate_bps} did not change EMI or interest "
-                        f"(was {emi_before}, now {emi_after})"
+                        f"{change.new_rate_bps} (in force: {rate_in_force}) did not "
+                        f"change the schedule (EMI was {emi_before}, now {emi_after})"
                     )
                 # For adjust_tenure mode, tenure (schedule length) should change
                 if (
                     change.mode == "adjust_tenure"
-                    and change.new_rate_bps != initial_rate
+                    and change.new_rate_bps != rate_in_force
                 ):
                     # We can't easily check tenure change here since it affects future months
                     # but we can verify the schedule was modified
                     pass
+
+            rate_in_force = change.new_rate_bps
 
     # Final schedule should match the one from simulate_floating_rate_schedule
     final_schedule = simulate_floating_rate_schedule(

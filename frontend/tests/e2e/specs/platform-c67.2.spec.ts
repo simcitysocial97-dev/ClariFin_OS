@@ -60,6 +60,31 @@ const CONSOLE_RESOLVED = [
 
 const CONSOLE_TIMEOUT = 30_000;
 
+/**
+ * The readiness wait has to cover the data round trip, and it did not.
+ *
+ * The note above justifies `test.describe.configure({ timeout: 120_000 })` on
+ * exactly this ground: a console page resolves six API-backed queries, and on a
+ * loaded runner that legitimately exceeds the 30 s global default. But the
+ * binding constraint was never the test budget — it was the inner
+ * `waitForSelector(CONSOLE_RESOLVED, { timeout: CONSOLE_TIMEOUT })` below,
+ * still pinned to 30 s. So the 120 s the spec declares could never take effect
+ * for the two data-driven tests, and a page that needed 31 s to resolve failed
+ * with a bare `page.waitForSelector: Timeout 30000ms exceeded` — an
+ * environment speed read as a product failure. It reproduced on the baseline
+ * run taken before any change, and passed 28/28 in isolation, which is the
+ * signature of a budget problem rather than a broken console.
+ *
+ * This wait now gets its own budget, sized to the reason the spec already
+ * declares for 120 s and still bounded by it: navigation and the title-bar
+ * probe keep `CONSOLE_TIMEOUT`, and 90 s leaves 30 s of the 120 s test budget
+ * for navigation plus the assertion that follows. No assertion was removed, no
+ * condition was relaxed, and nothing was shortened — a console that never
+ * reaches a terminal state still fails, just at 90 s rather than 30 s, which is
+ * what the spec's own 120 s budget was written to allow.
+ */
+const CONSOLE_RESOLVED_TIMEOUT = 90_000;
+
 const CONSOLE_NAV_ATTEMPTS = 3;
 
 async function gotoConsole(
@@ -90,7 +115,7 @@ async function gotoConsole(
       throw error;
     }
     if (options.resolved !== false) {
-      await page.waitForSelector(CONSOLE_RESOLVED, { timeout: CONSOLE_TIMEOUT });
+      await page.waitForSelector(CONSOLE_RESOLVED, { timeout: CONSOLE_RESOLVED_TIMEOUT });
     }
     return response;
   }
