@@ -55,23 +55,105 @@ class Symbol:
 
 
 class SymbolExtractor:
-    """Extract symbols from Python source files via AST parsing."""
+    """Extract symbols from Python source files via AST parsing.
+
+    Results are cached on disk keyed by resolved absolute path and validated by
+    file mtime. The cache is deliberately bounded and self-pruning — see
+    ``_is_cacheable`` and ``_prune_cache`` for why that is a correctness
+    requirement rather than a housekeeping nicety.
+    """
 
     def __init__(self, cache_path: Path = None):
         self.cache_path = cache_path or Path("runtime/generated/symbol-cache.json")
         self.cache = self._load_cache()
+        # Only rewrite the file when something actually changed. Rewriting it
+        # unconditionally serialised the entire cache on every extraction, so
+        # the cost of touching one small file was the cost of the whole cache.
+        self._dirty = False
 
     def _load_cache(self) -> dict:
         if self.cache_path.exists():
             try:
-                return json.loads(self.cache_path.read_text())
+                cache = json.loads(self.cache_path.read_text())
             except (json.JSONDecodeError, OSError):
                 logger.warning("Failed to load symbol cache, starting fresh")
+                return {}
+            return self._prune_cache(cache)
         return {}
 
+    def _prune_cache(self, cache: dict) -> dict:
+        """Drop entries that can never be served again.
+
+        Two classes of entry are dead weight:
+
+        * paths under the system temp directory, whose files are deleted when
+          the process ends — a later run will never find them, so their parsed
+          symbols can never be reused;
+        * any path that no longer exists, whose mtime can never be matched
+          again.
+
+        Without this the cache grew without bound: one full test-suite run left
+        51 of 52 entries pointing at ephemeral ``/tmp/tmpXXXX.py`` fixtures,
+        12.5 MB of payload on disk in a single run. Because every extraction
+        re-serialised the whole cache, the extractor grew slower with every run
+        until it exceeded the per-test time budget, which presented as a suite
+        that failed intermittently depending on how much history had piled up.
+        The cache is an optimisation; letting it grow past the point where it
+        costs more than it saves is how it became a correctness problem.
+        """
+        if not cache:
+            return cache
+        temp_dir = Path(tempfile.gettempdir()).resolve()
+        keep: dict = {}
+        dropped_temp = 0
+        dropped_missing = 0
+        for key, entry in cache.items():
+            try:
+                path = Path(key)
+            except (TypeError, ValueError):
+                dropped_missing += 1
+                continue
+            try:
+                if path.is_relative_to(temp_dir):
+                    dropped_temp += 1
+                    continue
+            except (OSError, ValueError):
+                pass
+            try:
+                if not path.exists():
+                    dropped_missing += 1
+                    continue
+            except OSError:
+                dropped_missing += 1
+                continue
+            keep[key] = entry
+        if dropped_temp or dropped_missing:
+            logger.debug(
+                "Pruned symbol cache: %d ephemeral temp entries, %d missing-path entries",
+                dropped_temp,
+                dropped_missing,
+            )
+        return keep
+
+    def _is_cacheable(self, resolved: Path) -> bool:
+        """Whether a resolved path belongs in the persistent cache.
+
+        Files under the system temp directory are excluded. Their parsed
+        symbols have no reuse value across processes — the file is gone before
+        the next run — so persisting them is pure cost: disk, serialisation
+        time, and a growing file that every later run must read and rewrite.
+        """
+        try:
+            return not resolved.is_relative_to(Path(tempfile.gettempdir()).resolve())
+        except (OSError, ValueError):
+            return True
+
     def _save_cache(self):
+        if not self._dirty:
+            return
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache_path.write_text(json.dumps(self.cache, indent=2))
+        self._dirty = False
 
     def extract_from_file(self, file_path: Path) -> list[Symbol]:
         """Extract all symbols from a single Python file.
@@ -143,10 +225,19 @@ class SymbolExtractor:
         except Exception as e:
             logger.warning(f"Failed to parse {file_path}: {e}")
 
-        self.cache[file_key] = {
-            "mtime": file_mtime,
-            "symbols": [s.to_dict() for s in symbols],
-        }
+        # Persist only files whose parsed symbols can actually be reused. A file
+        # under the system temp directory is deleted when the process exits, so
+        # caching it costs a permanent, ever-growing entry that no later run can
+        # ever hit — and because the whole cache is re-serialised on write, that
+        # cost is paid again on every subsequent extraction of any file.
+        if self._is_cacheable(Path(file_key)):
+            self.cache[file_key] = {
+                "mtime": file_mtime,
+                "symbols": [s.to_dict() for s in symbols],
+            }
+            self._dirty = True
+        else:
+            self.cache.pop(file_key, None)
         self._save_cache()
         return symbols
 

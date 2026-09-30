@@ -143,18 +143,71 @@ class TypeScriptSymbolExtractor:
         self._ts_resolver_script = (
             repo_root / "runtime/foundation/verification/typescript_symbol_resolver.ts"
         )
+        self._dirty = False
 
     def _load_cache(self) -> dict:
         if self.cache_path.exists():
             try:
-                return json.loads(self.cache_path.read_text(encoding="utf-8"))
+                cache = json.loads(self.cache_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError) as e:
                 logger.warning(f"Failed to load TypeScript symbol cache: {e}")
+                return {}
+            return self._prune_cache(cache)
         return {}
 
+    def _prune_cache(self, cache: dict) -> dict:
+        """Drop entries that can never be served again.
+
+        This mirrors the Python extractor's pruning. Two classes of entry are
+        dead weight: paths under the system temp directory, whose files are gone
+        before the next run, and paths that no longer exist, whose mtime can
+        never match again. Without pruning this cache grew to 7.8 MB with
+        nothing evicting it, and because `_save_cache` re-serialised the whole
+        file on every extraction, that cost was paid again on every subsequent
+        lookup of any file.
+        """
+        if not cache:
+            return cache
+        temp_dir = Path(tempfile.gettempdir()).resolve()
+        keep: dict = {}
+        for key, entry in cache.items():
+            try:
+                path = Path(key)
+            except (TypeError, ValueError):
+                continue
+            try:
+                if path.is_relative_to(temp_dir):
+                    continue
+            except (OSError, ValueError):
+                pass
+            try:
+                if not path.exists():
+                    continue
+            except OSError:
+                continue
+            keep[key] = entry
+        return keep
+
+    def _is_cacheable(self, resolved: Path) -> bool:
+        """Whether a path belongs in the persistent cache.
+
+        Files under the system temp directory are excluded: their symbols cannot
+        be reused across processes, so persisting them is pure cost.
+        """
+        try:
+            return not resolved.is_relative_to(Path(tempfile.gettempdir()).resolve())
+        except (OSError, ValueError):
+            return True
+
     def _save_cache(self):
+        # Only rewrite when something changed. Rewriting unconditionally
+        # serialised the entire cache on every extraction, including on the
+        # read-only path where nothing had changed at all.
+        if not self._dirty:
+            return
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache_path.write_text(json.dumps(self.cache, indent=2))
+        self._dirty = False
 
     def _run_ts_resolver(self, target_path: Path) -> dict:
         """Run the TypeScript symbol resolver script via npx tsx."""
@@ -238,6 +291,7 @@ class TypeScriptSymbolExtractor:
             "mtime": file_mtime,
             "symbols": [s.to_dict() for s in symbols],
         }
+        self._dirty = True
         self._save_cache()
         return symbols
 
@@ -311,6 +365,7 @@ class TypeScriptSymbolExtractor:
                     "mtime": mtime,
                     "symbols": [s.to_dict() for s in symbols],
                 }
+                self._dirty = True
             except OSError:
                 pass
 
@@ -357,9 +412,11 @@ class TypeScriptSymbolExtractor:
         if file_path:
             file_key = str(Path(file_path).resolve())
             self.cache.pop(file_key, None)
+            self._dirty = True
             self._save_cache()
         else:
             self.cache.clear()
+            self._dirty = True
             self._save_cache()
 
     def find_symbol_by_name(
