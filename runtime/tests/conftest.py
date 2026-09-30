@@ -13,6 +13,37 @@ from runtime.foundation.verification.registry import (
     reset_registry,
 )
 
+# Test-level progress evidence (M9 stabilization, 2026-09-30).
+#
+# This suite takes ~29 minutes, and before this the only record of a failing
+# run was a summary line. If the process died or was killed mid-run there was
+# no way to know which test was executing, so the only way to investigate was
+# to run the whole suite again and try to catch it again. The tracker records
+# each test's start and report as they happen and keeps a small state file
+# naming the last test started, which is exactly the test to look at when a
+# run stops mid-test. It observes only: it changes no collection, ordering,
+# outcome or assertion, and it can never fail a test run.
+try:
+    from runtime.foundation.verification.pytest_progress import TestProgressTracker
+
+    _pytest_progress = TestProgressTracker()
+except Exception:  # noqa: BLE001 - instrumentation must never break the suite
+    _pytest_progress = None
+
+if _pytest_progress is not None:
+
+    def pytest_sessionstart(session):
+        _pytest_progress.pytest_sessionstart(session)
+
+    def pytest_sessionfinish(session, exitstatus):
+        _pytest_progress.pytest_sessionfinish(session, exitstatus)
+
+    def pytest_runtest_logstart(nodeid, location):
+        _pytest_progress.pytest_runtest_logstart(nodeid, location)
+
+    def pytest_runtest_logreport(report):
+        _pytest_progress.pytest_runtest_logreport(report)
+
 
 @pytest.fixture
 def repo_root(tmp_path: Path) -> Path:

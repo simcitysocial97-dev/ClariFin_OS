@@ -183,6 +183,10 @@ runtime/generated/**/.mutmut-cache/
 runtime/generated/**/symbol-cache.json
 runtime/generated/**/symbol-test-map.json
 
+# Per-process pytest progress records (one pair per test session, rewritten as
+# the session runs — local diagnostic evidence, never committed).
+runtime/generated/verification-progress/
+
 # ── Regenerable bulk: runtime snapshots ──
 # Cached platform/health snapshots, rewritten on every read. Their TTL and
 # build cost are managed in runtime/platform/cache.py.
