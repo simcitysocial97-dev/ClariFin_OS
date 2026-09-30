@@ -39,6 +39,17 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
+      # The planner can schedule run_playwright_tests.sh when the boundary
+      # touches frontend E2E. That script's ED6 pre-flight check exits 1 when the
+      # required browser revision is absent, so without this step the task failed
+      # in 0.79 s before running anything. Reuses the same composite the
+      # Playwright workflow uses, including its browser cache.
+      - name: Install Playwright browsers
+        uses: ./.github/actions/setup-playwright
+        with:
+          working-directory: "frontend"
+          browsers: chromium
+
       - name: Run canonical verification
         env:
           VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
