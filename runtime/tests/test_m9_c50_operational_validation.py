@@ -560,6 +560,7 @@ class TestOperationalValidation:
 
             assert run_id is not None
 
+    @pytest.mark.timeout(180)
     def test_scenario_15_ci_equivalent_execution(self, recorder):
         """Scenario 15: CI-equivalent execution - verify local == CI.
 
@@ -573,6 +574,22 @@ class TestOperationalValidation:
         same code path CI exercises. The test asserts that the canonical
         executor boundary produces a real execution_id and evidence_id
         without invoking a second semantic authority.
+
+        Test budget: the S9 bound is on the *inner* pipeline
+        (``per_step_timeout=180``), and the inner work is a full
+        ``pytest backend/tests/invariants`` run — measured at 30.2 s on a
+        4-core workstation, so the whole test measures 37.3 s. The suite
+        budget in ``run_runtime_verification.sh`` is ``--timeout=30``, i.e.
+        *below the work this test must do*: the test could only pass on a
+        host fast enough to fit 30 s of nested pytest into 30 s of budget.
+        That makes the Runtime Verification gate's colour a function of host
+        CPU speed rather than of correctness — it happened to pass on
+        GitHub's runners and failed identically on every run here, twice as a
+        ``proc.wait`` timeout and once as a ``pytest-timeout``, always at the
+        same wall clock. The mark below gives this test the same 180 s bound
+        the inner pipeline already has, which is still a hard hang guard. No
+        assertion, no threshold and no other test in the suite changed; the
+        other 2522 tests keep the 30 s budget.
         """
         from runtime.foundation.verification.evidence_planner import PlannedTask
         from runtime.foundation.verification.executor_pipeline import (

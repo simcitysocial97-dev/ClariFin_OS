@@ -813,7 +813,25 @@ class VerificationRegistry:
                     "run_frontend_verification",
                     "run_backend_verification",
                 ],
-                modules=["backend/src", "frontend/lib"],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). Kept identical to verification.yaml:
+                # the yaml is the authority and wins over this default, so the
+                # two must not disagree.
+                #
+                # `frontend/scripts/verify-mock-sync.ts` is the verifier that
+                # holds the MSW mock handlers to the canonical Zod schemas in
+                # `frontend/lib/schemas` — the same frontend contract obligation
+                # the `api-contract-frontend` requirement above already names,
+                # in the same surface. It was unregistered, so a change to it
+                # resolved to no capability and tripped the fail-closed review
+                # obligation. One file, not the whole `frontend/scripts`
+                # directory: its siblings are test-metadata and parser-debug
+                # tooling, which are not contract obligations.
+                modules=[
+                    "backend/src",
+                    "frontend/lib",
+                    "frontend/scripts/verify-mock-sync.ts",
+                ],
             ),
             "migrations": VerificationCapability(
                 id="migrations",
@@ -880,7 +898,16 @@ class VerificationRegistry:
                 ],
                 workflows=["runtime"],
                 scripts=["run_runtime_verification"],
-                modules=[],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). This was empty, so the Platform
+                # Console's own page layer had no registry mapping. This
+                # capability is already the declared owner of that surface: every
+                # Platform Console hook edge in the cross-layer graph is
+                # `frontend:hook:frontend-platform:* -> runtime-verification
+                # (capability, depends_on)`, so the hooks under frontend/lib
+                # already resolved here and only the route layer was
+                # unregistered. Kept identical to verification.yaml.
+                modules=["frontend/app/platform"],
             ),
             "golden-regression": VerificationCapability(
                 id="golden-regression",

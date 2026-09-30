@@ -7475,3 +7475,131 @@ Certify         -> Final verdict derived from artifacts alone
 - Environmental limitations: 2 (CI env unavailable, no full campaign per governing principle)
 
 **M9-C42.37 CERTIFIED — VERIFICATION SYSTEM OPERATIONALLY INTEGRATED — 82 TESTS PASSING — 14 SCENARIOS VALIDATED — 0 BLOCKERS**
+
+---
+
+## M9 Main Stabilization — Final Convergence
+
+### Starting state
+
+Verification Reconcile was red with two unmapped changed files, and the
+Reconcile gate is not branch-protected. The gate is not a red herring: it is
+the only thing that notices a change resolving to no verification obligation,
+so it was fixed rather than bypassed.
+
+```
+UNMAPPED capabilities require review (2):
+    - frontend:frontend_utility:frontend-shared:verify-mock-sync
+    - frontend:route:frontend-cashflow:cashflow
+```
+
+### Fixed defects
+
+**1. `frontend/scripts/verify-mock-sync.ts` resolved to no capability.**
+Registered against the existing `api-contracts` capability, in both
+`verification.yaml` (authoritative) and `registry.py` (defaults). The script's
+stated purpose is validating that MSW mock handler responses conform to the
+canonical Zod schemas in `frontend/lib/schemas` — the same obligation as that
+capability's existing `api-contract-frontend` requirement ("Frontend contract
+compliance", module `frontend/lib`). Registered as one file, not the whole
+`frontend/scripts` directory: the siblings there are test-metadata and
+parser-debug tooling, not contract obligations.
+
+**2. `frontend/app/platform/diagnostics/page.tsx` resolved to no capability.**
+Registered against the existing `runtime-verification` capability. That
+capability is already the declared owner of the Platform Console: every
+Platform Console hook edge in `runtime/generated/cross-layer-graph.json` is
+`frontend:hook:frontend-platform:* -> runtime-verification (capability,
+depends_on)`, so `frontend/lib/hooks/use-platform-*.ts` already resolved
+there. Only the route layer beneath it was unregistered. Registered
+`frontend/app/platform`.
+
+**3. The cashflow attribution was a fabricated owner.**
+`cross-layer-graph.json` stores absolute file paths while the planner
+normalises to repo-relative, so exact matching never fires and resolution
+falls through to a basename match. `page.tsx` is owned by 19 route
+capabilities; `_find_frontend_capability` returned `matches[0]`, so dict order
+decided that a Platform Console page claimed the cashflow route, and the
+fail-closed gate then blocked on a capability the change has nothing to do
+with. An ambiguous basename now reports no capability: the file is recorded as
+`UNMAPPED:<path>` and judged on its merits — suppressed only when
+independently path-resolved to a registered capability, still blocking when
+it was not. No gate was weakened and no unmapped result was suppressed.
+
+**4. `api-contracts.modules` pointed at a directory that does not exist.**
+`verification.yaml` declared `["backend/src", "frontend/src"]`. `frontend/src`
+is Program 1-4 scaffolding from `c04de0f1`; the frontend now lives in
+`app/`, `lib/`, `components/` and `hooks/`. Because the yaml overrides
+`registry.py`, it silently voided the `frontend/lib` value that commit
+112cc7fd ("Fix module paths: frontend/src -> frontend/lib for api-contracts
+capability") had added to `registry.py` — that fix had only ever reached half
+its intended targets. Both authorities now carry the same value. No effect on
+this change set (no `frontend/lib` file is in it), so it cannot have changed
+this run's plan.
+
+**5. Two runtime self-verification tests were budgeted below their own work.**
+`run_runtime_verification.sh` runs `pytest runtime/tests/ -q --timeout=30`.
+`test_scenario_15_ci_equivalent_execution` executes a full
+`pytest backend/tests/invariants` as a subprocess (30.2 s measured here), and
+`test_no_forbidden_nondeterminism` runs `runtime.verify doctor` three times
+(~11 s each). Both tests measure 37.3 s and 34.1 s in isolation on a 4-core
+workstation, so the Runtime Verification gate's colour was decided by host CPU
+speed rather than by correctness: green on GitHub's runners, red here on every
+run — twice as a `proc.wait` timeout at 180 s, once as a `pytest-timeout` at
+exactly 30.0 s. Each test now carries `@pytest.mark.timeout(180)`, the same
+bound the inner pipeline already uses and one already used elsewhere in the
+suite. The 3x comparison, the subprocesses, their individual
+`run_verify(..., timeout=30)` bounds, every assertion, and the suite-wide 30 s
+budget for the other 2522 tests are unchanged. No coverage, mutation or
+regression threshold was touched.
+
+**6. `dashboard.spec.ts` asserted on a fixed 500 ms sleep.** "should trigger
+upload on button click" clicked the Upload button, slept 500 ms, then checked
+whether `?upload=true` or a dialog was present. The handler is
+`router.push('?upload=true')` — a client-side route change resolved through an
+RSC fetch — so a fixed sleep is a race, not an assertion. It failed inside the
+reconcile with `Expected: true / Received: false` while the identical test
+passed in the `mobile-chrome` project in the very same run. The condition is
+unchanged and is now polled to a bounded 15 s, well inside the spec's 30 s
+global timeout.
+
+### KNOWN DEFECT — NOT FIXED IN THIS PASS (recorded, non-blocking)
+
+**Platform route over-match in `_classify_change`.** The route branch of
+`CapabilityResolver._classify_change` matches a frontend route to a capability
+with `feature in cap_id`, where `feature` is the first path segment. For a
+file under `frontend/app/platform/...`, `feature` is `"platform"`, which is a
+substring of all 23 `frontend:route:frontend-platform:*` capabilities — and
+also of any other capability id containing that substring. One changed Platform
+Console page therefore claims all 23 platform routes as directly affected,
+inflating the blast radius and scheduling obligations that the change does not
+touch. This is a *separate* defect from the fabricated cashflow owner (fix 3
+above): it affects `direct_caps`, not the planner's attribution, and the two
+have different consequences — the cashflow owner was a wrong capability, this
+one is a right-but-over-broad set.
+
+It does not affect this change set's certification: the affected set is a
+superset that already contains the correct owner, so every obligation it
+schedules is one that should run anyway, and the unmapped gate is evaluated
+from the planner's `unmapped_blast_capabilities`, not from `direct_caps`. It
+was left unrepaired rather than redesigned, because repairing it means
+reworking how route paths are matched against capability ids — planner
+architecture, explicitly out of scope for this pass. A correct repair would
+match on path segments (`route_path in cap_id` already does this) and drop the
+substring test entirely.
+
+### Verification boundary
+
+Two residual local-only failures are CPU-speed boundaries, not product defects,
+and were not hidden:
+
+- Playwright console/dashboard specs have wall-clock waits; they passed
+  28/28 in isolation and are green in the dedicated CI Playwright workflow.
+  Locally `retries: 0` (CI: 2), so a contention-induced overrun is final.
+- `test_doctor_consistent_across_runs` (2 doctor runs) measures 22.7 s against
+  the 30 s suite budget — 76% utilisation, and the next test in that file to
+  cross it. Left at the suite-wide budget deliberately; recorded here as a
+  watch item.
+
+Both are pre-existing and unrelated to the capability-mapping fixes: they
+reproduced identically on the baseline run taken before any change.

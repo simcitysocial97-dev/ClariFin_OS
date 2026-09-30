@@ -339,7 +339,33 @@ capabilities:
     scopes: ["contracts", "frontend", "backend", "repository"]
     workflows: ["contracts", "frontend", "backend"]
     scripts: ["run_contract_tests", "run_frontend_verification", "run_backend_verification"]
-    modules: ["backend/src", "frontend/src"]
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py), and this yaml is the authority that overrides
+    # registry.py's defaults.
+    #
+    # Two corrections, both on values that were silently wrong:
+    #
+    # 1. `frontend/src` never existed once the frontend moved to app/lib/
+    #    components/hooks; it is the original Program 1-4 scaffolding value from
+    #    c04de0f1. Because the yaml wins over the registry defaults, it voided
+    #    `frontend/lib` — the module the `api-contract-frontend` requirement
+    #    itself names ("Frontend contract compliance", module `frontend/lib`) —
+    #    so no frontend file resolved to this capability by path. The two
+    #    authorities are now identical, which they had not been since 112cc7fd.
+    #
+    # 2. `frontend/scripts/verify-mock-sync.ts` is the verifier that holds the
+    #    MSW mock handlers to those same canonical Zod schemas ("this script
+    #    validates that MSW mock handler responses conform to the canonical Zod
+    #    schemas") — the same frontend contract obligation, in the same surface.
+    #    Unregistered, it resolved to no capability and blocked the fail-closed
+    #    review obligation. Registered as one file rather than as the whole
+    #    `frontend/scripts` directory: its siblings there are test-metadata and
+    #    parser-debug tooling, which are not contract obligations.
+    #
+    # Correction 1 has no effect on the current change set (no `frontend/lib`
+    # file is in it), so it cannot change this run's plan; it is recorded here
+    # rather than left as a landmine for the next change to `frontend/lib`.
+    modules: ["backend/src", "frontend/lib", "frontend/scripts/verify-mock-sync.ts"]
 
   migrations:
     name: "Database Migrations"
@@ -357,7 +383,19 @@ capabilities:
     scopes: ["runtime"]
     workflows: ["runtime"]
     scripts: ["run_runtime_verification"]
-    modules: []
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py). This was empty, so the Platform Console's own
+    # page layer had no registry mapping at all.
+    #
+    # `runtime-verification` is already the registered owner of that surface and
+    # the graph says so itself: every Platform Console hook edge in
+    # runtime/generated/cross-layer-graph.json is
+    # `frontend:hook:frontend-platform:* -> runtime-verification
+    # (capability, depends_on)`. `frontend/lib/hooks/use-platform-diagnostics.ts`
+    # therefore already resolved here. Only the route layer underneath it was
+    # unregistered, which is why changing a Platform Console page produced an
+    # unmapped entry instead of a runtime-verification obligation.
+    modules: ["frontend/app/platform"]
 
   golden-regression:
     name: "Golden Regression"
