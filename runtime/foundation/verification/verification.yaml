@@ -384,7 +384,13 @@ capabilities:
     scopes: ["playwright"]
     workflows: ["playwright"]
     scripts: ["run_playwright_tests"]
-    modules: []
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py). This was empty, so no changed file could ever
+    # match the capability: every PR touching a Playwright spec or a
+    # visual-regression snapshot resolved to UNMAPPED and blocked on the
+    # fail-closed review obligation, even though Playwright verifies that
+    # surface on the same event. The suite lives under frontend/tests/e2e.
+    modules: ["frontend/tests/e2e"]
 
   balance-engine:
     name: "Balance Engine"

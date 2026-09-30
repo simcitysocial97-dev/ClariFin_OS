@@ -63,8 +63,35 @@ from runtime.foundation.verification.shared_impact import (
 # capability IDs (``loan-engine``). This deterministic alias table bridges the
 # two vocabularies so blast radius is never silently dropped on an ID mismatch.
 PLANNER_CAPABILITY_ALIASES: dict[str, str] = {
+    # The cross-layer impact planner reports a frontend hook as a bare symbol
+    # ("useAccountsCapability"), while the contract registry names the same
+    # engine capability as "account-engine". Each entry below bridges one such
+    # pair, exactly as the pre-existing useLoansCapability entry does.
+    #
+    # The table was missing the other six engine hooks, so any change to those
+    # engines produced an unmapped capability and tripped the fail-closed
+    # review obligation — including on a backend-only change set, so this was
+    # never specific to any one branch.
     "useLoansCapability": "loan-engine",
+    "useAccountsCapability": "account-engine",
+    "useBehaviourCapability": "behaviour-engine",
+    "useCashflowCapability": "cashflow-engine",
+    "useCreditCardsCapability": "credit-card-engine",
+    "useNetWorthCapability": "balance-engine",
+    "useReconciliationCapability": "reconciliation",
 }
+
+
+def _file_stem(path: str) -> str:
+    """Basename of *path* with its final extension removed.
+
+    The cross-layer frontend vocabulary names files by stem
+    ("platform-dashboard.spec" for "platform-dashboard.spec.ts"), so the
+    comparison against a resolved file is made on stems.
+    """
+
+    name = path.replace("\\", "/").rsplit("/", 1)[-1]
+    return name.rsplit(".", 1)[0] if "." in name else name
 
 
 # ---------------------------------------------------------------------------
@@ -177,6 +204,12 @@ class CapabilityResolver:
             m.component: m for m in (measurements or [])
         }
         self._impact_planner = CrossLayerImpactPlanner()
+        # Changed files that claimed a capability by path in the current
+        # resolve(), so a later report from the impact planner naming the same
+        # file does not re-classify it as unmapped.
+        self._resolved_paths: set[str] = set()
+        self._resolved_stems: set[str] = set()
+        self._stem_counts: dict[str, int] = {}
         # M9-C49: deterministic shared-module dependency index (lazy).
         self._shared_index = shared_index
         if self._shared_index is None:
@@ -219,6 +252,29 @@ class CapabilityResolver:
         # Convert sets to sorted lists
         return {k: sorted(v) for k, v in router_caps.items()}
 
+    def _names_resolved_file(self, entry: str) -> bool:
+        """True when a planner entry names a file that already resolved.
+
+        The impact planner flags a file it cannot attribute to a capability,
+        either as ``UNMAPPED:<path>`` or in the cross-layer frontend vocabulary
+        as ``frontend:<kind>:<route>:<filename>``. Both name a file, and
+        neither implies the file is unmapped: step 2 may already have matched
+        it to a contract capability by path. Treating those reports as unmapped
+        made the fail-closed review obligation fire on correctly resolved
+        changes.
+
+        A file is only counted as resolved when its basename is unique across
+        the change set, so a different, genuinely unmapped file that happens to
+        share a name is never suppressed. The frontend vocabulary form carries
+        the file's stem rather than its name (``platform-dashboard.spec`` for
+        ``platform-dashboard.spec.ts``), so the comparison is on stems.
+        """
+
+        if entry.startswith("UNMAPPED:"):
+            return entry[len("UNMAPPED:") :] in self._resolved_paths
+        stem = entry.rsplit(":", 1)[-1]
+        return stem in self._resolved_stems and self._stem_counts.get(stem, 0) == 1
+
     def _get_router_capabilities(self, file_path: str) -> list[str]:
         """Get backend capabilities for a router file."""
         if not file_path.startswith("backend/src/routers/"):
@@ -241,10 +297,26 @@ class CapabilityResolver:
         # 1. Classify each change
         classified = [self._classify_change(f) for f in changed_files]
 
-        # 2. Collect directly affected capabilities
+        # 2. Collect directly affected capabilities, remembering which changed
+        #    files actually claimed a capability by path. A file that claims one
+        #    must not also be reported as unmapped later.
         direct_caps = set()
+        self._resolved_paths = set()
+        # Stems of resolved files, and the stem counts across the whole change
+        # set. A planner entry naming a file by stem is only suppressed when
+        # that stem is unique, so a same-named file that did *not* resolve is
+        # never masked.
+        self._resolved_stems: set[str] = set()
+        stem_counts: dict[str, int] = {}
+        for f in changed_files:
+            stem = _file_stem(f)
+            stem_counts[stem] = stem_counts.get(stem, 0) + 1
         for c in classified:
             direct_caps.update(c.directly_affected_capabilities)
+            if c.directly_affected_capabilities:
+                self._resolved_paths.add(c.path)
+                self._resolved_stems.add(_file_stem(c.path))
+        self._stem_counts = stem_counts
 
         # 3. Get blast radius from cross-layer impact planner
         blast_report = self._impact_planner.analyze_cross_layer_impact(changed_files)
@@ -262,6 +334,24 @@ class CapabilityResolver:
         for raw_cap in sorted(set(blast_report.affected_capabilities)):
             norm = PLANNER_CAPABILITY_ALIASES.get(raw_cap, raw_cap)
             if norm == raw_cap and norm not in registry_caps:
+                # The impact planner reports a change it could not attribute to
+                # a capability two ways: as "UNMAPPED:<path>", and in the
+                # cross-layer frontend vocabulary as
+                # "frontend:<kind>:<route>:<filename>". Both name a *file*,
+                # and both are a gap in the planner's reporting rather than an
+                # unmapped change when that file already resolved to a contract
+                # capability by path in step 2. Without this guard a correctly
+                # resolved file is still recorded as unmapped and trips the
+                # fail-closed review obligation, so the gate blocks on changes
+                # that are in fact mapped.
+                #
+                # A file is only genuinely unmapped when nothing in step 2
+                # claimed it. The filename form is matched on the basename, and
+                # only when that basename is unique across the changed files, so
+                # an unrelated file that happens to share a name can never be
+                # suppressed by accident.
+                if self._names_resolved_file(raw_cap):
+                    continue
                 unmapped.append(raw_cap)
                 continue
             if norm in direct_caps:

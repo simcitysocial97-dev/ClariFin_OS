@@ -937,13 +937,22 @@ class VerificationRegistry:
                         severity=VerificationSeverity.HIGH,
                         description="Playwright E2E browser tests",
                         scope=VerificationScope.PLAYWRIGHT,
-                        module="frontend/e2e",
+                        # The Playwright suite lives under frontend/tests/e2e.
+                        # This said "frontend/e2e", which does not exist.
+                        module="frontend/tests/e2e",
                         capability="e2e-tests",
                     ),
                 ],
                 workflows=["playwright"],
                 scripts=["run_playwright_tests"],
-                modules=[],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). This list was empty, so no changed
+                # file could ever match the capability: every PR touching a
+                # Playwright spec, a visual-regression snapshot, or anything
+                # under frontend/tests/e2e resolved to UNMAPPED and blocked on
+                # the fail-closed review obligation, even though the surface is
+                # verified by the Playwright workflow on the same event.
+                modules=["frontend/tests/e2e"],
             ),
             "balance-engine": VerificationCapability(
                 id="balance-engine",
