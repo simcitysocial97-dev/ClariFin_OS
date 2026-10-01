@@ -43,17 +43,83 @@ def _default_overrides() -> dict[str, str]:
     }
 
 
+def _stale_mutation_evidence_dir(tmpdir: Path, capability: str = "loan-engine") -> Path:
+    """Write a deliberately stale mutation measurement into *tmpdir*.
+
+    These scenarios verify one chain end to end: stale mutation evidence must be
+    rejected, the capability must get a mutation *revalidation* task, that task
+    must carry ``authorization_required``, and the run must therefore stop at
+    ``awaiting_authorization``.
+
+    The precondition — that the on-disk mutation evidence for the capability *is*
+    stale — used to come from the workspace. It holds only when nothing has
+    recently written an authoritative record for that capability, so the five
+    scenarios that depend on it flipped between pass and fail depending on what
+    had run in the workspace beforehand. That is the same class of defect the
+    suite's isolation audit identified: a test whose result depends on
+    accumulated on-disk state rather than on the code under test.
+
+    Supplying the stale record explicitly makes the precondition deterministic
+    and, in doing so, makes the scenarios exercise the stale -> revalidate ->
+    authorize path on *every* run rather than only when the workspace happens to
+    be stale. No assertion is relaxed: each scenario still asserts the full
+    chain, and it now always has evidence to assert about.
+
+    The record is written into a temporary directory and reached through the
+    orchestrator's existing ``measurement_search_dirs`` hook, so the repository's
+    real measurement records are neither read nor written.
+    """
+    from runtime.foundation.verification.measurement_truth import (
+        MeasurementKind,
+        MeasurementTruthRecord,
+        PopulationAccounting,
+        save_measurement_truth,
+    )
+
+    tmpdir.mkdir(parents=True, exist_ok=True)
+    record = MeasurementTruthRecord(
+        run_id="stale-scenario-fixture",
+        measurement_kind=MeasurementKind.MUTATION.value,
+        # Deliberately not the live repository SHA: this is what makes the
+        # evidence stale and forces the revalidation path.
+        repository_sha="0" * 40,
+        tree_sha="0" * 40,
+        toolchain_fingerprint="scenario-fixture",
+        environment_fingerprint="scenario-fixture",
+        command=f"verify.py mutation --target {capability}",
+        requested_scope=capability,
+        actual_scope=capability,
+        population=PopulationAccounting(
+            requested_generated=10, generated=10, killed=10, survived=0
+        ),
+        mutation_score=100.0,
+        execution_status="PASS",
+    )
+    save_measurement_truth(
+        record, tmpdir / f"measurement-truth-{capability}-mutation.json"
+    )
+    return tmpdir
+
+
 def _make_orchestrator(
     overrides: dict[str, str] | None = None,
     evidence_root: Path | None = None,
+    with_stale_mutation_evidence: bool = False,
 ):
     from runtime.foundation.verification.execution_orchestrator import (
         ExecutionOrchestrator,
     )
 
+    measurement_search_dirs: list[str] = []
+    if with_stale_mutation_evidence:
+        measurement_search_dirs.append(
+            str(_stale_mutation_evidence_dir(Path(tempfile.mkdtemp())))
+        )
+
     return ExecutionOrchestrator(
         command_overrides={**_default_overrides(), **(overrides or {})},
         evidence_root=evidence_root,
+        measurement_search_dirs=measurement_search_dirs,
     )
 
 
@@ -64,7 +130,7 @@ def _make_orchestrator(
 
 class ScenarioAIsolatedBackendChange(unittest.TestCase):
     def test_loan_change_produces_minimum_sufficient_plan(self):
-        orch = _make_orchestrator()
+        orch = _make_orchestrator(with_stale_mutation_evidence=True)
         plan = orch.build_execution_plan(
             ["backend/src/engines/loan_engine/amortization.py"]
         )
@@ -134,7 +200,7 @@ class ScenarioCUnaffectedCapabilityReuse(unittest.TestCase):
 
 class ScenarioDStaleEvidence(unittest.TestCase):
     def test_stale_record_triggers_revalidation(self):
-        orch = _make_orchestrator()
+        orch = _make_orchestrator(with_stale_mutation_evidence=True)
         plan = orch.build_execution_plan(
             ["backend/src/engines/loan_engine/amortization.py"]
         )
@@ -215,7 +281,7 @@ class ScenarioFMutationSurvivor(unittest.TestCase):
         # invoke a mutation campaign (mutation is a capability among many,
         # never auto-run). The diagnostic escalation path is the declared
         # next action.
-        orch = _make_orchestrator()
+        orch = _make_orchestrator(with_stale_mutation_evidence=True)
         plan = orch.build_execution_plan(
             ["backend/src/engines/loan_engine/amortization.py"]
         )
@@ -347,7 +413,7 @@ class ScenarioITimeout(unittest.TestCase):
 
 class ScenarioJAuthorizationBoundary(unittest.TestCase):
     def test_mutation_task_stops_at_authorization_boundary(self):
-        orch = _make_orchestrator()
+        orch = _make_orchestrator(with_stale_mutation_evidence=True)
         plan = orch.build_execution_plan(
             ["backend/src/engines/loan_engine/amortization.py"]
         )
@@ -432,7 +498,7 @@ class ScenarioLWorkflowFailureMappedToCapability(unittest.TestCase):
 
 class ScenarioMSuccessfulCompleteFlow(unittest.TestCase):
     def test_full_chain_produces_machine_readable_decision(self):
-        orch = _make_orchestrator()
+        orch = _make_orchestrator(with_stale_mutation_evidence=True)
         # change → plan → execute → decide
         plan = orch.build_execution_plan(
             ["backend/src/engines/loan_engine/amortization.py"]
