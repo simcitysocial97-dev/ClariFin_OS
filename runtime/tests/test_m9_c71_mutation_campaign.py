@@ -715,6 +715,44 @@ class TestShardedWorkflowTopology:
         assert "shard:" not in str(matrix)
         assert "component:" not in str(matrix)
 
+    def test_the_published_matrix_carries_nothing_but_include(self, mutation_workflow):
+        """GitHub reads every top-level key other than include/exclude as a
+        matrix DIMENSION, and a dimension's value must be a LIST.
+
+        The plan document also reports `shard_count`, `total_shards`,
+        `diff_safe` and `recommended_timeout_minutes` for the run summary, and
+        publishing it verbatim handed the evaluator scalars where it expected
+        lists. It rejected the matrix before a runner was involved — "the matrix
+        must define at least one vector" — so the shard job was never created,
+        the aggregate gate reconciled zero measured shards, and every scheduled
+        campaign failed in 105 seconds having measured nothing.
+
+        The matrix output must therefore be `include` alone.
+        """
+        plan_steps = mutation_workflow["jobs"]["mutation-plan"]["steps"]
+        emit = next(s for s in plan_steps if s.get("id") == "plan")
+        script = str(emit["run"])
+
+        shaped = re.search(r"MATRIX_JSON=\"\$\(jq -c '(?P<filter>[^']+)'", script)
+        assert shaped, "the plan step must shape its matrix output explicitly"
+        assert re.fullmatch(
+            r"\{\s*include\s*:\s*\.include\s*\}", shaped.group("filter")
+        ), (
+            "the matrix filter must select `include` and nothing else, or the "
+            "evaluator reads the other keys as dimensions that must be lists"
+        )
+
+        # The document being narrowed genuinely carries those other keys, so
+        # publishing it verbatim is a live failure mode rather than a stale one.
+        plan = ms.plan_payload()
+        assert set(plan) > {"include"}, (
+            "the plan payload reports metadata beside `include`; the matrix "
+            "output has to narrow to `include` before `fromJson` sees it"
+        )
+        assert plan["include"], "the full plan must select at least one shard"
+        for entry in plan["include"]:
+            assert entry["shard"] and entry["component"] and entry["tier"]
+
     def test_aggregate_gate_is_the_authoritative_decision(self, mutation_workflow):
         steps = mutation_workflow["jobs"]["mutation-aggregate"]["steps"]
         runs = "\n".join(s.get("run", "") for s in steps)

@@ -200,9 +200,20 @@ jobs:
           else
             MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
           fi
+          # `fromJson` is handed this document verbatim, and GitHub reads every
+          # top-level key other than `include`/`exclude` as a matrix DIMENSION
+          # whose value must be a LIST. The plan document also carries
+          # `shard_count`, `total_shards`, `diff_safe` and
+          # `recommended_timeout_minutes` for the summary below, and handing
+          # those over made the evaluator reject the matrix before a runner was
+          # ever involved ("the matrix must define at least one vector"), so the
+          # shard job was never created and the campaign measured nothing. The
+          # matrix therefore carries `include` and nothing else; the summary
+          # still reads the full plan.
+          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
           {
             echo "matrix<<MUTMATRIX_EOF"
-            echo "$MATRIX"
+            echo "$MATRIX_JSON"
             echo "MUTMATRIX_EOF"
             echo "components=$(jq -r '[.include[].component] | join(" ")' <<< "$MATRIX")"
             echo "count=$(jq -r '.include | length' <<< "$MATRIX")"
@@ -241,10 +252,16 @@ jobs:
     # available in a job-level `if:`, and using it makes the workflow file
     # unparseable ("Unrecognized named-value: 'env'"). `needs.<job>.outputs` is
     # available there, so the plan job is the right place to publish it.
+    #
+    # `count != '0'` rather than `matrix != '[]'`: an incremental campaign that
+    # selects no shard is a real, legitimate outcome, and the plan already
+    # publishes the selected-shard count for exactly that decision. Comparing
+    # the matrix document against a two-character literal was a guess at a
+    # serialisation that the producer is free to change.
     if: >-
       needs.mutation-plan.outputs.mode != 'replay'
       && needs.mutation-plan.result == 'success'
-      && needs.mutation-plan.outputs.matrix != '[]'
+      && needs.mutation-plan.outputs.count != '0'
     runs-on: ubuntu-latest
     # M9-C72 — derived from measured p95 x2 by mutation-plan, not a flat 90.
     # With the slowest shard measured at 693 s this lands at 21 min, so a
