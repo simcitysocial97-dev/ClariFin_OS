@@ -976,7 +976,16 @@ class TestC54RealScenarioExecution(unittest.TestCase):
     """Real repository scenario execution tests."""
 
     def test_scenario_A_source_change_triggers_workflow(self):
-        """A: Normal source change triggers correct workflow."""
+        """A: A source change triggers the workflow that verifies it.
+
+        `backend-verify.yml` used to assert a `paths:` filter containing
+        `backend`, which is what made it a required gate that could silently not
+        report: GitHub treats a required context that does not report as
+        unsatisfied, so a pull request touching none of the filtered paths was
+        permanently blocked with every reported check green. The filter is gone;
+        an unfiltered workflow triggers for a backend change too, plus every
+        other change.
+        """
         from runtime.foundation.verification.workflow_convergence import (
             inventory_workflows,
         )
@@ -985,10 +994,19 @@ class TestC54RealScenarioExecution(unittest.TestCase):
         # Find backend-verify workflow
         backend = next((i for i in invs if i.filename == "backend-verify.yml"), None)
         self.assertIsNotNone(backend)
-        # Check it triggers on backend/** paths
-        push_triggers = backend.triggers.get("push", {})
-        paths = push_triggers.get("paths", [])
-        self.assertTrue(any("backend" in p for p in paths))
+        # It still runs on main pushes and on pull requests to main — the
+        # events a backend change arrives through.
+        self.assertIn("main", backend.triggers.get("push", {}).get("branches", []))
+        self.assertIn(
+            "main", backend.triggers.get("pull_request", {}).get("branches", [])
+        )
+        # And it is not narrowed away from them.
+        for event in ("push", "pull_request"):
+            self.assertNotIn(
+                "paths",
+                backend.triggers.get(event, {}),
+                f"backend-verify is a required status check and must always report",
+            )
 
     def test_scenario_B_test_only_change_triggers_test_path(self):
         """B: Test-only change triggers test verification."""
