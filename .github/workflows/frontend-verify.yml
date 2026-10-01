@@ -10,21 +10,25 @@ name: Frontend Verification
 on:
   push:
     branches:
-      - "**"
-    paths:
-      - "frontend/**"
-      - "backend/src/routers/**"
-      - "backend/src/mappers/**"
-      - "runtime/**"
+      - "main"      # Scoped to the integration branches, not "**". A feature branch
+      # push and its pull_request event are the same commit, so "**" made
+      # this workflow run twice per PR and report twice under the same name.
+      # Feature branches now run via pull_request only; main/develop still run
+      # via push. Same convention as playwright.yml and security-codeql.yml.
+      - "develop"
   pull_request:
     branches:
       - main
       - develop
-    paths:
-      - "frontend/**"
-      - "backend/src/routers/**"
-      - "backend/src/mappers/**"
-      - "runtime/**"
+    # No `paths:` filter, deliberately. "Frontend Verification" and
+    # "Runtime Verification" are required_status_checks in the
+    # `protect-main-branch` ruleset. A required check skipped by a path
+    # filter never reports, and GitHub treats a required context that does
+    # not report as unsatisfied — so a PR touching none of the filtered
+    # paths (e.g. only backend/tests/**) left the merge permanently BLOCKED
+    # with every reported check green. That is exactly what happened to
+    # PR #8. A required gate must always be able to report.
+
   workflow_dispatch:
 
 concurrency:

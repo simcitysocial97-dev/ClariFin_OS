@@ -210,7 +210,28 @@ class TestGate4ProgrammaticAnswers:
         count = body["data"]["count"]
         assert isinstance(count, int) and count >= 0
 
-    def test_what_obligations_are_open(self, client):
+    def test_what_obligations_are_open(self, client, monkeypatch):
+        # The obligation set is derived from the *live* change set, so on a
+        # checkout with nothing pending — a freshly merged `main` — the plan
+        # produces no obligations and `open_count` is legitimately 0. Asserting
+        # `> 0` therefore made this test pass on a PR branch (240 changed files,
+        # so many obligations) and fail on the merge commit of that same branch.
+        # That is the same class of bug the sibling `test_what_happened_recently`
+        # documents for the event store: asserting on ambient workspace state.
+        #
+        # Drive the endpoint with a known, non-empty change set instead, so the
+        # assertion is about the endpoint's behaviour rather than about whatever
+        # happens to be unmerged. Everything else asserted here is already
+        # state-independent and is kept.
+        import runtime.platform.api.services.tasks as tasks_service
+
+        monkeypatch.setattr(
+            tasks_service,
+            "_collect_changed_files",
+            lambda *args, **kwargs: [
+                "backend/src/engines/loan_engine/amortization.py"
+            ],
+        )
         r = client.get("/platform/v1/tasks?nocache=1")
         body = r.json()
         data = body["data"]
