@@ -735,23 +735,47 @@ class TestShardedWorkflowTopology:
 
         shaped = re.search(r"MATRIX_JSON=\"\$\(jq -c '(?P<filter>[^']+)'", script)
         assert shaped, "the plan step must shape its matrix output explicitly"
-        assert re.fullmatch(
-            r"\{\s*include\s*:\s*\.include\s*\}", shaped.group("filter")
-        ), (
-            "the matrix filter must select `include` and nothing else, or the "
-            "evaluator reads the other keys as dimensions that must be lists"
-        )
 
-        # The document being narrowed genuinely carries those other keys, so
-        # publishing it verbatim is a live failure mode rather than a stale one.
-        plan = ms.plan_payload()
-        assert set(plan) > {"include"}, (
-            "the plan payload reports metadata beside `include`; the matrix "
-            "output has to narrow to `include` before `fromJson` sees it"
+        # The document being narrowed genuinely carries the values a matrix cell
+        # can hold and the two shapes a matrix cannot: scalar metadata keys at
+        # the top level, and a LIST inside each entry. Publishing it verbatim is
+        # a live failure mode rather than a stale one.
+        payload = ms.plan_payload()
+        assert set(payload) > {"include"}, "the plan reports metadata beside `include`"
+        assert any(
+            isinstance(v, list) for v in payload["include"][0].values()
+        ), "an include entry carries a LIST, which a matrix cell never is"
+
+        # Every key the shard job reads must be a scalar in the published
+        # matrix, and no key outside `include` may be a dimension.
+        import json  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+
+        published = json.loads(
+            subprocess.run(
+                ["jq", "-c", shaped.group("filter")],
+                input=json.dumps(payload),
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout
         )
-        assert plan["include"], "the full plan must select at least one shard"
-        for entry in plan["include"]:
-            assert entry["shard"] and entry["component"] and entry["tier"]
+        assert set(published) == {"include"}, (
+            f"matrix keys {sorted(published)} — only 'include' and 'exclude' "
+            "are accepted; every other top-level key is read as a dimension "
+            "whose value must be a list"
+        )
+        assert published["include"], "the full plan must select at least one shard"
+        for entry in published["include"]:
+            for key, value in entry.items():
+                assert not isinstance(
+                    value, (list, dict)
+                ), f"matrix cell {key!r} is a {type(value).__name__}"
+        # The shard job's identity and sizing fields must survive the narrowing.
+        shard = published["include"][0]
+        for key in ("shard", "component", "tier", "file_count", "byte_size"):
+            assert key in shard, f"the shard job reads matrix.{key}"
+        assert shard["shard"] and shard["component"] and shard["tier"]
 
     def test_aggregate_gate_is_the_authoritative_decision(self, mutation_workflow):
         steps = mutation_workflow["jobs"]["mutation-aggregate"]["steps"]

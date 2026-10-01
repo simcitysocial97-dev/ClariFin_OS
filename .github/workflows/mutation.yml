@@ -200,17 +200,31 @@ jobs:
           else
             MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
           fi
-          # `fromJson` is handed this document verbatim, and GitHub reads every
-          # top-level key other than `include`/`exclude` as a matrix DIMENSION
-          # whose value must be a LIST. The plan document also carries
-          # `shard_count`, `total_shards`, `diff_safe` and
-          # `recommended_timeout_minutes` for the summary below, and handing
-          # those over made the evaluator reject the matrix before a runner was
-          # ever involved ("the matrix must define at least one vector"), so the
-          # shard job was never created and the campaign measured nothing. The
-          # matrix therefore carries `include` and nothing else; the summary
-          # still reads the full plan.
-          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
+          # `fromJson` is handed this document verbatim, and GitHub builds a matrix
+          # out of it: every value in the object is a matrix cell, and every
+          # top-level key other than `include`/`exclude` is a DIMENSION whose
+          # value must be a list. The plan document has neither shape.
+          #
+          # It carries `shard_count`, `total_shards`, `diff_safe` and
+          # `recommended_timeout_minutes` as scalars — the evaluator reads
+          # those as dimensions and rejects the matrix before a runner is even
+          # involved ("the matrix must define at least one vector"). And each
+          # `include` entry carries `reasons`, a LIST, which a matrix cell
+          # never is.
+          #
+          # Either defect alone is enough to cost the whole campaign: the shard
+          # job is never created, the aggregate reconciles zero measured
+          # shards, and the run concludes `failure` in 105 seconds having
+          # measured nothing — with no failing job anywhere to point at. Both
+          # were live at once, which is why fixing one at a time looked like it
+          # was not working.
+          #
+          # The matrix therefore carries exactly the scalar fields the shard job
+          # reads: `shard`, `component`, `tier`, `file_count`, `byte_size`,
+          # `source_paths`. `reasons` and the metadata stay in `$MATRIX`, which
+          # the run summary below still reads.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, component, tier, file_count, byte_size, source_paths}]}' <<< "$MATRIX")"
+          echo "Matrix published: $(jq -r '.include | length' <<< "$MATRIX_JSON") shard(s), ${#MATRIX_JSON} bytes" >> $GITHUB_STEP_SUMMARY
           {
             echo "matrix<<MUTMATRIX_EOF"
             echo "$MATRIX_JSON"
