@@ -183,6 +183,22 @@ runtime/generated/**/.mutmut-cache/
 runtime/generated/**/symbol-cache.json
 runtime/generated/**/symbol-test-map.json
 
+# ── Regenerable bulk: append-only run logs ──
+# git-fetch-events.jsonl is appended to by every git-touching orchestration
+# step (runtime/foundation/verification/orchestration/orchestrator.py:345). It
+# is a per-run execution log: one line appended per run, read by nothing, and
+# rewritten in place, so a tracked copy is a fixed point of a moving target.
+runtime/generated/git-fetch-events.jsonl
+
+# ── Regenerable bulk: machine-local mtime caches ──
+# frontend-backend-map.json is a cache keyed by absolute path and mtime
+# (runtime/foundation/verification/frontend_backend_map.py:141,163). The
+# committed copy carried 589 entries under one developer's home directory, so it
+# could never be a valid cache for any other checkout or for CI — every entry
+# missed and the whole map was rescanned. It changes on every file touch, and it
+# is regenerated from tracked sources on first use.
+runtime/generated/frontend-backend-map.json
+
 # Per-process pytest progress records (one pair per test session, rewritten as
 # the session runs — local diagnostic evidence, never committed).
 runtime/generated/verification-progress/
