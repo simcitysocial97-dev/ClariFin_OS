@@ -90,6 +90,23 @@ jobs:
           # Default setup remains disabled, so there is no duplicate analysis of
           # python or javascript.
           languages: python, javascript, actions
+          config: |
+            # One vendored, upstream-generated bundle is excluded, and nothing
+            # else is.
+            #
+            # `frontend/public/pdf.worker.mjs` is the pdf.js distribution build
+            # (~1.9 MB, Apache-2.0 header, byte-identical to upstream release).
+            # It IS part of the maintained production artifact — the browser
+            # loads it — so it is not deleted; but findings inside it are
+            # defects in pdf.js, fixed by upgrading pdf.js, not by editing a
+            # vendored file this repository does not author. `js/double-escaping`
+            # (alert #20) is one such finding at line 37056.
+            #
+            # The exclusion is per-file and named, not a directory or a pattern,
+            # so the rest of `frontend/` — including the hand-written worker
+            # wrapper — is analysed normally.
+            paths-ignore:
+              - frontend/public/pdf.worker.mjs
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3

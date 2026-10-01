@@ -11,6 +11,7 @@ Coordinates the post-upload pipeline:
 Synchronous orchestration with graceful degradation.
 """
 
+import logging
 from typing import Any
 
 from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
@@ -20,6 +21,21 @@ from src.services.dashboard_service import DashboardService
 from src.services.financial_intelligence_service import FinancialIntelligenceService
 from src.services.loan_service import LoanService
 from src.services.transaction_intelligence_service import TransactionIntelligenceService
+
+logger = logging.getLogger(__name__)
+
+
+def _stage_failure(stage: str, statement_id: int, exc: Exception) -> str:
+    """Describe a failed pipeline stage without carrying the exception out.
+
+    ``str(exc)`` on an arbitrary exception routinely contains filesystem paths,
+    SQL fragments and driver messages, and this summary is returned from an API
+    handler and persisted for audit — so the detail belongs in the server log,
+    where the stage name and statement id carry it back to the same record,
+    and the caller gets the stage and the exception type (CWE-209, CWE-497).
+    """
+    logger.exception("Statement %s: %s stage failed", statement_id, stage, exc_info=exc)
+    return f"{stage} failed: {type(exc).__name__}"
 
 
 class StatementProcessingOrchestrator:
@@ -57,37 +73,43 @@ class StatementProcessingOrchestrator:
         try:
             summary["behaviour"] = self._run_behaviour()
         except Exception as e:
-            summary["behaviour_error"] = str(e)
+            summary["behaviour_error"] = _stage_failure("behaviour", statement_id, e)
 
         # Stage 2: Cashflow recalculation
         try:
             summary["cashflow"] = self._run_cashflow()
         except Exception as e:
-            summary["cashflow_error"] = str(e)
+            summary["cashflow_error"] = _stage_failure("cashflow", statement_id, e)
 
         # Stage 3: Financial Intelligence
         try:
             summary["intelligence"] = self._run_intelligence()
         except Exception as e:
-            summary["intelligence_error"] = str(e)
+            summary["intelligence_error"] = _stage_failure(
+                "intelligence", statement_id, e
+            )
 
         # Stage 4: Recommendations
         try:
             summary["recommendations"] = self._run_recommendations()
         except Exception as e:
-            summary["recommendations_error"] = str(e)
+            summary["recommendations_error"] = _stage_failure(
+                "recommendations", statement_id, e
+            )
 
         # Stage 5: Dashboard refresh
         try:
             summary["dashboard"] = self._run_dashboard_refresh()
         except Exception as e:
-            summary["dashboard_error"] = str(e)
+            summary["dashboard_error"] = _stage_failure("dashboard", statement_id, e)
 
         # Stage 6: Transaction Intelligence (EMI/CC/cash classification)
         try:
             summary["transaction_intelligence"] = self._run_transaction_intelligence()
         except Exception as e:
-            summary["transaction_intelligence_error"] = str(e)
+            summary["transaction_intelligence_error"] = _stage_failure(
+                "transaction_intelligence", statement_id, e
+            )
 
         # M08: surface has_errors and persist the summary for auditability.
         summary["has_errors"] = any(k.endswith("_error") for k in summary)

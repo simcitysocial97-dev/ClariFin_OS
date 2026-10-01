@@ -114,6 +114,11 @@ async function main() {
 
     // Check if handler file imports from the schema file
     // Use global replacement to handle all occurrences of '../'
+    // codeql[js/incomplete-multi-character-sanitization] -- `normalizedFile`
+    // is never used as a path: its only consumer is the RegExp below, and that
+    // RegExp runs the value through `escapeRegExp` first. The filesystem reads
+    // in this script use `schemaInfo.file` and `handlerFile` directly, from the
+    // module's own registry, not from this normalised value.
     const normalizedFile = schemaInfo.file.replace(/\.\.\//g, '');
     // The filename is interpolated into a RegExp, so its metacharacters must be
     // escaped. Without this a file named `a.b.ts` also matches `aXbYts`, and

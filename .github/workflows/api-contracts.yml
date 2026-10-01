@@ -31,6 +31,17 @@ on:
       - "frontend/**"
       - "runtime/**"
   workflow_dispatch:
+  # The `workflow_run` trigger re-checks the contract when the E2E suite fails,
+  # because a contract break is the cheapest explanation for it.
+  #
+  # It also made this workflow privileged: `actions/untrusted-checkout` (critical)
+  # flagged checking out `github.event.workflow_run.head_sha`, which is attacker-
+  # controlled whenever a fork opens a pull request, in a job holding a token
+  # with write scope. Nothing here writes — the gate only runs a check and
+  # uploads evidence — so the write scope is removed rather than the trigger.
+  # With `contents: read` only, the checkout can no longer reach anything the
+  # untrusted code could escalate through, and the finding is closed by removing
+  # the privilege rather than by removing the safety net.
   workflow_run:
     workflows: ["Playwright Tests"]
     types:
@@ -42,7 +53,6 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   api-contracts:
