@@ -104,8 +104,16 @@ class TestInspectWorkflows:
         """The shard budget must come from data, not a magic number.
 
         A flat 90 minutes was 12% utilised against a 693 s slowest shard, which
-        means the setting could not fail usefully. The workflow now consumes
-        the plan job's measured recommendation.
+        means the setting could not fail usefully. The budget therefore comes
+        from the plan job's measured recommendation.
+
+        It is applied inside the measure step rather than through
+        `timeout-minutes:`. A matrix job whose `timeout-minutes` is an
+        expression reading `needs.<job>.outputs` is never created at all, so
+        consuming the measurement there deleted the shard matrix and turned
+        every campaign into a failure that measured nothing. The static
+        `timeout-minutes` is now only a backstop, and it is asserted to be a
+        literal number above the measured budget so it can never fire first.
         """
         import yaml
 
@@ -113,11 +121,25 @@ class TestInspectWorkflows:
         workflow = yaml.safe_load(
             (root / ".github" / "workflows" / "mutation.yml").read_text()
         )
+        shard = workflow["jobs"]["mutation"]
 
-        assert (
-            workflow["jobs"]["mutation"]["timeout-minutes"]
-            == "${{ needs.mutation-plan.outputs.timeout }}"
+        backstop = shard["timeout-minutes"]
+        assert isinstance(backstop, int), (
+            f"timeout-minutes is {backstop!r}; a dynamic value here removes the "
+            "matrix job entirely and the campaign silently measures nothing"
         )
+
+        measure = next(
+            s
+            for s in shard["steps"]
+            if s.get("name") == "Measure shard mutation (canonical check)"
+        )
+        assert (
+            measure["env"]["MUTATION_SHARD_TIMEOUT"]
+            == "${{ needs.mutation-plan.outputs.timeout }}"
+        ), "the budget must still come from the measured recommendation"
+        assert "timeout --signal=TERM" in measure["run"]
+        assert backstop > 60, "the backstop must not fire before the measured budget"
 
     def test_boundary_classifications_reasonable(self):
         """Known workflows must have plausible boundary classifications."""
