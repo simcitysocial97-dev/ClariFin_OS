@@ -386,7 +386,7 @@ function DiagnosticItemCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-semibold text-[var(--text-primary)]">{item.title}</span>
-            <span className={cn('text-xs font-mono px-1.5 py-0.5 rounded', bgColor, categoryColor.replace('text-', 'text-'))}>
+            <span className={cn('text-xs font-mono px-1.5 py-0.5 rounded', bgColor, categoryColor)}>
               {item.provenance.status}
             </span>
           </div>

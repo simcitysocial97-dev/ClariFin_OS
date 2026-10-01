@@ -7676,3 +7676,177 @@ and five fresh seeds.
   caches" continuously) while the 100 MB cache above was being read and
   rewritten by concurrent processes. Relieving that returned the task to 249 s.
   No timeout was changed.
+
+---
+
+## M9 Stabilization — Convergence Record and Post-Merge Refactor Backlog
+
+Final state: `Verification Reconcile = PASS`, `unmapped = 0`, all 13 GitHub
+workflows green, no threshold weakened, no gate bypassed.
+
+### Diagnostic infrastructure added (why the failures were findable at all)
+
+The intermittent failures in this pass were not diagnosable from the evidence
+the verification runtime produced. Two gaps were closed, both minimal:
+
+1. **Task logs are streamed, not buffered.** `_execute_shell_task` used
+   `subprocess.run(capture_output=True)`, so a task's log file stayed 0 bytes
+   for the whole run and received its contents only after the child exited. If
+   the orchestrator was interrupted or the child killed, the evidence for a
+   failing task was nothing at all — which is exactly what happened to reconcile
+   run `execplan-d210b2f3ea52`, where all 20 task logs were zero bytes. It now
+   runs the child in its own session with reader threads flushing per line, so a
+   kill, a signal or an orchestrator crash still leaves everything produced up to
+   that instant.
+2. **Per-test progress evidence.** `runtime/foundation/verification/pytest_progress.py`
+   records each test's start and each setup/call/teardown report into an
+   append-only JSONL stream plus an atomically-replaced state file, wired into
+   `runtime/tests/conftest.py` and `backend/conftest.py` behind a guarded import.
+   On SIGKILL mid-run the state file named
+   `test_m9_c50_operational_validation.py::...::test_scenario_15_ci_equivalent_execution`
+   as `last_started_test` with the previous test as `last_completed_test` — the
+   failing test identified immediately, with no re-run.
+3. **Termination classification.** A record now distinguishes EXIT_ZERO /
+   EXIT_NONZERO / WRAPPER_TIMEOUT / SIGNAL_TERMINATION / INFRASTRUCTURE, and
+   when the command ran pytest it names the inner cause
+   (TEST_ASSERTION_FAILURE / TEST_TIMEOUT / COLLECTION_OR_INTERNAL_ERROR) and
+   lists the failing nodeids. This is what turned "runtime suite failed" into
+   "14 of 15 failures were test timeouts inside `env._version`".
+4. **Workflow artifact upload.** The reconcile workflow uploaded
+   `evidence/`, `engineering-history.json` and `verification-cache.json`, but not
+   `m9-c49/logs/`. A run reporting `Result: PASS` alongside
+   `exec-0009 failed 229.32s` was therefore undiagnosable. All three streams are
+   now uploaded.
+
+### Known observation, not fixed (non-mandatory by design)
+
+Reconcile run `36868931034` (CI, SHA `460df5bd`): `Result: PASS`, 11/11
+obligations, 7 pass / 3 skipped escalations / 1 failed. The failure is
+`exec-0009`, the non-mandatory whole-repo coverage measurement
+(`verify.py measurement coverage .`): `execution_status: FAIL`,
+`completion_status: INFRASTRUCTURE_FAILURE`, `failure_classification:
+infrastructure`, 226.61 s. The system behaved correctly — the record carries
+`is_authoritative: false` and `may_certification_consume: false`, so incomplete
+coverage evidence was refused rather than consumed, and certification proceeded on
+the remaining authoritative measurements. The underlying infrastructure cause on
+the CI runner is not yet diagnosed and is deliberately left open rather than
+guessed at.
+
+### CodeQL alerts on PR #7 — assessment
+
+All three are pre-existing on `main` (every open alert shares the single
+`2026-09-26T11:12:47Z` analysis timestamp) and none is in a file this
+stabilization touched. They are reported as "new in this pull request" only
+because the diff covers 3,281 files; CodeQL's own annotation says so.
+
+1. **high — `py/clear-text-logging-sensitive-data`,
+   `backend/src/extraction/metadata_extractor.py:884`.** False positive. The
+   value is passed through `_redact_for_display()`, which recursively masks
+   `_SENSITIVE_KEYS` while preserving structure, and the statement is inside the
+   `if __name__ == "__main__":` CLI block — a developer entry point, not a
+   service log path. No change made; altering correct code to satisfy the rule
+   would be the wrong trade.
+2. **high — `py/path-injection`, `backend/src/routers/import_router.py:31`.**
+   False positive. The flagged expression is `candidate = UPLOAD_DIR / safe_name`
+   where `safe_name = Path(filename).name`, and the very next statement rejects
+   any escape: `if candidate.resolve().parent != UPLOAD_DIR.resolve(): raise
+   HTTPException(400)`. The module docstring documents this as the single
+   containment rule for every handler. No change made.
+3. **medium — `js/identity-replacement`,
+   `frontend/app/platform/diagnostics/page.tsx:389`.** **Genuine and fixed.**
+   `categoryColor.replace('text-', 'text-')` replaced a string with itself — a
+   leftover no-op. Removed; `categoryColor` is now passed to `cn()` as-is.
+   `tsc --noEmit` clean, `eslint` clean (6 pre-existing `no-explicit-any`
+   warnings elsewhere in the file, untouched).
+
+### Post-merge refactor backlog — from the four audits
+
+Recorded here rather than acted on: this stabilization's mandate is a green
+merge, and the runtime test suite is scheduled for a full refactor on the back
+of these findings. Ordered by measured value.
+
+**A. The suite is ~63% duplicated work in 9.9% of its files.** 15 of 152 modules
+account for 1,135 s of a ~1,800 s run. The dominant cost is *recursive nested
+pytest*: `test_m9_c55.py:950/125/497` and `test_m9_c53.py:671/695/719`
+re-execute modules the outer run already executed — 386.66 s, 34% of the entire
+suite. The fix is to assert the gate functions in-process instead of
+re-running whole modules through subprocesses.
+
+**B. `ExecutionOrchestrator.build_execution_plan` is unmemoised.** 3.3–4.4 s per
+call, 23 call sites in `runtime/tests` alone, ~85–100 s total, with no
+warm-up benefit. A memo keyed on `(repo_fingerprint, frozenset(changed_files))`
+is the single highest ratio of saving to diff size in the whole audit.
+
+**C. Nine idempotent subprocess spawns cost ~139 s.** `runtime.verify doctor`
+and `plan` are re-spawned 7 times across `test_m9c66_repeatability.py` and
+`test_m9c57_verification_self_contract.py` at ~10.5 s each, plus an
+`npx eslint --version` cold start. A session-scoped fixture for `doctor`/`plan`
+collapses 9 spawns to 3.
+
+**D. Duplicate source of truth: `runtime/tests/audit_final_freeze.py` is a
+byte-clone of `test_m9_c50_stop_gate9_failure_modes.py`** — 1,262 vs 1,263
+lines, differing by exactly one added `sys.path.insert`. It is not collected by
+pytest (no `test_` prefix), so it is a 1,262-line mirror that no fix to the
+collected copy will ever reach.
+
+**E. Tests that depend on accumulated workspace state.** This caused real
+damage in this pass: five `test_m9_c49.py` scenarios assert the
+stale-evidence → revalidation → authorization chain, whose precondition was that
+the on-disk mutation evidence *is* stale. That held only when nothing had
+recently written an authoritative record, so the assertions flipped with
+workspace history. Fixed hermetically here; the class remains. Also identified:
+tests that read CWD-relative `runtime/generated/...` artifacts (proven to flip
+pass↔fail on CWD alone with zero code change), a test that rewrites the real
+tracked `runtime/foundation/verification/verification.yaml` in place with a
+`coverage_threshold: 999` window (a process kill inside the window leaves the
+production config corrupt — the only finding that can permanently damage the
+repo), and a test whose `EvidenceRetention().cleanup()` targets the real
+`runtime/generated/` and would `rmtree` certification evidence the moment any
+`m9-cXX` directory crosses 90 days.
+
+**F. Duplicated test parameters, 23 groups.** Highest drift risk: property-test
+domain bounds declared 36 times across 6 loan files (identical today, one edit
+from diverging) and 13 times across credit-card files where
+`MAX_INTEREST_RATE_BPS` is **already** 3,600 in `test_emi_properties.py` and
+4,800 in `test_interest_properties.py` for the same engine. Also: 222 hard-coded
+`max_examples` values that bypass `HYPOTHESIS_PROFILE` entirely; 46 hand-computed
+`parents[n]` repo-root depths, one of which (`test_ai_orchestrator_run_id_containment.py:24`)
+already resolves to the *parent of the repo root*; 5 divergent `run_verify`
+wrappers with 2 different default timeouts and 3 different interpreter-selection
+strategies; and 4 sites that pass raw `os.environ` to children instead of the
+existing `env.child_process_env()`.
+
+**G. Naming and regroup — 139 files, 6 milestone dialects, and a real
+reference hazard.** `pyproject.toml` already registers 11 verification-kind
+markers and `backend/tests` already encodes kind in the directory; only
+`runtime/tests` encodes milestone in the filename, and 150 of 152 files use no
+registered marker at all. A validated old→new mapping (0 duplicate targets, 0
+basename collisions) exists for all 139. Critically: **the reconcile gate is
+inert for this tree** — all 154 `runtime/tests` paths resolve to zero
+capabilities, before and after any rename, so the gate neither constrains nor
+protects the rename. The real hazards are string references and `parents[N]`
+depth: 8 files are hard blockers with 30 reference sites (a `G25` certification
+gate does `.exists()` on them), and 21 files compute the repo root as
+`parents[2]`, which silently becomes `runtime/` the moment they are moved into a
+subdirectory. There is also a `startswith("runtime/tests/test_m9_c50")` prefix
+filter in two files that would silently drop the audit's scope from 13 files to
+1 with no error.
+
+**H. Known defects recorded, not fixed.**
+- `Classify_change`'s route branch matches with `feature in cap_id`, so one
+  changed Platform Console page claims all 23 platform routes. Separate from the
+  fabricated cashflow owner fixed earlier: the right owner in an over-broad set,
+  so it only inflates the blast radius. Repair means reworking route matching
+  against capability ids — planner architecture.
+- `TypeScriptSymbolResolver` still reads its cache with no mtime validation at
+  all, and holds two cache generations in one module.
+- The Python symbol cache is still read-modify-write with no locking: two
+  extractors built before either extracts lose one entry (reproduced). Bounded
+  in a strictly sequential run, unsafe under `xdist`.
+- `config_loader._load_yaml` is an `lru_cache(maxsize=1)` with no mtime in the
+  key, so any call with a different path evicts the no-arg entry and a rewritten
+  config is served stale (reproduced).
+- `networkidle` appears 84 times across 11 Playwright specs and is the largest
+  remaining flake surface in the E2E suite.
+- `test_doctor_consistent_across_runs` measures 22.7 s against the 30 s suite
+  budget — 76% utilisation, and the next test in that file to cross it.
