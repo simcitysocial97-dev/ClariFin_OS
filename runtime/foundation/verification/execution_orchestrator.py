@@ -1144,6 +1144,62 @@ class ExecutionOrchestrator:
                 continue
             if rec.measurement_kind != kind:
                 continue
+            # A record only speaks for the scope it actually measured.
+            #
+            # The candidate list ends in generic, non-per-capability locations —
+            # `backend/tests/generated/mutation/local-smoke/measurement-truth.json`
+            # and `.../measurement-truth-coverage.json` — and the only filter
+            # applied before this point was `measurement_kind`. So a single
+            # generic file was accepted as the measurement for *every*
+            # capability whose own path was absent.
+            #
+            # That is not hypothetical. The reuse guard requires an
+            # authoritative record at the live SHA, and before the record-minting
+            # order was fixed, freshly measured records were always derived, so
+            # the guard never fired and the defect stayed hidden. Fixing the
+            # minting exposed it: `local-smoke/measurement-truth.json` — a
+            # 6-mutant smoke probe of a scratch file, `requested_scope:
+            # "probe.py"`, `mode: "smoke"`, score 50% — was consumed as the
+            # authoritative mutation measurement for ledger, loan-engine *and*
+            # reconciliation, and certification failed on
+            # "mutation score 50.0 < 80.0" for all three.
+            #
+            # For mutation the capability's target is unambiguous
+            # (`CAPABILITY_TO_MUTATION_TARGET`), so require the record to name
+            # that target and refuse a smoke-mode record outright. Coverage needs
+            # the same discipline and it is stricter still: every engine
+            # capability declares the coverage scope `tests/unit/engines`, while
+            # the single shared record in the candidate list measured
+            # `tests/unit/engines/credit_card`. Containment would accept it —
+            # that path is inside the declared scope — but a measurement taken
+            # over one engine's tests is not coverage evidence for another
+            # engine, so the record's scope must *equal* the declared scope.
+            #
+            # Both checks only ever refuse. A refused record causes the
+            # measurement to be re-run, which is the safe direction: it can
+            # never let a campaign certify on evidence it did not produce.
+            if kind == "mutation":
+                target = CAPABILITY_TO_MUTATION_TARGET.get(cap_id)
+                if not target:
+                    continue
+                scopes = {
+                    str(getattr(rec, "requested_scope", "") or ""),
+                    str(getattr(rec, "actual_scope", "") or ""),
+                    str(getattr(rec, "target", "") or ""),
+                }
+                if target not in scopes:
+                    continue
+                if str(getattr(rec, "mode", "") or "") == "smoke":
+                    continue
+            else:
+                expected = self._component_for_mapping(cap_id, kind)
+                if expected:
+                    got = {
+                        str(getattr(rec, "requested_scope", "") or ""),
+                        str(getattr(rec, "actual_scope", "") or ""),
+                    }
+                    if expected not in got:
+                        continue
             return rec, path
         return None, None
 
