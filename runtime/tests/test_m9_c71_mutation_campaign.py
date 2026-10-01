@@ -25,9 +25,11 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -653,15 +655,58 @@ class TestShardedWorkflowTopology:
     def test_an_empty_incremental_plan_does_not_strand_the_aggregate(
         self, mutation_workflow
     ):
-        """If incremental mode selects zero shards, the shard matrix is empty.
+        """An empty shard matrix must still reach the aggregate gate.
 
-        GitHub renders that as an empty matrix, which would otherwise leave the
-        aggregate waiting on a job that never starts. The shard job is skipped
-        and the aggregate is explicitly allowed to proceed on that signal.
+        GitHub renders a zero-entry matrix as "no jobs", so the aggregate's
+        dependency never produces a result to inspect. Gating the aggregate on
+        `needs.mutation.result != 'skipped'` made it skip with it: a campaign
+        that measured NOTHING reported the same bare `failure` as one that
+        measured badly, with no shard evidence to point at. The gate must run
+        whenever a measurement mode was requested and reconcile whatever
+        arrived — an empty population is a verdict, not an absence.
         """
         assert "!=" in str(mutation_workflow["jobs"]["mutation"]["if"])
-        aggregate_if = str(mutation_workflow["jobs"]["mutation-aggregate"]["if"])
-        assert "skipped" in aggregate_if and "cancelled" in aggregate_if
+        aggregate = mutation_workflow["jobs"]["mutation-aggregate"]
+        aggregate_if = str(aggregate["if"])
+        assert (
+            "always()" in aggregate_if
+        ), "the aggregate must survive a dependency that produced no jobs"
+        assert "needs.mutation-plan" in aggregate_if, (
+            "the aggregate must key off the plan's mode, not off the shard "
+            "matrix's job result, which does not exist when the matrix is empty"
+        )
+        assert "mutation-plan" in str(aggregate["needs"])
+        assert (
+            "'replay'" in aggregate_if
+        ), "replay reconciles its own evidence and must not run this gate twice"
+
+    def test_every_plan_output_read_by_a_downstream_job_is_declared(
+        self, mutation_workflow
+    ):
+        """`needs.<job>.outputs.<name>` only resolves for DECLARED outputs.
+
+        An undeclared step output evaluates to the empty string, so
+        `timeout-minutes: ${{ needs.mutation-plan.outputs.timeout }}` became
+        `timeout-minutes: ''` — not a number — and GitHub created ZERO shard
+        jobs. Plan and smoke both succeeded, the aggregate skipped, and the run
+        concluded `failure` with no failing job anywhere. The matrix output was
+        published all along; only the timeout beside it was invisible.
+        """
+        jobs = mutation_workflow["jobs"]
+        reads: dict[str, set[str]] = {}
+        pattern = re.compile(r"needs\.([A-Za-z0-9_-]+)\.outputs\.([A-Za-z0-9_-]+)")
+        for job in jobs.values():
+            blob = yaml.safe_dump(job)
+            for producer, name in pattern.findall(blob):
+                reads.setdefault(producer, set()).add(name)
+
+        for producer, names in reads.items():
+            declared = set(jobs[producer].get("outputs") or {})
+            missing = names - declared
+            assert not missing, (
+                f"job {producer!r} must declare {sorted(missing)} as job outputs; "
+                "an undeclared output reads as an empty string downstream"
+            )
 
     def test_shards_come_from_the_canonical_plan(self, mutation_workflow):
         matrix = mutation_workflow["jobs"]["mutation"]["strategy"]["matrix"]

@@ -143,10 +143,20 @@ jobs:
     name: Mutation Campaign Plan
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Every value another job reads through `needs.<job>.outputs.<name>` must be
+    # declared here. An undeclared step output evaluates to the empty string, and
+    # `timeout-minutes: ''` is not a number — GitHub rejects the job definition
+    # and creates ZERO shard jobs. The signature was a run whose plan and smoke
+    # jobs both succeeded, whose shard jobs did not exist at all, and whose
+    # aggregate gate skipped: `failure` with nothing to fix. `timeout` was read by
+    # the shard job's `timeout-minutes:` but never declared, which is exactly that.
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       components: ${{ steps.plan.outputs.components }}
       count: ${{ steps.plan.outputs.count }}
+      total: ${{ steps.plan.outputs.total }}
+      diff_safe: ${{ steps.plan.outputs.diff_safe }}
+      timeout: ${{ steps.plan.outputs.timeout }}
       mode: ${{ steps.plan.outputs.mode }}
     steps:
       - name: Checkout code
@@ -477,11 +487,19 @@ jobs:
 
   mutation-aggregate:
     name: Mutation Aggregate Gate
-    needs: [mutation]
-    # When the shard matrix is empty (incremental with no affected shard) the
-    # matrix job is skipped; the gate must proceed on that signal rather than
-    # waiting for a job that will never start.
-    if: needs.mutation.result != 'skipped' && needs.mutation.result != 'cancelled'
+    # The gate is the ONLY thing that turns shard evidence into a verdict, so it
+    # must run whenever a measurement mode was requested — including the case
+    # where the shard matrix expanded to nothing. `always()` plus an explicit mode
+    # check replaces `needs.mutation.result != 'skipped'`: a skipped dependency
+    # made this gate skip too, so a campaign that measured NOTHING reported the
+    # same `failure` as a campaign that measured badly, with no shard evidence
+    # and no explanation. Now the gate runs, finds an empty measured population,
+    # and fails it as NOT EVALUABLE — which is the truth.
+    needs: [mutation-plan, mutation]
+    if: >-
+      always()
+      && needs.mutation-plan.result == 'success'
+      && needs.mutation-plan.outputs.mode != 'replay'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
