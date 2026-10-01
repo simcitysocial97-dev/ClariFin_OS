@@ -16,16 +16,27 @@ on:
       # Feature branches now run via pull_request only; main/develop still run
       # via push. Same convention as playwright.yml and security-codeql.yml.
       - "develop"
-    paths:
-      - "backend/**"
-      - "runtime/**"
   pull_request:
     branches:
       - main
       - develop
-    paths:
-      - "backend/**"
-      - "runtime/**"
+    # No `paths:` filter, deliberately, and for the same reason
+    # verification-runtime.yml has none.
+    #
+    # "Backend Verification" is a required_status_checks entry in the
+    # `protect-main-branch` ruleset. A required check that a path filter skips
+    # never reports, and GitHub treats a required context that does not report as
+    # unsatisfied — so a pull request touching none of the filtered paths was
+    # permanently BLOCKED with every reported check green. It is the same
+    # failure verification-runtime.yml already fixed for itself, and it was
+    # still present here: a PR changing only `frontend/`, `tools/`, `docs/` or
+    # `.github/` could never be merged, and the checks list gave no clue why.
+    #
+    # This check is a TOTAL backend verification (`runtime verify backend`), not
+    # a change-boundary one. Boundary-scoped runtime verification is owned by
+    # Verification Reconcile (`runtime verify check`) — a different command over
+    # a different scope — so dropping the filter adds a report, not a second copy
+    # of the same work.
   workflow_dispatch:
 
 concurrency:
