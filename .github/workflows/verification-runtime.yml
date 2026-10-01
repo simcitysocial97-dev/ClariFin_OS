@@ -10,7 +10,12 @@ name: Verification Runtime
 on:
   push:
     branches:
-      - "**"
+      - "main"      # Scoped to the integration branches, not "**". A feature branch
+      # push and its pull_request event are the same commit, so "**" made
+      # this workflow run twice per PR and report twice under the same name.
+      # Feature branches now run via pull_request only; main/develop still run
+      # via push. Same convention as playwright.yml and security-codeql.yml.
+      - "develop"
     paths:
       - "runtime/**"
       - "backend/src/engines/**"
