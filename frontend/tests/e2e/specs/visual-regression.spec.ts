@@ -67,6 +67,38 @@ function volatileRuntimeReadouts(page: import('@playwright/test').Page) {
   ];
 }
 
+/**
+ * A snapshot of a page that is still loading is not a snapshot of the page.
+ *
+ * `waitForPageReady` waits for `domcontentloaded` and for React to hydrate
+ * (the root element having children). Neither means the page's async queries
+ * have resolved, so a data-driven page can still be showing its skeleton when
+ * the screenshot is taken. Playwright's own stability check does not catch this
+ * either — "stable" means no layout shift, not "data arrived".
+ *
+ * That is what happened to the home-page baseline: the capture showed the
+ * dashboard's four stat tiles, summary strip and Cashflow Trend / Financial
+ * Health panels missing entirely, against a baseline that contains them — 12% of
+ * all pixels differing, identically in the chromium and mobile-chrome projects,
+ * which is the signature of a synchronisation problem rather than a rendering
+ * difference. Every other page passed in the same run because their content is
+ * not data-driven in the same way.
+ *
+ * Every loading placeholder in this app is the same primitive,
+ * `Skeleton` in components/ui/skeleton.tsx, which renders `div.animate-pulse`.
+ * So waiting for no `.animate-pulse` to remain is a precise "the page has
+ * finished loading" condition that works for all ten pages in PAGES.
+ *
+ * This is deliberately an assertion, not a swallowed wait: if a page never
+ * settles, `toHaveCount(0)` fails and the screenshot is never taken. A page
+ * that cannot finish loading is a real defect and must fail the run. The
+ * snapshot comparison itself is unchanged — same pages, same baselines, same
+ * `maxDiffPixels`, same `threshold`.
+ */
+async function waitForContentSettled(page: import('@playwright/test').Page) {
+  await expect(page.locator('.animate-pulse')).toHaveCount(0, { timeout: 15000 });
+}
+
 // ============================================================================
 // Full Page Screenshots
 // ============================================================================
@@ -82,7 +114,8 @@ test.describe('Visual Regression - Full Pages', () => {
     test(`should match ${pageConfig.name} page snapshot`, async ({ page, waitForPageReady }) => {
       await page.goto(pageConfig.path);
       await waitForPageReady(page);
-      
+      await waitForContentSettled(page);
+
       // Take full page screenshot
       await expect(page).toHaveScreenshot(`${pageConfig.name}-page.png`, {
         mask: volatileRuntimeReadouts(page),
@@ -179,7 +212,8 @@ test.describe('Visual Regression - Mobile', () => {
     test(`should match ${pageConfig.name} mobile snapshot`, async ({ page, waitForPageReady }) => {
       await page.goto(pageConfig.path);
       await waitForPageReady(page);
-      
+      await waitForContentSettled(page);
+
       await expect(page).toHaveScreenshot(`${pageConfig.name}-mobile.png`, {
         mask: volatileRuntimeReadouts(page),
         maxDiffPixels: MAX_DIFF_PIXELS,
@@ -298,7 +332,8 @@ test.describe('Visual Regression - Dark Mode', () => {
   test('should match dark mode dashboard', async ({ page, waitForPageReady }) => {
     await page.goto('/');
     await waitForPageReady(page);
-    
+    await waitForContentSettled(page);
+
     await expect(page).toHaveScreenshot('dark-mode-dashboard.png', {
       mask: volatileRuntimeReadouts(page),
       maxDiffPixels: MAX_DIFF_PIXELS,
