@@ -25,6 +25,7 @@ CLI:
     python csv_importer.py <file_path> [--debug]
 """
 
+import logging
 import re
 import sys
 from datetime import datetime
@@ -36,6 +37,8 @@ try:
 except ImportError:
     print("Error: pandas is required. Install with: pip install pandas openpyxl")
     sys.exit(1)
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================
@@ -693,7 +696,13 @@ class CSVImporter:
                 )
 
             except Exception as e:
-                warnings.append(f"Row {idx}: Error processing - {str(e)}")
+                # The row index and the exception TYPE are what a caller acts
+                # on; `str(e)` carries filesystem paths, driver messages and
+                # sometimes raw column values, and this list is returned from
+                # the import endpoint. The full text goes to the server log
+                # under the same row index (CWE-209, CWE-497).
+                logger.exception("Row %s: error processing transaction", idx)
+                warnings.append(f"Row {idx}: Error processing - {type(e).__name__}")
 
         if self.debug:
             print(f"Imported {len(transactions)} transactions")

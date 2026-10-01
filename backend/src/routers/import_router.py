@@ -27,8 +27,14 @@ def _resolve_upload_path(filename: str) -> Path:
     safe_name = Path(filename).name
     if not safe_name or safe_name in {".", ".."}:
         raise HTTPException(status_code=400, detail="Invalid filename")
-    candidate = UPLOAD_DIR / safe_name
-    if candidate.resolve().parent != UPLOAD_DIR.resolve():
+    # `filename` is caller-controlled. It is reduced to its final component
+    # above and the resolved parent is compared to the resolved upload root
+    # below, so neither `../` segments nor an absolute path can escape. CodeQL
+    # models neither `PurePath.name` nor the containment comparison as a
+    # path-injection sanitizer, so the two sites that touch the derived path
+    # carry an explicit, justified suppression.
+    candidate = UPLOAD_DIR / safe_name  # codeql[py/path-injection]
+    if candidate.resolve().parent != UPLOAD_DIR.resolve():  # codeql[py/path-injection]
         raise HTTPException(status_code=400, detail="Invalid filename")
     return candidate
 
@@ -93,10 +99,11 @@ def import_execute(data: ImportExecute) -> dict[str, Any]:
     # `filename` is caller-controlled, so it is confined to UPLOAD_DIR exactly
     # as the two upload handlers above do. Without this check a request could
     # name `../../etc/passwd` and have the importer read a file outside the
-    # upload directory (CWE-22).
-    save_path = _resolve_upload_path(data.filename)
+    # upload directory (CWE-22). `_resolve_upload_path` is the single
+    # containment rule; CodeQL cannot see it, hence the suppression.
+    save_path = _resolve_upload_path(data.filename)  # codeql[py/path-injection]
 
-    if not save_path.exists():
+    if not save_path.exists():  # codeql[py/path-injection]
         raise HTTPException(status_code=404, detail="File not found")
 
     service = ImportService()

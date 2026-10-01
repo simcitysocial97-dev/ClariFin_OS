@@ -37,11 +37,18 @@ def _run_path(runs_dir: Path, run_id: str) -> Path | None:
 
     if not isinstance(run_id, str) or not _RUN_ID_RE.match(run_id):
         return None
-    candidate = runs_dir / f"{run_id}.json"
+    # Every `run_id` -> path step in this module is guarded by `_RUN_ID_RE`
+    # (anchored, no separator, no traversal, no unbounded length) plus the
+    # resolved-parent check below. CodeQL models neither an anchored regex nor
+    # a containment comparison as a path-injection sanitizer, so each site that
+    # touches the derived path carries an explicit, justified suppression.
+    candidate = runs_dir / f"{run_id}.json"  # codeql[py/path-injection]
     # Belt and braces: the pattern already forbids traversal, but the runs
     # directory is cwd-relative, so confirm containment after resolution too.
     try:
-        if candidate.resolve().parent != runs_dir.resolve():
+        if (  # codeql[py/path-injection]
+            candidate.resolve().parent != runs_dir.resolve()
+        ):
             return None
     except OSError:
         return None
@@ -94,8 +101,8 @@ class AIOrchestrator:
         if run_id in self._runs:
             return self._runs[run_id]
         # Try loading from disk
-        path = _run_path(self._runs_dir, run_id)
-        if path is not None and path.exists():
+        path = _run_path(self._runs_dir, run_id)  # codeql[py/path-injection]
+        if path is not None and path.exists():  # codeql[py/path-injection]
             run = json.loads(path.read_text())
             self._runs[run_id] = run
             return run
@@ -280,7 +287,9 @@ class AIOrchestrator:
                 # treating an unvalidated id as a path.
                 logger.warning("refusing to persist run with invalid id")
                 return
-            path.write_text(json.dumps(run, indent=2, default=str))
+            path.write_text(  # codeql[py/path-injection]
+                json.dumps(run, indent=2, default=str)
+            )
 
     def _audit(self, run_id: str, event_type: str, payload: dict[str, Any]) -> None:
         """Record an audit event for this run."""

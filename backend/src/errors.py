@@ -189,7 +189,10 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
     # The traceback always goes to the server log, and is only ever added to the
     # response when EXPOSE_ERROR_DETAILS is set explicitly. Keying this off
     # log_level meant a deployment that enabled DEBUG for troubleshooting also
-    # started shipping stack traces to clients (CWE-209).
+    # started shipping stack traces to clients (CWE-209). No workflow, compose
+    # file, or frontend bundle sets the variable, so the default deployment
+    # answers 500 with a generic body; CodeQL cannot follow the flag, and this
+    # is the one place the deliberate opt-in is spelled out.
     details: dict[str, Any] = {}
     from src.config import settings
 
@@ -198,6 +201,8 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
 
     return JSONResponse(
         status_code=500,
+        # codeql[py/stack-trace-exposure] -- guarded by `expose_error_details`,
+        # which defaults off; see the comment above.
         content=format_error_response(
             500, "Internal server error", details if details else None
         ),

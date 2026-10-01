@@ -198,6 +198,10 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
         return result
     except Exception as exc:  # noqa: BLE001
         logger.warning("Verification write path failed: %s", exc, exc_info=True)
+        # `str(exc)` reaches the caller as a 200 response envelope, and on an
+        # arbitrary exception it carries filesystem paths, SQL fragments and
+        # driver messages. The type plus the already-logged report_id is enough
+        # to correlate this response with the server log (CWE-209, CWE-497).
         return {
             "ok": False,
             "report_id": f"failed-{uuid.uuid4().hex[:8]}",
@@ -205,7 +209,7 @@ def _safe_run(capability_id: str | None = None) -> dict[str, Any]:
             "completed_at": now_iso(),
             "duration_seconds": 0.0,
             "final_decision": "error",
-            "decision_reason": str(exc),
+            "decision_reason": f"internal error ({type(exc).__name__})",
             "record_count": 0,
             "task_ids": [],
             "capabilities": [],

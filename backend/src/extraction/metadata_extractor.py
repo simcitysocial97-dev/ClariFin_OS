@@ -594,6 +594,25 @@ _NUMERIC_FIELDS = {
     "credit_limit",
 }
 
+#: Fields whose extracted value is a full account identifier. Debug output goes
+#: to CI logs and terminal scrollback, which are retained far longer than the
+#: process that produced them, so these are masked at the point of logging
+#: rather than only in the CLI summary (CWE-532).
+_SENSITIVE_FIELDS = frozenset({"card_number", "account_number", "pan", "cvv"})
+
+
+def _mask_for_log(field_name: str, value: Any) -> Any:
+    """Return ``value`` masked when ``field_name`` is an account identifier.
+
+    A masked card number on a statement (``4321 23XX XXXX 1234``) still ends in
+    four real digits, so masking keeps the last four — enough to confirm which
+    card a PDF described, and nothing that identifies the account on its own.
+    """
+    if field_name not in _SENSITIVE_FIELDS or value is None:
+        return value
+    digits = "".join(ch for ch in str(value) if ch.isdigit())
+    return f"****{digits[-4:]}" if len(digits) >= 4 else "****"
+
 
 # ============================================================
 # MetadataExtractor Class
@@ -674,7 +693,10 @@ class MetadataExtractor:
                     else:
                         value = extracted
 
-                    self._log(f"  {field_name}: directPattern matched → {value}")
+                    self._log(
+                        f"  {field_name}: directPattern matched → "
+                        f"{_mask_for_log(field_name, value)}"
+                    )
                     return value
 
         # Strategy 2: Proximity search using labels
@@ -686,7 +708,8 @@ class MetadataExtractor:
             result = find_value_near(self._full_text, label, value_type, distance)
             if result is not None:
                 self._log(
-                    f"  {field_name}: proximity matched (label={label!r}) → {result}"
+                    f"  {field_name}: proximity matched (label={label!r}) → "
+                    f"{_mask_for_log(field_name, result)}"
                 )
                 return result
 
@@ -800,7 +823,7 @@ class MetadataExtractor:
             f"Final result: total_due={result['total_amount_due']}, "
             f"min_due={result['minimum_amount_due']}, "
             f"due_date={result['due_date']}, "
-            f"card={result['card_number']}"
+            f"card=****{result['card_last4']}"
         )
 
         return result
@@ -829,8 +852,9 @@ class MetadataExtractor:
 #: Keys whose values are credentials or full account identifiers. The CLI exists
 #: to inspect the *shape* of an extraction, so masking these loses nothing for
 #: its purpose while keeping a full card number out of terminal scrollback,
-#: CI logs and shell history (CWE-532).
-_SENSITIVE_KEYS = frozenset({"card_number", "account_number", "pan", "cvv"})
+#: CI logs and shell history (CWE-532). The same set the per-field debug log
+#: masks, so "printed" and "extracted" never disagree about what is sensitive.
+_SENSITIVE_KEYS = _SENSITIVE_FIELDS
 
 
 def _redact_for_display(value: Any) -> Any:
@@ -881,4 +905,9 @@ if __name__ == "__main__":
 
     extractor = MetadataExtractor(pdf_path, bank=bank, debug=debug)
     result = extractor.extract()
+    # codeql[py/clear-text-logging-sensitive-data] -- the payload is
+    # `_redact_for_display(result)`, which replaces every value under a
+    # credential key (`_SENSITIVE_KEYS`) with `***REDACTED***` and recurses
+    # through nested mappings. CodeQL models a dict-key-conditional redactor as
+    # a pass-through, so it reports a value that is redacted by construction.
     print(json.dumps(_redact_for_display(result), indent=2, default=str))

@@ -169,6 +169,12 @@ def ingest_pdf(
 
         # Print metadata findings
         if metadata.get("card_last4"):
+            # codeql[py/clear-text-logging-sensitive-data] -- `card_last4` is
+            # the last four digits and nothing else. A full PAN is never held
+            # in `metadata`: `extract_card_number` only matches already-masked
+            # representations on the statement, and the per-field debug log
+            # masks `card_number` before printing it. Printing last-four is the
+            # masking the standard asks for (PCI DSS 3.4).
             print(f"  Card: ****{metadata['card_last4']}")
         if metadata.get("total_amount_due") is not None:
             total_due = metadata["total_amount_due"]
