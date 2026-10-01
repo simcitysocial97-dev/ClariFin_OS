@@ -277,12 +277,25 @@ jobs:
       && needs.mutation-plan.result == 'success'
       && needs.mutation-plan.outputs.count != '0'
     runs-on: ubuntu-latest
-    # M9-C72 — derived from measured p95 x2 by mutation-plan, not a flat 90.
-    # With the slowest shard measured at 693 s this lands at 21 min, so a
-    # pathological shard fails visibly instead of holding a parallel slot for
-    # 90 minutes and reporting an ambiguous timeout. The plan job always emits
-    # this output, including when the diff lookup fails.
-    timeout-minutes: ${{ needs.mutation-plan.outputs.timeout }}
+    # M9-C72 sizes the per-shard budget from measured p95 x2, not a flat 90
+    # minutes, and publishes it as a plan output.
+    #
+    # It CANNOT be applied through `timeout-minutes:`. A matrix job whose
+    # `timeout-minutes` is an expression reading `needs.<job>.outputs` is never
+    # created: GitHub evaluates a matrix job's own properties in a context that
+    # does not have the matrix, the definition fails, and the job silently
+    # vanishes. That is what made this campaign look alive and useless for its
+    # whole life — plan and smoke green, no shard jobs anywhere, aggregate gate
+    # failing on an empty measured population, run `failure` in 105 seconds.
+    # A literal `timeout-minutes` on the same job expands normally; a dynamic
+    # one does not, whatever the shape of the matrix behind it.
+    #
+    # The measured budget is therefore enforced where a dynamic value is
+    # actually evaluated: inside the step, with GNU `timeout`. The static
+    # `timeout-minutes` below is only the backstop for a runner that has
+    # outlived its own budget, and sits above the largest budget the planner can
+    # emit so it never fires first.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       max-parallel: 7
@@ -308,7 +321,23 @@ jobs:
         run: .venv/bin/python -m runtime.verify doctor
 
       - name: Measure shard mutation (canonical check)
-        run: .venv/bin/python -m runtime.verify mutation --shard "${{ matrix.shard }}"
+        env:
+          # The measured budget. Read as an env var, not interpolated into the
+          # command line, so a shard name can never reach the shell as syntax.
+          MUTATION_SHARD: ${{ matrix.shard }}
+          MUTATION_SHARD_TIMEOUT: ${{ needs.mutation-plan.outputs.timeout }}
+        run: |
+          echo "Shard $MUTATION_SHARD budget: ${MUTATION_SHARD_TIMEOUT}m (measured p95 x2)"
+          set +e
+          timeout --signal=TERM --kill-after=60s "${MUTATION_SHARD_TIMEOUT}m" \
+            .venv/bin/python -m runtime.verify mutation --shard "$MUTATION_SHARD"
+          rc=$?
+          set -e
+          if [ "$rc" -eq 124 ]; then
+            echo "::error::Shard $MUTATION_SHARD overran its ${MUTATION_SHARD_TIMEOUT}-minute measured budget. Raise the cap only after checking whether the shard is genuinely pathological or the measurement drifted."
+            exit 1
+          fi
+          exit "$rc"
 
       - name: Upload shard summary
         if: always()

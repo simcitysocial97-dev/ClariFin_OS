@@ -680,17 +680,61 @@ class TestShardedWorkflowTopology:
             "'replay'" in aggregate_if
         ), "replay reconciles its own evidence and must not run this gate twice"
 
-    def test_every_plan_output_read_by_a_downstream_job_is_declared(
+    def test_a_matrix_job_never_sizes_itself_from_a_needs_output(
+        self, mutation_workflow
+    ):
+        """The measured per-shard budget must not be a dynamic `timeout-minutes`.
+
+        A matrix job whose `timeout-minutes` is an expression reading
+        `needs.<job>.outputs` is never created. GitHub evaluates a matrix job's
+        own properties in a context that does not have the matrix, the job
+        definition fails, and the job silently disappears — no check run, no
+        annotation, no failing job. The run still concludes `failure`, because
+        the aggregate gate reconciles a measured population of zero.
+
+        Verified against GitHub with an isolated probe: identical plan/matrix
+        plumbing produced shard jobs with a literal `timeout-minutes` and none at
+        all with the expression, with the matrix shape held constant.
+
+        The measured budget is therefore enforced inside the step with GNU
+        `timeout`, and the static `timeout-minutes` is only a backstop that must
+        exceed it.
+        """
+        shard = mutation_workflow["jobs"]["mutation"]
+        assert "matrix" in shard["strategy"], "the shard job must still be a matrix"
+        timeout = shard["timeout-minutes"]
+        assert not isinstance(timeout, str) or "${{" not in timeout, (
+            f"timeout-minutes: {timeout!r} — a dynamic value here removes the "
+            "matrix job entirely"
+        )
+        assert isinstance(timeout, int), "the backstop must be a literal number"
+
+        # The measured budget survives, enforced where a dynamic value is
+        # actually evaluated.
+        measure = next(
+            s
+            for s in shard["steps"]
+            if s.get("name") == "Measure shard mutation (canonical check)"
+        )
+        assert measure["env"]["MUTATION_SHARD_TIMEOUT"] == (
+            "${{ needs.mutation-plan.outputs.timeout }}"
+        )
+        assert "timeout --signal=TERM" in measure["run"]
+        assert "124" in measure["run"], "an overrun must be reported, not absorbed"
+        assert timeout > 60, (
+            "the static backstop must exceed any budget the planner can emit, "
+            "or it fires before the measured one"
+        )
+
+    def test_a_plan_output_read_by_a_downstream_job_is_declared(
         self, mutation_workflow
     ):
         """`needs.<job>.outputs.<name>` only resolves for DECLARED outputs.
 
-        An undeclared step output evaluates to the empty string, so
-        `timeout-minutes: ${{ needs.mutation-plan.outputs.timeout }}` became
-        `timeout-minutes: ''` — not a number — and GitHub created ZERO shard
-        jobs. Plan and smoke both succeeded, the aggregate skipped, and the run
-        concluded `failure` with no failing job anywhere. The matrix output was
-        published all along; only the timeout beside it was invisible.
+        An undeclared step output evaluates to the empty string, so a consumer
+        reading it gets `''` and has to cope with that. `timeout` was read by
+        the shard job and never declared, which is one of the two reasons the
+        campaign measured nothing.
         """
         jobs = mutation_workflow["jobs"]
         reads: dict[str, set[str]] = {}
