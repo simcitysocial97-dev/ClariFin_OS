@@ -329,7 +329,15 @@ class VerificationRegistry:
                 category=VerificationCategory.CONTRACT_FRONTEND,
                 scope=VerificationScope.FRONTEND,
                 command="bash .github/scripts/run_frontend_verification.sh",
-                estimated_duration_seconds=180,
+                # Measured 249 s on an idle 4-core workstation (lint 56 +
+                # typecheck 21 + build 65 + vitest 107 for 1367 tests), and 345 s
+                # on a loaded host. The previous 180 s was below the command's own
+                # cost, so the derived task budget of 2x the estimate (360 s) left
+                # roughly 4% headroom and the obligation's result tracked machine
+                # load rather than the code. Corrected to the measurement; kept in
+                # step with verification.yaml, which overrides this default. See
+                # the full rationale in that file.
+                estimated_duration_seconds=300,
                 scopes=[VerificationScope.FRONTEND, VerificationScope.CONTRACTS],
             ),
             "contracts": VerificationWorkflow(

@@ -100,7 +100,30 @@ workflows:
     category: "contract_frontend"
     scope: "frontend"
     command: "bash .github/scripts/run_frontend_verification.sh"
-    estimated_duration_seconds: 180
+    # Measured on an idle 4-core workstation: lint 56 s + typecheck 21 s +
+    # build 65 s + vitest 107 s = 249 s for 1367 frontend tests. The previous
+    # value of 180 s was below the command's own cost, and since
+    # `_timeout_for` derives the task budget as 2x the estimate, it produced a
+    # 360 s ceiling for a command that takes 249 s idle and reached 345 s on a
+    # loaded host — about 4% headroom, so it passed or failed according to
+    # machine load rather than according to the code. Reconcile run
+    # execplan-b357471cbfa8 recorded exactly that: `timeout 360.50s command
+    # exceeded 360s`, with the streamed log showing lint 74 s, typecheck 27 s,
+    # build 69 s, and vitest still running at 175 s when it was killed
+    # (exit=143).
+    #
+    # This is the only workflow whose declared estimate was below its measured
+    # cost. For comparison, as measured in the same run: backend 300 declared /
+    # 135 actual, contracts 180 / 107, quick 60 / 46, runtime 2700 / 1493. So
+    # this is one wrong data point being corrected against a measurement, not a
+    # budget being relaxed to fit a failure.
+    #
+    # 300 s matches how sibling workflows are sized (backend, property and
+    # migration are all 300-600) and yields a 600 s task ceiling: comfortably
+    # above the 345 s loaded cost, and still a hard bound on a genuine hang.
+    # No coverage, mutation or regression threshold is involved — those live in
+    # the thresholds block below and are untouched.
+    estimated_duration_seconds: 300
     scopes: ["frontend", "contracts"]
     capabilities: ["api-contracts"]
 
