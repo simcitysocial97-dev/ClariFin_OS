@@ -27,14 +27,18 @@ def _resolve_upload_path(filename: str) -> Path:
     safe_name = Path(filename).name
     if not safe_name or safe_name in {".", ".."}:
         raise HTTPException(status_code=400, detail="Invalid filename")
-    # `filename` is caller-controlled. It is reduced to its final component
-    # above and the resolved parent is compared to the resolved upload root
-    # below, so neither `../` segments nor an absolute path can escape. CodeQL
-    # models neither `PurePath.name` nor the containment comparison as a
-    # path-injection sanitizer, so the two sites that touch the derived path
-    # carry an explicit, justified suppression.
-    candidate = UPLOAD_DIR / safe_name  # codeql[py/path-injection]
-    if candidate.resolve().parent != UPLOAD_DIR.resolve():  # codeql[py/path-injection]
+    # `filename` is caller-controlled. `PurePath.name` above discards every
+    # directory component, and the comparison below confirms the resolved parent
+    # is the resolved upload root, so neither a `../` segment nor an absolute
+    # path can escape (CWE-22). CodeQL models neither `PurePath.name` nor a
+    # resolved-parent comparison as a path-injection sanitizer, so every site
+    # that touches the derived path carries a suppression on the line above it —
+    # which is where Python expects one. A trailing comment on the same line is
+    # not read as a suppression.
+    # codeql[py/path-injection]
+    candidate = UPLOAD_DIR / safe_name
+    # codeql[py/path-injection]
+    if candidate.resolve().parent != UPLOAD_DIR.resolve():
         raise HTTPException(status_code=400, detail="Invalid filename")
     return candidate
 
@@ -101,9 +105,11 @@ def import_execute(data: ImportExecute) -> dict[str, Any]:
     # name `../../etc/passwd` and have the importer read a file outside the
     # upload directory (CWE-22). `_resolve_upload_path` is the single
     # containment rule; CodeQL cannot see it, hence the suppression.
-    save_path = _resolve_upload_path(data.filename)  # codeql[py/path-injection]
+    # codeql[py/path-injection]
+    save_path = _resolve_upload_path(data.filename)
 
-    if not save_path.exists():  # codeql[py/path-injection]
+    # codeql[py/path-injection]
+    if not save_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
 
     service = ImportService()

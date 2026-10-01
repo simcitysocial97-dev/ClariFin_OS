@@ -27,9 +27,10 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent.parent
 
 PY_ALERTS = {
-    # py/path-injection — 4 alerts (orchestrator.py:44/98/99/283)
+    # py/path-injection — orchestrator.py x4, import_router.py x2. The alert is
+    # reported at each site that TOUCHES the derived path, not at the one place
+    # the guard is written, so a fix at a single site is not enough.
     "runtime/platform/ai/orchestrator.py": 5,
-    # py/path-injection — 2 alerts (import_router.py:31/99)
     "backend/src/routers/import_router.py": 4,
     # py/clear-text-logging-sensitive-data — 1 alert (:884); :618 was fixed
     "backend/src/extraction/metadata_extractor.py": 1,
@@ -171,6 +172,40 @@ def test_every_python_suppression_is_present_and_counted():
             f"{expected}. Each needs a classification; see "
             "runtime/tests/test_m9_security_findings.py."
         )
+
+
+def test_every_python_suppression_sits_on_the_line_before_its_alert():
+    """Python only reads a suppression comment placed on its OWN line.
+
+    This is the failure the first pass made. Nine suppressions were written, six
+    of them as trailing comments — the idiomatic placement in every other
+    language — and CodeQL still reported five sites as live high-severity alerts
+    on the pull request. The CodeQL changelog is explicit for Python:
+    `codeql[query-id]` comments "must be placed on a blank line before the
+    alert". The three that worked were the ones already written that way, by
+    accident, because their justification was a paragraph rather than a trailing
+    aside.
+
+    A suppression that CodeQL silently ignores is worse than none: it reads like
+    a decision and closes nothing.
+    """
+    for rel in PY_ALERTS:
+        lines = _read(rel).splitlines()
+        for index, line in enumerate(lines):
+            match = re.search(r"#\s*codeql\[", line)
+            if not match:
+                continue
+            assert line.strip().startswith("# codeql["), (
+                f"{rel}:{index + 1} is a trailing comment. In Python a codeql "
+                "suppression must be the whole comment, on the line before the "
+                "alert — a trailing one is silently ignored."
+            )
+            following = [
+                n.strip()
+                for n in lines[index + 1 :]
+                if n.strip() and not n.strip().startswith("#")
+            ]
+            assert following, f"{rel}:{index + 1} suppresses nothing below it"
 
 
 def test_every_python_suppression_names_a_python_query():
