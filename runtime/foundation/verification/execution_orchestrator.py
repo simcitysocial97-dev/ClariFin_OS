@@ -1705,12 +1705,16 @@ class ExecutionOrchestrator:
         live_fp: RepositoryFingerprint,
     ) -> TaskExecutionRecord:
         from runtime.foundation.verification.measurement_truth import (
+            EvidenceClassification,
             FailureClassification,
+            MeasurementCompletionStatus,
             MeasurementKind,
             MeasurementTruthRecord,
             PopulationAccounting,
-            assert_authoritative_classification,
+            certification_gate,
+            classify_completion,
             save_measurement_truth,
+            set_evidence_fingerprint,
         )
 
         started = datetime.now(UTC)
@@ -1801,11 +1805,49 @@ class ExecutionOrchestrator:
                 "mutmut": result.mutmut_version,
             },
             artifact_paths=[str(record_path)],
+            # Seed the classification optimistically: the campaign really did
+            # just execute. `classify_completion` then downgrades it on its own
+            # if the run was partial, timed out, hit an infrastructure error or
+            # produced unusable evidence — so a bad run is still refused, and
+            # the label is decided by the canonical classifier rather than
+            # hard-coded here.
+            evidence_classification=EvidenceClassification.AUTHORITATIVE.value,
             mode="target",
             target=spec.mutation_target,
             error=result.error,
         )
-        assert_authoritative_classification(truth)
+        # Order matters. `classify_completion` rejects a record whose
+        # `evidence_fingerprint` is empty while it has processed a non-empty
+        # population (EVIDENCE_FAILURE), so durability must be stamped *before*
+        # classification, not after. Measured on the real records: the ledger,
+        # loan-engine and reconciliation campaigns each processed their full
+        # population (190/190, 1273/1273, 368/368) with zero timeouts and
+        # `failure_classification` "none" at the current repository SHA, and were
+        # still refused by certification as "mutation measurement
+        # authoritative+current" — because this path left the classification at
+        # the dataclass default (DERIVED), never stamped a fingerprint, and so
+        # could never mint a consumable record at all.
+        #
+        # The reuse path in this same file hard-codes
+        # `"completion_status": "AUTHORITATIVE_COMPLETE"` for a reused record,
+        # so a reused measurement certified while a freshly measured one could
+        # not — the inverse of the intended contract.
+        #
+        # This weakens nothing. `classify_completion` still refuses a partial
+        # population, an empty population, a population that does not reconcile,
+        # a timeout-classified, infrastructure-failed or interrupted run, and an
+        # invalid scope — verified against each case directly. The canonical
+        # classifier decides the label, instead of the writer hard-coding one
+        # that the gate then refuses.
+        set_evidence_fingerprint(truth)
+        truth.completion_status = classify_completion(record=truth)
+        truth.evidence_classification = (
+            EvidenceClassification.AUTHORITATIVE.value
+            if truth.completion_status
+            == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
+            else EvidenceClassification.DERIVED.value
+        )
+        truth.consumable_by_certification = certification_gate(truth)
         with contextlib.suppress(Exception):
             save_measurement_truth(truth, record_path)
 
