@@ -186,12 +186,14 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
         f"Unexpected error: {str(exc)}", error=exc, extra={"path": request.url.path}
     )
 
-    # In development, you might want to include the traceback
-    # In production, keep it generic
+    # The traceback always goes to the server log, and is only ever added to the
+    # response when EXPOSE_ERROR_DETAILS is set explicitly. Keying this off
+    # log_level meant a deployment that enabled DEBUG for troubleshooting also
+    # started shipping stack traces to clients (CWE-209).
     details: dict[str, Any] = {}
     from src.config import settings
 
-    if settings.log_level == "DEBUG":
+    if settings.expose_error_details:
         details["traceback"] = traceback.format_exc()
 
     return JSONResponse(

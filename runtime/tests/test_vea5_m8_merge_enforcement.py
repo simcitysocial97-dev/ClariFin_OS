@@ -57,7 +57,14 @@ def test_m81_stale_workflows_use_verification_command_pattern():
     required, and the aggregate gate is now part of the asserted topology.
     """
     expected_profiles = {
-        "quality": "check",
+        # quality owns repository/static quality, so it delegates to the quick
+        # profile (ruff, black, mypy-strict, unit tests) — the same responsibility
+        # it had before b326f08e replaced those steps with `runtime/verify.py
+        # quick`, and before later C70 work widened it to `check`. `check` is
+        # change-boundary capability verification, which is
+        # verification-reconcile.yml's job; running it here as well made the most
+        # expensive verification in the repository execute twice per event.
+        "quality": "quick",
         "playwright": "playwright",
         "golden": "golden",
     }
@@ -83,15 +90,15 @@ def test_m81_stale_workflows_use_verification_command_pattern():
                 "mutation must keep the smoke-first sharded campaign topology: "
                 f"{sorted(mutation_job_profiles)}"
             )
-            assert "mutation-smoke" in jobs["mutation"].get("needs", []), (
-                "authoritative mutation shards must need mutation-smoke"
-            )
-            assert "mutation-plan" in jobs["mutation"].get("needs", []), (
-                "shards must consume the canonical plan, not a duplicated list"
-            )
-            assert "mutation" in jobs["mutation-aggregate"].get("needs", []), (
-                "the aggregate gate must consume every shard"
-            )
+            assert "mutation-smoke" in jobs["mutation"].get(
+                "needs", []
+            ), "authoritative mutation shards must need mutation-smoke"
+            assert "mutation-plan" in jobs["mutation"].get(
+                "needs", []
+            ), "shards must consume the canonical plan, not a duplicated list"
+            assert "mutation" in jobs["mutation-aggregate"].get(
+                "needs", []
+            ), "the aggregate gate must consume every shard"
             expected = mutation_job_profiles
         else:
             # Single job, single command invoking verify.py <profile>.

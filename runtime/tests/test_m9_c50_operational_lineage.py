@@ -271,8 +271,19 @@ class TestOperationalLineage:
             # Restore original file
             _remove_change(change_file)
 
+    @pytest.mark.timeout(180)
     def test_scenario_14_ci_equivalent(self):
         """CI-equivalent: verify verify.py check exits cleanly on clean tree subset."""
+        # Test budget: this test's own work is a nested `pytest
+        # runtime/tests/test_m9_c50_stop_gate5_evidence_trust.py` with its own
+        # `timeout=30`, so it cannot finish inside the 30 s per-test budget the
+        # suite imposes. Without a mark here the harness kills the test at 30 s
+        # while the child is still running, which both fails the test and
+        # orphans the child. The sibling module already diagnosed exactly this
+        # and carries `@pytest.mark.timeout(180)` for the same reason — this
+        # module was never given the same mitigation. No assertion, threshold
+        # or nested timeout is changed; only this test's outer budget, so the
+        # 180 s bound that the inner subprocess already has can actually govern.
         # Run a targeted subset of verification to prove CI equivalence
         r = subprocess.run(
             [
@@ -311,8 +322,17 @@ class TestOperationalLineage:
         }
         (OUTPUT_DIR / "run-ci-equivalent.json").write_text(json.dumps(record, indent=2))
 
+    @pytest.mark.timeout(180)
     def test_scenario_15_self_verification(self):
         """Framework invokes its own canonical pipeline."""
+        # Test budget: the nested `pytest
+        # runtime/tests/test_m9_c50_self_verification.py` below is allowed 60 s
+        # by its own `timeout=60`, so the suite's 30 s per-test budget would
+        # kill this test at 30 s with the child still running — failing the test
+        # and orphaning the child. Same asymmetry, same mitigation, same value
+        # as scenario 14 above and as the sibling module in
+        # test_m9_c50_operational_validation.py. No assertion, threshold or
+        # nested timeout is changed.
         cp = ControlPlane()
         result = cp.plan(changed_files=[], json_out=False)
         assert result == 0

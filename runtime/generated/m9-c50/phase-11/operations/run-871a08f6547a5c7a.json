@@ -1,0 +1,24 @@
+{
+  "run_id": "871a08f6547a5c7a",
+  "timestamp": "2026-09-25T09:26:50.392713+00:00",
+  "repository_sha": "e669116f5b171d5e916436b9cae6e92c99942561",
+  "scenario": "frontend_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/frontend/components/tmpn0_35ie6.tsx"
+  ],
+  "resolved_capabilities": [
+    "frontend-component"
+  ],
+  "obligations": [
+    "unit",
+    "e2e"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

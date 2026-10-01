@@ -174,3 +174,86 @@ class TestImportDetectSafety:
             assert body["row_count"] == 0
         finally:
             _cleanup("data.csv")
+
+
+class TestImportExecutePathContainment:
+    """``/import/execute`` takes a filename in the request body, not as an upload.
+
+    The two upload handlers confine the name to UPLOAD_DIR; ``import_execute``
+    originally did not, so a request could name a path outside the upload
+    directory and have the importer read it (CWE-22). These tests pin the
+    containment on that route specifically.
+    """
+
+    @staticmethod
+    def _payload(filename: str) -> dict:
+        return {"filename": filename, "mapping": {}, "member": "Self"}
+
+    def test_traversal_cannot_reach_a_file_outside_upload_dir(
+        self, client: TestClient, monkeypatch
+    ) -> None:
+        """The real invariant: an outside file is never read.
+
+        ``../../etc/passwd`` is reduced to ``passwd`` inside UPLOAD_DIR, so the
+        request reports "not found" rather than 400. What matters is that the
+        importer is never handed a path outside the upload directory, so this
+        test plants a real file above UPLOAD_DIR and proves it is not read.
+        """
+
+        reached: list[str] = []
+
+        class _Fake:
+            def import_csv(self, save_path: str, mapping, member):
+                reached.append(save_path)
+                return {"success": True, "rows": 0, "log": []}
+
+        monkeypatch.setattr(import_router, "ImportService", lambda *a, **k: _Fake())
+
+        secret = import_router.UPLOAD_DIR.parent / "secret-outside.csv"
+        secret.write_text("Date,Amount\n", encoding="utf-8")
+        try:
+            response = client.post(
+                "/api/v1/import/execute",
+                json=self._payload("../secret-outside.csv"),
+            )
+            assert response.status_code == 404, "outside file must not be importable"
+            assert reached == [], "importer must not be invoked for an outside path"
+        finally:
+            secret.unlink(missing_ok=True)
+
+    def test_dotdot_only_filename_is_rejected(self, client: TestClient) -> None:
+        response = client.post("/api/v1/import/execute", json=self._payload(".."))
+        assert response.status_code == 400
+        assert "Invalid filename" in response.text
+
+    def test_absolute_path_is_confined_to_upload_dir(
+        self, client: TestClient, monkeypatch
+    ) -> None:
+        seen: dict[str, str] = {}
+
+        class _Fake:
+            def import_csv(self, save_path: str, mapping, member):
+                seen["save_path"] = save_path
+                return {"success": True, "rows": 0, "log": []}
+
+        monkeypatch.setattr(import_router, "ImportService", lambda *a, **k: _Fake())
+        target = import_router.UPLOAD_DIR / "outside.csv"
+        target.write_text("Date,Amount\n", encoding="utf-8")
+        try:
+            response = client.post(
+                "/api/v1/import/execute",
+                json=self._payload(str(target)),
+            )
+            assert response.status_code == 200
+            # The absolute path was reduced to its final component and confined.
+            assert Path(seen["save_path"]).resolve().parent == (
+                import_router.UPLOAD_DIR.resolve()
+            )
+        finally:
+            target.unlink(missing_ok=True)
+
+    def test_missing_file_still_reports_404(self, client: TestClient) -> None:
+        response = client.post(
+            "/api/v1/import/execute", json=self._payload("definitely-absent.csv")
+        )
+        assert response.status_code == 404

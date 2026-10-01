@@ -14,10 +14,8 @@ import sqlite3
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
-from src.core.db.schema import create_all
 from src.core.db.migrations._registry import apply_pending_migrations
+from src.core.db.schema import create_all
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 
 
@@ -37,18 +35,28 @@ def test_has_errors_false_on_full_success(tmp_path: Path) -> None:
     orch = _make_orchestrator(tmp_path, db_path)
 
     # Stub every stage so no real service call can raise.
-    with patch.object(orch, "_run_behaviour", return_value={"ok": True}), \
-         patch.object(orch, "_run_cashflow", return_value={"ok": True}), \
-         patch.object(orch, "_run_intelligence", return_value={"ok": True}), \
-         patch.object(orch, "_run_recommendations", return_value={"ok": True}), \
-         patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}), \
-         patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}):
+    with (
+        patch.object(orch, "_run_behaviour", return_value={"ok": True}),
+        patch.object(orch, "_run_cashflow", return_value={"ok": True}),
+        patch.object(orch, "_run_intelligence", return_value={"ok": True}),
+        patch.object(orch, "_run_recommendations", return_value={"ok": True}),
+        patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}),
+        patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}),
+    ):
         summary = orch.process_after_upload(statement_id=1)
 
     assert summary["has_errors"] is False
-    assert all(k in summary for k in ("behaviour", "cashflow", "intelligence",
-                                      "recommendations", "dashboard",
-                                      "transaction_intelligence"))
+    assert all(
+        k in summary
+        for k in (
+            "behaviour",
+            "cashflow",
+            "intelligence",
+            "recommendations",
+            "dashboard",
+            "transaction_intelligence",
+        )
+    )
     # Persistence: exactly one row for statement_id=1.
     conn = sqlite3.connect(db_path)
     try:
@@ -71,12 +79,14 @@ def test_has_errors_true_when_stage_fails(tmp_path: Path) -> None:
         raise RuntimeError("boom")
 
     # Stub successful stages, force behaviour to fail.
-    with patch.object(orch, "_run_behaviour", side_effect=_raise), \
-         patch.object(orch, "_run_cashflow", return_value={"ok": True}), \
-         patch.object(orch, "_run_intelligence", return_value={"ok": True}), \
-         patch.object(orch, "_run_recommendations", return_value={"ok": True}), \
-         patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}), \
-         patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}):
+    with (
+        patch.object(orch, "_run_behaviour", side_effect=_raise),
+        patch.object(orch, "_run_cashflow", return_value={"ok": True}),
+        patch.object(orch, "_run_intelligence", return_value={"ok": True}),
+        patch.object(orch, "_run_recommendations", return_value={"ok": True}),
+        patch.object(orch, "_run_dashboard_refresh", return_value={"ok": True}),
+        patch.object(orch, "_run_transaction_intelligence", return_value={"ok": True}),
+    ):
         summary = orch.process_after_upload(statement_id=2)
 
     assert summary["has_errors"] is True
@@ -98,7 +108,6 @@ def test_has_errors_true_when_stage_fails(tmp_path: Path) -> None:
 
 def test_migration_004_idempotent(tmp_path: Path) -> None:
     """Applying migration 004 twice: no error, identical schema."""
-    from src.core.db.migrations.m004_import_runs import migrate as m004
 
     db_path = str(tmp_path / "m08_mig.db")
     create_all(db_path)

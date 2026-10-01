@@ -6,6 +6,7 @@ definitions have been consolidated there to eliminate duplication.
 
 All original import paths continue to work unchanged.
 """
+
 from __future__ import annotations
 
 # Re-export all evidence types from the unified schema for backward compatibility.

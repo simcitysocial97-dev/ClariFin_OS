@@ -76,7 +76,20 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: python, javascript
+          # Explicit ownership for every security-relevant language.
+          #
+          # `actions` is included deliberately. GitHub's default CodeQL setup is
+          # `not-configured` on this repository, so this workflow is the only
+          # analysis surface. Without `actions`, workflow files had no owner:
+          # the actions database was last written on 2026-08-10 by the retired
+          # default setup, and the 12 actions/missing-workflow-permissions alerts
+          # it raised have never been re-analysed. Including it restores that
+          # ownership and lets those alerts be confirmed or cleared by a real
+          # re-analysis rather than closed on age.
+          #
+          # Default setup remains disabled, so there is no duplicate analysis of
+          # python or javascript.
+          languages: python, javascript, actions
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3

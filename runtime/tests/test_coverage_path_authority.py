@@ -42,7 +42,9 @@ class TestCoveragePathAuthority:
 
     def test_coverage_dir_created(self):
         """COVERAGE_DIR must be under runtime/generated/m9-c47/coverage."""
-        assert COVERAGE_DIR == REPO_ROOT / "runtime" / "generated" / "m9-c47" / "coverage"
+        assert (
+            COVERAGE_DIR == REPO_ROOT / "runtime" / "generated" / "m9-c47" / "coverage"
+        )
         COVERAGE_DIR.mkdir(parents=True, exist_ok=True)
         assert COVERAGE_DIR.exists()
 
@@ -71,14 +73,22 @@ class TestCoveragePathAuthority:
         # Verify `coverage report --format` does NOT include json option
         result = subprocess.run(
             [str(Path(".venv/bin/coverage").resolve()), "report", "--help"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         # --format only supports text/markdown/total, not json
-        assert "json" not in result.stdout.split("--format")[1].split("\n")[0] if "--format" in result.stdout else True
+        assert (
+            "json" not in result.stdout.split("--format")[1].split("\n")[0]
+            if "--format" in result.stdout
+            else True
+        )
         # Verify `coverage json` is available
         result2 = subprocess.run(
             [str(Path(".venv/bin/coverage").resolve()), "json", "--help"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         assert result2.returncode == 0
         assert "-o" in result2.stdout or "--output" in result2.stdout

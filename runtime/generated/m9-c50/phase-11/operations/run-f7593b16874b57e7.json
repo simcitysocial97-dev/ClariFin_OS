@@ -1,0 +1,24 @@
+{
+  "run_id": "f7593b16874b57e7",
+  "timestamp": "2026-09-25T18:01:56.083564+00:00",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpgn2smdmh.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

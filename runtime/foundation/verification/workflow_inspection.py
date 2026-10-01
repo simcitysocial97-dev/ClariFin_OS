@@ -38,12 +38,21 @@ class BoundaryClassification(str, Enum):
 _WORKFLOW_BOUNDARY_RULES: dict[str, tuple[BoundaryClassification, list[str]]] = {
     "release.yml": (BoundaryClassification.GITHUB_ONLY, ["docker", "push", "tag"]),
     "security-codeql.yml": (BoundaryClassification.GITHUB_ONLY, ["codeql", "security"]),
-    "playwright.yml": (BoundaryClassification.BROWSER, ["playwright", "browser", "e2e"]),
-    "frontend-verify.yml": (BoundaryClassification.ENVIRONMENT_BOUNDARY, ["frontend", "next"]),
+    "playwright.yml": (
+        BoundaryClassification.BROWSER,
+        ["playwright", "browser", "e2e"],
+    ),
+    "frontend-verify.yml": (
+        BoundaryClassification.ENVIRONMENT_BOUNDARY,
+        ["frontend", "next"],
+    ),
     "golden.yml": (BoundaryClassification.ENVIRONMENT_BOUNDARY, ["golden"]),
     "mutation.yml": (BoundaryClassification.EXTERNAL_TOOLING, ["mutmut"]),
     "mutation-pr.yml": (BoundaryClassification.EXTERNAL_TOOLING, ["mutmut"]),
-    "api-contracts.yml": (BoundaryClassification.EXTERNAL_SERVICE, ["schema", "contract"]),
+    "api-contracts.yml": (
+        BoundaryClassification.EXTERNAL_SERVICE,
+        ["schema", "contract"],
+    ),
     "dependency-update.yml": (BoundaryClassification.GITHUB_ONLY, ["dependabot"]),
     "quality.yml": (BoundaryClassification.ENVIRONMENT_BOUNDARY, ["ruff", "mypy"]),
 }
@@ -242,7 +251,8 @@ def enumerate_workflows(workflow_dir: Path | None = None) -> list[WorkflowRecord
                 local_executable=local_exec,
                 boundary_classification=boundary,
                 environment_requirements=[
-                    r.value for r in (
+                    r.value
+                    for r in (
                         [BoundaryClassification.BROWSER]
                         if boundary == BoundaryClassification.BROWSER
                         else []
@@ -275,7 +285,11 @@ def format_workflows_table(records: list[WorkflowRecord]) -> str:
     lines.append("-" * 80)
 
     local_count = sum(1 for w in records if w.local_executable)
-    github_only = sum(1 for w in records if w.boundary_classification == BoundaryClassification.GITHUB_ONLY)
+    github_only = sum(
+        1
+        for w in records
+        if w.boundary_classification == BoundaryClassification.GITHUB_ONLY
+    )
     env_boundary = sum(
         1
         for w in records
@@ -286,7 +300,10 @@ def format_workflows_table(records: list[WorkflowRecord]) -> str:
         1
         for w in records
         if w.boundary_classification
-        in (BoundaryClassification.EXTERNAL_SERVICE, BoundaryClassification.EXTERNAL_TOOLING)
+        in (
+            BoundaryClassification.EXTERNAL_SERVICE,
+            BoundaryClassification.EXTERNAL_TOOLING,
+        )
     )
     lines.append(f"  Local executable: {local_count}")
     lines.append(f"  GitHub-only: {github_only}")

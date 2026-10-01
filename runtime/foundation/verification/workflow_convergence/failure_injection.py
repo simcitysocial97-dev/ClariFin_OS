@@ -5,6 +5,7 @@ Builds the machine-readable failure-injection matrix by combining the
 failure semantics definitions (Q8) with the expected classification and
 certification effect for each failure type.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

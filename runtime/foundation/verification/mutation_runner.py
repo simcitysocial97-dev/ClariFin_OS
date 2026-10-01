@@ -1095,6 +1095,17 @@ def _write_measurement_truth(
         ),
     )
 
+    # Order matters: `classify_completion` rejects a record whose
+    # `evidence_fingerprint` is empty while it has processed a non-empty
+    # population (EVIDENCE_FAILURE), so durability must be stamped *before*
+    # classification. Classifying first stamped EVIDENCE_FAILURE, which then
+    # downgraded `evidence_classification` to DERIVED, and the subsequent
+    # `assert_authoritative_classification` recomputed DERIVED_ONLY — so a
+    # complete, clean, freshly measured campaign was written to disk as derived
+    # evidence and certification refused to consume it. The order here is now
+    # stamp -> classify -> settle label, which is the same sequence the
+    # execution orchestrator's measurement path uses.
+    set_evidence_fingerprint(record)
     completion = classify_completion(record=record)
     record.completion_status = completion
     # Authoritative only when the full scope completed cleanly (never for
@@ -1105,7 +1116,6 @@ def _write_measurement_truth(
         if completion == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
         else EvidenceClassification.DERIVED.value
     )
-    set_evidence_fingerprint(record)
     assert_authoritative_classification(record)
     out.write_text(json.dumps(record.to_dict(), indent=2) + "\n")
     return out

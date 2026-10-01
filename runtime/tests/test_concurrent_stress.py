@@ -29,6 +29,7 @@ def test_concurrent_plan_commands():
     cache_file = Path("runtime/generated/verification-cache.json")
     if cache_file.exists():
         import json
+
         try:
             cache_data = json.loads(cache_file.read_text())
             assert isinstance(cache_data, dict), "Cache corrupted (not a dict)"
@@ -62,10 +63,24 @@ def test_concurrent_mutation_incremental():
     """Multiple incremental mutation runs must not interfere."""
 
     commands = [
-        ["python", "-m", "runtime.verify", "strengthen", "--target",
-         "backend/src/engines/loan_engine/emi.py", "--smoke"],
-        ["python", "-m", "runtime.verify", "strengthen", "--target",
-         "backend/src/engines/balance_engine/balance.py", "--smoke"],
+        [
+            "python",
+            "-m",
+            "runtime.verify",
+            "strengthen",
+            "--target",
+            "backend/src/engines/loan_engine/emi.py",
+            "--smoke",
+        ],
+        [
+            "python",
+            "-m",
+            "runtime.verify",
+            "strengthen",
+            "--target",
+            "backend/src/engines/balance_engine/balance.py",
+            "--smoke",
+        ],
     ]
 
     def run_command(cmd):
@@ -76,8 +91,11 @@ def test_concurrent_mutation_incremental():
         results = [f.result() for f in as_completed(futures)]
 
     for result in results:
-        assert result.returncode in [0, 1, 2], \
-            f"Mutation crashed: {result.stderr[-500:]}"
+        assert result.returncode in [
+            0,
+            1,
+            2,
+        ], f"Mutation crashed: {result.stderr[-500:]}"
 
 
 def test_evidence_directory_under_concurrent_load():
@@ -90,7 +108,9 @@ def test_evidence_directory_under_concurrent_load():
     ]
 
     generated_dir = Path("runtime/generated")
-    before_files = set(generated_dir.rglob("*.json")) if generated_dir.exists() else set()
+    before_files = (
+        set(generated_dir.rglob("*.json")) if generated_dir.exists() else set()
+    )
 
     def run_command(cmd):
         return subprocess.run(cmd, capture_output=True, text=True, timeout=60)
@@ -99,13 +119,16 @@ def test_evidence_directory_under_concurrent_load():
         futures = [executor.submit(run_command, cmd) for cmd in commands]
         [f.result() for f in as_completed(futures)]
 
-    after_files = set(generated_dir.rglob("*.json")) if generated_dir.exists() else set()
+    after_files = (
+        set(generated_dir.rglob("*.json")) if generated_dir.exists() else set()
+    )
     new_files = after_files - before_files
 
     corrupted = []
     for file in new_files:
         try:
             import json
+
             json.loads(file.read_text())
         except json.JSONDecodeError:
             corrupted.append(file)

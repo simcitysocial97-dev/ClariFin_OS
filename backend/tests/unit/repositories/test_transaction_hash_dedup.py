@@ -57,9 +57,7 @@ def test_two_distinct_transactions_with_same_hash_inputs_both_persist(
     finally:
         conn.close()
 
-    assert inserted == 2, (
-        f"BE-001: expected both rows inserted (2), got {inserted}"
-    )
+    assert inserted == 2, f"BE-001: expected both rows inserted (2), got {inserted}"
     assert count == 2, (
         f"BE-001: expected 2 persisted rows, found {count} — "
         "the second transaction was swallowed by the hash dedup"

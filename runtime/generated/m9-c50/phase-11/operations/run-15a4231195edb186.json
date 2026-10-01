@@ -1,0 +1,32 @@
+{
+  "run_id": "15a4231195edb186",
+  "timestamp": "2026-09-25T08:42:31.291014+00:00",
+  "repository_sha": "c7360cc37c2f7b04cbd7079560dded00b1457b02",
+  "scenario": "failed_verification",
+  "changed_files": [
+    "test.py"
+  ],
+  "resolved_capabilities": [
+    "cap1"
+  ],
+  "obligations": [
+    "unit"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {
+    "complete": false,
+    "satisfied": 0,
+    "total_required": 1,
+    "failed_obligations": [
+      "test.fail"
+    ]
+  },
+  "final_decision": "failed",
+  "failures": [
+    "No execution record for obligation test.fail"
+  ],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

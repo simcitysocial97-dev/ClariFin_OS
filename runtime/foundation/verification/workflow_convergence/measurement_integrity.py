@@ -4,6 +4,7 @@ M9-C54 — Measurement integrity assessment (Q10).
 Assesses whether test/coverage/mutation evidence is preserved independently
 of the workflow execution pipeline.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

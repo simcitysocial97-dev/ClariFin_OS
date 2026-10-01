@@ -117,6 +117,43 @@ def _resolve(tool: str) -> tuple[str | None, str]:
     return None, "missing"
 
 
+# Per-process memo of tool version strings, keyed by (executable, config_dir).
+#
+# `_version` shells out to each tool (`<tool> --version`) with a 30 s timeout,
+# and `resolve_environment` calls it once per tool. That made every
+# `resolve_environment()` cost a full round of subprocess spawns — measured at
+# 2.00 s per call, repeated identically, at 20 call sites across the
+# verification runtime and the test suite.
+#
+# The cost was not merely slow, it was a correctness hazard. Those spawns sit
+# inside the 30 s per-test budget, and on a loaded host they overrun it: 14 of
+# the 15 failures in one full `pytest runtime/tests/ -q --timeout=30` run were
+# `Failed: Timeout (>30.0s) from pytest-timeout.`, every one of them inside this
+# call chain (`executor_pipeline.collect_repo_fingerprints` ->
+# `resolve_environment` -> `build_fingerprint` -> `_resolve_tool` ->
+# `_version` -> `subprocess.run(..., timeout=30)`). Whether the suite passed
+# depended on machine load, not on the code under test.
+#
+# A toolchain does not change while a process is running, so the version of a
+# given executable under a given working directory is a constant of the
+# process. Memoising that is the same per-process discipline the symbol cache
+# already uses. `resolve_environment()` still assembles a fresh report on every
+# call, so comparisons between two of its results (e.g. the fingerprint-stability
+# contract) remain real recomputations — only the subprocess spawn is shared.
+# `clear_tool_version_cache()` exists for a caller that genuinely changes the
+# toolchain mid-process.
+_TOOL_VERSION_CACHE: dict[tuple[str | None, str | None], str | None] = {}
+
+
+def clear_tool_version_cache() -> None:
+    """Drop memoised tool versions.
+
+    Only needed by a caller that replaces or reconfigures a tool while the
+    process is alive; nothing in the current verification runtime does.
+    """
+    _TOOL_VERSION_CACHE.clear()
+
+
 def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
     """Get a tool version from evidence only — never from a hard-coded table.
 
@@ -128,9 +165,15 @@ def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
          the resolved binary — the installed package's actual metadata.
       3. Otherwise ``None`` (the caller reports the tool as version-unknown;
          a fabricated pin must never masquerade as a detection).
+
+    Results are memoised per process; see ``_TOOL_VERSION_CACHE``.
     """
     if not path:
         return None
+
+    key = (path, str(config_dir) if config_dir else None)
+    if key in _TOOL_VERSION_CACHE:
+        return _TOOL_VERSION_CACHE[key]
 
     cwd = str(config_dir) if config_dir else None
     try:
@@ -144,7 +187,9 @@ def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
         if out.returncode == 0:
             line = (out.stdout or out.stderr).strip().splitlines()
             if line and line[0]:
-                return line[0].strip()
+                version = line[0].strip()
+                _TOOL_VERSION_CACHE[key] = version
+                return version
     except Exception:
         pass
 
@@ -153,9 +198,11 @@ def _version(path: str | None, *, config_dir: Path | None = None) -> str | None:
     try:
         import importlib.metadata
 
-        return f"{tool_name}, version {importlib.metadata.version(tool_name)}"
+        version = f"{tool_name}, version {importlib.metadata.version(tool_name)}"
     except Exception:
-        return None
+        version = None
+    _TOOL_VERSION_CACHE[key] = version
+    return version
 
 
 def _resolve_tool(name: str, *, config_dir: Path | None = None) -> Tool:

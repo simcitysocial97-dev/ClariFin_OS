@@ -110,7 +110,9 @@ def compute_financial_blast_radius(changed_files: list[str]) -> FinancialBlastRa
     initial = _FinancialBlastRadius.compute_affected_concepts(changed_files)
     all_concepts = _FinancialBlastRadius.compute_transitive_closure(initial)
     invariants = _FinancialBlastRadius.compute_at_risk_invariants(all_concepts)
-    is_cross_domain, details = _FinancialBlastRadius.detect_cross_domain_impacts(all_concepts)
+    is_cross_domain, details = _FinancialBlastRadius.detect_cross_domain_impacts(
+        all_concepts
+    )
 
     return FinancialBlastRadius(
         changed_files=changed_files,

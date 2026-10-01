@@ -356,7 +356,12 @@ function DiagnosticCategoryPanel({
         <div className="border-t border-[var(--border-subtle)] p-4">
           <div className="flex flex-col gap-3">
             {items.map((item) => (
-              <DiagnosticItemCard key={item.id} item={item} categoryColor={config.color} />
+              <DiagnosticItemCard
+                key={item.id}
+                item={item}
+                categoryColor={config.color}
+                bgColor={config.bgColor}
+              />
             ))}
           </div>
         </div>
@@ -368,9 +373,11 @@ function DiagnosticCategoryPanel({
 function DiagnosticItemCard({
   item,
   categoryColor,
+  bgColor,
 }: {
   item: any;
   categoryColor: string;
+  bgColor: string;
 }) {
   return (
     <div className="border border-[var(--border-subtle)] rounded-lg p-4 flex flex-col gap-3">
@@ -379,7 +386,7 @@ function DiagnosticItemCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-semibold text-[var(--text-primary)]">{item.title}</span>
-            <span className={cn('text-xs font-mono px-1.5 py-0.5 rounded', categoryColor.replace('text-', 'bg-').replace('400', '500/20'), categoryColor.replace('text-', 'text-'))}>
+            <span className={cn('text-xs font-mono px-1.5 py-0.5 rounded', bgColor, categoryColor)}>
               {item.provenance.status}
             </span>
           </div>

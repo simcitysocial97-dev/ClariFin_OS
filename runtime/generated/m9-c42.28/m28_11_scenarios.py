@@ -438,8 +438,12 @@ def scenario_D() -> ScenarioResult:
 
     # Re-build the planner with the new population (the default
     # planner hard-codes pop-14, so we construct a fresh one).
-    import importlib
-    g, _ = importlib.import_module("m27_2_graph_inventory").build_graph()
+    # The builder moved out of runtime/generated/m9-c42.27/ to
+    # runtime/foundation/verification/graph_inventory.py, where it is a normal
+    # module rather than a file loaded by path out of a generated directory.
+    from runtime.foundation.verification import graph_inventory
+
+    g, _ = graph_inventory.build_graph()
     planner2 = EvidenceAwarePlanner(g, new_population, list(prior.values()))
 
     # Add the new component to the evidence_reuse's known components

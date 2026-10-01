@@ -102,7 +102,9 @@ class DiagnosticFormatter:
         )
 
 
-def enrich_with_semantic_failure(report: EnrichedFailureReport, semantic: SemanticFailure) -> EnrichedFailureReport:
+def enrich_with_semantic_failure(
+    report: EnrichedFailureReport, semantic: SemanticFailure
+) -> EnrichedFailureReport:
     """Attach a SemanticFailure to an EnrichedFailureReport."""
     return EnrichedFailureReport(
         classification=report.classification,

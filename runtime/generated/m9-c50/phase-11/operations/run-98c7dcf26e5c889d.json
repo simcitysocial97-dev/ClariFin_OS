@@ -1,0 +1,24 @@
+{
+  "run_id": "98c7dcf26e5c889d",
+  "timestamp": "2026-09-20T02:49:44.796171+00:00",
+  "repository_sha": "8990f3ae16e664d9b0f58737bd4f556bc82f52c9",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpzkylyltt.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

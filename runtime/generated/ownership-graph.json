@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-18T07:36:52.168245",
+  "generated_at": "2026-09-29T15:57:36.802591",
   "description": "Ownership graph: every edge has evidence. Ownership != execution.",
-  "node_count": 2155,
-  "edge_count": 2183,
+  "node_count": 2166,
+  "edge_count": 2194,
   "nodes": [
     {
       "id": "engine:account_engine",
@@ -445,6 +445,11 @@
       "label": "backend/tests/unit/engines/behaviour/test_credit_dependency_strengthening.py"
     },
     {
+      "id": "test:backend/tests/unit/engines/behaviour/test_index_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_index_contract.py"
+    },
+    {
       "id": "test:backend/tests/unit/engines/behaviour/test_insights_nudges_coverage.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/behaviour/test_insights_nudges_coverage.py"
@@ -463,6 +468,11 @@
       "id": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/behaviour/test_metrics.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behaviour/test_month_bucket_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_month_bucket_contract.py"
     },
     {
       "id": "test:backend/tests/unit/engines/behaviour/test_mutation_golden.py",
@@ -5345,6 +5355,11 @@
       "label": "backend/tests/properties/financial_events/test_lineage_properties.py"
     },
     {
+      "id": "test:backend/tests/properties/financial_events/test_sparse_event_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/financial_events/test_sparse_event_properties.py"
+    },
+    {
       "id": "test:backend/tests/unit/engines/financial_events/__init__.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/financial_events/__init__.py"
@@ -7035,6 +7050,11 @@
       "label": "backend/tests/unit/engines/financial_intelligence/test_forecasting.py"
     },
     {
+      "id": "test:backend/tests/unit/engines/financial_intelligence/test_goal_health_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_intelligence/test_goal_health_contract.py"
+    },
+    {
       "id": "test:backend/tests/unit/engines/financial_intelligence/test_goal_planner.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/financial_intelligence/test_goal_planner.py"
@@ -7053,6 +7073,21 @@
       "id": "test:backend/tests/unit/engines/financial_intelligence/test_optimization.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/financial_intelligence/test_optimization.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/financial_intelligence/test_projection_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_intelligence/test_projection_contract.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/financial_intelligence/test_ranking_output_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_intelligence/test_ranking_output_contract.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/financial_intelligence/test_risk_aggregation_contract.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_intelligence/test_risk_aggregation_contract.py"
     },
     {
       "id": "test:backend/tests/unit/engines/financial_intelligence/test_scenario.py",
@@ -8360,6 +8395,11 @@
       "label": "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
     },
     {
+      "id": "test:backend/tests/unit/engines/recommendation/test_recommendation_payload.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/recommendation/test_recommendation_payload.py"
+    },
+    {
       "id": "test:backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py"
@@ -9030,9 +9070,19 @@
       "label": "backend/tests/properties/transaction_intelligence/__init__.py"
     },
     {
+      "id": "test:backend/tests/properties/transaction_intelligence/test_cc_payment_contract.py",
+      "type": "Test",
+      "label": "backend/tests/properties/transaction_intelligence/test_cc_payment_contract.py"
+    },
+    {
       "id": "test:backend/tests/properties/transaction_intelligence/test_detector_properties.py",
       "type": "Test",
       "label": "backend/tests/properties/transaction_intelligence/test_detector_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/transaction_intelligence/test_emi_classification_contract.py",
+      "type": "Test",
+      "label": "backend/tests/properties/transaction_intelligence/test_emi_classification_contract.py"
     },
     {
       "id": "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
@@ -9898,6 +9948,11 @@
       "id": "test:backend/tests/unit/engines/ledger_audit_engine.py",
       "type": "Test",
       "label": "backend/tests/unit/engines/ledger_audit_engine.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/test_ledger_audit_foreign_writer.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/test_ledger_audit_foreign_writer.py"
     },
     {
       "id": "artifact:runtime/generated/m9-c42.21/m9-c42.21-population-ledger_audit_engine.json",
@@ -11406,6 +11461,13 @@
     },
     {
       "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_index_contract.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
       "to": "test:backend/tests/unit/engines/behaviour/test_insights_nudges_coverage.py",
       "relation": "owns",
       "evidence": "test file imports engines.behaviour_engine",
@@ -11428,6 +11490,13 @@
     {
       "from": "engine:behaviour_engine",
       "to": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_month_bucket_contract.py",
       "relation": "owns",
       "evidence": "test file imports engines.behaviour_engine",
       "layer": "backend"
@@ -18259,6 +18328,13 @@
     },
     {
       "from": "engine:financial_events",
+      "to": "test:backend/tests/properties/financial_events/test_sparse_event_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
       "to": "test:backend/tests/test_m9_c56_scenarios.py",
       "relation": "owns",
       "evidence": "test file imports engines.financial_events",
@@ -20639,6 +20715,13 @@
     },
     {
       "from": "engine:financial_intelligence",
+      "to": "test:backend/tests/unit/engines/financial_intelligence/test_goal_health_contract.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
       "to": "test:backend/tests/unit/engines/financial_intelligence/test_goal_planner.py",
       "relation": "owns",
       "evidence": "test file imports engines.financial_intelligence",
@@ -20661,6 +20744,27 @@
     {
       "from": "engine:financial_intelligence",
       "to": "test:backend/tests/unit/engines/financial_intelligence/test_optimization.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "test:backend/tests/unit/engines/financial_intelligence/test_projection_contract.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "test:backend/tests/unit/engines/financial_intelligence/test_ranking_output_contract.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "test:backend/tests/unit/engines/financial_intelligence/test_risk_aggregation_contract.py",
       "relation": "owns",
       "evidence": "test file imports engines.financial_intelligence",
       "layer": "backend"
@@ -22627,6 +22731,13 @@
     },
     {
       "from": "engine:recommendation_engine",
+      "to": "test:backend/tests/unit/engines/recommendation/test_recommendation_payload.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.recommendation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:recommendation_engine",
       "to": "test:backend/tests/unit/engines/recommendation/test_recommendation_strengthening.py",
       "relation": "owns",
       "evidence": "test file imports engines.recommendation_engine",
@@ -23628,7 +23739,21 @@
     },
     {
       "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/properties/transaction_intelligence/test_cc_payment_contract.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
       "to": "test:backend/tests/properties/transaction_intelligence/test_detector_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/properties/transaction_intelligence/test_emi_classification_contract.py",
       "relation": "owns",
       "evidence": "test file imports engines.transaction_intelligence",
       "layer": "backend"
@@ -24826,6 +24951,13 @@
     {
       "from": "engine:ledger_audit_engine",
       "to": "test:backend/tests/unit/engines/ledger_audit_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.ledger_audit_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:ledger_audit_engine",
+      "to": "test:backend/tests/unit/engines/test_ledger_audit_foreign_writer.py",
       "relation": "owns",
       "evidence": "test file imports engines.ledger_audit_engine",
       "layer": "backend"

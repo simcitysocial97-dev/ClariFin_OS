@@ -178,11 +178,17 @@ class FinancialAssertion:
     """Static helpers for asserting financial invariants in tests."""
 
     @staticmethod
-    def emi_exceeds_interest(emi_paise: int, interest_paise: int, context: dict[str, Any] | None = None) -> None:
+    def emi_exceeds_interest(
+        emi_paise: int, interest_paise: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert EMI > monthly interest (principal must be reducing)."""
         inv = FinancialAssertion._get_inv("emi_must_exceed_interest")
         if emi_paise <= interest_paise:
-            ctx = {**(context or {}), "emi_paise": emi_paise, "interest_paise": interest_paise}
+            ctx = {
+                **(context or {}),
+                "emi_paise": emi_paise,
+                "interest_paise": interest_paise,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="emi_must_exceed_interest",
                 expected=f"emi ({emi_paise}) > interest ({interest_paise})",
@@ -192,7 +198,9 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def closure_zero_balance(final_balance: int, context: dict[str, Any] | None = None) -> None:
+    def closure_zero_balance(
+        final_balance: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert loan closure leaves zero balance."""
         inv = FinancialAssertion._get_inv("closure_requires_zero_balance")
         if final_balance != 0:
@@ -206,11 +214,17 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def total_payment_covers_principal(total_payment: int, principal: int, context: dict[str, Any] | None = None) -> None:
+    def total_payment_covers_principal(
+        total_payment: int, principal: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert total repayment >= original principal."""
         inv = FinancialAssertion._get_inv("total_payment_covers_principal")
         if total_payment < principal:
-            ctx = {**(context or {}), "total_payment_paise": total_payment, "principal_paise": principal}
+            ctx = {
+                **(context or {}),
+                "total_payment_paise": total_payment,
+                "principal_paise": principal,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="total_payment_covers_principal",
                 expected=f"total_payment ({total_payment}) >= principal ({principal})",
@@ -220,7 +234,9 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def reconciliation_within_tolerance(diff: int, tolerance: int, context: dict[str, Any] | None = None) -> None:
+    def reconciliation_within_tolerance(
+        diff: int, tolerance: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert transaction match difference is within tolerance."""
         inv = FinancialAssertion._get_inv("reconciliation_match_within_tolerance")
         if abs(diff) > tolerance:
@@ -234,11 +250,17 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def balance_equals_transaction_sum(balance: int, transaction_sum: int, context: dict[str, Any] | None = None) -> None:
+    def balance_equals_transaction_sum(
+        balance: int, transaction_sum: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert running balance equals sum of transactions."""
         inv = FinancialAssertion._get_inv("balance_equals_sum_of_transactions")
         if balance != transaction_sum:
-            ctx = {**(context or {}), "balance": balance, "transaction_sum": transaction_sum}
+            ctx = {
+                **(context or {}),
+                "balance": balance,
+                "transaction_sum": transaction_sum,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="balance_equals_sum_of_transactions",
                 expected=f"balance ({balance}) == transaction_sum ({transaction_sum})",
@@ -248,11 +270,19 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def prepayment_reduces_outstanding(old_outstanding: int, new_outstanding: int, context: dict[str, Any] | None = None) -> None:
+    def prepayment_reduces_outstanding(
+        old_outstanding: int,
+        new_outstanding: int,
+        context: dict[str, Any] | None = None,
+    ) -> None:
         """Assert prepayment reduces outstanding principal."""
         inv = FinancialAssertion._get_inv("prepayment_reduces_principal_or_tenure")
         if new_outstanding >= old_outstanding:
-            ctx = {**(context or {}), "old_outstanding": old_outstanding, "new_outstanding": new_outstanding}
+            ctx = {
+                **(context or {}),
+                "old_outstanding": old_outstanding,
+                "new_outstanding": new_outstanding,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="prepayment_reduces_principal_or_tenure",
                 expected=f"new_outstanding ({new_outstanding}) < old_outstanding ({old_outstanding})",
@@ -262,11 +292,21 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def floating_rate_bounded(rate_bps: int, floor_bps: int, cap_bps: int, context: dict[str, Any] | None = None) -> None:
+    def floating_rate_bounded(
+        rate_bps: int,
+        floor_bps: int,
+        cap_bps: int,
+        context: dict[str, Any] | None = None,
+    ) -> None:
         """Assert floating rate stays within contractual bounds."""
         inv = FinancialAssertion._get_inv("floating_rate_bounded")
         if rate_bps < floor_bps or rate_bps > cap_bps:
-            ctx = {**(context or {}), "rate_bps": rate_bps, "floor_bps": floor_bps, "cap_bps": cap_bps}
+            ctx = {
+                **(context or {}),
+                "rate_bps": rate_bps,
+                "floor_bps": floor_bps,
+                "cap_bps": cap_bps,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="floating_rate_bounded",
                 expected=f"floor ({floor_bps}) <= rate ({rate_bps}) <= cap ({cap_bps})",
@@ -276,11 +316,19 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def cashflow_category_valid(category: str, valid_categories: list[str], context: dict[str, Any] | None = None) -> None:
+    def cashflow_category_valid(
+        category: str,
+        valid_categories: list[str],
+        context: dict[str, Any] | None = None,
+    ) -> None:
         """Assert cashflow category is in the allowed set."""
         inv = FinancialAssertion._get_inv("cashflow_category_valid")
         if category not in valid_categories:
-            ctx = {**(context or {}), "category": category, "valid_categories": valid_categories}
+            ctx = {
+                **(context or {}),
+                "category": category,
+                "valid_categories": valid_categories,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="cashflow_category_valid",
                 expected=f"category in {valid_categories}",
@@ -290,7 +338,9 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def forecast_horizon_positive(horizon: int, context: dict[str, Any] | None = None) -> None:
+    def forecast_horizon_positive(
+        horizon: int, context: dict[str, Any] | None = None
+    ) -> None:
         """Assert forecast horizon is positive."""
         inv = FinancialAssertion._get_inv("forecast_horizon_positive")
         if horizon <= 0:
@@ -304,12 +354,22 @@ class FinancialAssertion:
             )
 
     @staticmethod
-    def net_worth_balanced(assets: int, liabilities: int, net_worth: int, context: dict[str, Any] | None = None) -> None:
+    def net_worth_balanced(
+        assets: int,
+        liabilities: int,
+        net_worth: int,
+        context: dict[str, Any] | None = None,
+    ) -> None:
         """Assert net worth equals assets minus liabilities."""
         inv = FinancialAssertion._get_inv("net_worth_equals_assets_minus_liabilities")
         expected_nw = assets - liabilities
         if net_worth != expected_nw:
-            ctx = {**(context or {}), "assets": assets, "liabilities": liabilities, "net_worth": net_worth}
+            ctx = {
+                **(context or {}),
+                "assets": assets,
+                "liabilities": liabilities,
+                "net_worth": net_worth,
+            }
             raise FinancialInvariantViolation(
                 invariant_id="net_worth_equals_assets_minus_liabilities",
                 expected=f"net_worth ({net_worth}) == assets ({assets}) - liabilities ({liabilities})",

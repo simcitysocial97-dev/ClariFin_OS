@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-18T07:36:47.628181",
+  "generated_at": "2026-09-29T15:57:36.941276",
   "description": "Execution graph: runtime call path. Traverses implementation modules. Distinct from ownership graph.",
-  "node_count": 258,
-  "edge_count": 223,
+  "node_count": 272,
+  "edge_count": 236,
   "nodes": [
     {
       "id": "router:backend/src/errors.py",
@@ -40,9 +40,9 @@
       "label": "backend/src/routers/banks.py"
     },
     {
-      "id": "endpoint:GET /api/banks",
+      "id": "endpoint:GET /api/v1/banks",
       "type": "Endpoint",
-      "label": "GET /api/banks"
+      "label": "GET /api/v1/banks"
     },
     {
       "id": "service:backend/src/services/bank_service.py",
@@ -70,24 +70,24 @@
       "label": "backend/src/routers/cashflow.py"
     },
     {
-      "id": "endpoint:GET /api/cashflow",
+      "id": "endpoint:GET /api/v1/cashflow",
       "type": "Endpoint",
-      "label": "GET /api/cashflow"
+      "label": "GET /api/v1/cashflow"
     },
     {
-      "id": "endpoint:GET /api/cashflow/categories",
+      "id": "endpoint:GET /api/v1/cashflow/categories",
       "type": "Endpoint",
-      "label": "GET /api/cashflow/categories"
+      "label": "GET /api/v1/cashflow/categories"
     },
     {
-      "id": "endpoint:GET /api/cashflow/monthly",
+      "id": "endpoint:GET /api/v1/cashflow/monthly",
       "type": "Endpoint",
-      "label": "GET /api/cashflow/monthly"
+      "label": "GET /api/v1/cashflow/monthly"
     },
     {
-      "id": "endpoint:GET /api/cashflow/transactions",
+      "id": "endpoint:GET /api/v1/cashflow/transactions",
       "type": "Endpoint",
-      "label": "GET /api/cashflow/transactions"
+      "label": "GET /api/v1/cashflow/transactions"
     },
     {
       "id": "service:backend/src/services/cashflow_service.py",
@@ -100,9 +100,9 @@
       "label": "backend/src/routers/cashflow_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/cashflow",
+      "id": "endpoint:GET /api/v1/workspaces/cashflow",
       "type": "Endpoint",
-      "label": "GET /api/v1/cashflow"
+      "label": "GET /api/v1/workspaces/cashflow"
     },
     {
       "id": "service:backend/src/services/cashflow_workspace_service.py",
@@ -115,9 +115,9 @@
       "label": "backend/src/routers/credit_cards_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/credit-cards",
+      "id": "endpoint:GET /api/v1/workspaces/credit-cards",
       "type": "Endpoint",
-      "label": "GET /api/v1/credit-cards"
+      "label": "GET /api/v1/workspaces/credit-cards"
     },
     {
       "id": "service:backend/src/services/credit_cards_workspace_service.py",
@@ -130,9 +130,9 @@
       "label": "backend/src/routers/export.py"
     },
     {
-      "id": "endpoint:GET /api/export/csv",
+      "id": "endpoint:GET /api/v1/export/csv",
       "type": "Endpoint",
-      "label": "GET /api/export/csv"
+      "label": "GET /api/v1/export/csv"
     },
     {
       "id": "service:backend/src/services/export_service.py",
@@ -165,24 +165,24 @@
       "label": "backend/src/routers/investments.py"
     },
     {
-      "id": "endpoint:DELETE /api/investments/{investment_id}",
+      "id": "endpoint:DELETE /api/v1/investments/{investment_id}",
       "type": "Endpoint",
-      "label": "DELETE /api/investments/{investment_id}"
+      "label": "DELETE /api/v1/investments/{investment_id}"
     },
     {
-      "id": "endpoint:GET /api/investments",
+      "id": "endpoint:GET /api/v1/investments",
       "type": "Endpoint",
-      "label": "GET /api/investments"
+      "label": "GET /api/v1/investments"
     },
     {
-      "id": "endpoint:POST /api/investments",
+      "id": "endpoint:POST /api/v1/investments",
       "type": "Endpoint",
-      "label": "POST /api/investments"
+      "label": "POST /api/v1/investments"
     },
     {
-      "id": "endpoint:PUT /api/investments/{investment_id}",
+      "id": "endpoint:PUT /api/v1/investments/{investment_id}",
       "type": "Endpoint",
-      "label": "PUT /api/investments/{investment_id}"
+      "label": "PUT /api/v1/investments/{investment_id}"
     },
     {
       "id": "service:backend/src/services/investment_service.py",
@@ -195,9 +195,9 @@
       "label": "backend/src/routers/investments_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/investments",
+      "id": "endpoint:GET /api/v1/workspaces/investments",
       "type": "Endpoint",
-      "label": "GET /api/v1/investments"
+      "label": "GET /api/v1/workspaces/investments"
     },
     {
       "id": "service:backend/src/services/investments_workspace_service.py",
@@ -210,9 +210,9 @@
       "label": "backend/src/routers/loans_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/loans",
+      "id": "endpoint:GET /api/v1/workspaces/loans",
       "type": "Endpoint",
-      "label": "GET /api/v1/loans"
+      "label": "GET /api/v1/workspaces/loans"
     },
     {
       "id": "service:backend/src/services/loans_workspace_service.py",
@@ -225,29 +225,29 @@
       "label": "backend/src/routers/members.py"
     },
     {
-      "id": "endpoint:DELETE /api/members/{member_id}",
+      "id": "endpoint:DELETE /api/v1/members/{member_id}",
       "type": "Endpoint",
-      "label": "DELETE /api/members/{member_id}"
+      "label": "DELETE /api/v1/members/{member_id}"
     },
     {
-      "id": "endpoint:GET /api/members",
+      "id": "endpoint:GET /api/v1/members",
       "type": "Endpoint",
-      "label": "GET /api/members"
+      "label": "GET /api/v1/members"
     },
     {
-      "id": "endpoint:GET /api/members/{member_id}",
+      "id": "endpoint:GET /api/v1/members/{member_id}",
       "type": "Endpoint",
-      "label": "GET /api/members/{member_id}"
+      "label": "GET /api/v1/members/{member_id}"
     },
     {
-      "id": "endpoint:POST /api/members",
+      "id": "endpoint:POST /api/v1/members",
       "type": "Endpoint",
-      "label": "POST /api/members"
+      "label": "POST /api/v1/members"
     },
     {
-      "id": "endpoint:PUT /api/members/{member_id}",
+      "id": "endpoint:PUT /api/v1/members/{member_id}",
       "type": "Endpoint",
-      "label": "PUT /api/members/{member_id}"
+      "label": "PUT /api/v1/members/{member_id}"
     },
     {
       "id": "service:backend/src/services/member_service.py",
@@ -260,9 +260,9 @@
       "label": "backend/src/routers/networth.py"
     },
     {
-      "id": "endpoint:GET /api/networth",
+      "id": "endpoint:GET /api/v1/net-worth",
       "type": "Endpoint",
-      "label": "GET /api/networth"
+      "label": "GET /api/v1/net-worth"
     },
     {
       "id": "router:backend/src/routers/networth_workspace.py",
@@ -270,9 +270,9 @@
       "label": "backend/src/routers/networth_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/net-worth",
+      "id": "endpoint:GET /api/v1/workspaces/net-worth",
       "type": "Endpoint",
-      "label": "GET /api/v1/net-worth"
+      "label": "GET /api/v1/workspaces/net-worth"
     },
     {
       "id": "service:backend/src/services/networth_workspace_service.py",
@@ -420,6 +420,21 @@
       "label": "GET /platform/v1/context/pack"
     },
     {
+      "id": "endpoint:GET /platform/v1/cross-layer",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/cross-layer"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/cross-layer/{capability_id}",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/cross-layer/{capability_id}"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/diagnostics",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/diagnostics"
+    },
+    {
       "id": "endpoint:GET /platform/v1/errors/current",
       "type": "Endpoint",
       "label": "GET /platform/v1/errors/current"
@@ -480,6 +495,16 @@
       "label": "GET /platform/v1/executions/{execution_id}/stream"
     },
     {
+      "id": "endpoint:GET /platform/v1/framework/integrity",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/framework/integrity"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/framework/self-tests",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/framework/self-tests"
+    },
+    {
       "id": "endpoint:GET /platform/v1/health",
       "type": "Endpoint",
       "label": "GET /platform/v1/health"
@@ -505,6 +530,21 @@
       "label": "GET /platform/v1/history/runs/{run_id}"
     },
     {
+      "id": "endpoint:GET /platform/v1/runs",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/runs"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/runs/{run_id}",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/runs/{run_id}"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/status",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/status"
+    },
+    {
       "id": "endpoint:GET /platform/v1/tasks",
       "type": "Endpoint",
       "label": "GET /platform/v1/tasks"
@@ -515,6 +555,11 @@
       "label": "GET /platform/v1/tasks/{task_id}"
     },
     {
+      "id": "endpoint:GET /platform/v1/verification",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/verification"
+    },
+    {
       "id": "endpoint:GET /platform/v1/verification/recommendation",
       "type": "Endpoint",
       "label": "GET /platform/v1/verification/recommendation"
@@ -523,6 +568,11 @@
       "id": "endpoint:GET /platform/v1/verification/runs/recent",
       "type": "Endpoint",
       "label": "GET /platform/v1/verification/runs/recent"
+    },
+    {
+      "id": "endpoint:GET /platform/v1/workflows",
+      "type": "Endpoint",
+      "label": "GET /platform/v1/workflows"
     },
     {
       "id": "endpoint:POST /platform/v1/ai/config/provider",
@@ -640,6 +690,11 @@
       "label": "runtime/platform/api/services/change.py"
     },
     {
+      "id": "service:runtime/platform/api/services/cross_layer.py",
+      "type": "Service",
+      "label": "runtime/platform/api/services/cross_layer.py"
+    },
+    {
       "id": "service:runtime/platform/api/services/errors.py",
       "type": "Service",
       "label": "runtime/platform/api/services/errors.py"
@@ -660,6 +715,11 @@
       "label": "runtime/platform/api/services/executions.py"
     },
     {
+      "id": "service:runtime/platform/api/services/framework_integrity.py",
+      "type": "Service",
+      "label": "runtime/platform/api/services/framework_integrity.py"
+    },
+    {
       "id": "service:runtime/platform/api/services/health.py",
       "type": "Service",
       "label": "runtime/platform/api/services/health.py"
@@ -668,6 +728,11 @@
       "id": "service:runtime/platform/api/services/history.py",
       "type": "Service",
       "label": "runtime/platform/api/services/history.py"
+    },
+    {
+      "id": "service:runtime/platform/api/services/status.py",
+      "type": "Service",
+      "label": "runtime/platform/api/services/status.py"
     },
     {
       "id": "service:runtime/platform/api/services/tasks.py",
@@ -690,9 +755,9 @@
       "label": "backend/src/routers/reconciliation_workspace.py"
     },
     {
-      "id": "endpoint:GET /api/v1/reconciliation",
+      "id": "endpoint:GET /api/v1/workspaces/reconciliation",
       "type": "Endpoint",
-      "label": "GET /api/v1/reconciliation"
+      "label": "GET /api/v1/workspaces/reconciliation"
     },
     {
       "id": "service:backend/src/services/reconciliation_workspace_service.py",
@@ -705,24 +770,24 @@
       "label": "backend/src/routers/transactions.py"
     },
     {
-      "id": "endpoint:GET /api/analytics",
+      "id": "endpoint:GET /api/v1/analytics",
       "type": "Endpoint",
-      "label": "GET /api/analytics"
+      "label": "GET /api/v1/analytics"
     },
     {
-      "id": "endpoint:GET /api/categories",
+      "id": "endpoint:GET /api/v1/categories",
       "type": "Endpoint",
-      "label": "GET /api/categories"
+      "label": "GET /api/v1/categories"
     },
     {
-      "id": "endpoint:GET /api/overview",
+      "id": "endpoint:GET /api/v1/overview",
       "type": "Endpoint",
-      "label": "GET /api/overview"
+      "label": "GET /api/v1/overview"
     },
     {
-      "id": "endpoint:GET /api/transactions",
+      "id": "endpoint:GET /api/v1/transactions",
       "type": "Endpoint",
-      "label": "GET /api/transactions"
+      "label": "GET /api/v1/transactions"
     },
     {
       "id": "service:backend/src/services/transaction_service.py",
@@ -860,9 +925,9 @@
       "label": "backend/src/routers/audit.py"
     },
     {
-      "id": "endpoint:GET /api/audit/report",
+      "id": "endpoint:GET /api/v1/audit/report",
       "type": "Endpoint",
-      "label": "GET /api/audit/report"
+      "label": "GET /api/v1/audit/report"
     },
     {
       "id": "service:backend/src/services/audit_service.py",
@@ -920,19 +985,19 @@
       "label": "backend/src/routers/cards_statements.py"
     },
     {
-      "id": "endpoint:GET /api/cards",
+      "id": "endpoint:GET /api/v1/cards",
       "type": "Endpoint",
-      "label": "GET /api/cards"
+      "label": "GET /api/v1/cards"
     },
     {
-      "id": "endpoint:GET /api/statements",
+      "id": "endpoint:GET /api/v1/statements",
       "type": "Endpoint",
-      "label": "GET /api/statements"
+      "label": "GET /api/v1/statements"
     },
     {
-      "id": "endpoint:GET /api/statements/{statement_id}/validate",
+      "id": "endpoint:GET /api/v1/statements/{statement_id}/validate",
       "type": "Endpoint",
-      "label": "GET /api/statements/{statement_id}/validate"
+      "label": "GET /api/v1/statements/{statement_id}/validate"
     },
     {
       "id": "service:backend/src/services/statement_service.py",
@@ -948,6 +1013,11 @@
       "id": "endpoint:DELETE /api/v1/credit-cards/{card_id}",
       "type": "Endpoint",
       "label": "DELETE /api/v1/credit-cards/{card_id}"
+    },
+    {
+      "id": "endpoint:GET /api/v1/credit-cards",
+      "type": "Endpoint",
+      "label": "GET /api/v1/credit-cards"
     },
     {
       "id": "endpoint:GET /api/v1/credit-cards/{card_id}",
@@ -1020,9 +1090,9 @@
       "label": "backend/src/routers/dashboard.py"
     },
     {
-      "id": "endpoint:GET /api/dashboard/summary",
+      "id": "endpoint:GET /api/v1/dashboard/summary",
       "type": "Endpoint",
-      "label": "GET /api/dashboard/summary"
+      "label": "GET /api/v1/dashboard/summary"
     },
     {
       "id": "service:backend/src/services/dashboard_service.py",
@@ -1035,19 +1105,19 @@
       "label": "backend/src/routers/financial_events.py"
     },
     {
-      "id": "endpoint:GET /api/financial-events/",
+      "id": "endpoint:GET /api/v1/financial-events/",
       "type": "Endpoint",
-      "label": "GET /api/financial-events/"
+      "label": "GET /api/v1/financial-events/"
     },
     {
-      "id": "endpoint:GET /api/financial-events/{event_id}",
+      "id": "endpoint:GET /api/v1/financial-events/{event_id}",
       "type": "Endpoint",
-      "label": "GET /api/financial-events/{event_id}"
+      "label": "GET /api/v1/financial-events/{event_id}"
     },
     {
-      "id": "endpoint:POST /api/financial-events/",
+      "id": "endpoint:POST /api/v1/financial-events/",
       "type": "Endpoint",
-      "label": "POST /api/financial-events/"
+      "label": "POST /api/v1/financial-events/"
     },
     {
       "id": "service:backend/src/services/financial_events_service.py",
@@ -1060,44 +1130,44 @@
       "label": "backend/src/routers/financial_intelligence.py"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/cashflow-forecast",
+      "id": "endpoint:GET /api/v1/financial-intelligence/cashflow-forecast",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/cashflow-forecast"
+      "label": "GET /api/v1/financial-intelligence/cashflow-forecast"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/credit-forecast",
+      "id": "endpoint:GET /api/v1/financial-intelligence/credit-forecast",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/credit-forecast"
+      "label": "GET /api/v1/financial-intelligence/credit-forecast"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/liquidity-forecast",
+      "id": "endpoint:GET /api/v1/financial-intelligence/liquidity-forecast",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/liquidity-forecast"
+      "label": "GET /api/v1/financial-intelligence/liquidity-forecast"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/outlook",
+      "id": "endpoint:GET /api/v1/financial-intelligence/outlook",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/outlook"
+      "label": "GET /api/v1/financial-intelligence/outlook"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/priorities",
+      "id": "endpoint:GET /api/v1/financial-intelligence/priorities",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/priorities"
+      "label": "GET /api/v1/financial-intelligence/priorities"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/recommendations",
+      "id": "endpoint:GET /api/v1/financial-intelligence/recommendations",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/recommendations"
+      "label": "GET /api/v1/financial-intelligence/recommendations"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/recommendations/{recommendation_id}",
+      "id": "endpoint:GET /api/v1/financial-intelligence/recommendations/{recommendation_id}",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/recommendations/{recommendation_id}"
+      "label": "GET /api/v1/financial-intelligence/recommendations/{recommendation_id}"
     },
     {
-      "id": "endpoint:GET /financial-intelligence/report",
+      "id": "endpoint:GET /api/v1/financial-intelligence/report",
       "type": "Endpoint",
-      "label": "GET /financial-intelligence/report"
+      "label": "GET /api/v1/financial-intelligence/report"
     },
     {
       "id": "service:backend/src/services/financial_intelligence_service.py",
@@ -1115,19 +1185,19 @@
       "label": "backend/src/routers/import_router.py"
     },
     {
-      "id": "endpoint:POST /api/import/detect",
+      "id": "endpoint:POST /api/v1/import/detect",
       "type": "Endpoint",
-      "label": "POST /api/import/detect"
+      "label": "POST /api/v1/import/detect"
     },
     {
-      "id": "endpoint:POST /api/import/execute",
+      "id": "endpoint:POST /api/v1/import/execute",
       "type": "Endpoint",
-      "label": "POST /api/import/execute"
+      "label": "POST /api/v1/import/execute"
     },
     {
-      "id": "endpoint:POST /api/upload",
+      "id": "endpoint:POST /api/v1/upload",
       "type": "Endpoint",
-      "label": "POST /api/upload"
+      "label": "POST /api/v1/upload"
     },
     {
       "id": "service:backend/src/services/import_service.py",
@@ -1140,69 +1210,69 @@
       "label": "backend/src/routers/loans.py"
     },
     {
-      "id": "endpoint:DELETE /api/loans/{loan_id}",
+      "id": "endpoint:DELETE /api/v1/loans/{loan_id}",
       "type": "Endpoint",
-      "label": "DELETE /api/loans/{loan_id}"
+      "label": "DELETE /api/v1/loans/{loan_id}"
     },
     {
-      "id": "endpoint:GET /api/loans",
+      "id": "endpoint:GET /api/v1/loans",
       "type": "Endpoint",
-      "label": "GET /api/loans"
+      "label": "GET /api/v1/loans"
     },
     {
-      "id": "endpoint:GET /api/loans/analysis/priority",
+      "id": "endpoint:GET /api/v1/loans/analysis/priority",
       "type": "Endpoint",
-      "label": "GET /api/loans/analysis/priority"
+      "label": "GET /api/v1/loans/analysis/priority"
     },
     {
-      "id": "endpoint:GET /api/loans/{loan_id}",
+      "id": "endpoint:GET /api/v1/loans/{loan_id}",
       "type": "Endpoint",
-      "label": "GET /api/loans/{loan_id}"
+      "label": "GET /api/v1/loans/{loan_id}"
     },
     {
-      "id": "endpoint:GET /api/loans/{loan_id}/schedule",
+      "id": "endpoint:GET /api/v1/loans/{loan_id}/schedule",
       "type": "Endpoint",
-      "label": "GET /api/loans/{loan_id}/schedule"
+      "label": "GET /api/v1/loans/{loan_id}/schedule"
     },
     {
-      "id": "endpoint:POST /api/loans",
+      "id": "endpoint:POST /api/v1/loans",
       "type": "Endpoint",
-      "label": "POST /api/loans"
+      "label": "POST /api/v1/loans"
     },
     {
-      "id": "endpoint:POST /api/loans/analysis/surplus-allocation",
+      "id": "endpoint:POST /api/v1/loans/analysis/surplus-allocation",
       "type": "Endpoint",
-      "label": "POST /api/loans/analysis/surplus-allocation"
+      "label": "POST /api/v1/loans/analysis/surplus-allocation"
     },
     {
-      "id": "endpoint:POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "id": "endpoint:POST /api/v1/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
       "type": "Endpoint",
-      "label": "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure"
+      "label": "POST /api/v1/loans/{loan_id}/analysis/prepayment-vs-foreclosure"
     },
     {
-      "id": "endpoint:POST /api/loans/{loan_id}/foreclosure-simulation",
+      "id": "endpoint:POST /api/v1/loans/{loan_id}/foreclosure-simulation",
       "type": "Endpoint",
-      "label": "POST /api/loans/{loan_id}/foreclosure-simulation"
+      "label": "POST /api/v1/loans/{loan_id}/foreclosure-simulation"
     },
     {
-      "id": "endpoint:POST /api/loans/{loan_id}/payments",
+      "id": "endpoint:POST /api/v1/loans/{loan_id}/payments",
       "type": "Endpoint",
-      "label": "POST /api/loans/{loan_id}/payments"
+      "label": "POST /api/v1/loans/{loan_id}/payments"
     },
     {
-      "id": "endpoint:POST /api/loans/{loan_id}/prepayment-simulation",
+      "id": "endpoint:POST /api/v1/loans/{loan_id}/prepayment-simulation",
       "type": "Endpoint",
-      "label": "POST /api/loans/{loan_id}/prepayment-simulation"
+      "label": "POST /api/v1/loans/{loan_id}/prepayment-simulation"
     },
     {
-      "id": "endpoint:POST /api/loans/{loan_id}/rate-change-simulation",
+      "id": "endpoint:POST /api/v1/loans/{loan_id}/rate-change-simulation",
       "type": "Endpoint",
-      "label": "POST /api/loans/{loan_id}/rate-change-simulation"
+      "label": "POST /api/v1/loans/{loan_id}/rate-change-simulation"
     },
     {
-      "id": "endpoint:PUT /api/loans/{loan_id}",
+      "id": "endpoint:PUT /api/v1/loans/{loan_id}",
       "type": "Endpoint",
-      "label": "PUT /api/loans/{loan_id}"
+      "label": "PUT /api/v1/loans/{loan_id}"
     },
     {
       "id": "service:backend/src/services/loan_analysis_service.py",
@@ -1260,34 +1330,34 @@
       "label": "backend/src/routers/reconciliation.py"
     },
     {
-      "id": "endpoint:GET /api/reconciliation/pending",
+      "id": "endpoint:GET /api/v1/reconciliation/pending",
       "type": "Endpoint",
-      "label": "GET /api/reconciliation/pending"
+      "label": "GET /api/v1/reconciliation/pending"
     },
     {
-      "id": "endpoint:GET /api/reconciliation/scan",
+      "id": "endpoint:GET /api/v1/reconciliation/scan",
       "type": "Endpoint",
-      "label": "GET /api/reconciliation/scan"
+      "label": "GET /api/v1/reconciliation/scan"
     },
     {
-      "id": "endpoint:POST /api/reconciliation/batch-insert",
+      "id": "endpoint:POST /api/v1/reconciliation/batch-insert",
       "type": "Endpoint",
-      "label": "POST /api/reconciliation/batch-insert"
+      "label": "POST /api/v1/reconciliation/batch-insert"
     },
     {
-      "id": "endpoint:POST /api/reconciliation/create",
+      "id": "endpoint:POST /api/v1/reconciliation/create",
       "type": "Endpoint",
-      "label": "POST /api/reconciliation/create"
+      "label": "POST /api/v1/reconciliation/create"
     },
     {
-      "id": "endpoint:POST /api/reconciliation/{reconciliation_id}/confirm",
+      "id": "endpoint:POST /api/v1/reconciliation/{reconciliation_id}/confirm",
       "type": "Endpoint",
-      "label": "POST /api/reconciliation/{reconciliation_id}/confirm"
+      "label": "POST /api/v1/reconciliation/{reconciliation_id}/confirm"
     },
     {
-      "id": "endpoint:POST /api/reconciliation/{reconciliation_id}/reject",
+      "id": "endpoint:POST /api/v1/reconciliation/{reconciliation_id}/reject",
       "type": "Endpoint",
-      "label": "POST /api/reconciliation/{reconciliation_id}/reject"
+      "label": "POST /api/v1/reconciliation/{reconciliation_id}/reject"
     },
     {
       "id": "service:backend/src/services/reconciliation_service.py",
@@ -1311,10 +1381,10 @@
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/banks",
+      "from": "endpoint:GET /api/v1/banks",
       "to": "router:backend/src/routers/banks.py",
       "relation": "executes",
-      "evidence": "GET /api/banks is defined by @router decorator in backend/src/routers/banks.py",
+      "evidence": "GET /api/v1/banks is defined by @router decorator in backend/src/routers/banks.py",
       "stage": "dispatch"
     },
     {
@@ -1339,31 +1409,31 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/cashflow",
+      "from": "endpoint:GET /api/v1/cashflow",
       "to": "router:backend/src/routers/cashflow.py",
       "relation": "executes",
-      "evidence": "GET /api/cashflow is defined by @router decorator in backend/src/routers/cashflow.py",
+      "evidence": "GET /api/v1/cashflow is defined by @router decorator in backend/src/routers/cashflow.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/cashflow/categories",
+      "from": "endpoint:GET /api/v1/cashflow/categories",
       "to": "router:backend/src/routers/cashflow.py",
       "relation": "executes",
-      "evidence": "GET /api/cashflow/categories is defined by @router decorator in backend/src/routers/cashflow.py",
+      "evidence": "GET /api/v1/cashflow/categories is defined by @router decorator in backend/src/routers/cashflow.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/cashflow/monthly",
+      "from": "endpoint:GET /api/v1/cashflow/monthly",
       "to": "router:backend/src/routers/cashflow.py",
       "relation": "executes",
-      "evidence": "GET /api/cashflow/monthly is defined by @router decorator in backend/src/routers/cashflow.py",
+      "evidence": "GET /api/v1/cashflow/monthly is defined by @router decorator in backend/src/routers/cashflow.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/cashflow/transactions",
+      "from": "endpoint:GET /api/v1/cashflow/transactions",
       "to": "router:backend/src/routers/cashflow.py",
       "relation": "executes",
-      "evidence": "GET /api/cashflow/transactions is defined by @router decorator in backend/src/routers/cashflow.py",
+      "evidence": "GET /api/v1/cashflow/transactions is defined by @router decorator in backend/src/routers/cashflow.py",
       "stage": "dispatch"
     },
     {
@@ -1374,10 +1444,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/v1/cashflow",
+      "from": "endpoint:GET /api/v1/workspaces/cashflow",
       "to": "router:backend/src/routers/cashflow_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/cashflow is defined by @router decorator in backend/src/routers/cashflow_workspace.py",
+      "evidence": "GET /api/v1/workspaces/cashflow is defined by @router decorator in backend/src/routers/cashflow_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -1388,10 +1458,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/v1/credit-cards",
+      "from": "endpoint:GET /api/v1/workspaces/credit-cards",
       "to": "router:backend/src/routers/credit_cards_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/credit-cards is defined by @router decorator in backend/src/routers/credit_cards_workspace.py",
+      "evidence": "GET /api/v1/workspaces/credit-cards is defined by @router decorator in backend/src/routers/credit_cards_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -1402,10 +1472,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/export/csv",
+      "from": "endpoint:GET /api/v1/export/csv",
       "to": "router:backend/src/routers/export.py",
       "relation": "executes",
-      "evidence": "GET /api/export/csv is defined by @router decorator in backend/src/routers/export.py",
+      "evidence": "GET /api/v1/export/csv is defined by @router decorator in backend/src/routers/export.py",
       "stage": "dispatch"
     },
     {
@@ -1430,31 +1500,31 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:DELETE /api/investments/{investment_id}",
+      "from": "endpoint:DELETE /api/v1/investments/{investment_id}",
       "to": "router:backend/src/routers/investments.py",
       "relation": "executes",
-      "evidence": "DELETE /api/investments/{investment_id} is defined by @router decorator in backend/src/routers/investments.py",
+      "evidence": "DELETE /api/v1/investments/{investment_id} is defined by @router decorator in backend/src/routers/investments.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/investments",
+      "from": "endpoint:GET /api/v1/investments",
       "to": "router:backend/src/routers/investments.py",
       "relation": "executes",
-      "evidence": "GET /api/investments is defined by @router decorator in backend/src/routers/investments.py",
+      "evidence": "GET /api/v1/investments is defined by @router decorator in backend/src/routers/investments.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/investments",
+      "from": "endpoint:POST /api/v1/investments",
       "to": "router:backend/src/routers/investments.py",
       "relation": "executes",
-      "evidence": "POST /api/investments is defined by @router decorator in backend/src/routers/investments.py",
+      "evidence": "POST /api/v1/investments is defined by @router decorator in backend/src/routers/investments.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:PUT /api/investments/{investment_id}",
+      "from": "endpoint:PUT /api/v1/investments/{investment_id}",
       "to": "router:backend/src/routers/investments.py",
       "relation": "executes",
-      "evidence": "PUT /api/investments/{investment_id} is defined by @router decorator in backend/src/routers/investments.py",
+      "evidence": "PUT /api/v1/investments/{investment_id} is defined by @router decorator in backend/src/routers/investments.py",
       "stage": "dispatch"
     },
     {
@@ -1465,10 +1535,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/v1/investments",
+      "from": "endpoint:GET /api/v1/workspaces/investments",
       "to": "router:backend/src/routers/investments_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/investments is defined by @router decorator in backend/src/routers/investments_workspace.py",
+      "evidence": "GET /api/v1/workspaces/investments is defined by @router decorator in backend/src/routers/investments_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -1479,10 +1549,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/v1/loans",
+      "from": "endpoint:GET /api/v1/workspaces/loans",
       "to": "router:backend/src/routers/loans_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/loans is defined by @router decorator in backend/src/routers/loans_workspace.py",
+      "evidence": "GET /api/v1/workspaces/loans is defined by @router decorator in backend/src/routers/loans_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -1493,38 +1563,38 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:DELETE /api/members/{member_id}",
+      "from": "endpoint:DELETE /api/v1/members/{member_id}",
       "to": "router:backend/src/routers/members.py",
       "relation": "executes",
-      "evidence": "DELETE /api/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
+      "evidence": "DELETE /api/v1/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/members",
+      "from": "endpoint:GET /api/v1/members",
       "to": "router:backend/src/routers/members.py",
       "relation": "executes",
-      "evidence": "GET /api/members is defined by @router decorator in backend/src/routers/members.py",
+      "evidence": "GET /api/v1/members is defined by @router decorator in backend/src/routers/members.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/members/{member_id}",
+      "from": "endpoint:GET /api/v1/members/{member_id}",
       "to": "router:backend/src/routers/members.py",
       "relation": "executes",
-      "evidence": "GET /api/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
+      "evidence": "GET /api/v1/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/members",
+      "from": "endpoint:POST /api/v1/members",
       "to": "router:backend/src/routers/members.py",
       "relation": "executes",
-      "evidence": "POST /api/members is defined by @router decorator in backend/src/routers/members.py",
+      "evidence": "POST /api/v1/members is defined by @router decorator in backend/src/routers/members.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:PUT /api/members/{member_id}",
+      "from": "endpoint:PUT /api/v1/members/{member_id}",
       "to": "router:backend/src/routers/members.py",
       "relation": "executes",
-      "evidence": "PUT /api/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
+      "evidence": "PUT /api/v1/members/{member_id} is defined by @router decorator in backend/src/routers/members.py",
       "stage": "dispatch"
     },
     {
@@ -1535,17 +1605,17 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/networth",
+      "from": "endpoint:GET /api/v1/net-worth",
       "to": "router:backend/src/routers/networth.py",
       "relation": "executes",
-      "evidence": "GET /api/networth is defined by @router decorator in backend/src/routers/networth.py",
+      "evidence": "GET /api/v1/net-worth is defined by @router decorator in backend/src/routers/networth.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/v1/net-worth",
+      "from": "endpoint:GET /api/v1/workspaces/net-worth",
       "to": "router:backend/src/routers/networth_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/net-worth is defined by @router decorator in backend/src/routers/networth_workspace.py",
+      "evidence": "GET /api/v1/workspaces/net-worth is defined by @router decorator in backend/src/routers/networth_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -1745,6 +1815,27 @@
       "stage": "dispatch"
     },
     {
+      "from": "endpoint:GET /platform/v1/cross-layer",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/cross-layer is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/cross-layer/{capability_id}",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/cross-layer/{capability_id} is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/diagnostics",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/diagnostics is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
       "from": "endpoint:GET /platform/v1/errors/current",
       "to": "router:backend/src/routers/platform.py",
       "relation": "executes",
@@ -1829,6 +1920,20 @@
       "stage": "dispatch"
     },
     {
+      "from": "endpoint:GET /platform/v1/framework/integrity",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/framework/integrity is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/framework/self-tests",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/framework/self-tests is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
       "from": "endpoint:GET /platform/v1/health",
       "to": "router:backend/src/routers/platform.py",
       "relation": "executes",
@@ -1864,6 +1969,27 @@
       "stage": "dispatch"
     },
     {
+      "from": "endpoint:GET /platform/v1/runs",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/runs is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/runs/{run_id}",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/runs/{run_id} is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/status",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/status is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
       "from": "endpoint:GET /platform/v1/tasks",
       "to": "router:backend/src/routers/platform.py",
       "relation": "executes",
@@ -1878,6 +2004,13 @@
       "stage": "dispatch"
     },
     {
+      "from": "endpoint:GET /platform/v1/verification",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/verification is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
       "from": "endpoint:GET /platform/v1/verification/recommendation",
       "to": "router:backend/src/routers/platform.py",
       "relation": "executes",
@@ -1889,6 +2022,13 @@
       "to": "router:backend/src/routers/platform.py",
       "relation": "executes",
       "evidence": "GET /platform/v1/verification/runs/recent is defined by @router decorator in backend/src/routers/platform.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "endpoint:GET /platform/v1/workflows",
+      "to": "router:backend/src/routers/platform.py",
+      "relation": "executes",
+      "evidence": "GET /platform/v1/workflows is defined by @router decorator in backend/src/routers/platform.py",
       "stage": "dispatch"
     },
     {
@@ -2054,6 +2194,13 @@
     },
     {
       "from": "router:backend/src/routers/platform.py",
+      "to": "service:runtime/platform/api/services/cross_layer.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/cross_layer.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/platform.py",
       "to": "service:runtime/platform/api/services/errors.py",
       "relation": "executes",
       "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/errors.py service",
@@ -2082,6 +2229,13 @@
     },
     {
       "from": "router:backend/src/routers/platform.py",
+      "to": "service:runtime/platform/api/services/framework_integrity.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/framework_integrity.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/platform.py",
       "to": "service:runtime/platform/api/services/health.py",
       "relation": "executes",
       "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/health.py service",
@@ -2092,6 +2246,13 @@
       "to": "service:runtime/platform/api/services/history.py",
       "relation": "executes",
       "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/history.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/platform.py",
+      "to": "service:runtime/platform/api/services/status.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/platform.py instantiates/calls runtime/platform/api/services/status.py service",
       "stage": "business"
     },
     {
@@ -2116,10 +2277,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/v1/reconciliation",
+      "from": "endpoint:GET /api/v1/workspaces/reconciliation",
       "to": "router:backend/src/routers/reconciliation_workspace.py",
       "relation": "executes",
-      "evidence": "GET /api/v1/reconciliation is defined by @router decorator in backend/src/routers/reconciliation_workspace.py",
+      "evidence": "GET /api/v1/workspaces/reconciliation is defined by @router decorator in backend/src/routers/reconciliation_workspace.py",
       "stage": "dispatch"
     },
     {
@@ -2130,31 +2291,31 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/analytics",
+      "from": "endpoint:GET /api/v1/analytics",
       "to": "router:backend/src/routers/transactions.py",
       "relation": "executes",
-      "evidence": "GET /api/analytics is defined by @router decorator in backend/src/routers/transactions.py",
+      "evidence": "GET /api/v1/analytics is defined by @router decorator in backend/src/routers/transactions.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/categories",
+      "from": "endpoint:GET /api/v1/categories",
       "to": "router:backend/src/routers/transactions.py",
       "relation": "executes",
-      "evidence": "GET /api/categories is defined by @router decorator in backend/src/routers/transactions.py",
+      "evidence": "GET /api/v1/categories is defined by @router decorator in backend/src/routers/transactions.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/overview",
+      "from": "endpoint:GET /api/v1/overview",
       "to": "router:backend/src/routers/transactions.py",
       "relation": "executes",
-      "evidence": "GET /api/overview is defined by @router decorator in backend/src/routers/transactions.py",
+      "evidence": "GET /api/v1/overview is defined by @router decorator in backend/src/routers/transactions.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/transactions",
+      "from": "endpoint:GET /api/v1/transactions",
       "to": "router:backend/src/routers/transactions.py",
       "relation": "executes",
-      "evidence": "GET /api/transactions is defined by @router decorator in backend/src/routers/transactions.py",
+      "evidence": "GET /api/v1/transactions is defined by @router decorator in backend/src/routers/transactions.py",
       "stage": "dispatch"
     },
     {
@@ -2305,10 +2466,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/audit/report",
+      "from": "endpoint:GET /api/v1/audit/report",
       "to": "router:backend/src/routers/audit.py",
       "relation": "executes",
-      "evidence": "GET /api/audit/report is defined by @router decorator in backend/src/routers/audit.py",
+      "evidence": "GET /api/v1/audit/report is defined by @router decorator in backend/src/routers/audit.py",
       "stage": "dispatch"
     },
     {
@@ -2375,24 +2536,24 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/cards",
+      "from": "endpoint:GET /api/v1/cards",
       "to": "router:backend/src/routers/cards_statements.py",
       "relation": "executes",
-      "evidence": "GET /api/cards is defined by @router decorator in backend/src/routers/cards_statements.py",
+      "evidence": "GET /api/v1/cards is defined by @router decorator in backend/src/routers/cards_statements.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/statements",
+      "from": "endpoint:GET /api/v1/statements",
       "to": "router:backend/src/routers/cards_statements.py",
       "relation": "executes",
-      "evidence": "GET /api/statements is defined by @router decorator in backend/src/routers/cards_statements.py",
+      "evidence": "GET /api/v1/statements is defined by @router decorator in backend/src/routers/cards_statements.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/statements/{statement_id}/validate",
+      "from": "endpoint:GET /api/v1/statements/{statement_id}/validate",
       "to": "router:backend/src/routers/cards_statements.py",
       "relation": "executes",
-      "evidence": "GET /api/statements/{statement_id}/validate is defined by @router decorator in backend/src/routers/cards_statements.py",
+      "evidence": "GET /api/v1/statements/{statement_id}/validate is defined by @router decorator in backend/src/routers/cards_statements.py",
       "stage": "dispatch"
     },
     {
@@ -2508,10 +2669,10 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/dashboard/summary",
+      "from": "endpoint:GET /api/v1/dashboard/summary",
       "to": "router:backend/src/routers/dashboard.py",
       "relation": "executes",
-      "evidence": "GET /api/dashboard/summary is defined by @router decorator in backend/src/routers/dashboard.py",
+      "evidence": "GET /api/v1/dashboard/summary is defined by @router decorator in backend/src/routers/dashboard.py",
       "stage": "dispatch"
     },
     {
@@ -2522,24 +2683,24 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/financial-events/",
+      "from": "endpoint:GET /api/v1/financial-events/",
       "to": "router:backend/src/routers/financial_events.py",
       "relation": "executes",
-      "evidence": "GET /api/financial-events/ is defined by @router decorator in backend/src/routers/financial_events.py",
+      "evidence": "GET /api/v1/financial-events/ is defined by @router decorator in backend/src/routers/financial_events.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/financial-events/{event_id}",
+      "from": "endpoint:GET /api/v1/financial-events/{event_id}",
       "to": "router:backend/src/routers/financial_events.py",
       "relation": "executes",
-      "evidence": "GET /api/financial-events/{event_id} is defined by @router decorator in backend/src/routers/financial_events.py",
+      "evidence": "GET /api/v1/financial-events/{event_id} is defined by @router decorator in backend/src/routers/financial_events.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/financial-events/",
+      "from": "endpoint:POST /api/v1/financial-events/",
       "to": "router:backend/src/routers/financial_events.py",
       "relation": "executes",
-      "evidence": "POST /api/financial-events/ is defined by @router decorator in backend/src/routers/financial_events.py",
+      "evidence": "POST /api/v1/financial-events/ is defined by @router decorator in backend/src/routers/financial_events.py",
       "stage": "dispatch"
     },
     {
@@ -2550,59 +2711,59 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/cashflow-forecast",
+      "from": "endpoint:GET /api/v1/financial-intelligence/cashflow-forecast",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/cashflow-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/cashflow-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/credit-forecast",
+      "from": "endpoint:GET /api/v1/financial-intelligence/credit-forecast",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/credit-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/credit-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/liquidity-forecast",
+      "from": "endpoint:GET /api/v1/financial-intelligence/liquidity-forecast",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/liquidity-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/liquidity-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/outlook",
+      "from": "endpoint:GET /api/v1/financial-intelligence/outlook",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/outlook is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/outlook is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/priorities",
+      "from": "endpoint:GET /api/v1/financial-intelligence/priorities",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/priorities is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/priorities is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/recommendations",
+      "from": "endpoint:GET /api/v1/financial-intelligence/recommendations",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/recommendations is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/recommendations is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/recommendations/{recommendation_id}",
+      "from": "endpoint:GET /api/v1/financial-intelligence/recommendations/{recommendation_id}",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/recommendations/{recommendation_id} is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/recommendations/{recommendation_id} is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /financial-intelligence/report",
+      "from": "endpoint:GET /api/v1/financial-intelligence/report",
       "to": "router:backend/src/routers/financial_intelligence.py",
       "relation": "executes",
-      "evidence": "GET /financial-intelligence/report is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "evidence": "GET /api/v1/financial-intelligence/report is defined by @router decorator in backend/src/routers/financial_intelligence.py",
       "stage": "dispatch"
     },
     {
@@ -2620,24 +2781,24 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:POST /api/import/detect",
+      "from": "endpoint:POST /api/v1/import/detect",
       "to": "router:backend/src/routers/import_router.py",
       "relation": "executes",
-      "evidence": "POST /api/import/detect is defined by @router decorator in backend/src/routers/import_router.py",
+      "evidence": "POST /api/v1/import/detect is defined by @router decorator in backend/src/routers/import_router.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/import/execute",
+      "from": "endpoint:POST /api/v1/import/execute",
       "to": "router:backend/src/routers/import_router.py",
       "relation": "executes",
-      "evidence": "POST /api/import/execute is defined by @router decorator in backend/src/routers/import_router.py",
+      "evidence": "POST /api/v1/import/execute is defined by @router decorator in backend/src/routers/import_router.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/upload",
+      "from": "endpoint:POST /api/v1/upload",
       "to": "router:backend/src/routers/import_router.py",
       "relation": "executes",
-      "evidence": "POST /api/upload is defined by @router decorator in backend/src/routers/import_router.py",
+      "evidence": "POST /api/v1/upload is defined by @router decorator in backend/src/routers/import_router.py",
       "stage": "dispatch"
     },
     {
@@ -2648,94 +2809,94 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:DELETE /api/loans/{loan_id}",
+      "from": "endpoint:DELETE /api/v1/loans/{loan_id}",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "DELETE /api/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "DELETE /api/v1/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/loans",
+      "from": "endpoint:GET /api/v1/loans",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "GET /api/loans is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "GET /api/v1/loans is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/loans/analysis/priority",
+      "from": "endpoint:GET /api/v1/loans/analysis/priority",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "GET /api/loans/analysis/priority is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "GET /api/v1/loans/analysis/priority is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/loans/{loan_id}",
+      "from": "endpoint:GET /api/v1/loans/{loan_id}",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "GET /api/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "GET /api/v1/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/loans/{loan_id}/schedule",
+      "from": "endpoint:GET /api/v1/loans/{loan_id}/schedule",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "GET /api/loans/{loan_id}/schedule is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "GET /api/v1/loans/{loan_id}/schedule is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans",
+      "from": "endpoint:POST /api/v1/loans",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/analysis/surplus-allocation",
+      "from": "endpoint:POST /api/v1/loans/analysis/surplus-allocation",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/analysis/surplus-allocation is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/analysis/surplus-allocation is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "from": "endpoint:POST /api/v1/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/{loan_id}/analysis/prepayment-vs-foreclosure is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/{loan_id}/foreclosure-simulation",
+      "from": "endpoint:POST /api/v1/loans/{loan_id}/foreclosure-simulation",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/{loan_id}/foreclosure-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/{loan_id}/foreclosure-simulation is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/{loan_id}/payments",
+      "from": "endpoint:POST /api/v1/loans/{loan_id}/payments",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/{loan_id}/payments is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/{loan_id}/payments is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/{loan_id}/prepayment-simulation",
+      "from": "endpoint:POST /api/v1/loans/{loan_id}/prepayment-simulation",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/{loan_id}/prepayment-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/{loan_id}/prepayment-simulation is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/loans/{loan_id}/rate-change-simulation",
+      "from": "endpoint:POST /api/v1/loans/{loan_id}/rate-change-simulation",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "POST /api/loans/{loan_id}/rate-change-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "POST /api/v1/loans/{loan_id}/rate-change-simulation is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:PUT /api/loans/{loan_id}",
+      "from": "endpoint:PUT /api/v1/loans/{loan_id}",
       "to": "router:backend/src/routers/loans.py",
       "relation": "executes",
-      "evidence": "PUT /api/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "evidence": "PUT /api/v1/loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
       "stage": "dispatch"
     },
     {
@@ -2809,45 +2970,45 @@
       "stage": "business"
     },
     {
-      "from": "endpoint:GET /api/reconciliation/pending",
+      "from": "endpoint:GET /api/v1/reconciliation/pending",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "GET /api/reconciliation/pending is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "GET /api/v1/reconciliation/pending is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:GET /api/reconciliation/scan",
+      "from": "endpoint:GET /api/v1/reconciliation/scan",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "GET /api/reconciliation/scan is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "GET /api/v1/reconciliation/scan is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/reconciliation/batch-insert",
+      "from": "endpoint:POST /api/v1/reconciliation/batch-insert",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "POST /api/reconciliation/batch-insert is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "POST /api/v1/reconciliation/batch-insert is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/reconciliation/create",
+      "from": "endpoint:POST /api/v1/reconciliation/create",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "POST /api/reconciliation/create is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "POST /api/v1/reconciliation/create is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/reconciliation/{reconciliation_id}/confirm",
+      "from": "endpoint:POST /api/v1/reconciliation/{reconciliation_id}/confirm",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "POST /api/reconciliation/{reconciliation_id}/confirm is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "POST /api/v1/reconciliation/{reconciliation_id}/confirm is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {
-      "from": "endpoint:POST /api/reconciliation/{reconciliation_id}/reject",
+      "from": "endpoint:POST /api/v1/reconciliation/{reconciliation_id}/reject",
       "to": "router:backend/src/routers/reconciliation.py",
       "relation": "executes",
-      "evidence": "POST /api/reconciliation/{reconciliation_id}/reject is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "evidence": "POST /api/v1/reconciliation/{reconciliation_id}/reject is defined by @router decorator in backend/src/routers/reconciliation.py",
       "stage": "dispatch"
     },
     {

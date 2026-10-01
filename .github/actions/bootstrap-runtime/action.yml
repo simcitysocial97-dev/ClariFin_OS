@@ -34,6 +34,30 @@ runs:
       shell: bash
       run: git config --global --add safe.directory '*'
 
+    - name: Prepare generated workspace
+      shell: bash
+      run: |
+        mkdir -p runtime/generated
+        # Seed the shared engineering history cache so downstream status commands work.
+        if [ ! -f runtime/generated/engineering-history.json ]; then
+          echo '{"runs":[]}' > runtime/generated/engineering-history.json
+        fi
+        # Seed verification cache so the runtime never fails on a missing cache.
+        if [ ! -f runtime/generated/verification-cache.json ]; then
+          echo '{}' > runtime/generated/verification-cache.json
+        fi
+
+    - name: Discover architecture (canonical inventory)
+      shell: bash
+      run: |
+        # The cross-layer map, the knowledge index and every capability that reads
+        # architecture all require runtime/generated/architecture-inventory.json.
+        # That artifact is generated output and is no longer committed, so a clean
+        # checkout must produce it before anything consumes it. This is the single
+        # architecture discovery pipeline named by ArchitectureNotDiscovered, and it
+        # must run before the cross-layer map and the knowledge index below.
+        .venv/bin/python -m runtime.foundation.architecture.discovery
+
     - name: Generate cross-layer map (Architecture Map — Program 7A)
       shell: bash
       run: |
@@ -51,16 +75,3 @@ runs:
         echo "Runtime VERSION file declares: ${RUNTIME_VERSION_LINE:-unspecified}"
         echo "Runtime version: $(cat runtime/VERSION | head -1)"
         echo "runtime-version=${RUNTIME_VERSION_LINE}" >> "$GITHUB_OUTPUT"
-
-    - name: Prepare generated workspace
-      shell: bash
-      run: |
-        mkdir -p runtime/generated
-        # Seed the shared engineering history cache so downstream status commands work.
-        if [ ! -f runtime/generated/engineering-history.json ]; then
-          echo '{"runs":[]}' > runtime/generated/engineering-history.json
-        fi
-        # Seed verification cache so the runtime never fails on a missing cache.
-        if [ ! -f runtime/generated/verification-cache.json ]; then
-          echo '{}' > runtime/generated/verification-cache.json
-        fi

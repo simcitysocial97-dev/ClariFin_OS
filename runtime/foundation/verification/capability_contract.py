@@ -667,7 +667,24 @@ class CapabilityContractRegistry:
             mappings.append(
                 MeasurementMapping(
                     measurement_kind=MeasurementKind.COVERAGE,
-                    scope=cap.modules[0] if cap.modules else "full",
+                    # A coverage scope is a *pytest* path — a tree of tests to
+                    # run under coverage — not a source directory. This used to
+                    # be `cap.modules[0]`, which is the capability's first source
+                    # module (e.g. "backend/src/engines/account_engine"). pytest
+                    # collects nothing from a source directory and exits 5, so
+                    # every coverage revalidation task died with
+                    #   "file or directory not found: backend/src/engines/..."
+                    # and was reported as an INFRASTRUCTURE_FAILURE. The
+                    # measurement never ran.
+                    #
+                    # Per-engine test directories are not a reliable basis for a
+                    # per-engine scope: backend/tests/unit/engines/ contains
+                    # account/, balance_engine/, credit_card/, credit_card_engine/,
+                    # behavior/ and behaviour/ for the same family of engines, so
+                    # a derived name would be wrong for several of them. The
+                    # engine test tree is used instead, which is also the
+                    # orchestrator's existing fallback. Threshold unchanged.
+                    scope="tests/unit/engines",
                     required_for_certification=False,
                     authoritative_evidence_path="runtime/generated/m9-c47/coverage/measurement-truth-coverage.json",
                     completion_requirements={"minimum_line_percent": 40},

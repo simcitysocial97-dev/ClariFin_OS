@@ -705,6 +705,19 @@ def main() -> None:
         with open(GENERATED_DIR / "verification-matrix.md", "w") as f:
             f.write(generate_verification_matrix(plan, "PLANNED"))
 
+        # Honour --json here too. Both execution paths write
+        # selective-summary.json when --json is given, but the plan path wrote
+        # only selective-plan.md and verification-matrix.md, so
+        # `--plan --json` silently dropped one of its declared outputs and
+        # test_json_summary_flag failed with "selective-summary.json not
+        # generated". The result is "PLANNED", matching the verification matrix
+        # written just above: nothing was executed, so claiming PASS would be
+        # false.
+        if args.json:
+            summary = generate_summary_json(plan, 0.0, 0, "PLANNED")
+            with open(GENERATED_DIR / "selective-summary.json", "w") as f:
+                json.dump(summary, f, indent=2)
+
         sys.exit(0)
 
     # Default: execute if --run specified

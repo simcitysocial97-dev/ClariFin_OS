@@ -965,18 +965,14 @@ class DiagnosticForensicAgent:
         diagnosis = self._diagnose_financial_semantics(record)
         return diagnosis
 
-    def _diagnose_financial_semantics(
-        self, record: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _diagnose_financial_semantics(self, record: dict[str, Any]) -> dict[str, Any]:
         """Diagnose financial semantic failures from the forensic record.
 
         Inspects execution_results for SemanticFailure markers; when found,
         resolves affected concepts via FinancialBlastRadius and surfaces
         the violated invariant and remediation hint.
         """
-        results = (record.get("execution_results", {}) or {}).get(
-            "by_component", {}
-        )
+        results = (record.get("execution_results", {}) or {}).get("by_component", {})
         if not results:
             return {"financial_diagnosis": "none"}
 
@@ -990,19 +986,13 @@ class DiagnosticForensicAgent:
                     )
 
                     source_file = sf.get("source_file", "")
-                    affected = (
-                        _FinancialBlastRadius.compute_affected_concepts(
-                            [source_file] if source_file else []
-                        )
+                    affected = _FinancialBlastRadius.compute_affected_concepts(
+                        [source_file] if source_file else []
                     )
-                    at_risk = (
-                        _FinancialBlastRadius.compute_at_risk_invariants(affected)
-                    )
+                    at_risk = _FinancialBlastRadius.compute_at_risk_invariants(affected)
                     return {
                         "invariant_violated": sf.get("invariant_id", "unknown"),
-                        "invariant_description": sf.get(
-                            "description", "unknown"
-                        ),
+                        "invariant_description": sf.get("description", "unknown"),
                         "affected_concepts": affected,
                         "at_risk_invariants": list(at_risk),
                         "remediation": sf.get("remediation", ""),
@@ -1023,7 +1013,9 @@ class DiagnosticForensicAgent:
 
     # -- Q11 — Minimal fix suggestion --------------------------------------
 
-    def _answer_q11(self, record: dict[str, Any], *, q10: dict[str, Any]) -> dict[str, Any]:
+    def _answer_q11(
+        self, record: dict[str, Any], *, q10: dict[str, Any]
+    ) -> dict[str, Any]:
         """Suggest the minimal fix based on Q10 financial diagnosis."""
         if q10.get("financial_diagnosis") == "none":
             return {"minimal_fix": "none_required"}
@@ -1037,9 +1029,7 @@ class DiagnosticForensicAgent:
             fix_hints.append(f"Remediation: {remediation}")
         if affected:
             fix_hints.append(f"Affected concepts: {', '.join(affected)}")
-        fix_hints.append(
-            f"Invariant to restore: {invariant_id}"
-        )
+        fix_hints.append(f"Invariant to restore: {invariant_id}")
 
         return {
             "minimal_fix": "; ".join(fix_hints),

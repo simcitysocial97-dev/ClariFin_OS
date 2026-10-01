@@ -826,6 +826,31 @@ class MetadataExtractor:
 # CLI
 # ============================================================
 
+#: Keys whose values are credentials or full account identifiers. The CLI exists
+#: to inspect the *shape* of an extraction, so masking these loses nothing for
+#: its purpose while keeping a full card number out of terminal scrollback,
+#: CI logs and shell history (CWE-532).
+_SENSITIVE_KEYS = frozenset({"card_number", "account_number", "pan", "cvv"})
+
+
+def _redact_for_display(value: Any) -> Any:
+    """Return ``value`` with sensitive fields masked, preserving structure.
+
+    Recurses so the nested ``raw`` mapping is covered too, and leaves every
+    other key untouched so the output still shows what was extracted and from
+    which pattern.
+    """
+
+    if isinstance(value, dict):
+        return {
+            k: ("***REDACTED***" if k in _SENSITIVE_KEYS else _redact_for_display(v))
+            for k, v in value.items()
+        }
+    if isinstance(value, list):
+        return [_redact_for_display(v) for v in value]
+    return value
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python metadata_extractor.py <pdf_path> [bank_name] [--debug]")
@@ -856,4 +881,4 @@ if __name__ == "__main__":
 
     extractor = MetadataExtractor(pdf_path, bank=bank, debug=debug)
     result = extractor.extract()
-    print(json.dumps(result, indent=2, default=str))
+    print(json.dumps(_redact_for_display(result), indent=2, default=str))

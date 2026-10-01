@@ -3,13 +3,13 @@
 Verifies that all runtime.foundation modules are importable, detects circular
 dependencies, and flags imports from deprecated paths.
 """
+
 from __future__ import annotations
 
 import ast
 import subprocess
 import sys
 from pathlib import Path
-
 
 RUNTIME_ROOT = Path("runtime/foundation/verification")
 TESTS_ROOT = Path("runtime/tests")
@@ -76,6 +76,11 @@ class TestImportIntegrity:
                 source = py_file.read_text()
                 ast.parse(source)
             except SyntaxError as e:
-                rel = str(py_file.relative_to(Path.cwd())) if Path.cwd() in py_file.parents or py_file.is_relative_to(Path.cwd()) else str(py_file)
+                rel = (
+                    str(py_file.relative_to(Path.cwd()))
+                    if Path.cwd() in py_file.parents
+                    or py_file.is_relative_to(Path.cwd())
+                    else str(py_file)
+                )
                 failures.append(f"{rel}: {e}")
         assert not failures, f"Syntax errors:\n" + "\n".join(failures[:20])

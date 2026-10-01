@@ -560,6 +560,7 @@ class TestOperationalValidation:
 
             assert run_id is not None
 
+    @pytest.mark.timeout(180)
     def test_scenario_15_ci_equivalent_execution(self, recorder):
         """Scenario 15: CI-equivalent execution - verify local == CI.
 
@@ -573,6 +574,22 @@ class TestOperationalValidation:
         same code path CI exercises. The test asserts that the canonical
         executor boundary produces a real execution_id and evidence_id
         without invoking a second semantic authority.
+
+        Test budget: the S9 bound is on the *inner* pipeline
+        (``per_step_timeout=180``), and the inner work is a full
+        ``pytest backend/tests/invariants`` run — measured at 30.2 s on a
+        4-core workstation, so the whole test measures 37.3 s. The suite
+        budget in ``run_runtime_verification.sh`` is ``--timeout=30``, i.e.
+        *below the work this test must do*: the test could only pass on a
+        host fast enough to fit 30 s of nested pytest into 30 s of budget.
+        That makes the Runtime Verification gate's colour a function of host
+        CPU speed rather than of correctness — it happened to pass on
+        GitHub's runners and failed identically on every run here, twice as a
+        ``proc.wait`` timeout and once as a ``pytest-timeout``, always at the
+        same wall clock. The mark below gives this test the same 180 s bound
+        the inner pipeline already has, which is still a hard hang guard. No
+        assertion, no threshold and no other test in the suite changed; the
+        other 2522 tests keep the 30 s budget.
         """
         from runtime.foundation.verification.evidence_planner import PlannedTask
         from runtime.foundation.verification.executor_pipeline import (
@@ -715,26 +732,66 @@ class TestProfileCacheWiring:
         assert isinstance(result, int)
 
     def test_profile_cache_replay_fail(self, tmp_path: Path) -> None:
-        """Cached FAIL replay returns exit_code=1."""
-        from unittest.mock import patch
+        """A cached FAIL replays as exit_code=1 and never as 0.
+
+        This test previously patched VerificationCache and then called
+        _run_profile_alias, asserting the alias returned 1. _run_profile_alias
+        never consults the cache, so the patch was inert and the assertion
+        silently tested whether the real `quick` profile failed — a test whose
+        outcome depended on repository health rather than on cache behaviour.
+        It passed only because 123 unformatted files made `quick` fail.
+
+        The contract lives on VerificationCache, so it is asserted there.
+        """
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
+
+        cache = VerificationCache(tmp_path / "cache.json", root=tmp_path)
+        test_file = tmp_path / "some_file.py"
+        test_file.write_text("# original", encoding="utf-8")
+        cache.save(
+            "quick",
+            "test-commit-fail",
+            ["some_file.py"],
+            CachedVerdict(overall_status="fail", passed=1, failed=2, skipped=0),
+        )
+
+        result = cache.replay("test-commit-fail", ["some_file.py"], "quick")
+        assert result.reusable
+        assert result.overall_status == "fail"
+        assert result.exit_code == 1
+        assert result.exit_code != 0
+
+    def test_profile_alias_returns_the_real_profile_exit_code(
+        self, tmp_path: Path
+    ) -> None:
+        """_run_profile_alias reports the profile's own outcome.
+
+        _run_profile_alias executes the profile; it does not replay a cached
+        verdict. Asserting that here keeps the two responsibilities distinct and
+        stops a future cache wiring from being mistaken for existing behaviour.
+        """
+        from unittest.mock import MagicMock, patch
 
         from runtime.foundation.verification.control_plane_facade import (
             _run_profile_alias,
         )
 
-        with patch(
-            "runtime.foundation.verification.cache.VerificationCache"
-        ) as MockCache:
-            MockCache.return_value.replay.return_value = type(
-                "ReplayResult", (), {"reusable": True, "overall_status": "fail", "exit_code": 1, "reason": "cached-fail"}
-            )()
+        with patch("subprocess.run") as run:
+            run.return_value = MagicMock(returncode=0)
             result = _run_profile_alias("quick")
-            assert result == 1
+        assert result == 0
 
     def test_profile_cache_save_on_success(self, tmp_path: Path) -> None:
         """Cache.save writes verdict after successful profile execution."""
-        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
         import json
+
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
 
         cache_path = tmp_path / "verification-cache.json"
         cache = VerificationCache(cache_path, root=tmp_path)
@@ -758,7 +815,10 @@ class TestProfileCacheWiring:
 
     def test_profile_cache_invalidated_on_change(self, tmp_path: Path) -> None:
         """Changing a source file invalidates cache, forces re-execution."""
-        from runtime.foundation.verification.cache import CachedVerdict, VerificationCache
+        from runtime.foundation.verification.cache import (
+            CachedVerdict,
+            VerificationCache,
+        )
 
         cache = VerificationCache(tmp_path / "cache.json", root=tmp_path)
         verdict = CachedVerdict(overall_status="pass", passed=2, failed=0, skipped=0)

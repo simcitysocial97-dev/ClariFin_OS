@@ -67,6 +67,52 @@ function volatileRuntimeReadouts(page: import('@playwright/test').Page) {
   ];
 }
 
+/**
+ * A snapshot of a page that is still loading is not a snapshot of the page.
+ *
+ * `waitForPageReady` waits for `domcontentloaded` and for React to hydrate
+ * (the root element having children). Neither means the page's async queries
+ * have resolved, so a data-driven page can still be showing its loading state
+ * when the screenshot is taken. Playwright's own stability check cannot catch
+ * this either — "stable" means no layout shift, not "data arrived" — and it
+ * reports "captured a stable screenshot" of a loading dashboard quite happily.
+ *
+ * That is what the home-page baseline was catching. On a cold CI container the
+ * dashboard is still in its loading state when the capture happens: the panel
+ * header renders, the body renders as two thin placeholder bars, and the whole
+ * KPI row, analytics summary bar and chart panels are absent. Against a baseline
+ * containing all of them, that is ~11% of all pixels differing, identically on
+ * all three attempts including both retries — a signature of a deterministic
+ * state, not a flake. The mobile-chrome job passed in the same run because its
+ * layout and timing differ.
+ *
+ * Two loading affordances have to be covered, and an earlier version of this
+ * helper only covered the first, which is why it did not work:
+ *
+ *   - `.animate-pulse` — the `Skeleton` primitive in components/ui/skeleton.tsx
+ *     and the in-place placeholders in chart-container.tsx and financial-table.tsx
+ *   - `.fin-loading` / `.fin-loading-pulse` — the `PanelBody loading` state in
+ *     components/primitives/panel/panel.tsx, which is what the dashboard and
+ *     every other panel-based page actually use. It renders no `.animate-pulse`
+ *     element at all, so waiting on `.animate-pulse` alone returns immediately.
+ *
+ * This is deliberately an assertion, not a swallowed wait: if a page never
+ * settles, `toHaveCount(0)` fails and the screenshot is never taken. A page
+ * that cannot finish loading is a real defect and must fail the run. The
+ * snapshot comparison itself is unchanged — same pages, same baselines, same
+ * `maxDiffPixels`, same `threshold`.
+ */
+const LOADING_AFFORDANCES = [
+  '.animate-pulse',
+  '.fin-loading',
+  '.fin-loading-pulse',
+  '[class*="skeleton"]',
+].join(', ');
+
+async function waitForContentSettled(page: import('@playwright/test').Page) {
+  await expect(page.locator(LOADING_AFFORDANCES)).toHaveCount(0, { timeout: 30000 });
+}
+
 // ============================================================================
 // Full Page Screenshots
 // ============================================================================
@@ -82,7 +128,8 @@ test.describe('Visual Regression - Full Pages', () => {
     test(`should match ${pageConfig.name} page snapshot`, async ({ page, waitForPageReady }) => {
       await page.goto(pageConfig.path);
       await waitForPageReady(page);
-      
+      await waitForContentSettled(page);
+
       // Take full page screenshot
       await expect(page).toHaveScreenshot(`${pageConfig.name}-page.png`, {
         mask: volatileRuntimeReadouts(page),
@@ -179,7 +226,8 @@ test.describe('Visual Regression - Mobile', () => {
     test(`should match ${pageConfig.name} mobile snapshot`, async ({ page, waitForPageReady }) => {
       await page.goto(pageConfig.path);
       await waitForPageReady(page);
-      
+      await waitForContentSettled(page);
+
       await expect(page).toHaveScreenshot(`${pageConfig.name}-mobile.png`, {
         mask: volatileRuntimeReadouts(page),
         maxDiffPixels: MAX_DIFF_PIXELS,
@@ -298,7 +346,8 @@ test.describe('Visual Regression - Dark Mode', () => {
   test('should match dark mode dashboard', async ({ page, waitForPageReady }) => {
     await page.goto('/');
     await waitForPageReady(page);
-    
+    await waitForContentSettled(page);
+
     await expect(page).toHaveScreenshot('dark-mode-dashboard.png', {
       mask: volatileRuntimeReadouts(page),
       maxDiffPixels: MAX_DIFF_PIXELS,

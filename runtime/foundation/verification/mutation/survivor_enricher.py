@@ -153,7 +153,9 @@ class SurvivorEnricher:
         """Enrich a single survivor record."""
         source_file = survivor.get("source_file", "")
         component = survivor.get("component", "")
-        mutation_type = survivor.get("mutation_type", "") or survivor.get("category", "")
+        mutation_type = survivor.get("mutation_type", "") or survivor.get(
+            "category", ""
+        )
         original_expression = survivor.get("original_expression", "")
         mutated_expression = survivor.get("mutated_expression", "")
 

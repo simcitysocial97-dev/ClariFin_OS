@@ -899,15 +899,14 @@ class CrossLayerImpactPlanner:
         """Load cross-layer graph for frontend capability resolution."""
         try:
             import json
+
             graph_path = Path("runtime/generated/cross-layer-graph.json")
             if graph_path.exists():
                 self._cross_layer_graph = json.loads(graph_path.read_text())
         except Exception:
             pass
 
-    def _find_frontend_capability(
-        self, file_path: str
-    ) -> dict[str, Any] | None:
+    def _find_frontend_capability(self, file_path: str) -> dict[str, Any] | None:
         """Resolve a frontend file to its capability and related backend info.
 
         Returns a dict with:
@@ -916,8 +915,13 @@ class CrossLayerImpactPlanner:
           - domain: domain prefix (frontend-accounts, frontend-loans, etc.)
           - backend_capabilities: list of resolved backend capability IDs
           - backend_endpoints: list of resolved backend endpoint paths
-          - status: MAPPED | UNMAPPED | AMBIGUOUS
+          - status: MAPPED | UNMAPPED
           - edges: list of cross-layer edges from this capability
+
+        Returns None when no single capability can be attributed to the file,
+        including when the basename fallback is ambiguous: a basename shared by
+        several capabilities identifies none of them, and naming the first would
+        report an owner the graph does not support.
         """
         if not self._cross_layer_graph:
             return None
@@ -942,6 +946,33 @@ class CrossLayerImpactPlanner:
             return self._resolve_capability_edges(cap_id)
 
         # Try basename match (for files without full path)
+        #
+        # The basename fallback exists for inputs that carry no usable path of
+        # their own, so it can only conclude something when exactly one
+        # capability owns that basename. `page.tsx` is owned by 19 route
+        # capabilities, `layout.tsx`, `index.ts` and `runtime.ts` by several
+        # each, and a basename shared by N capabilities identifies none of
+        # them: the candidates differ only in their *directories*, which is
+        # exactly the information the basename threw away.
+        #
+        # Returning `matches[0]` here did not report an ambiguity, it invented
+        # an owner. `frontend/app/platform/diagnostics/page.tsx` was attributed
+        # to `frontend:route:frontend-cashflow:cashflow` purely because that
+        # capability happened to be first in dict order, so the planner's blast
+        # radius claimed a cashflow impact for a Platform Console page and the
+        # fail-closed unmapped obligation then blocked on a capability the
+        # change has nothing to do with. A report that names the wrong owner is
+        # worse than no report: it is indistinguishable from a real one.
+        #
+        # Returning None is the truthful outcome — the planner genuinely cannot
+        # attribute this file — and it routes the file to the caller's
+        # unresolved list, where it is recorded as `UNMAPPED:<path>`. The
+        # resolver then judges that report on its merits: it is suppressed only
+        # when the file was independently attributed to a registered
+        # verification capability by path, and it still blocks the merge when it
+        # was not. Nothing is weakened, and an unmapped file that shares a name
+        # with a resolved one can no longer be masked, because the entry carries
+        # the full path rather than a stem.
         basename = Path(norm_path).name
         matches = [
             cap_id
@@ -950,28 +981,10 @@ class CrossLayerImpactPlanner:
         ]
         if len(matches) == 1:
             return self._resolve_capability_edges(matches[0])
-        elif len(matches) > 1:
-            # Ambiguous - return first match with ambiguous flag
-            return {
-                "capability_id": matches[0],
-                "kind": self._cross_layer_graph["frontend_capabilities"][
-                    matches[0]
-                ].get("kind", "unknown"),
-                "domain": self._cross_layer_graph["frontend_capabilities"][
-                    matches[0]
-                ].get("domain", "unknown"),
-                "backend_capabilities": [],
-                "backend_endpoints": [],
-                "status": "AMBIGUOUS",
-                "edges": [],
-                "matched_files": matches,
-            }
 
         return None
 
-    def _resolve_capability_edges(
-        self, capability_id: str
-    ) -> dict[str, Any] | None:
+    def _resolve_capability_edges(self, capability_id: str) -> dict[str, Any] | None:
         """Resolve cross-layer edges for a frontend capability."""
         if not self._cross_layer_graph:
             return None
@@ -1064,7 +1077,8 @@ class CrossLayerImpactPlanner:
 
         # Second pass: for unresolved frontend files, use cross-layer graph
         unresolved_frontend = [
-            f for f in changed_files
+            f
+            for f in changed_files
             if f not in chain_resolved and self._is_frontend_path(f)
         ]
         if unresolved_frontend and self._cross_layer_graph:
@@ -1072,7 +1086,8 @@ class CrossLayerImpactPlanner:
 
         # Third pass: enrich unresolved non-frontend files via intelligence
         unresolved_backend = [
-            f for f in changed_files
+            f
+            for f in changed_files
             if f not in chain_resolved and not self._is_frontend_path(f)
         ]
         if self.map_path is None and unresolved_backend:

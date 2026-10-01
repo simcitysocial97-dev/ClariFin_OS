@@ -3,6 +3,7 @@
 Validates that AST-based symbol extraction reports correct names, kinds, line
 ranges, and parent classes.
 """
+
 from __future__ import annotations
 
 import tempfile
@@ -25,9 +26,15 @@ class TestSymbolResolutionAccuracy:
         assert len(symbols) > 0
         names = {s.name for s in symbols}
         # emi.py defines compute_* functions, not calculate_emi
-        expected_symbols = ["compute_emi_fixed", "compute_emi_floating", "compute_monthly_interest"]
+        expected_symbols = [
+            "compute_emi_fixed",
+            "compute_emi_floating",
+            "compute_monthly_interest",
+        ]
         for expected in expected_symbols:
-            assert expected in names, f"Expected symbol {expected} not found. Found: {names}"
+            assert (
+                expected in names
+            ), f"Expected symbol {expected} not found. Found: {names}"
 
     def test_line_ranges_valid(self):
         test_file = Path("backend/src/engines/loan_engine/emi.py")
@@ -60,12 +67,16 @@ class TestSymbolResolutionAccuracy:
             functions = [s for s in symbols if s.kind == "function"]
             classes = [s for s in symbols if s.kind == "class"]
 
-            assert len(methods) == 2, f"Expected 2 methods, got {len(methods)}: {[s.name for s in methods]}"
+            assert (
+                len(methods) == 2
+            ), f"Expected 2 methods, got {len(methods)}: {[s.name for s in methods]}"
             assert len(functions) == 1, f"Expected 1 function, got {len(functions)}"
             assert len(classes) == 1, f"Expected 1 class, got {len(classes)}"
 
             for m in methods:
-                assert m.parent_class == "TestClass", f"Method {m.name} parent_class={m.parent_class}"
+                assert (
+                    m.parent_class == "TestClass"
+                ), f"Method {m.name} parent_class={m.parent_class}"
         finally:
             tmp.unlink(missing_ok=True)
 

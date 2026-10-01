@@ -4,6 +4,7 @@ M9-C54 — Local <-> CI semantic equivalence (Q5).
 Standalone module that compares local and CI execution across semantic
 dimensions without depending on workflow inventory.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

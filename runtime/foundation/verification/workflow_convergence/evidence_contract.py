@@ -5,6 +5,7 @@ Operationalizes CIEvidenceRecord across workflows, building a contract that
 maps every verification step to its required evidence type, path, and
 fingerprint requirements.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

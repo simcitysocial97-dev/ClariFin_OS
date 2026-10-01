@@ -19,6 +19,11 @@
 import fs from 'fs';
 import path from 'path';
 
+/** Escape a string for literal use inside a RegExp. */
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // ===== Zod Schema Registry =====
 // Maps mock handler names to their canonical Zod schemas.
 // This is the ONLY place where mock→schema mapping is defined.
@@ -110,7 +115,10 @@ async function main() {
     // Check if handler file imports from the schema file
     // Use global replacement to handle all occurrences of '../'
     const normalizedFile = schemaInfo.file.replace(/\.\.\//g, '');
-    const schemaImportPattern = new RegExp(`from.*${normalizedFile}`);
+    // The filename is interpolated into a RegExp, so its metacharacters must be
+    // escaped. Without this a file named `a.b.ts` also matches `aXbYts`, and
+    // characters like `(` or `+` would change the pattern's meaning entirely.
+    const schemaImportPattern = new RegExp(`from.*${escapeRegExp(normalizedFile)}`);
     const hasSchemaImport = schemaImportPattern.test(handlerContent);
 
     totalChecked++;

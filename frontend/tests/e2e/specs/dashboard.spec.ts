@@ -94,17 +94,31 @@ test.describe('Dashboard Components', () => {
   test('should trigger upload on button click', async ({ page }) => {
     const uploadBtn = page.locator('button:has-text("Upload")').first();
     await expect(uploadBtn).toBeVisible();
-    
+
     // Click should either open modal or navigate to upload page
     await uploadBtn.click();
-    await page.waitForTimeout(500);
-    
-    // Check if URL changed to include upload param or modal appeared
-    const url = page.url();
-    const hasModal = await page.locator('[role="dialog"], [data-state="open"]').count() > 0;
-    
-    // Either modal is visible or URL has upload param
-    expect(url.includes('upload=true') || hasModal).toBe(true);
+
+    // The handler is `router.push('?upload=true')` — a client-side route change
+    // that resolves through an RSC fetch — so the outcome is not synchronously
+    // present when the click returns. This previously sampled the page after a
+    // fixed 500 ms `waitForTimeout`, which is a race, not an assertion: on a
+    // loaded machine the route change had not landed yet and the test failed
+    // with `Expected: true / Received: false` even though the click worked. The
+    // same test then passed on the mobile-chrome project in the very same run,
+    // which is the signature of a timing race rather than a broken control.
+    //
+    // The condition is unchanged — the URL carries `upload=true`, or a dialog
+    // opened — and is now polled to a bounded 15 s, well inside this spec's
+    // 30 s global test timeout. No assertion was removed and no state was
+    // relaxed: the test still fails if neither outcome ever occurs.
+    await expect
+      .poll(
+        async () =>
+          page.url().includes('upload=true') ||
+          (await page.locator('[role="dialog"], [data-state="open"]').count()) > 0,
+        { timeout: 15000 }
+      )
+      .toBe(true);
   });
 
   test('should display quick stats cards', async ({ page, waitForPageReady }) => {

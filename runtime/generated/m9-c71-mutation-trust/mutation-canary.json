@@ -1,6 +1,6 @@
 {
   "schema": "m9-c71-mutation-canary/v1",
-  "recorded_at": "2026-09-28T09:38:55.755643+00:00",
+  "recorded_at": "2026-09-29T09:53:53.443328+00:00",
   "passed": false,
   "checks": {
     "KNOWN_KILL_MUTANT": "KILLED",
@@ -8,7 +8,7 @@
     "KNOWN_REACHED_LOCATION": "FAILED",
     "KNOWN_UNREACHED_LOCATION": "FAILED"
   },
-  "canary_root": "/tmp/pytest-of-vasantha/pytest-998/test_canary_accepts_a_kill_wit0",
+  "canary_root": "/tmp/pytest-of-vasantha/pytest-1068/test_canary_accepts_a_kill_wit0",
   "population": 2,
   "sentinel_records": 0,
   "mutants_observed_executing": 0,

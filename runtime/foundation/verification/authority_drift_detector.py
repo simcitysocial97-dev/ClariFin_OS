@@ -108,7 +108,9 @@ class DriftReport:
 # ---------------------------------------------------------------------------
 
 CANONICAL_PLANNER = "runtime.foundation.verification.control_plane.ControlPlanePlanner"
-CANONICAL_EXECUTOR = "runtime.foundation.verification.execution_orchestrator.ExecutionOrchestrator"
+CANONICAL_EXECUTOR = (
+    "runtime.foundation.verification.execution_orchestrator.ExecutionOrchestrator"
+)
 CANONICAL_FACADE = "runtime.foundation.verification.control_plane_facade.ControlPlane"
 CANONICAL_EVIDENCE_WRITER = "runtime.verify.record_execution_report"
 
@@ -123,13 +125,25 @@ HISTORICAL_ORCHESTRATORS = {
 }
 
 LEGACY_COMMANDS = {
-    "quick", "backend", "frontend", "api-contracts",
-    "runtime", "golden", "playwright",
+    "quick",
+    "backend",
+    "frontend",
+    "api-contracts",
+    "runtime",
+    "golden",
+    "playwright",
 }
 
 CANONICAL_COMMANDS = {
-    "check", "plan", "run", "diagnose",
-    "strengthen", "inspect", "certify", "ci", "doctor",
+    "check",
+    "plan",
+    "run",
+    "diagnose",
+    "strengthen",
+    "inspect",
+    "certify",
+    "ci",
+    "doctor",
 }
 
 # Known evidence writer functions (single writer pattern)
@@ -144,7 +158,10 @@ KNOWN_EVIDENCE_WRITERS = {
 # AST-based import detector
 # ---------------------------------------------------------------------------
 
-def _scan_imports(file_path: Path, target_modules: set[str]) -> list[tuple[str, str, int]]:
+
+def _scan_imports(
+    file_path: Path, target_modules: set[str]
+) -> list[tuple[str, str, int]]:
     """Scan a Python file for imports of target modules.
 
     Returns list of (imported_module, attribute, line_number).
@@ -165,7 +182,9 @@ def _scan_imports(file_path: Path, target_modules: set[str]) -> list[tuple[str, 
             for alias in node.names:
                 top = alias.name.split(".")[0]
                 if top in target_dotted:
-                    results.append((alias.name, alias.asname or alias.name, node.lineno))
+                    results.append(
+                        (alias.name, alias.asname or alias.name, node.lineno)
+                    )
         elif isinstance(node, ast.ImportFrom):
             if node.module:
                 top = node.module.split(".")[0]
@@ -177,7 +196,9 @@ def _scan_imports(file_path: Path, target_modules: set[str]) -> list[tuple[str, 
     return results
 
 
-def _scan_file_for_module(file_path: Path, module_prefix: str) -> list[tuple[str, str, int]]:
+def _scan_file_for_module(
+    file_path: Path, module_prefix: str
+) -> list[tuple[str, str, int]]:
     """Check if a file imports anything from a given module prefix."""
     if not file_path.exists():
         return []
@@ -188,7 +209,11 @@ def _scan_file_for_module(file_path: Path, module_prefix: str) -> list[tuple[str
         return []
     results: list[tuple[str, str, int]] = []
     for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith(module_prefix):
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and node.module.startswith(module_prefix)
+        ):
             for alias in node.names:
                 full = f"{node.module}.{alias.name}"
                 results.append((full, alias.asname or alias.name, node.lineno))
@@ -204,13 +229,20 @@ def _find_python_files(root: Path, pattern: str = "*.py") -> list[Path]:
 # Drift detectors
 # ---------------------------------------------------------------------------
 
+
 class PlannerDriftDetector:
     """Detect when the wrong planner is imported by canonical CLI paths."""
 
     def check(self) -> list[DriftFinding]:
         findings: list[DriftFinding] = []
 
-        facade_file = REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py"
+        facade_file = (
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py"
+        )
         if not facade_file.exists():
             return findings
 
@@ -226,53 +258,70 @@ class PlannerDriftDetector:
         planner_imports = {m for m, _, _ in imports if "Planner" in m or "planner" in m}
         direct_top_level = {m for m in planner_imports if "ControlPlanePlanner" in m}
         subordinate_imports = {
-            m for m in planner_imports
-            if any(s in m for s in ["EvidenceAwarePlanner", "VerificationPlanner", "CrossLayerImpactPlanner"])
+            m
+            for m in planner_imports
+            if any(
+                s in m
+                for s in [
+                    "EvidenceAwarePlanner",
+                    "VerificationPlanner",
+                    "CrossLayerImpactPlanner",
+                ]
+            )
         }
 
         # Check facade imports ControlPlanePlanner directly (expected)
         if not direct_top_level:
-            findings.append(DriftFinding(
-                detected_component="control_plane_facade.py",
-                expected_authority=CANONICAL_PLANNER,
-                actual_authority="NO_PLANNER_IMPORTED",
-                classification=DriftClassification.AUTHORITY_DRIFT,
-                source_evidence="control_plane_facade.py does not import ControlPlanePlanner",
-                severity=Severity.CRITICAL,
-                check_name="wrong_planner_imported",
-            ))
+            findings.append(
+                DriftFinding(
+                    detected_component="control_plane_facade.py",
+                    expected_authority=CANONICAL_PLANNER,
+                    actual_authority="NO_PLANNER_IMPORTED",
+                    classification=DriftClassification.AUTHORITY_DRIFT,
+                    source_evidence="control_plane_facade.py does not import ControlPlanePlanner",
+                    severity=Severity.CRITICAL,
+                    check_name="wrong_planner_imported",
+                )
+            )
         else:
             # Verify subordinate planners are NOT directly imported by facade
             for imp in subordinate_imports:
-                findings.append(DriftFinding(
-                    detected_component="control_plane_facade.py",
-                    expected_authority=f"Subordinate planner via {CANONICAL_PLANNER}",
-                    actual_authority=imp,
-                    classification=DriftClassification.AUTHORITY_DRIFT,
-                    source_evidence=f"Facade directly imports subordinate planner {imp} (should be composed by ControlPlanePlanner)",
-                    severity=Severity.MEDIUM,
-                    check_name="direct_subordinate_planner_import",
-                ))
+                findings.append(
+                    DriftFinding(
+                        detected_component="control_plane_facade.py",
+                        expected_authority=f"Subordinate planner via {CANONICAL_PLANNER}",
+                        actual_authority=imp,
+                        classification=DriftClassification.AUTHORITY_DRIFT,
+                        source_evidence=f"Facade directly imports subordinate planner {imp} (should be composed by ControlPlanePlanner)",
+                        severity=Severity.MEDIUM,
+                        check_name="direct_subordinate_planner_import",
+                    )
+                )
 
         # Scan all CLI entry points for top-level planner usage
         cli_files = [REPO_ROOT / "runtime" / "verify.py"]
         for cli_file in cli_files:
             imports = _scan_imports(
                 cli_file,
-                {"runtime.foundation.verification.planner", "runtime.foundation.verification.control_plane"},
+                {
+                    "runtime.foundation.verification.planner",
+                    "runtime.foundation.verification.control_plane",
+                },
             )
             for imp, _, line in imports:
                 if "CrossLayerImpactPlanner" in imp or "VerificationPlanner" in imp:
                     if "control_plane" not in imp:
-                        findings.append(DriftFinding(
-                            detected_component=str(cli_file),
-                            expected_authority=f"Accessed via {CANONICAL_PLANNER}",
-                            actual_authority=imp,
-                            classification=DriftClassification.AUTHORITY_DRIFT,
-                            source_evidence=f"CLI file {cli_file.name}:{line} directly imports {imp}",
-                            severity=Severity.LOW,
-                            check_name="cli_direct_planner_access",
-                        ))
+                        findings.append(
+                            DriftFinding(
+                                detected_component=str(cli_file),
+                                expected_authority=f"Accessed via {CANONICAL_PLANNER}",
+                                actual_authority=imp,
+                                classification=DriftClassification.AUTHORITY_DRIFT,
+                                source_evidence=f"CLI file {cli_file.name}:{line} directly imports {imp}",
+                                severity=Severity.LOW,
+                                check_name="cli_direct_planner_access",
+                            )
+                        )
 
         return findings
 
@@ -283,49 +332,74 @@ class ExecutorDriftDetector:
     def check(self) -> list[DriftFinding]:
         findings: list[DriftFinding] = []
 
-        facade_file = REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py"
+        facade_file = (
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py"
+        )
         if not facade_file.exists():
             return findings
 
         imports = _scan_imports(
             facade_file,
-            {"runtime.foundation.verification.execution_orchestrator", "runtime.foundation.verification.orchestrator"},
+            {
+                "runtime.foundation.verification.execution_orchestrator",
+                "runtime.foundation.verification.orchestrator",
+            },
         )
 
         for imp, attr, line in imports:
             if "execution_orchestrator" in imp and "ExecutionOrchestrator" in attr:
-                logger.debug("Facade correctly imports ExecutionOrchestrator: %s:%d", imp, line)
-            elif "orchestrator" in imp and "ExecutionOrchestrator" in attr and "execution_orchestrator" not in imp:
-                findings.append(DriftFinding(
-                    detected_component="control_plane_facade.py",
-                    expected_authority=CANONICAL_EXECUTOR,
-                    actual_authority=f"{imp}.{attr}",
-                    classification=DriftClassification.AUTHORITY_DRIFT,
-                    source_evidence=f"Facade line {line}: imports {imp}.{attr} instead of ExecutionOrchestrator",
-                    severity=Severity.CRITICAL,
-                    check_name="wrong_executor_imported",
-                ))
+                logger.debug(
+                    "Facade correctly imports ExecutionOrchestrator: %s:%d", imp, line
+                )
+            elif (
+                "orchestrator" in imp
+                and "ExecutionOrchestrator" in attr
+                and "execution_orchestrator" not in imp
+            ):
+                findings.append(
+                    DriftFinding(
+                        detected_component="control_plane_facade.py",
+                        expected_authority=CANONICAL_EXECUTOR,
+                        actual_authority=f"{imp}.{attr}",
+                        classification=DriftClassification.AUTHORITY_DRIFT,
+                        source_evidence=f"Facade line {line}: imports {imp}.{attr} instead of ExecutionOrchestrator",
+                        severity=Severity.CRITICAL,
+                        check_name="wrong_executor_imported",
+                    )
+                )
 
         # Check for historical orchestrator class usage in canonical paths
         canonical_files = [
-            REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py",
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py",
             REPO_ROOT / "runtime" / "verify.py",
         ]
         for f in canonical_files:
             py_files = _find_python_files(f.parent, "*.py") if f.is_dir() else [f]
             for pf in py_files:
-                imports = _scan_imports(pf, {"runtime.foundation.verification.orchestration"})
+                imports = _scan_imports(
+                    pf, {"runtime.foundation.verification.orchestration"}
+                )
                 for imp, attr, line in imports:
                     if "orchestration" in imp and "ExecutionOrchestrator" in attr:
-                        findings.append(DriftFinding(
-                            detected_component=str(pf),
-                            expected_authority="No orchestration/orchestrator import in canonical path",
-                            actual_authority=f"{imp}.{attr}",
-                            classification=DriftClassification.AUTHORITY_DRIFT,
-                            source_evidence=f"Canonical file {pf.relative_to(REPO_ROOT)} line {line} imports historical orchestrator class {imp}",
-                            severity=Severity.HIGH,
-                            check_name="historical_orchestrator_in_canonical_path",
-                        ))
+                        findings.append(
+                            DriftFinding(
+                                detected_component=str(pf),
+                                expected_authority="No orchestration/orchestrator import in canonical path",
+                                actual_authority=f"{imp}.{attr}",
+                                classification=DriftClassification.AUTHORITY_DRIFT,
+                                source_evidence=f"Canonical file {pf.relative_to(REPO_ROOT)} line {line} imports historical orchestrator class {imp}",
+                                severity=Severity.HIGH,
+                                check_name="historical_orchestrator_in_canonical_path",
+                            )
+                        )
 
         return findings
 
@@ -337,40 +411,55 @@ class LegacyOrchestratorDriftDetector:
         findings: list[DriftFinding] = []
 
         canonical_files = [
-            REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py",
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py",
             REPO_ROOT / "runtime" / "verify.py",
         ]
 
         for f in canonical_files:
             if not f.exists():
                 continue
-            imports = _scan_imports(f, {"runtime.foundation.verification.orchestration"})
+            imports = _scan_imports(
+                f, {"runtime.foundation.verification.orchestration"}
+            )
             for imp, attr, line in imports:
                 if "orchestration" in imp and "ExecutionOrchestrator" in attr:
-                    findings.append(DriftFinding(
-                        detected_component=str(f.relative_to(REPO_ROOT)),
-                        expected_authority="ExecutionOrchestrator from execution_orchestrator",
-                        actual_authority=f"{imp}.{attr}",
-                        classification=DriftClassification.AUTHORITY_DRIFT,
-                        source_evidence=f"Canonical path {f.relative_to(REPO_ROOT)}:{line} imports ExecutionOrchestrator from {imp} (should be from execution_orchestrator)",
-                        severity=Severity.HIGH,
-                        check_name="legacy_orchestrator_in_canonical_path",
-                    ))
+                    findings.append(
+                        DriftFinding(
+                            detected_component=str(f.relative_to(REPO_ROOT)),
+                            expected_authority="ExecutionOrchestrator from execution_orchestrator",
+                            actual_authority=f"{imp}.{attr}",
+                            classification=DriftClassification.AUTHORITY_DRIFT,
+                            source_evidence=f"Canonical path {f.relative_to(REPO_ROOT)}:{line} imports ExecutionOrchestrator from {imp} (should be from execution_orchestrator)",
+                            severity=Severity.HIGH,
+                            check_name="legacy_orchestrator_in_canonical_path",
+                        )
+                    )
 
         # Check ControlPlanePlanner does not instantiate legacy orchestrator
-        planner_file = REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane.py"
+        planner_file = (
+            REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane.py"
+        )
         if planner_file.exists():
             source = planner_file.read_text(encoding="utf-8")
-            if "orchestration.orchestrator" in source and "ExecutionOrchestrator" in source:
-                findings.append(DriftFinding(
-                    detected_component="control_plane.py",
-                    expected_authority="No reference to orchestration.orchestrator.ExecutionOrchestrator",
-                    actual_authority="runtime.foundation.verification.orchestration.orchestrator.ExecutionOrchestrator",
-                    classification=DriftClassification.AUTHORITY_DRIFT,
-                    source_evidence="ControlPlanePlanner references historical orchestrator class",
-                    severity=Severity.HIGH,
-                    check_name="legacy_orchestrator_in_planner",
-                ))
+            if (
+                "orchestration.orchestrator" in source
+                and "ExecutionOrchestrator" in source
+            ):
+                findings.append(
+                    DriftFinding(
+                        detected_component="control_plane.py",
+                        expected_authority="No reference to orchestration.orchestrator.ExecutionOrchestrator",
+                        actual_authority="runtime.foundation.verification.orchestration.orchestrator.ExecutionOrchestrator",
+                        classification=DriftClassification.AUTHORITY_DRIFT,
+                        source_evidence="ControlPlanePlanner references historical orchestrator class",
+                        severity=Severity.HIGH,
+                        check_name="legacy_orchestrator_in_planner",
+                    )
+                )
 
         return findings
 
@@ -387,7 +476,16 @@ class EvidencePathDriftDetector:
                 continue
             for py_file in sorted(root.rglob("*.py")):
                 rel = str(py_file.relative_to(REPO_ROOT))
-                if any(x in rel for x in ["__pycache__", ".git", "node_modules", "/test_", "_test.py"]):
+                if any(
+                    x in rel
+                    for x in [
+                        "__pycache__",
+                        ".git",
+                        "node_modules",
+                        "/test_",
+                        "_test.py",
+                    ]
+                ):
                     continue
                 imports = _scan_imports(
                     py_file,
@@ -396,15 +494,17 @@ class EvidencePathDriftDetector:
                 for imp, attr, line in imports:
                     if "EventStore" in attr or "RunRecord" in attr:
                         if "record_execution" not in imp and "record" not in attr:
-                            findings.append(DriftFinding(
-                                detected_component=rel,
-                                expected_authority=CANONICAL_EVIDENCE_WRITER,
-                                actual_authority=f"{imp}.{attr}",
-                                classification=DriftClassification.EVIDENCE_INTEGRITY_DEFECT,
-                                source_evidence=f"{rel}:{line} imports event store directly — should go through record_execution_report",
-                                severity=Severity.MEDIUM,
-                                check_name="second_evidence_path",
-                            ))
+                            findings.append(
+                                DriftFinding(
+                                    detected_component=rel,
+                                    expected_authority=CANONICAL_EVIDENCE_WRITER,
+                                    actual_authority=f"{imp}.{attr}",
+                                    classification=DriftClassification.EVIDENCE_INTEGRITY_DEFECT,
+                                    source_evidence=f"{rel}:{line} imports event store directly — should go through record_execution_report",
+                                    severity=Severity.MEDIUM,
+                                    check_name="second_evidence_path",
+                                )
+                            )
 
         return findings
 
@@ -420,62 +520,74 @@ class ConfigurationDriftDetector:
             from runtime.foundation.verification.capability_authority import (
                 authority_audit,
             )
+
             audit = authority_audit()
             if not audit.canonical_resolvable:
-                findings.append(DriftFinding(
+                findings.append(
+                    DriftFinding(
+                        detected_component="capability registry",
+                        expected_authority="VerificationRegistry (canonical)",
+                        actual_authority="UNRESOLVABLE",
+                        classification=DriftClassification.CONFIGURATION_DRIFT,
+                        source_evidence="Capability authority audit shows canonical registry is not resolvable",
+                        severity=Severity.CRITICAL,
+                        check_name="canonical_registry_bypassed",
+                    )
+                )
+            if not audit.canonical_factory_callable:
+                findings.append(
+                    DriftFinding(
+                        detected_component="capability registry",
+                        expected_authority="get_registry() (canonical factory)",
+                        actual_authority="UNRESOLVABLE",
+                        classification=DriftClassification.CONFIGURATION_DRIFT,
+                        source_evidence="Capability authority factory is not callable",
+                        severity=Severity.CRITICAL,
+                        check_name="canonical_registry_bypassed",
+                    )
+                )
+        except Exception as exc:
+            findings.append(
+                DriftFinding(
                     detected_component="capability registry",
                     expected_authority="VerificationRegistry (canonical)",
-                    actual_authority="UNRESOLVABLE",
+                    actual_authority=f"ERROR: {exc}",
                     classification=DriftClassification.CONFIGURATION_DRIFT,
-                    source_evidence="Capability authority audit shows canonical registry is not resolvable",
+                    source_evidence=f"Failed to audit capability authority: {exc}",
                     severity=Severity.CRITICAL,
                     check_name="canonical_registry_bypassed",
-                ))
-            if not audit.canonical_factory_callable:
-                findings.append(DriftFinding(
-                    detected_component="capability registry",
-                    expected_authority="get_registry() (canonical factory)",
-                    actual_authority="UNRESOLVABLE",
-                    classification=DriftClassification.CONFIGURATION_DRIFT,
-                    source_evidence="Capability authority factory is not callable",
-                    severity=Severity.CRITICAL,
-                    check_name="canonical_registry_bypassed",
-                ))
-        except Exception as exc:
-            findings.append(DriftFinding(
-                detected_component="capability registry",
-                expected_authority="VerificationRegistry (canonical)",
-                actual_authority=f"ERROR: {exc}",
-                classification=DriftClassification.CONFIGURATION_DRIFT,
-                source_evidence=f"Failed to audit capability authority: {exc}",
-                severity=Severity.CRITICAL,
-                check_name="canonical_registry_bypassed",
-            ))
+                )
+            )
 
         # Verify verification registry
         try:
             from runtime.foundation.verification.registry import get_registry
+
             registry = get_registry()
             if registry is None:
-                findings.append(DriftFinding(
+                findings.append(
+                    DriftFinding(
+                        detected_component="verification registry",
+                        expected_authority="VerificationRegistry (canonical)",
+                        actual_authority="None",
+                        classification=DriftClassification.CONFIGURATION_DRIFT,
+                        source_evidence="Verification registry returns None",
+                        severity=Severity.CRITICAL,
+                        check_name="canonical_registry_bypassed",
+                    )
+                )
+        except Exception as exc:
+            findings.append(
+                DriftFinding(
                     detected_component="verification registry",
                     expected_authority="VerificationRegistry (canonical)",
-                    actual_authority="None",
+                    actual_authority=f"ERROR: {exc}",
                     classification=DriftClassification.CONFIGURATION_DRIFT,
-                    source_evidence="Verification registry returns None",
+                    source_evidence=f"Failed to load verification registry: {exc}",
                     severity=Severity.CRITICAL,
                     check_name="canonical_registry_bypassed",
-                ))
-        except Exception as exc:
-            findings.append(DriftFinding(
-                detected_component="verification registry",
-                expected_authority="VerificationRegistry (canonical)",
-                actual_authority=f"ERROR: {exc}",
-                classification=DriftClassification.CONFIGURATION_DRIFT,
-                source_evidence=f"Failed to load verification registry: {exc}",
-                severity=Severity.CRITICAL,
-                check_name="canonical_registry_bypassed",
-            ))
+                )
+            )
 
         return findings
 
@@ -486,7 +598,13 @@ class CLIDriftDetector:
     def check(self) -> list[DriftFinding]:
         findings: list[DriftFinding] = []
 
-        facade_file = REPO_ROOT / "runtime" / "foundation" / "verification" / "control_plane_facade.py"
+        facade_file = (
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "control_plane_facade.py"
+        )
         if not facade_file.exists():
             return findings
 
@@ -495,30 +613,34 @@ class CLIDriftDetector:
         # Verify all 9 canonical commands are dispatched
         for cmd in CANONICAL_COMMANDS:
             if cmd not in source:
-                findings.append(DriftFinding(
-                    detected_component="control_plane_facade.py",
-                    expected_authority=f"Canonical command '{cmd}' in facade dispatch",
-                    actual_authority="MISSING from facade",
-                    classification=DriftClassification.AUTHORITY_DRIFT,
-                    source_evidence=f"Canonical command '{cmd}' not found in control_plane_facade.py",
-                    severity=Severity.CRITICAL,
-                    check_name="canonical_command_missing",
-                ))
+                findings.append(
+                    DriftFinding(
+                        detected_component="control_plane_facade.py",
+                        expected_authority=f"Canonical command '{cmd}' in facade dispatch",
+                        actual_authority="MISSING from facade",
+                        classification=DriftClassification.AUTHORITY_DRIFT,
+                        source_evidence=f"Canonical command '{cmd}' not found in control_plane_facade.py",
+                        severity=Severity.CRITICAL,
+                        check_name="canonical_command_missing",
+                    )
+                )
 
         # Verify legacy aliases route through migration_map (not direct dispatch)
         for alias in LEGACY_COMMANDS:
             # Check that legacy aliases do NOT have direct method calls
             # (they should be in PROFILE_ALIASES and routed through _run_profile_alias)
             if f"cp.{alias}" in source or f"self.{alias}" in source:
-                findings.append(DriftFinding(
-                    detected_component="control_plane_facade.py",
-                    expected_authority=f"Legacy alias '{alias}' routed through migration_map",
-                    actual_authority=f"Direct execution of '{alias}' in facade",
-                    classification=DriftClassification.CI_BYPASS,
-                    source_evidence=f"Legacy command '{alias}' appears to be dispatched directly (should use migration_map)",
-                    severity=Severity.HIGH,
-                    check_name="alias_bypasses_canonical_chain",
-                ))
+                findings.append(
+                    DriftFinding(
+                        detected_component="control_plane_facade.py",
+                        expected_authority=f"Legacy alias '{alias}' routed through migration_map",
+                        actual_authority=f"Direct execution of '{alias}' in facade",
+                        classification=DriftClassification.CI_BYPASS,
+                        source_evidence=f"Legacy command '{alias}' appears to be dispatched directly (should use migration_map)",
+                        severity=Severity.HIGH,
+                        check_name="alias_bypasses_canonical_chain",
+                    )
+                )
 
         return findings
 
@@ -550,43 +672,60 @@ class CIDriftDetector:
                 stripped = line.strip()
                 if stripped.startswith("run:") or stripped.startswith("- run:"):
                     run_content = stripped.lstrip("- ").replace("run:", "").strip()
-                    if ("pytest" in run_content or "mutmut" in run_content or "ruff" in run_content) and "runtime.verify" not in run_content and "mutmut" not in run_content.split()[-1:]:
-                        if any(tool in run_content for tool in ["codeql", "dependabot", "release"]):
+                    if (
+                        (
+                            "pytest" in run_content
+                            or "mutmut" in run_content
+                            or "ruff" in run_content
+                        )
+                        and "runtime.verify" not in run_content
+                        and "mutmut" not in run_content.split()[-1:]
+                    ):
+                        if any(
+                            tool in run_content
+                            for tool in ["codeql", "dependabot", "release"]
+                        ):
                             continue
-                        findings.append(DriftFinding(
-                            detected_component=rel,
-                            expected_authority="python -m runtime.verify",
-                            actual_authority=run_content,
-                            classification=DriftClassification.CI_BYPASS,
-                            source_evidence=f"Workflow {wf_file.name} directly invokes: {run_content}",
-                            severity=Severity.HIGH,
-                            check_name="ci_direct_tool_invocation",
-                        ))
+                        findings.append(
+                            DriftFinding(
+                                detected_component=rel,
+                                expected_authority="python -m runtime.verify",
+                                actual_authority=run_content,
+                                classification=DriftClassification.CI_BYPASS,
+                                source_evidence=f"Workflow {wf_file.name} directly invokes: {run_content}",
+                                severity=Severity.HIGH,
+                                check_name="ci_direct_tool_invocation",
+                            )
+                        )
 
             # Check for continue-on-error: true — classify based on workflow intent
             if "continue-on-error" in source and "true" in source:
                 for i, line in enumerate(source.splitlines(), 1):
                     if "continue-on-error" in line and "true" in line:
                         if wf_name in self.INTENTIONAL_CONTINUE_ON_ERROR_WORKFLOWS:
-                            findings.append(DriftFinding(
-                                detected_component=rel,
-                                expected_authority="continue-on-error: true allowed for diagnostic/reconciliation",
-                                actual_authority="continue-on-error: true",
-                                classification=DriftClassification.FALSE_POSITIVE,
-                                source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error is intentional — {wf_name} workflow requires evidence capture regardless of pass/fail",
-                                severity=Severity.LOW,
-                                check_name="ci_continue_on_error_intentional",
-                            ))
+                            findings.append(
+                                DriftFinding(
+                                    detected_component=rel,
+                                    expected_authority="continue-on-error: true allowed for diagnostic/reconciliation",
+                                    actual_authority="continue-on-error: true",
+                                    classification=DriftClassification.FALSE_POSITIVE,
+                                    source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error is intentional — {wf_name} workflow requires evidence capture regardless of pass/fail",
+                                    severity=Severity.LOW,
+                                    check_name="ci_continue_on_error_intentional",
+                                )
+                            )
                         else:
-                            findings.append(DriftFinding(
-                                detected_component=rel,
-                                expected_authority="No continue-on-error: true",
-                                actual_authority="continue-on-error: true",
-                                classification=DriftClassification.CI_BYPASS,
-                                source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error may suppress verification failures",
-                                severity=Severity.MEDIUM,
-                                check_name="ci_suppress_failure",
-                            ))
+                            findings.append(
+                                DriftFinding(
+                                    detected_component=rel,
+                                    expected_authority="No continue-on-error: true",
+                                    actual_authority="continue-on-error: true",
+                                    classification=DriftClassification.CI_BYPASS,
+                                    source_evidence=f"Workflow {wf_file.name} line {i}: continue-on-error may suppress verification failures",
+                                    severity=Severity.MEDIUM,
+                                    check_name="ci_suppress_failure",
+                                )
+                            )
 
         return findings
 
@@ -594,6 +733,7 @@ class CIDriftDetector:
 # ---------------------------------------------------------------------------
 # Main detection entry point
 # ---------------------------------------------------------------------------
+
 
 def run_authority_drift_detection() -> DriftReport:
     """Run all authority drift detectors and return a report."""
@@ -612,22 +752,25 @@ def run_authority_drift_detection() -> DriftReport:
         try:
             findings = detector.check()
             all_findings.extend(findings)
-            logger.debug("%s produced %d findings", detector.__class__.__name__, len(findings))
+            logger.debug(
+                "%s produced %d findings", detector.__class__.__name__, len(findings)
+            )
         except Exception as exc:
             logger.error("Detector %s failed: %s", detector.__class__.__name__, exc)
-            all_findings.append(DriftFinding(
-                detected_component=detector.__class__.__name__,
-                expected_authority="Detector executed successfully",
-                actual_authority=f"DETECTOR_ERROR: {exc}",
-                classification=DriftClassification.ENVIRONMENTAL,
-                source_evidence=f"Detector {detector.__class__.__name__} raised: {exc}",
-                severity=Severity.MEDIUM,
-                check_name=f"{detector.__class__.__name__}_error",
-            ))
+            all_findings.append(
+                DriftFinding(
+                    detected_component=detector.__class__.__name__,
+                    expected_authority="Detector executed successfully",
+                    actual_authority=f"DETECTOR_ERROR: {exc}",
+                    classification=DriftClassification.ENVIRONMENTAL,
+                    source_evidence=f"Detector {detector.__class__.__name__} raised: {exc}",
+                    severity=Severity.MEDIUM,
+                    check_name=f"{detector.__class__.__name__}_error",
+                )
+            )
 
     healthy = all(
-        f.severity not in (Severity.CRITICAL, Severity.HIGH)
-        for f in all_findings
+        f.severity not in (Severity.CRITICAL, Severity.HIGH) for f in all_findings
     )
 
     return DriftReport(
@@ -662,12 +805,16 @@ def main() -> int:
         else:
             print("⚠️ Framework authority integrity: DEGRADED")
             for f in report.findings:
-                print(f"  [{f.severity.value.upper()}] {f.check_name}: {f.detected_component}")
+                print(
+                    f"  [{f.severity.value.upper()}] {f.check_name}: {f.detected_component}"
+                )
                 print(f"    Expected: {f.expected_authority}")
                 print(f"    Actual:   {f.actual_authority}")
                 print(f"    Evidence: {f.source_evidence}")
         print()
-        print(f"Critical: {report.critical_count}, High: {report.high_count}, Total: {len(report.findings)}")
+        print(
+            f"Critical: {report.critical_count}, High: {report.high_count}, Total: {len(report.findings)}"
+        )
 
     return 0 if report.healthy else 1
 

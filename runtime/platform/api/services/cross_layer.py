@@ -39,27 +39,33 @@ def build_cross_layer_graph() -> dict[str, Any]:
 
     graph = _load_graph()
     if graph is None:
-        return envelope(kind="platform.cross_layer_graph", data={
-            "count": 0,
-            "edges": [],
-            "frontend_capabilities": {},
-            "contract_drifts": [],
-            "unmapped_frontend": [],
-            "metadata": {"source": "cross-layer-graph.json", "available": False},
-        })
+        return envelope(
+            kind="platform.cross_layer_graph",
+            data={
+                "count": 0,
+                "edges": [],
+                "frontend_capabilities": {},
+                "contract_drifts": [],
+                "unmapped_frontend": [],
+                "metadata": {"source": "cross-layer-graph.json", "available": False},
+            },
+        )
 
-    return envelope(kind="platform.cross_layer_graph", data={
-        "count": len(graph.get("edges", [])),
-        "edges": graph.get("edges", []),
-        "frontend_capabilities": graph.get("frontend_capabilities", {}),
-        "contract_drifts": graph.get("contract_drifts", []),
-        "unmapped_frontend": graph.get("unmapped_frontend", []),
-        "metadata": {
-            "source": "cross-layer-graph.json",
-            "available": True,
-            "generated_at": _GRAPH_PATH.stat().st_mtime,
+    return envelope(
+        kind="platform.cross_layer_graph",
+        data={
+            "count": len(graph.get("edges", [])),
+            "edges": graph.get("edges", []),
+            "frontend_capabilities": graph.get("frontend_capabilities", {}),
+            "contract_drifts": graph.get("contract_drifts", []),
+            "unmapped_frontend": graph.get("unmapped_frontend", []),
+            "metadata": {
+                "source": "cross-layer-graph.json",
+                "available": True,
+                "generated_at": _GRAPH_PATH.stat().st_mtime,
+            },
         },
-    })
+    )
 
 
 def build_cross_layer_capability(capability_id: str) -> dict[str, Any] | None:
@@ -77,19 +83,24 @@ def build_cross_layer_capability(capability_id: str) -> dict[str, Any] | None:
     edges = graph.get("edges", [])
     related_edges = [e for e in edges if e.get("source_id") == capability_id]
 
-    return envelope(kind="platform.cross_layer_capability", data={
-        "capability_id": capability_id,
-        "name": cap.get("name", capability_id),
-        "kind": cap.get("kind", "unknown"),
-        "domain": cap.get("domain", "unknown"),
-        "files": cap.get("files", []),
-        "backend_capabilities": cap.get("backend_capabilities", []),
-        "backend_endpoints": cap.get("backend_endpoints", []),
-        "status": cap.get("status", "UNMAPPED"),
-        "related_edges": related_edges,
-        "blast_radius": {
-            "affected_tests": [e.get("target_id", "") for e in related_edges],
-            "affected_capabilities": list(set(e.get("target_id", "") for e in related_edges)),
+    return envelope(
+        kind="platform.cross_layer_capability",
+        data={
+            "capability_id": capability_id,
+            "name": cap.get("name", capability_id),
+            "kind": cap.get("kind", "unknown"),
+            "domain": cap.get("domain", "unknown"),
+            "files": cap.get("files", []),
+            "backend_capabilities": cap.get("backend_capabilities", []),
+            "backend_endpoints": cap.get("backend_endpoints", []),
+            "status": cap.get("status", "UNMAPPED"),
+            "related_edges": related_edges,
+            "blast_radius": {
+                "affected_tests": [e.get("target_id", "") for e in related_edges],
+                "affected_capabilities": list(
+                    set(e.get("target_id", "") for e in related_edges)
+                ),
+            },
+            "verification_obligations": [],
         },
-        "verification_obligations": [],
-    })
+    )

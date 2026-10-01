@@ -22,7 +22,9 @@ from runtime.foundation.verification.execution.task import (
 )
 from runtime.foundation.verification.mutation_runner import execute_mutation
 
-REPO_ROOT = __import__("pathlib").Path(__file__).resolve().parent.parent.parent.parent.parent
+REPO_ROOT = (
+    __import__("pathlib").Path(__file__).resolve().parent.parent.parent.parent.parent
+)
 
 # Pattern that detects a scope-mismatch in the configured mutation
 # source_paths. The C42.7 mutation contract installs a single engine's

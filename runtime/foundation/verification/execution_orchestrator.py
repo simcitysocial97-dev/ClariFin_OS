@@ -42,8 +42,11 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import json
+import os
 import re
+import signal
 import subprocess
+import threading
 import time
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
@@ -154,6 +157,164 @@ def _git(*args: str) -> str:
         return out.stdout.strip()
     except Exception:
         return ""
+
+
+_PYTEST_FAILURE_LINE = re.compile(r"^(FAILED|ERROR)\s+(\S+)", re.MULTILINE)
+_PYTEST_TIMEOUT_MARKER = "from pytest-timeout"
+_PYTEST_SUMMARY = re.compile(
+    r"^(?:(\d+) failed)?(?:,?\s*(\d+) passed)?(?:,?\s*(\d+) skipped)?"
+    r"(?:,?\s*(\d+) error)?(?:,?\s*(\d+) xfailed)?"
+    r"(?:,?\s*(\d+) xpassed)?.*?in\s+(\d+\.?\d*)s",
+    re.MULTILINE,
+)
+
+
+def _summarise_pytest_outcome(text: str) -> dict | None:
+    """Name the inner pytest failure precisely, from its own output.
+
+    A verification script that runs pytest and then aggregates several checks
+    exits with a single non-zero status, which loses the distinction the
+    investigation actually needs: was this an assertion failure, a per-test
+    timeout, or a collection/internal error? Those have different causes and
+    different fixes, and "the suite failed" is not evidence for any of them.
+
+    Returns None when the text contains no pytest signal at all, so callers can
+    leave non-pytest tasks untouched. The classification is derived only from
+    pytest's own summary and short-summary lines — it never re-runs anything and
+    never guesses.
+    """
+    if not text or "pytest" not in text and "passed" not in text:
+        return None
+
+    failed = _PYTEST_FAILURE_LINE.findall(text)
+    summary = _PYTEST_SUMMARY.search(text)
+    counts = {
+        "failed": int(summary.group(1)) if summary and summary.group(1) else 0,
+        "passed": int(summary.group(2)) if summary and summary.group(2) else 0,
+        "skipped": int(summary.group(3)) if summary and summary.group(3) else 0,
+        "errors": int(summary.group(4)) if summary and summary.group(4) else 0,
+        "xfailed": int(summary.group(5)) if summary and summary.group(5) else 0,
+        "xpassed": int(summary.group(6)) if summary and summary.group(6) else 0,
+    }
+    duration = float(summary.group(7)) if summary and summary.group(7) else None
+
+    if not failed and not summary:
+        return None
+
+    # A per-test timeout is reported by pytest-timeout in the failure body; a
+    # timeout and an assertion failure are different defects even when both
+    # surface as a non-zero pytest exit.
+    timed_out = _PYTEST_TIMEOUT_MARKER in text
+    errored = any(tag == "ERROR" for tag, _ in failed) or counts["errors"] > 0
+
+    if timed_out:
+        kind = "TEST_TIMEOUT"
+    elif errored:
+        kind = "COLLECTION_OR_INTERNAL_ERROR"
+    elif counts["failed"] or failed:
+        kind = "TEST_ASSERTION_FAILURE"
+    else:
+        kind = "PASSED"
+
+    return {
+        "kind": kind,
+        "failed_nodeids": [nodeid for _, nodeid in failed],
+        "counts": counts,
+        "duration_seconds": duration,
+    }
+
+
+def _read_text(path: Path) -> str:
+    """Read an evidence file, tolerating a missing or undecodable one."""
+    try:
+        return path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+
+
+def _tee(pipe, path: Path) -> None:
+    """Copy a child pipe into an evidence file line by line, flushing each line.
+
+    Flushing per line is the whole point: the file is valid, and contains
+    everything produced so far, even if the child is killed, the orchestrator is
+    interrupted, or the machine loses the process. It mirrors ``_tee`` in
+    executor.py, which streams the same way for the same reason.
+    """
+    try:
+        with path.open("a", encoding="utf-8") as handle:
+            for raw in pipe:
+                line = (
+                    raw
+                    if isinstance(raw, str)
+                    else raw.decode("utf-8", errors="replace")
+                )
+                handle.write(line)
+                handle.flush()
+    except (OSError, ValueError):
+        # A closed pipe during teardown is expected, not an error worth raising
+        # into the verification run.
+        pass
+    finally:
+        with contextlib.suppress(Exception):
+            pipe.close()
+
+
+def _kill_process_group(proc) -> None:
+    """Kill the child's whole process group (F19, as in executor.py).
+
+    The child is a shell that runs pytest, which runs further processes. Killing
+    only the shell would leave the real work running after a wrapper timeout.
+    """
+    with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
+        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+        time.sleep(0.5)
+        with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+
+
+def _classify_termination(
+    exit_code: int | None, timed_out: bool, infra_error: str | None
+) -> dict:
+    """Say *how* a task's process ended, not just that it did not pass.
+
+    "the command exited non-zero" is not a diagnosis. A verification run can
+    end because a test failed, because the wrapper killed it, because the
+    process was killed by a signal, or because the command never started, and
+    each of those points at a different cause. The record keeps them apart so a
+    long run cannot be misread as a flaky one.
+    """
+    if infra_error:
+        return {"kind": "INFRASTRUCTURE", "detail": infra_error, "signal": None}
+    if timed_out:
+        return {
+            "kind": "WRAPPER_TIMEOUT",
+            "detail": "verification wrapper killed the command before it finished",
+            "signal": None,
+        }
+    if exit_code is not None and exit_code < 0:
+        return {
+            "kind": "SIGNAL_TERMINATION",
+            "detail": f"child terminated by signal {-exit_code}",
+            "signal": -exit_code,
+        }
+    if exit_code is not None and exit_code > 128:
+        signum = exit_code - 128
+        try:
+            signame = signal.Signals(signum).name
+        except ValueError:
+            signame = f"SIG{signum}"
+        return {
+            "kind": "SIGNAL_TERMINATION",
+            "detail": f"shell reported 128+{signum} ({signame})",
+            "signal": signum,
+        }
+    if exit_code == 0:
+        return {"kind": "EXIT_ZERO", "detail": "command exit 0", "signal": None}
+    return {
+        "kind": "EXIT_NONZERO",
+        "detail": f"command reported exit {exit_code}",
+        "signal": None,
+    }
 
 
 def _hash_file(path: Path) -> str:
@@ -365,6 +526,10 @@ class ExecutionPlan:
     # M9-C49: revalidation injections and persistent-evidence state.
     revalidation_sources: list[dict] = field(default_factory=list)
     reusable_measurements: list[dict] = field(default_factory=list)
+    #: Boundary classification and the strategy this plan was built under.
+    #: Present on every plan so a reader never has to infer the scope of a run
+    #: from a warning in a log. See runtime.foundation.verification.boundary_policy.
+    boundary_evidence: object | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -445,6 +610,14 @@ class TaskExecutionRecord:
     next_action: str
     reason: str
     prerequisites_satisfied: bool
+    # How the process actually ended, kept apart from the completion state:
+    # EXIT_ZERO / EXIT_NONZERO / WRAPPER_TIMEOUT / SIGNAL_TERMINATION /
+    # INFRASTRUCTURE, plus an `inner` pytest classification when the command
+    # ran pytest (TEST_ASSERTION_FAILURE / TEST_TIMEOUT /
+    # COLLECTION_OR_INTERNAL_ERROR / PASSED). See `_classify_termination` and
+    # `_summarise_pytest_outcome`. A long run that ends in any of these must be
+    # diagnosable from the record alone, without re-running it.
+    termination: dict | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -901,8 +1074,8 @@ class ExecutionOrchestrator:
                             expected_evidence=("measurement_truth",),
                             measurement_required=("coverage",),
                             authorization_required=False,
-                                timeout_seconds=1800,
-                                estimated_duration_seconds=1800,
+                            timeout_seconds=1800,
+                            estimated_duration_seconds=1800,
                         )
                     )
                 next_id += 1
@@ -971,6 +1144,62 @@ class ExecutionOrchestrator:
                 continue
             if rec.measurement_kind != kind:
                 continue
+            # A record only speaks for the scope it actually measured.
+            #
+            # The candidate list ends in generic, non-per-capability locations —
+            # `backend/tests/generated/mutation/local-smoke/measurement-truth.json`
+            # and `.../measurement-truth-coverage.json` — and the only filter
+            # applied before this point was `measurement_kind`. So a single
+            # generic file was accepted as the measurement for *every*
+            # capability whose own path was absent.
+            #
+            # That is not hypothetical. The reuse guard requires an
+            # authoritative record at the live SHA, and before the record-minting
+            # order was fixed, freshly measured records were always derived, so
+            # the guard never fired and the defect stayed hidden. Fixing the
+            # minting exposed it: `local-smoke/measurement-truth.json` — a
+            # 6-mutant smoke probe of a scratch file, `requested_scope:
+            # "probe.py"`, `mode: "smoke"`, score 50% — was consumed as the
+            # authoritative mutation measurement for ledger, loan-engine *and*
+            # reconciliation, and certification failed on
+            # "mutation score 50.0 < 80.0" for all three.
+            #
+            # For mutation the capability's target is unambiguous
+            # (`CAPABILITY_TO_MUTATION_TARGET`), so require the record to name
+            # that target and refuse a smoke-mode record outright. Coverage needs
+            # the same discipline and it is stricter still: every engine
+            # capability declares the coverage scope `tests/unit/engines`, while
+            # the single shared record in the candidate list measured
+            # `tests/unit/engines/credit_card`. Containment would accept it —
+            # that path is inside the declared scope — but a measurement taken
+            # over one engine's tests is not coverage evidence for another
+            # engine, so the record's scope must *equal* the declared scope.
+            #
+            # Both checks only ever refuse. A refused record causes the
+            # measurement to be re-run, which is the safe direction: it can
+            # never let a campaign certify on evidence it did not produce.
+            if kind == "mutation":
+                target = CAPABILITY_TO_MUTATION_TARGET.get(cap_id)
+                if not target:
+                    continue
+                scopes = {
+                    str(getattr(rec, "requested_scope", "") or ""),
+                    str(getattr(rec, "actual_scope", "") or ""),
+                    str(getattr(rec, "target", "") or ""),
+                }
+                if target not in scopes:
+                    continue
+                if str(getattr(rec, "mode", "") or "") == "smoke":
+                    continue
+            else:
+                expected = self._component_for_mapping(cap_id, kind)
+                if expected:
+                    got = {
+                        str(getattr(rec, "requested_scope", "") or ""),
+                        str(getattr(rec, "actual_scope", "") or ""),
+                    }
+                    if expected not in got:
+                        continue
             return rec, path
         return None, None
 
@@ -1352,49 +1581,104 @@ class ExecutionOrchestrator:
         log_dir.mkdir(parents=True, exist_ok=True)
         stdout_path = log_dir / f"{spec.task_id}-stdout.log"
         stderr_path = log_dir / f"{spec.task_id}-stderr.log"
+        # Start each execution with a clean file. The tee appends (so it is safe
+        # for the reader threads to interleave), so anything left from an earlier
+        # execution of the same task would otherwise appear to be this run's
+        # output. Truncating up front keeps the file meaning "this execution",
+        # and an empty file is still a valid record of "produced no output".
+        for stale in (stdout_path, stderr_path):
+            with contextlib.suppress(OSError):
+                stale.unlink()
         t0 = time.monotonic()
         exit_code: int | None = None
         timed_out = False
         infra_error: str | None = None
         stdout_data = ""
         stderr_data = ""
+        # 2026-09-30 — M9 stabilization: stream to the evidence files instead of
+        # buffering the whole run in memory and writing it at the end.
+        #
+        # With `capture_output=True` the log files stayed 0 bytes for the entire
+        # execution and only received their contents after the child exited. Two
+        # consequences, both observed during this stabilization:
+        #
+        #   1. If the orchestrator itself is interrupted, or the child is killed
+        #      and the write step is never reached, the evidence for a failing
+        #      run is *nothing at all* — which is exactly what happened to
+        #      reconcile run execplan-d210b2f3ea52, where all 20 task logs were
+        #      zero bytes and the failing obligation's output was unrecoverable.
+        #   2. Nothing recorded which test was executing, so a failing 29-minute
+        #      pytest run could not be narrowed down without re-running the
+        #      whole suite to catch it again.
+        #
+        # Streaming with an immediate flush makes the evidence exist and grow
+        # while the task runs, so a kill, a signal or an orchestrator crash
+        # still leaves the output produced up to that instant. This reuses the
+        # tee-then-flush pattern executor.py already uses for the same purpose
+        # (see `_tee` there); it is not a new mechanism.
+        #
+        # The contents read back afterwards are identical to what
+        # `capture_output=True` would have produced, so the state classification
+        # below is unchanged.
         try:
             # Canonical child environment (M9-C57): venv-first PATH + ED7
             # locale/TZ, shared with executor.py via env.child_process_env.
             from runtime.foundation.verification.env import child_process_env
 
-            proc = subprocess.run(
+            proc = subprocess.Popen(
                 command,
                 shell=True,
                 cwd=str(REPO_ROOT),
                 env=child_process_env(),
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
-                timeout=spec.timeout_seconds,
+                bufsize=1,
+                # Own process group, so a wrapper timeout can kill the whole
+                # tree (the child is a shell that runs pytest, which runs more
+                # processes again). Mirrors executor.py's F19 handling.
+                start_new_session=True,
             )
-            exit_code = proc.returncode
-            stdout_data = proc.stdout or ""
-            stderr_data = proc.stderr or ""
-        except subprocess.TimeoutExpired as exc:
-            timed_out = True
-            stdout_data = (
-                (exc.stdout or b"").decode("utf-8", errors="replace")
-                if isinstance(exc.stdout, (bytes, bytearray))
-                else (exc.stdout or "")
-            )
-            stderr_data = (
-                (exc.stderr or b"").decode("utf-8", errors="replace")
-                if isinstance(exc.stderr, (bytes, bytearray))
-                else (exc.stderr or "")
-            )
-            exit_code = 124
+            readers = [
+                threading.Thread(
+                    target=_tee,
+                    args=(proc.stdout, stdout_path),
+                    daemon=True,
+                ),
+                threading.Thread(
+                    target=_tee,
+                    args=(proc.stderr, stderr_path),
+                    daemon=True,
+                ),
+            ]
+            for reader in readers:
+                reader.start()
+            try:
+                proc.wait(timeout=spec.timeout_seconds)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                exit_code = 124
+                _kill_process_group(proc)
+            for reader in readers:
+                reader.join(timeout=5)
+            # A shell that dies on a signal reports 128+signum, so a return code
+            # above 128 is a termination, not a command's own exit status. It is
+            # recorded explicitly because "the process was killed" and "the
+            # command reported failure" are different diagnoses.
+            if exit_code is None:
+                exit_code = proc.returncode
+            stdout_data = _read_text(stdout_path)
+            stderr_data = _read_text(stderr_path)
         except FileNotFoundError as exc:
             infra_error = f"command not found: {exc}"
         except Exception as exc:  # defensive
             infra_error = f"subprocess raised: {type(exc).__name__}: {exc}"
 
-        stdout_path.write_text(stdout_data, encoding="utf-8")
-        stderr_path.write_text(stderr_data, encoding="utf-8")
+        # The evidence files were written by the tee while the child ran. Touch
+        # them so they exist even when the child produced no output at all and
+        # the process was killed before the first line.
+        stdout_path.touch(exist_ok=True)
+        stderr_path.touch(exist_ok=True)
         duration = time.monotonic() - t0
         artifacts: list[str] = [str(stdout_path), str(stderr_path)]
 
@@ -1433,6 +1717,24 @@ class ExecutionOrchestrator:
 
         diag = self._diagnose(spec, state, stderr_data, stdout_data)
         next_action = self._next_action(spec, state, diag)
+        termination = _classify_termination(exit_code, timed_out, infra_error)
+        # Fold the *in-command* cause into the record. A wrapper script that
+        # aggregates checks (`run_runtime_verification.sh` prints
+        # `Failed checks: runtime-tests`) hides which check actually failed, and
+        # the script's own non-zero exit says nothing about the kind of failure:
+        # an assertion failure, a per-test timeout and an integrity failure are
+        # three different defects. The record names them so a long run cannot be
+        # summarised as "command exit 1" and then guessed at.
+        pytest_detail = _summarise_pytest_outcome(stdout_data + "\n" + stderr_data)
+        if pytest_detail and state is not CompletionState.PASS:
+            diag = dict(diag or {})
+            diag.setdefault("pytest", pytest_detail)
+            termination = dict(termination)
+            termination["inner"] = pytest_detail
+            if not timed_out and not infra_error and exit_code != 0:
+                # Keep the wrapper's EXIT_NONZERO but say what the inner run
+                # actually was, so the two are never confused.
+                termination["kind"] = "EXIT_NONZERO_WITH_INNER_" + pytest_detail["kind"]
         if state != CompletionState.PASS and spec.is_mandatory:
             # attach a forensic diagnostic record
             pass
@@ -1449,6 +1751,7 @@ class ExecutionOrchestrator:
             diagnostic=diag,
             next_action=next_action,
             duration_seconds=duration,
+            termination=termination,
         )
 
     def _execute_measurement_task(
@@ -1458,12 +1761,16 @@ class ExecutionOrchestrator:
         live_fp: RepositoryFingerprint,
     ) -> TaskExecutionRecord:
         from runtime.foundation.verification.measurement_truth import (
+            EvidenceClassification,
             FailureClassification,
+            MeasurementCompletionStatus,
             MeasurementKind,
             MeasurementTruthRecord,
             PopulationAccounting,
-            assert_authoritative_classification,
+            certification_gate,
+            classify_completion,
             save_measurement_truth,
+            set_evidence_fingerprint,
         )
 
         started = datetime.now(UTC)
@@ -1554,11 +1861,49 @@ class ExecutionOrchestrator:
                 "mutmut": result.mutmut_version,
             },
             artifact_paths=[str(record_path)],
+            # Seed the classification optimistically: the campaign really did
+            # just execute. `classify_completion` then downgrades it on its own
+            # if the run was partial, timed out, hit an infrastructure error or
+            # produced unusable evidence — so a bad run is still refused, and
+            # the label is decided by the canonical classifier rather than
+            # hard-coded here.
+            evidence_classification=EvidenceClassification.AUTHORITATIVE.value,
             mode="target",
             target=spec.mutation_target,
             error=result.error,
         )
-        assert_authoritative_classification(truth)
+        # Order matters. `classify_completion` rejects a record whose
+        # `evidence_fingerprint` is empty while it has processed a non-empty
+        # population (EVIDENCE_FAILURE), so durability must be stamped *before*
+        # classification, not after. Measured on the real records: the ledger,
+        # loan-engine and reconciliation campaigns each processed their full
+        # population (190/190, 1273/1273, 368/368) with zero timeouts and
+        # `failure_classification` "none" at the current repository SHA, and were
+        # still refused by certification as "mutation measurement
+        # authoritative+current" — because this path left the classification at
+        # the dataclass default (DERIVED), never stamped a fingerprint, and so
+        # could never mint a consumable record at all.
+        #
+        # The reuse path in this same file hard-codes
+        # `"completion_status": "AUTHORITATIVE_COMPLETE"` for a reused record,
+        # so a reused measurement certified while a freshly measured one could
+        # not — the inverse of the intended contract.
+        #
+        # This weakens nothing. `classify_completion` still refuses a partial
+        # population, an empty population, a population that does not reconcile,
+        # a timeout-classified, infrastructure-failed or interrupted run, and an
+        # invalid scope — verified against each case directly. The canonical
+        # classifier decides the label, instead of the writer hard-coding one
+        # that the gate then refuses.
+        set_evidence_fingerprint(truth)
+        truth.completion_status = classify_completion(record=truth)
+        truth.evidence_classification = (
+            EvidenceClassification.AUTHORITATIVE.value
+            if truth.completion_status
+            == MeasurementCompletionStatus.AUTHORITATIVE_COMPLETE.value
+            else EvidenceClassification.DERIVED.value
+        )
+        truth.consumable_by_certification = certification_gate(truth)
         with contextlib.suppress(Exception):
             save_measurement_truth(truth, record_path)
 
@@ -1842,6 +2187,7 @@ class ExecutionOrchestrator:
         next_action: str = "",
         measurement_truth: dict | None = None,
         duration_seconds: float = 0.0,
+        termination: dict | None = None,
     ) -> TaskExecutionRecord:
         record_id = (
             "task-"
@@ -1875,6 +2221,7 @@ class ExecutionOrchestrator:
             next_action=next_action or "no action",
             reason=reason_text,
             prerequisites_satisfied=True,
+            termination=termination,
         )
 
     def _blocked_report(

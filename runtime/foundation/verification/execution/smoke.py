@@ -201,8 +201,12 @@ def fault_injection_smoke() -> dict:
         component=t.component,
         capability=t.capability,
         verification_kind=t.verification_kind,
-        started_at=__import__("datetime").datetime.now(__import__("datetime").UTC).isoformat(),
-        completed_at=__import__("datetime").datetime.now(__import__("datetime").UTC).isoformat(),
+        started_at=__import__("datetime")
+        .datetime.now(__import__("datetime").UTC)
+        .isoformat(),
+        completed_at=__import__("datetime")
+        .datetime.now(__import__("datetime").UTC)
+        .isoformat(),
         duration_seconds=0.0,
         command=t.execution_command,
         exit_code=0,
@@ -243,8 +247,12 @@ def fault_injection_smoke() -> dict:
         component=t.component,
         capability=t.capability,
         verification_kind=t.verification_kind,
-        started_at=__import__("datetime").datetime.now(__import__("datetime").UTC).isoformat(),
-        completed_at=__import__("datetime").datetime.now(__import__("datetime").UTC).isoformat(),
+        started_at=__import__("datetime")
+        .datetime.now(__import__("datetime").UTC)
+        .isoformat(),
+        completed_at=__import__("datetime")
+        .datetime.now(__import__("datetime").UTC)
+        .isoformat(),
         duration_seconds=0.0,
         command=t.execution_command,
         exit_code=0,
@@ -255,7 +263,11 @@ def fault_injection_smoke() -> dict:
         config_fingerprint=t.config_fingerprint,
         toolchain_fingerprint=t.toolchain_fingerprint,
         repository_sha=_git_sha(),
-        artifact_paths=(str(REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "artifact-test.bin"),),
+        artifact_paths=(
+            str(
+                REPO_ROOT / "runtime" / "generated" / "m9-c50.13" / "artifact-test.bin"
+            ),
+        ),
         notes="ev::test",
     )
     from runtime.foundation.verification.execution.decisions import (

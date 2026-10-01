@@ -138,15 +138,12 @@ def _run_pipeline(changed_files: tuple[str, ...], *, fresh_outcomes: dict[str, d
 
 def _drifted_planner() -> EvidenceAwarePlanner:
     """A planner whose graph claims coverage the surface cannot reach."""
-    import importlib.util
+    # The builder moved out of runtime/generated/m9-c42.27/ to
+    # runtime/foundation/verification/graph_inventory.py, where it is a normal
+    # module rather than a file loaded by path out of a generated directory.
+    from runtime.foundation.verification import graph_inventory
 
-    spec = importlib.util.spec_from_file_location(
-        "_graph_inv_drift",
-        REPO_ROOT / "runtime/generated/m9-c42.27/m27_2_graph_inventory.py",
-    )
-    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
-    spec.loader.exec_module(mod)  # type: ignore[union-attr]
-    g, _ = mod.build_graph()
+    g, _ = graph_inventory.build_graph()
     # Remove all source bindings for the cashflow capability while
     # leaving its test-surface links intact — the C42.24 shape.
     cap_key = "cap::cashflow-engine"

@@ -75,6 +75,29 @@ def _git_tree() -> str:
         return "unknown"
 
 
+def _resolve_scope(scope: str) -> str:
+    """Return a pytest path usable from the directory pytest actually runs in.
+
+    The command is documented as taking a scope relative to ``backend/``, and
+    pytest runs there. But the verification planner builds its coverage tasks
+    from engine module paths, which are repository-root-relative
+    (``backend/src/engines/account_engine``). Handed to pytest unchanged that
+    resolves to ``backend/backend/src/...`` and the run dies with
+
+        ERROR: file or directory not found: backend/src/engines/account_engine
+
+    — reported as an infrastructure failure of the coverage task rather than as
+    a bad argument. Both spellings are accepted here so no caller has to know
+    which directory the command happens to start in.
+    """
+    if scope in {"backend", ".", "full", ""}:
+        return "."
+    normalized = scope.replace("\\", "/").lstrip("./")
+    if normalized.startswith("backend/"):
+        normalized = normalized[len("backend/") :]
+    return normalized or "."
+
+
 def _coverage_run(
     *,
     scope: str,
@@ -89,7 +112,7 @@ def _coverage_run(
     )
     # .coverage data file is isolated per-run under the C47 coverage dir.
     data_file = str(COVERAGE_DIR / ".coverage")
-    pytest_scope = "." if scope in {"backend", ".", "full"} else scope
+    pytest_scope = _resolve_scope(scope)
     cmd = [
         str(coverage_bin),
         "run",
@@ -173,7 +196,9 @@ def _coverage_run(
             )
             rc = report.returncode
         else:
-            raise RuntimeError(f"coverage json exited {report.returncode}: {report.stderr[:200]}")
+            raise RuntimeError(
+                f"coverage json exited {report.returncode}: {report.stderr[:200]}"
+            )
     except Exception as exc:  # pragma: no cover - defensive
         rc = 2 if rc == 0 else rc
         tail = tail or f"coverage report failed: {exc}"

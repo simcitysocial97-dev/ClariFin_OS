@@ -33,12 +33,11 @@ class TestControlledScenarioA_BackendChange:
 
         # Should not invent frontend capabilities for backend changes
         frontend_caps = [
-            c for c in report.affected_capabilities
-            if c.startswith("frontend:")
+            c for c in report.affected_capabilities if c.startswith("frontend:")
         ]
-        assert len(frontend_caps) == 0, (
-            f"Backend change should not produce frontend capabilities, got: {frontend_caps}"
-        )
+        assert (
+            len(frontend_caps) == 0
+        ), f"Backend change should not produce frontend capabilities, got: {frontend_caps}"
 
     def test_backend_change_produces_obligation(self):
         """Backend change produces verification obligations."""
@@ -49,7 +48,9 @@ class TestControlledScenarioA_BackendChange:
 
         plan = report.verification_plan
         assert plan.get("run_unit") is True, "Backend engine change requires unit tests"
-        assert plan.get("run_property") is True, "Loan engine change requires property tests"
+        assert (
+            plan.get("run_property") is True
+        ), "Loan engine change requires property tests"
 
 
 class TestControlledScenarioB_FrontendChange:
@@ -67,7 +68,9 @@ class TestControlledScenarioB_FrontendChange:
         )
 
         # Should resolve to frontend capability
-        assert "frontend:hook:frontend-accounts:accounts" in report.affected_capabilities
+        assert (
+            "frontend:hook:frontend-accounts:accounts" in report.affected_capabilities
+        )
 
     def test_frontend_hook_propagates_backend(self):
         """Frontend hook change propagates backend dependencies."""
@@ -87,8 +90,12 @@ class TestControlledScenarioB_FrontendChange:
         )
 
         plan = report.verification_plan
-        assert plan.get("run_frontend") is True, "Frontend change requires frontend verification"
-        assert plan.get("run_contract") is True, "Hook with API deps requires contract tests"
+        assert (
+            plan.get("run_frontend") is True
+        ), "Frontend change requires frontend verification"
+        assert (
+            plan.get("run_contract") is True
+        ), "Hook with API deps requires contract tests"
 
 
 class TestControlledScenarioC_CrossLayerChange:
@@ -106,11 +113,19 @@ class TestControlledScenarioC_CrossLayerChange:
         )
 
         # Should have both frontend and backend in capabilities
-        frontend_caps = [c for c in report.affected_capabilities if c.startswith("frontend:")]
-        backend_caps = [c for c in report.affected_capabilities if c not in frontend_caps and not c.startswith("UNMAPPED:")]
+        frontend_caps = [
+            c for c in report.affected_capabilities if c.startswith("frontend:")
+        ]
+        backend_caps = [
+            c
+            for c in report.affected_capabilities
+            if c not in frontend_caps and not c.startswith("UNMAPPED:")
+        ]
 
         assert len(frontend_caps) >= 1, "Should resolve frontend capability"
-        assert len(backend_caps) >= 1, "Should resolve backend capability via propagation"
+        assert (
+            len(backend_caps) >= 1
+        ), "Should resolve backend capability via propagation"
 
     def test_cross_layer_obligation_generated(self):
         """Cross-layer change generates appropriate obligations."""
@@ -156,9 +171,9 @@ class TestControlledScenarioD_FrontendAPIClient:
         )
 
         # Should have endpoints in affected list
-        assert len(report.affected_endpoints) > 0, (
-            f"Expected endpoints, got: {report.affected_endpoints}"
-        )
+        assert (
+            len(report.affected_endpoints) > 0
+        ), f"Expected endpoints, got: {report.affected_endpoints}"
 
     def test_no_financial_behavior_modified(self):
         """Frontend API consumer change does not affect financial calculations."""
@@ -169,12 +184,13 @@ class TestControlledScenarioD_FrontendAPIClient:
 
         # Should not touch financial engines
         financial_engines = [
-            e for e in report.affected_engines
+            e
+            for e in report.affected_engines
             if "financial" in e.lower() or "credit_card" in e.lower()
         ]
-        assert len(financial_engines) == 0, (
-            f"Account hook change should not affect financial engines: {financial_engines}"
-        )
+        assert (
+            len(financial_engines) == 0
+        ), f"Account hook change should not affect financial engines: {financial_engines}"
 
 
 class TestControlledScenarioE_UnmappedFrontend:
@@ -193,7 +209,9 @@ class TestControlledScenarioE_UnmappedFrontend:
         )
 
         # Should have UNMAPPED prefix
-        unmapped = [c for c in report.affected_capabilities if c.startswith("UNMAPPED:")]
+        unmapped = [
+            c for c in report.affected_capabilities if c.startswith("UNMAPPED:")
+        ]
         assert len(unmapped) >= 1, "Unmapped frontend file should be explicitly marked"
         assert "frontend/lib/unknown/orphan-component.tsx" in unmapped[0]
 
@@ -206,12 +224,13 @@ class TestControlledScenarioE_UnmappedFrontend:
 
         # Should NOT have legitimate capabilities
         legitimate_caps = [
-            c for c in report.affected_capabilities
+            c
+            for c in report.affected_capabilities
             if not c.startswith("UNMAPPED:") and not c.startswith("frontend:")
         ]
-        assert len(legitimate_caps) == 0, (
-            f"Unmapped file should not produce backend capabilities: {legitimate_caps}"
-        )
+        assert (
+            len(legitimate_caps) == 0
+        ), f"Unmapped file should not produce backend capabilities: {legitimate_caps}"
 
     def test_unmapped_has_minimal_obligation(self):
         """Unmapped frontend produces minimal obligation."""
@@ -270,9 +289,18 @@ class TestFrontendCapabilityResolution:
     def test_find_frontend_capability_by_absolute_path(self):
         """Can resolve frontend capability using absolute path."""
         planner = CrossLayerImpactPlanner()
-        result = planner._find_frontend_capability(
-            "/home/vasantha/AI-Projects/ClariFin_OS/frontend/lib/hooks/use-accounts.ts"
+        # Derive the real path from the repository rather than hardcoding a
+        # developer-local absolute path that exists on no other machine,
+        # including CI. The assertion under test is the absolute-path branch,
+        # which any real absolute path exercises.
+        target = (
+            Path(__file__).resolve().parents[2]
+            / "frontend"
+            / "lib"
+            / "hooks"
+            / "use-accounts.ts"
         )
+        result = planner._find_frontend_capability(str(target))
 
         assert result is not None
         assert result["capability_id"] == "frontend:hook:frontend-accounts:accounts"
@@ -282,9 +310,7 @@ class TestFrontendCapabilityResolution:
     def test_find_frontend_capability_by_relative_path(self):
         """Can resolve frontend capability using relative path."""
         planner = CrossLayerImpactPlanner()
-        result = planner._find_frontend_capability(
-            "frontend/lib/hooks/use-accounts.ts"
-        )
+        result = planner._find_frontend_capability("frontend/lib/hooks/use-accounts.ts")
 
         assert result is not None
         assert result["capability_id"] == "frontend:hook:frontend-accounts:accounts"
@@ -292,9 +318,7 @@ class TestFrontendCapabilityResolution:
     def test_find_frontend_capability_unmapped(self):
         """Returns None for completely unknown frontend file."""
         planner = CrossLayerImpactPlanner()
-        result = planner._find_frontend_capability(
-            "frontend/lib/unknown/orphan.tsx"
-        )
+        result = planner._find_frontend_capability("frontend/lib/unknown/orphan.tsx")
 
         assert result is None
 
@@ -306,7 +330,9 @@ class TestFrontendCapabilityResolution:
         planner._cross_layer_graph = None
 
         try:
-            result = planner._find_frontend_capability("frontend/lib/hooks/use-accounts.ts")
+            result = planner._find_frontend_capability(
+                "frontend/lib/hooks/use-accounts.ts"
+            )
             assert result is None
         finally:
             planner._cross_layer_graph = original
@@ -314,7 +340,9 @@ class TestFrontendCapabilityResolution:
     def test_resolve_capability_edges(self):
         """Correctly extracts edges from cross-layer graph."""
         planner = CrossLayerImpactPlanner()
-        result = planner._resolve_capability_edges("frontend:hook:frontend-accounts:accounts")
+        result = planner._resolve_capability_edges(
+            "frontend:hook:frontend-accounts:accounts"
+        )
 
         assert result is not None
         assert result["kind"] == "frontend_hook"
@@ -339,9 +367,9 @@ class TestContractDriftClassification:
         drifts = planner._cross_layer_graph.get("contract_drifts", [])
 
         valid_types = {
-            "missing_endpoint", 
-            "path_mismatch", 
-            "method_mismatch", 
+            "missing_endpoint",
+            "path_mismatch",
+            "method_mismatch",
             "schema_drift",
             "normalization_mismatch",
             "query_parameter",
@@ -349,9 +377,9 @@ class TestContractDriftClassification:
             "prefix_mismatch",
         }
         for drift in drifts:
-            assert drift.get("drift_type") in valid_types, (
-                f"Unexpected drift type: {drift.get('drift_type')}"
-            )
+            assert (
+                drift.get("drift_type") in valid_types
+            ), f"Unexpected drift type: {drift.get('drift_type')}"
 
 
 class TestGeneratedArtifactIsolation:
@@ -369,9 +397,9 @@ class TestGeneratedArtifactIsolation:
         # Should not produce blast radius from generated file itself
         # (it may produce some impact if the graph says so, but not recursive)
         caps = report.affected_capabilities
-        assert not any("cross-layer-graph" in c for c in caps), (
-            "Generated graph file should not reference itself"
-        )
+        assert not any(
+            "cross-layer-graph" in c for c in caps
+        ), "Generated graph file should not reference itself"
 
     def test_symbol_cache_not_treated_as_source(self):
         """TypeScript symbol cache is not treated as source change."""
@@ -382,7 +410,9 @@ class TestGeneratedArtifactIsolation:
         )
 
         # Should not produce frontend capabilities from cache file
-        frontend_caps = [c for c in report.affected_capabilities if c.startswith("frontend:")]
-        assert len(frontend_caps) == 0, (
-            f"Cache file should not produce frontend capabilities: {frontend_caps}"
-        )
+        frontend_caps = [
+            c for c in report.affected_capabilities if c.startswith("frontend:")
+        ]
+        assert (
+            len(frontend_caps) == 0
+        ), f"Cache file should not produce frontend capabilities: {frontend_caps}"

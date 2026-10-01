@@ -5,6 +5,7 @@ Evaluates all 28 explicit machine-evaluated certification gates that
 determine whether the workflow/CI layer satisfies the C54 convergence
 requirements. Depends on all prior analysis modules.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -129,13 +130,18 @@ def evaluate_certification_gates(
 
     # Intentional continue-on-error workflows (diagnostic/reconciliation)
     # classified as FALSE_POSITIVE per C62 authority drift detection.
-    _INTENTIONAL_COE_WORKFLOWS = frozenset({
-        "m9-forensic-diagnostic-lab.yml",
-        "verification-reconcile.yml",
-    })
+    _INTENTIONAL_COE_WORKFLOWS = frozenset(
+        {
+            "m9-forensic-diagnostic-lab.yml",
+            "verification-reconcile.yml",
+        }
+    )
     has_greenness_issues = any(
         a.status.value == "masked"
-        or (a.status.value == "continue_on_error" and inv.filename not in _INTENTIONAL_COE_WORKFLOWS)
+        or (
+            a.status.value == "continue_on_error"
+            and inv.filename not in _INTENTIONAL_COE_WORKFLOWS
+        )
         for inv in inventories
         for a in audit_workflow_greenness([inv])
     )
@@ -387,7 +393,10 @@ def evaluate_certification_gates(
                 inv.permissions.get("contents") == "read"
                 or inv.permissions.get("actions") == "read"
                 or not inv.permissions
-                or (inv.filename == "release.yml" and inv.permissions.get("contents") == "write")
+                or (
+                    inv.filename == "release.yml"
+                    and inv.permissions.get("contents") == "write"
+                )
                 for inv in inventories
             ),
             evidence="Least-privilege permissions enforced (release workflow allowed write)",

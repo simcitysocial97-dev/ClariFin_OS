@@ -3,6 +3,7 @@ M9-C54 — Workflow duplication/redundancy analysis (Q11).
 
 Detects duplicate or redundant workflow execution across the repository.
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -21,7 +22,9 @@ class DuplicationFinding:
     description: str
     workflows_involved: tuple[str, ...]
     commands: tuple[str, ...]
-    classification: str  # "intentional" | "useful" | "redundant" | "conflicting" | "obsolete"
+    classification: (
+        str  # "intentional" | "useful" | "redundant" | "conflicting" | "obsolete"
+    )
     notes: str
 
     def to_dict(self) -> dict[str, Any]:

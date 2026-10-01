@@ -103,14 +103,35 @@ run_phase() {
   phase_json="$phase_json{\"phase\":\"$name\",\"status\":\"$status\",\"exit_code\":$code,\"duration_seconds\":$duration,\"log\":\"$log\"}"
 }
 
-run_phase lint npx eslint . --ext .ts,.tsx --quiet
-run_phase typecheck npx tsc --noEmit
-run_phase build npm run build
+# Phase selection. Unset means every phase, which is the historical behaviour
+# and what Frontend Verification runs. The Quality Gate selects the static
+# subset (lint, typecheck, test) and leaves the production build to Frontend
+# Verification, so the two workflows stay distinct instead of each paying for
+# the other's work. Backend startup and evidence recording are unchanged, so a
+# selected subset is still produced by exactly the same mechanism.
+ALL_PHASES="lint typecheck build test"
+PHASES="${FRONTEND_VERIFICATION_PHASES:-$ALL_PHASES}"
 
-if [ -d "tests" ] || [ -d "src" ] || [ -d "__tests__" ]; then
-  run_phase test npx vitest run
+phase_selected() {
+  case " $PHASES " in
+    *" $1 "*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+if phase_selected lint; then
+  run_phase lint npx eslint . --ext .ts,.tsx --quiet
+fi
+if phase_selected typecheck; then
+  run_phase typecheck npx tsc --noEmit
+fi
+if phase_selected build; then
+  run_phase build npm run build
 fi
 
+if phase_selected test && { [ -d "tests" ] || [ -d "src" ] || [ -d "__tests__" ]; }; then
+  run_phase test npx vitest run
+fi
 overall="pass"
 if [ "$fail" -ne 0 ]; then
   overall="fail"

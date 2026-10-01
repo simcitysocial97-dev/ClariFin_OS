@@ -196,8 +196,7 @@ class TestC54WorkflowCapabilityMapping(unittest.TestCase):
             if m.verification_task is None:
                 continue
             has_cap = any(
-                m.verification_task.startswith(prefix)
-                for prefix in cap_bearing_tasks
+                m.verification_task.startswith(prefix) for prefix in cap_bearing_tasks
             )
             if has_cap:
                 self.assertIsNotNone(m.capability)
@@ -826,7 +825,9 @@ class TestC54ActualFailureInjection(unittest.TestCase):
             timeout=30,
         )
         self.assertNotEqual(result.returncode, 0)
-        self.assertTrue("not available" in result.stderr.lower() or "Error:" in result.stderr)
+        self.assertTrue(
+            "not available" in result.stderr.lower() or "Error:" in result.stderr
+        )
 
     def test_lint_failure_detection(self):
         """Test that lint failures are detected."""

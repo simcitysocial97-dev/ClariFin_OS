@@ -1,0 +1,48 @@
+{
+  "summary_id": "run-20260925-105551",
+  "generated_at": "2026-09-25T10:55:51.266260+00:00",
+  "commit": "fc5775643977008ec623ee1e59a76d7088417e7d",
+  "branch": "m9c9-merge-authorization-resolution",
+  "verification_plan": "selective",
+  "overall_status": "not_run",
+  "backend": {
+    "unit_tests": {
+      "status": "unknown",
+      "passed": 0,
+      "failed": 0,
+      "duration_seconds": 0.0
+    },
+    "property_tests": {
+      "status": "unknown",
+      "passed": 0,
+      "counterexamples_found": 0
+    },
+    "contract_tests": {
+      "status": "not_run",
+      "endpoints_tested": 0,
+      "failures_found": 0
+    },
+    "coverage": {
+      "overall_pct": 0.0,
+      "engines_pct": 0.0,
+      "delta_from_last": "0.0",
+      "collected": false
+    },
+    "mutation": {
+      "overall": {
+        "score_pct": 0.0,
+        "killed": 0,
+        "survived": 0,
+        "status": "not_run"
+      }
+    }
+  },
+  "frontend": {},
+  "unit_failures": [],
+  "attention_needed": [],
+  "ai_context": {
+    "ready": true,
+    "context_file": "runtime/generated/evidence/ai_context.json",
+    "note": "Program 8 will consume this for automated remediation planning"
+  }
+}

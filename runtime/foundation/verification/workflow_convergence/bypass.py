@@ -3,6 +3,7 @@ M9-C54 — Workflow bypass analysis (Q7).
 
 Analyzes every workflow for paths that bypass the verification control plane.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

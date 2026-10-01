@@ -55,8 +55,9 @@ class NormalizedEndpoint:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NormalizedEndpoint):
             return False
-        return (self.canonical_path == other.canonical_path and
-                self.method == other.method)
+        return (
+            self.canonical_path == other.canonical_path and self.method == other.method
+        )
 
     def __hash__(self) -> int:
         return hash((self.canonical_path, self.method))
@@ -102,7 +103,7 @@ def normalize_endpoint(
 ) -> NormalizedEndpoint:
     """
     Normalize an endpoint to its canonical representation.
-    
+
     Handles:
     - Frontend template variables: ${id}, ${encodeURIComponent(id!)}
     - Backend path parameters: {id}, {account_id}
@@ -110,7 +111,7 @@ def normalize_endpoint(
     - Query strings: ?limit=10
     - Trailing slashes
     - Multiple slashes
-    
+
     Returns a NormalizedEndpoint with:
     - canonical_path: method-aware canonical path (e.g., "GET:/platform/v1/tasks/{param}/cancel")
     - path_params: tuple of parameter names in order

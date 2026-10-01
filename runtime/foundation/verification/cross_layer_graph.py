@@ -83,15 +83,30 @@ class CrossLayerGraph:
     def get_edges_to(self, target_id: str) -> list[CrossLayerEdge]:
         return [e for e in self.edges if e.target_id == target_id]
 
-    def get_frontend_consumers_of_backend_endpoint(self, endpoint: str) -> list[CrossLayerEdge]:
-        return [e for e in self.edges if e.target_id == endpoint and e.target_type == "endpoint"]
+    def get_frontend_consumers_of_backend_endpoint(
+        self, endpoint: str
+    ) -> list[CrossLayerEdge]:
+        return [
+            e
+            for e in self.edges
+            if e.target_id == endpoint and e.target_type == "endpoint"
+        ]
 
-    def get_backend_dependencies_of_frontend_capability(self, capability_id: str) -> list[CrossLayerEdge]:
-        return [e for e in self.edges if e.source_id == capability_id and e.target_type in ("endpoint", "capability")]
+    def get_backend_dependencies_of_frontend_capability(
+        self, capability_id: str
+    ) -> list[CrossLayerEdge]:
+        return [
+            e
+            for e in self.edges
+            if e.source_id == capability_id
+            and e.target_type in ("endpoint", "capability")
+        ]
 
     def to_dict(self) -> dict:
         return {
-            "frontend_capabilities": {k: v.to_dict() for k, v in self.frontend_capabilities.items()},
+            "frontend_capabilities": {
+                k: v.to_dict() for k, v in self.frontend_capabilities.items()
+            },
             "backend_capabilities": self.backend_capabilities,
             "edges": [asdict(e) for e in self.edges],
             "contract_drifts": [asdict(d) for d in self.contract_drifts],
@@ -115,7 +130,9 @@ class CrossLayerGraphBuilder:
         self._graph: CrossLayerGraph | None = None
         self._api_map: dict | None = None
         self._contract_registry: dict | None = None
-        self._platform_endpoints: dict[str, dict] = {}  # endpoint -> {method, router, capability}
+        self._platform_endpoints: dict[str, dict] = (
+            {}
+        )  # endpoint -> {method, router, capability}
         self._normalizer = EndpointNormalizer()
 
     def build(self, force_rebuild: bool = False) -> CrossLayerGraph:
@@ -125,7 +142,9 @@ class CrossLayerGraphBuilder:
 
         self._graph = CrossLayerGraph()
 
-        self._graph.frontend_capabilities = self.capability_discoverer.discover_capabilities()
+        self._graph.frontend_capabilities = (
+            self.capability_discoverer.discover_capabilities()
+        )
 
         self._load_backend_capabilities()
         self._scan_platform_router()
@@ -191,7 +210,9 @@ class CrossLayerGraphBuilder:
                     "response_schema": endpoint_data.get("response_schema", {}),
                 }
 
-        contract_registry_path = self.repo_root / "backend/tests/generated/contract-registry.json"
+        contract_registry_path = (
+            self.repo_root / "backend/tests/generated/contract-registry.json"
+        )
         if contract_registry_path.exists():
             self._contract_registry = json.loads(contract_registry_path.read_text())
 
@@ -255,7 +276,9 @@ class CrossLayerGraphBuilder:
                     # Get backend method for proper normalization
                     be_info = self._graph.backend_capabilities.get(backend_endpoint, {})
                     be_method = be_info.get("method", "GET")
-                    be_normalized = self._normalizer.normalize(backend_endpoint, be_method)
+                    be_normalized = self._normalizer.normalize(
+                        backend_endpoint, be_method
+                    )
                     backend_cap = be_info.get("capability", "unknown")
 
                     edge = CrossLayerEdge(
@@ -279,7 +302,7 @@ class CrossLayerGraphBuilder:
                             "backend_normalized": be_normalized.canonical_path,
                             "backend_capability": backend_cap,
                             "normalization_rules": fe_normalized.normalization_rules,
-                        }
+                        },
                     )
                     self._graph.add_edge(edge)
 
@@ -291,10 +314,12 @@ class CrossLayerGraphBuilder:
                             target_type="capability",
                             relationship="depends_on",
                             confidence=0.8,
-                            evidence=[f"Frontend capability {cap_id} calls backend endpoint {backend_endpoint}"],
+                            evidence=[
+                                f"Frontend capability {cap_id} calls backend endpoint {backend_endpoint}"
+                            ],
                             metadata={
                                 "via_endpoint": backend_endpoint,
-                            }
+                            },
                         )
                         self._graph.add_edge(cap_edge)
                 else:
@@ -305,13 +330,15 @@ class CrossLayerGraphBuilder:
                         target_type="endpoint",
                         relationship="calls",
                         confidence=0.3,
-                        evidence=[f"Frontend calls {endpoint} but no matching backend endpoint found"],
+                        evidence=[
+                            f"Frontend calls {endpoint} but no matching backend endpoint found"
+                        ],
                         metadata={
                             "frontend_endpoint": endpoint,
                             "frontend_method": method,
                             "frontend_normalized": canonical_key,
                             "drift_suspected": True,
-                        }
+                        },
                     )
                     self._graph.add_edge(edge)
 
@@ -331,11 +358,13 @@ class CrossLayerGraphBuilder:
                             target_type="capability",
                             relationship="consumed_by",
                             confidence=0.95,
-                            evidence=[f"Backend endpoint {endpoint} consumed by frontend hook {hook_file}"],
+                            evidence=[
+                                f"Backend endpoint {endpoint} consumed by frontend hook {hook_file}"
+                            ],
                             metadata={
                                 "consumer_file": hook_file,
                                 "consumer_type": "hook",
-                            }
+                            },
                         )
                         self._graph.add_edge(edge)
 
@@ -351,11 +380,13 @@ class CrossLayerGraphBuilder:
                             target_type="capability",
                             relationship="consumed_by",
                             confidence=0.9,
-                            evidence=[f"Backend endpoint {endpoint} consumed by frontend component {comp_file}"],
+                            evidence=[
+                                f"Backend endpoint {endpoint} consumed by frontend component {comp_file}"
+                            ],
                             metadata={
                                 "consumer_file": comp_file,
                                 "consumer_type": "component",
-                            }
+                            },
                         )
                         self._graph.add_edge(edge)
 
@@ -395,13 +426,15 @@ class CrossLayerGraphBuilder:
                 endpoint = ep_info["endpoint"]
                 method = ep_info["method"]
                 fe_normalized = self._normalizer.normalize(endpoint, method)
-                frontend_endpoints.append({
-                    "original": endpoint,
-                    "method": method,
-                    "normalized": fe_normalized,
-                    "capability_id": cap_id,
-                    "files": cap.files,
-                })
+                frontend_endpoints.append(
+                    {
+                        "original": endpoint,
+                        "method": method,
+                        "normalized": fe_normalized,
+                        "capability_id": cap_id,
+                        "files": cap.files,
+                    }
+                )
 
         # Collect all backend endpoints
         backend_endpoints = []
@@ -411,25 +444,31 @@ class CrossLayerGraphBuilder:
                 endpoint = endpoint_data.get("endpoint", "")
                 method = endpoint_data.get("method", "GET")
                 be_normalized = self._normalizer.normalize(endpoint, method)
-                backend_endpoints.append({
-                    "original": endpoint,
-                    "method": method,
-                    "normalized": be_normalized,
-                    "router": endpoint_data.get("router", ""),
-                })
+                backend_endpoints.append(
+                    {
+                        "original": endpoint,
+                        "method": method,
+                        "normalized": be_normalized,
+                        "router": endpoint_data.get("router", ""),
+                    }
+                )
 
         for endpoint, info in self._platform_endpoints.items():
             method = info.get("method", "GET")
             be_normalized = self._normalizer.normalize(endpoint, method)
-            backend_endpoints.append({
-                "original": endpoint,
-                "method": method,
-                "normalized": be_normalized,
-                "router": "platform",
-            })
+            backend_endpoints.append(
+                {
+                    "original": endpoint,
+                    "method": method,
+                    "normalized": be_normalized,
+                    "router": "platform",
+                }
+            )
 
         # Build lookup maps by canonical key
-        backend_by_canonical = {be["normalized"].canonical_path: be for be in backend_endpoints}
+        backend_by_canonical = {
+            be["normalized"].canonical_path: be for be in backend_endpoints
+        }
 
         # Classify each frontend endpoint
         for fe in frontend_endpoints:
@@ -457,12 +496,19 @@ class CrossLayerGraphBuilder:
                     severity = "medium"
                     description = f"Frontend uses encodeURIComponent in {fe_original} but no matching backend endpoint"
                 # Check for /platform/ prefix without /v1
-                elif fe_original.startswith("/platform/") and not fe_original.startswith("/platform/v1/"):
+                elif fe_original.startswith(
+                    "/platform/"
+                ) and not fe_original.startswith("/platform/v1/"):
                     drift_type = "prefix_mismatch"
                     severity = "medium"
-                    description = f"Frontend uses /platform/ prefix without /v1: {fe_original}"
+                    description = (
+                        f"Frontend uses /platform/ prefix without /v1: {fe_original}"
+                    )
                 # Check for singular vs plural (reconciliation vs reconciliations)
-                elif "/reconciliation/" in fe_original or fe_original == "/api/reconciliation":
+                elif (
+                    "/reconciliation/" in fe_original
+                    or fe_original == "/api/reconciliation"
+                ):
                     drift_type = "path_mismatch"
                     severity = "high"
                     description = f"Frontend uses singular 'reconciliation' but backend uses plural 'reconciliations': {fe_original}"
@@ -491,9 +537,7 @@ class CrossLayerGraphBuilder:
         all_ts_files: list[Path] = []
         for root, directories, filenames in os.walk(self.frontend_root):
             directories[:] = [
-                directory
-                for directory in directories
-                if directory not in excluded_dirs
+                directory for directory in directories if directory not in excluded_dirs
             ]
             all_ts_files.extend(
                 Path(root) / filename
@@ -522,7 +566,9 @@ class CrossLayerGraphBuilder:
         self._graph.frontend_capabilities = data.get("frontend_capabilities", {})
         self._graph.backend_capabilities = data.get("backend_capabilities", {})
         self._graph.edges = [CrossLayerEdge(**e) for e in data.get("edges", [])]
-        self._graph.contract_drifts = [ContractDrift(**d) for d in data.get("contract_drifts", [])]
+        self._graph.contract_drifts = [
+            ContractDrift(**d) for d in data.get("contract_drifts", [])
+        ]
         self._graph.unmapped_frontend = data.get("unmapped_frontend", [])
         self._graph.metadata = data.get("metadata", {})
         return self._graph

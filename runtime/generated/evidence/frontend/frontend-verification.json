@@ -1,0 +1,6 @@
+{
+  "schema": "frontend-verification/v1",
+  "overall_status": "pass",
+  "unit_id": "",
+  "phases": [{"phase":"lint","status":"pass","exit_code":0,"duration_seconds":107,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/lint.log"},{"phase":"typecheck","status":"pass","exit_code":0,"duration_seconds":33,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/typecheck.log"}]
+}

@@ -3,6 +3,7 @@
 Executes a minimal end-to-end verification with a real file change and
 validates output structure.
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -29,7 +30,9 @@ class TestFullPipelineIntegration:
 
             result = subprocess.run(
                 [sys.executable, "-m", "runtime.verify", "plan", "--scope", "backend"],
-                capture_output=True, text=True, timeout=60,
+                capture_output=True,
+                text=True,
+                timeout=60,
             )
 
             output = result.stdout + result.stderr
@@ -43,7 +46,9 @@ class TestFullPipelineIntegration:
         """Health inspection must remain valid after verification."""
         result = subprocess.run(
             [sys.executable, "-m", "runtime.verify", "inspect", "health"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"Health check failed: {result.stderr[:300]}"
         assert "Traceback" not in result.stderr

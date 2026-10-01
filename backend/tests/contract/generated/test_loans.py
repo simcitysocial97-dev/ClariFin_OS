@@ -306,7 +306,9 @@ def test_post__api_loans_analysis_surplus_allocation_contract(client):
 
     # TODO: Replace with a valid payload for this endpoint if needed.
     request_body = {}
-    response = client.post("/api/v1/loans/analysis/surplus-allocation", json=request_body)
+    response = client.post(
+        "/api/v1/loans/analysis/surplus-allocation", json=request_body
+    )
 
     # Validate status code strictly against permitted spec responses and controlled errors
     assert response.status_code in [

@@ -182,9 +182,7 @@ class ScenarioHUnmappedProductionSurface(unittest.TestCase):
         from runtime.foundation.verification.blast_radius import compute_blast_radius
 
         # A file outside the repository tree — no capability can claim it.
-        contract = compute_blast_radius(
-            ["other/repo/random.py"]
-        )
+        contract = compute_blast_radius(["other/repo/random.py"])
         has_unmapped = (
             len(contract.unmapped_capabilities) > 0 or contract.is_fail_closed
         )
@@ -313,9 +311,7 @@ class FailClosedTests(unittest.TestCase):
     def test_unmapped_production_triggers_fail_closed(self):
         from runtime.foundation.verification.blast_radius import compute_blast_radius
 
-        contract = compute_blast_radius(
-            ["other/repo/random.py"]
-        )
+        contract = compute_blast_radius(["other/repo/random.py"])
         # A path outside all registered capability trees must be fail-closed.
         self.assertTrue(contract.is_fail_closed)
 

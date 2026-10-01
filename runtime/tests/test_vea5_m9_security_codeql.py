@@ -31,7 +31,21 @@ WORKFLOWS = REPO / ".github" / "workflows"
 WF = WORKFLOWS / "security-codeql.yml"
 
 CODEQL_ACTION = "github/codeql-action"
-VALID_LANGS = {"python", "javascript"}  # javascript extractor covers TypeScript
+# Every security-relevant language must have exactly one owner.
+#
+# `javascript` covers TypeScript via its extractor. `actions` is here because
+# GitHub's default CodeQL setup is `not-configured` on this repository, so
+# .github/workflows/security-codeql.yml is the only analysis surface — and
+# without `actions` the workflow files had no owner at all: the actions database
+# was last written on 2026-08-10 by the now-retired default setup, leaving 12
+# actions/missing-workflow-permissions alerts that no current run could confirm
+# or clear. Adding it restores that ownership; default setup staying disabled is
+# what keeps python and javascript from being analysed twice.
+VALID_LANGS = {
+    "python",
+    "javascript",
+    "actions",
+}  # javascript extractor covers TypeScript
 
 
 def _load_wf() -> dict:

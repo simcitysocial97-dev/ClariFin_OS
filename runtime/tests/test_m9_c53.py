@@ -673,7 +673,14 @@ class TestC53RegressionPreservation(unittest.TestCase):
         import subprocess
 
         result = subprocess.run(
-            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c52.py", "-q", "--tb=no"],
+            [
+                str(REPO_ROOT / ".venv" / "bin" / "python"),
+                "-m",
+                "pytest",
+                "runtime/tests/test_m9_c52.py",
+                "-q",
+                "--tb=no",
+            ],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -690,7 +697,14 @@ class TestC53RegressionPreservation(unittest.TestCase):
         import subprocess
 
         result = subprocess.run(
-            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c51.py", "-q", "--tb=no"],
+            [
+                str(REPO_ROOT / ".venv" / "bin" / "python"),
+                "-m",
+                "pytest",
+                "runtime/tests/test_m9_c51.py",
+                "-q",
+                "--tb=no",
+            ],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -707,7 +721,14 @@ class TestC53RegressionPreservation(unittest.TestCase):
         import subprocess
 
         result = subprocess.run(
-            [str(REPO_ROOT / ".venv" / "bin" / "python"), "-m", "pytest", "runtime/tests/test_m9_c50.py", "-q", "--tb=no"],
+            [
+                str(REPO_ROOT / ".venv" / "bin" / "python"),
+                "-m",
+                "pytest",
+                "runtime/tests/test_m9_c50.py",
+                "-q",
+                "--tb=no",
+            ],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,

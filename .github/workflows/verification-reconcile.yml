@@ -39,6 +39,17 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
+      # The planner can schedule run_playwright_tests.sh when the boundary
+      # touches frontend E2E. That script's ED6 pre-flight check exits 1 when the
+      # required browser revision is absent, so without this step the task failed
+      # in 0.79 s before running anything. Reuses the same composite the
+      # Playwright workflow uses, including its browser cache.
+      - name: Install Playwright browsers
+        uses: ./.github/actions/setup-playwright
+        with:
+          working-directory: "frontend"
+          browsers: chromium
+
       - name: Run canonical verification
         env:
           VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
@@ -51,10 +62,22 @@ jobs:
         uses: ./.github/actions/upload-runtime
         with:
           name: reconciliation-report
+          # m9-c49/logs holds the per-task stdout/stderr the orchestrator writes
+          # as each task runs, plus the per-command logs for the coverage and
+          # measurement steps. Without it a failed obligation leaves nothing but
+          # a task id and an exit code: on 2026-10-01 a run that reported
+          # `Result: PASS` alongside `exec-0009 failed 229.32s` could not be
+          # diagnosed at all, because engineering-history.json records only
+          # per-state counts ({pass: 7, skipped: 3, failed: 1}) and the logs were
+          # never uploaded. These are the same streams the orchestrator now
+          # writes incrementally, so they are present even when a task is killed
+          # or the job is cancelled.
           path: |
             runtime/generated/evidence/
+            runtime/generated/m9-c49/logs/
             runtime/generated/engineering-history.json
             runtime/generated/verification-cache.json
+            runtime/generated/verification-progress/
           retention-days: 14
 
       - name: Job Summary

@@ -1,0 +1,21 @@
+{
+  "run_id": "b3646d3eed38187a",
+  "timestamp": "2026-09-28T07:27:28.771976+00:00",
+  "repository_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+  "scenario": "unmapped_change",
+  "changed_files": [
+    "/tmp/tmpt8vriojv.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [
+    "unmapped-review"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "blocked_unmapped",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

@@ -275,7 +275,10 @@ def scan_file(file_path: Path) -> list[AntiPattern]:
 
 
 def main() -> int:
-    root = Path("/home/vasantha/AI-Projects/ClariFin_OS/backend")
+    # Resolve the backend root from this file's location. A hardcoded
+    # developer-local path made the scanner silently scan the wrong tree
+    # (or nothing at all) on every other machine, including CI.
+    root = Path(__file__).resolve().parent.parent
     test_files = find_test_files(root)
 
     print(f"Scanning {len(test_files)} test files...")

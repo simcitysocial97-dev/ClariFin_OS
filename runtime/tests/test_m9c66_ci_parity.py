@@ -40,7 +40,9 @@ class TestCIWorkflowParity:
 
     def test_all_14_workflows_documented(self) -> None:
         """All 14 workflows must have a documented boundary classification."""
-        assert len(WORKFLOW_BOUNDARIES) == 14, f"Expected 14, got {len(WORKFLOW_BOUNDARIES)}"
+        assert (
+            len(WORKFLOW_BOUNDARIES) == 14
+        ), f"Expected 14, got {len(WORKFLOW_BOUNDARIES)}"
 
     def test_workflow_files_exist(self) -> None:
         """All documented workflow files should exist on disk."""
@@ -50,9 +52,19 @@ class TestCIWorkflowParity:
 
     def test_boundary_classifications_valid(self) -> None:
         """All boundary classifications must be from the allowed set."""
-        valid = {"LOCAL", "LOCAL_PASS_WITH_BOUNDARY", "GITHUB_ONLY", "EXTERNAL_SERVICE",
-                 "EXTERNAL_TOOLING", "HARDWARE", "BROWSER", "NETWORK", "RESOURCE_LIMIT",
-                 "DEFECT", "ENVIRONMENT_BOUNDARY"}
+        valid = {
+            "LOCAL",
+            "LOCAL_PASS_WITH_BOUNDARY",
+            "GITHUB_ONLY",
+            "EXTERNAL_SERVICE",
+            "EXTERNAL_TOOLING",
+            "HARDWARE",
+            "BROWSER",
+            "NETWORK",
+            "RESOURCE_LIMIT",
+            "DEFECT",
+            "ENVIRONMENT_BOUNDARY",
+        }
         for wf, boundary in WORKFLOW_BOUNDARIES.items():
             assert boundary in valid, f"Invalid boundary for {wf}: {boundary}"
 
@@ -65,7 +77,9 @@ class TestCIWorkflowParity:
 
     def test_github_only_workflows_documented(self) -> None:
         """GitHub-only workflows should be explicitly documented as such."""
-        github_only = [wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "GITHUB_ONLY"]
+        github_only = [
+            wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "GITHUB_ONLY"
+        ]
         assert len(github_only) == 3, f"Expected 3 GitHub-only, got {github_only}"
 
     def test_browser_workflows_documented(self) -> None:
@@ -75,12 +89,16 @@ class TestCIWorkflowParity:
 
     def test_external_tooling_workflows_documented(self) -> None:
         """External tooling workflows should be documented."""
-        external = [wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "EXTERNAL_TOOLING"]
+        external = [
+            wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "EXTERNAL_TOOLING"
+        ]
         assert len(external) == 2  # mutation, mutation-pr
 
     def test_environment_boundary_workflows_documented(self) -> None:
         """Environment-boundary workflows should be documented."""
-        env_bound = [wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "ENVIRONMENT_BOUNDARY"]
+        env_bound = [
+            wf for wf, b in WORKFLOW_BOUNDARIES.items() if b == "ENVIRONMENT_BOUNDARY"
+        ]
         assert len(env_bound) == 3
 
     def test_ci_parity_artifact_generated(self) -> None:
@@ -106,11 +124,21 @@ def generate_ci_parity_json() -> dict:
         "total_workflows": 14,
         "classifications": WORKFLOW_BOUNDARIES,
         "summary": {
-            "local_executable": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "LOCAL"),
-            "github_only": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "GITHUB_ONLY"),
-            "environment_boundary": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "ENVIRONMENT_BOUNDARY"),
-            "external_service": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "EXTERNAL_SERVICE"),
-            "external_tooling": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "EXTERNAL_TOOLING"),
+            "local_executable": sum(
+                1 for b in WORKFLOW_BOUNDARIES.values() if b == "LOCAL"
+            ),
+            "github_only": sum(
+                1 for b in WORKFLOW_BOUNDARIES.values() if b == "GITHUB_ONLY"
+            ),
+            "environment_boundary": sum(
+                1 for b in WORKFLOW_BOUNDARIES.values() if b == "ENVIRONMENT_BOUNDARY"
+            ),
+            "external_service": sum(
+                1 for b in WORKFLOW_BOUNDARIES.values() if b == "EXTERNAL_SERVICE"
+            ),
+            "external_tooling": sum(
+                1 for b in WORKFLOW_BOUNDARIES.values() if b == "EXTERNAL_TOOLING"
+            ),
             "browser": sum(1 for b in WORKFLOW_BOUNDARIES.values() if b == "BROWSER"),
         },
         "discrepancies": [],

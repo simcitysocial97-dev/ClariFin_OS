@@ -1,17 +1,23 @@
-
-
 def test_incremental_mutation_with_no_coverage():
     """Incremental mutation must handle engines with no test coverage."""
     import subprocess
 
     result = subprocess.run(
-        ["python", "-m", "runtime.verify", "strengthen", "--target",
-         "backend/src/services/account_service.py", "--smoke"],
-        capture_output=True, text=True, timeout=300
+        [
+            "python",
+            "-m",
+            "runtime.verify",
+            "strengthen",
+            "--target",
+            "backend/src/services/account_service.py",
+            "--smoke",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=300,
     )
 
-    assert result.returncode in [0, 1, 2], \
-        f"Mutation crashed: {result.stderr[-500:]}"
+    assert result.returncode in [0, 1, 2], f"Mutation crashed: {result.stderr[-500:]}"
 
 
 def test_mutation_with_nonexistent_engine():
@@ -19,13 +25,23 @@ def test_mutation_with_nonexistent_engine():
     import subprocess
 
     result = subprocess.run(
-        ["python", "-m", "runtime.verify", "strengthen", "--target",
-         "backend/src/engines/fake_engine/fake.py", "--smoke"],
-        capture_output=True, text=True, timeout=60
+        [
+            "python",
+            "-m",
+            "runtime.verify",
+            "strengthen",
+            "--target",
+            "backend/src/engines/fake_engine/fake.py",
+            "--smoke",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=60,
     )
 
-    assert result.returncode == 0, \
-        f"Should exit 0 for no affected engines: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"Should exit 0 for no affected engines: {result.stderr}"
 
 
 def test_survivor_enrichment_with_unknown_file():

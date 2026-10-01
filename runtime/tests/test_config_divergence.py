@@ -83,7 +83,10 @@ class TestConfigurationDivergence:
         authorities = get_configuration_authority()
         cov = next((a for a in authorities if a["tool"] == "coverage"), None)
         assert cov is not None
-        assert "m9-c47" in cov["config_path"] or "coverage" in cov["canonical_command"].lower()
+        assert (
+            "m9-c47" in cov["config_path"]
+            or "coverage" in cov["canonical_command"].lower()
+        )
 
 
 if __name__ == "__main__":

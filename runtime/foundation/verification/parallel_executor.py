@@ -55,7 +55,10 @@ class TaskGroup:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "task_ids": [t.task_id if hasattr(t, "task_id") else str(i) for i, t in enumerate(self.tasks)],
+            "task_ids": [
+                t.task_id if hasattr(t, "task_id") else str(i)
+                for i, t in enumerate(self.tasks)
+            ],
             "parallel": self.parallel,
             "dependency_on": self.dependency_on,
         }
@@ -248,51 +251,66 @@ class ParallelExecutor:
         groups: list[TaskGroup] = []
 
         if independent:
-            groups.append(TaskGroup(
-                tasks=tuple(independent),
-                parallel=True,
-                dependency_on=None,
-            ))
+            groups.append(
+                TaskGroup(
+                    tasks=tuple(independent),
+                    parallel=True,
+                    dependency_on=None,
+                )
+            )
 
         # Sort dependent tasks by dependency depth for sequential ordering
         sorted_dependent = self._topological_sort(dependent, id_set)
         if sorted_dependent:
-            groups.append(TaskGroup(
-                tasks=tuple(sorted_dependent),
-                parallel=False,
-                dependency_on=None,
-            ))
+            groups.append(
+                TaskGroup(
+                    tasks=tuple(sorted_dependent),
+                    parallel=False,
+                    dependency_on=None,
+                )
+            )
 
         # If any task references another via dependency_on, split it out
         final_groups: list[TaskGroup] = []
         for group in groups:
-            has_ext_dep = any(
-                getattr(t, "dependency_on", None)
-                for t in group.tasks
-            )
+            has_ext_dep = any(getattr(t, "dependency_on", None) for t in group.tasks)
             if not has_ext_dep:
                 final_groups.append(group)
             else:
-                standalone = [t for t in group.tasks if not getattr(t, "dependency_on", None)]
-                dependent_tasks = [t for t in group.tasks if getattr(t, "dependency_on", None)]
+                standalone = [
+                    t for t in group.tasks if not getattr(t, "dependency_on", None)
+                ]
+                dependent_tasks = [
+                    t for t in group.tasks if getattr(t, "dependency_on", None)
+                ]
                 if standalone:
-                    final_groups.append(TaskGroup(
-                        tasks=tuple(standalone),
-                        parallel=len(standalone) > 1,
-                        dependency_on=None,
-                    ))
+                    final_groups.append(
+                        TaskGroup(
+                            tasks=tuple(standalone),
+                            parallel=len(standalone) > 1,
+                            dependency_on=None,
+                        )
+                    )
                 for dt in dependent_tasks:
-                    final_groups.append(TaskGroup(
-                        tasks=(dt,),
-                        parallel=False,
-                        dependency_on=dt.dependency_on,
-                    ))
+                    final_groups.append(
+                        TaskGroup(
+                            tasks=(dt,),
+                            parallel=False,
+                            dependency_on=dt.dependency_on,
+                        )
+                    )
 
-        return final_groups if final_groups else [TaskGroup(
-            tasks=tuple(tasks),
-            parallel=len(tasks) > 1,
-            dependency_on=None,
-        )]
+        return (
+            final_groups
+            if final_groups
+            else [
+                TaskGroup(
+                    tasks=tuple(tasks),
+                    parallel=len(tasks) > 1,
+                    dependency_on=None,
+                )
+            ]
+        )
 
     def _topological_sort(
         self,
@@ -364,9 +382,7 @@ class ParallelExecutor:
             all_results.extend(group_results)
             report.groups_executed += 1
 
-            group_duration = (
-                datetime.now(UTC) - group_started
-            ).total_seconds()
+            group_duration = (datetime.now(UTC) - group_started).total_seconds()
 
         report.results = all_results
         report.completed_at = datetime.now(UTC).isoformat()
@@ -413,16 +429,18 @@ class ParallelExecutor:
                         "error": str(exc),
                     }
 
-                results.append(TaskResult(
-                    task_id=data.get("task_id", "unknown"),
-                    component=getattr(task, "component", ""),
-                    capability=getattr(task, "capability", ""),
-                    success=data.get("success", False),
-                    exit_code=data.get("exit_code", -1),
-                    duration_seconds=data.get("duration_seconds", 0.0),
-                    error=data.get("error"),
-                    output_path=data.get("output_path", ""),
-                ))
+                results.append(
+                    TaskResult(
+                        task_id=data.get("task_id", "unknown"),
+                        component=getattr(task, "component", ""),
+                        capability=getattr(task, "capability", ""),
+                        success=data.get("success", False),
+                        exit_code=data.get("exit_code", -1),
+                        duration_seconds=data.get("duration_seconds", 0.0),
+                        error=data.get("error"),
+                        output_path=data.get("output_path", ""),
+                    )
+                )
 
         return results
 
@@ -434,16 +452,18 @@ class ParallelExecutor:
         results: list[TaskResult] = []
         for idx, task in enumerate(group.tasks):
             data = _run_task(task, idx, self.per_task_timeout)
-            results.append(TaskResult(
-                task_id=data.get("task_id", "unknown"),
-                component=getattr(task, "component", ""),
-                capability=getattr(task, "capability", ""),
-                success=data.get("success", False),
-                exit_code=data.get("exit_code", -1),
-                duration_seconds=data.get("duration_seconds", 0.0),
-                error=data.get("error"),
-                output_path=data.get("output_path", ""),
-            ))
+            results.append(
+                TaskResult(
+                    task_id=data.get("task_id", "unknown"),
+                    component=getattr(task, "component", ""),
+                    capability=getattr(task, "capability", ""),
+                    success=data.get("success", False),
+                    exit_code=data.get("exit_code", -1),
+                    duration_seconds=data.get("duration_seconds", 0.0),
+                    error=data.get("error"),
+                    output_path=data.get("output_path", ""),
+                )
+            )
         return results
 
     @staticmethod

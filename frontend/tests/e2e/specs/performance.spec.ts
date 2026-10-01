@@ -401,12 +401,18 @@ test.describe('Memory Usage', () => {
   // test finished, reporting a timeout rather than a leak verdict. The timeout
   // is raised to match the work the test does; the growth assertion
   // (`growth < 0.5`) is unchanged and still decides the result.
-  test('should not have memory leaks on navigation', async ({ page, captureErrors }) => {
+  test('should not have memory leaks on navigation', async ({ page, captureErrors, waitForPageReady }) => {
     test.setTimeout(180_000);
     captureErrors(page);
     
+    // Readiness uses the suite's waitForPageReady fixture (DOM content loaded +
+    // React hydrated) rather than `networkidle`. `networkidle` waits for 500 ms of
+    // network silence, so under a loaded mobile runner with a polling backend it
+    // expires and the test fails with a waitForLoadState timeout — reporting a
+    // readiness failure where the test means to report a memory verdict. The
+    // growth assertion below is unchanged and still decides the result.
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForPageReady(page);
     
     // Get initial memory
     const initialMemory = await page.evaluate(() => {
@@ -416,9 +422,9 @@ test.describe('Memory Usage', () => {
     // Navigate multiple times
     for (let i = 0; i < 5; i++) {
       await page.goto('/transactions');
-      await page.waitForLoadState('networkidle');
+      await waitForPageReady(page);
       await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await waitForPageReady(page);
     }
     
     // Get final memory
@@ -459,10 +465,27 @@ test.describe('Bundle Size', () => {
     });
     
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
+    // Wait for the `load` event, not `networkidle`.
+    //
+    // These totals are accumulated from `response` events, and `page.goto()`
+    // already waits for `load` by default — which fires only after every
+    // subresource, stylesheets and scripts included, has finished loading. So
+    // by this point the measurement is complete and `networkidle` adds nothing
+    // to it.
+    //
+    // What `networkidle` does add is a 30-second surface: it requires 500 ms of
+    // *total* network quiet, so any slow API call, polling request or late
+    // resource on a loaded machine keeps it from settling. That is how
+    // "CSS bundle should be reasonable size" failed in reconcile run
+    // execplan-d3fa20f767d7 with `page.waitForLoadState: Timeout 30000ms
+    // exceeded` — the size assertion was never even reached, so the test
+    // measured nothing and reported only a load-state timeout.
+    //
+    // The assertion is unchanged: JS < 2MB, CSS < 500KB.
+    await page.waitForLoadState('load');
+
     console.log(`Total JavaScript size: ${(totalJSSize / 1024).toFixed(2)}KB`);
-    
+
     // JS bundle should be less than 2MB (reasonable for a Next.js app)
     expect(totalJSSize).toBeLessThan(2 * 1024 * 1024);
   });
@@ -483,10 +506,13 @@ test.describe('Bundle Size', () => {
     });
     
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
+    // Same reasoning as the JavaScript bundle test above: `load` is the correct
+    // and sufficient precondition for a stylesheet-byte measurement, and
+    // `networkidle` only added a 30-second flake surface.
+    await page.waitForLoadState('load');
+
     console.log(`Total CSS size: ${(totalCSSSize / 1024).toFixed(2)}KB`);
-    
+
     // CSS bundle should be less than 500KB
     expect(totalCSSSize).toBeLessThan(500 * 1024);
   });

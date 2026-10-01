@@ -67,8 +67,23 @@ class TestCertificationRepeatability:
                 assert isinstance(plan_id, str) and len(plan_id) > 0
                 assert isinstance(plan_id2, str) and len(plan_id2) > 0
 
+    @pytest.mark.timeout(180)
     def test_no_forbidden_nondeterminism(self) -> None:
-        """Health status should be OPERATIONAL in all runs."""
+        """Health status should be OPERATIONAL in all runs.
+
+        Test budget: this is the only test in the file that runs
+        ``runtime.verify doctor`` three times, and one doctor run measures
+        ~11 s on a 4-core workstation, so the test measures 34.1 s. The suite
+        budget in ``run_runtime_verification.sh`` is ``--timeout=30`` — below
+        the work the test must do — so the Runtime Verification gate's colour
+        was decided by host CPU speed rather than by correctness: it passed on
+        GitHub's runners and failed here at exactly 30.0 s on every run. The
+        3x comparison, the three subprocesses and their individual
+        ``run_verify(..., timeout=30)` bounds are unchanged; only this test's
+        outer budget is raised, to the same 180 s bound the rest of the suite
+        already uses for multi-invocation probes. ``test_doctor_consistent_across_runs``
+        (2 runs) keeps the suite-wide 30 s budget.
+        """
         results = [self._run_doctor() for _ in range(3)]
         for r in results:
             assert r["exit_code"] == 0, f"Doctor failed: {r}"

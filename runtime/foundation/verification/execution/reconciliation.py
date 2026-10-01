@@ -155,9 +155,11 @@ def reconcile(
     aggregate = _compute_labelled_aggregate(
         tuple(components), population, freshness_authority=freshness_authority
     )
-    certifiable = all(
-        c.source not in ("invalidated", "no_evidence") for c in components
-    ) and aggregate is not None and aggregate.denominator > 0
+    certifiable = (
+        all(c.source not in ("invalidated", "no_evidence") for c in components)
+        and aggregate is not None
+        and aggregate.denominator > 0
+    )
     rationale = (
         f"Reconciled {len(components)} component(s) from plan "
         f"{plan.plan_id!r} against population {population.population_id!r}. "

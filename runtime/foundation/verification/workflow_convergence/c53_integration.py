@@ -4,6 +4,7 @@ M9-C54 — C53 integration checks (Q14).
 Standalone module that verifies the workflow/CI layer does not break
 the C53 generation chain without depending on workflow inventory.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

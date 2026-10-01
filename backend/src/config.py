@@ -85,6 +85,26 @@ class Settings:
             "LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
 
+    @property
+    def expose_error_details(self) -> bool:
+        """Whether 5xx responses may include a traceback.
+
+        Deliberately separate from ``log_level``. Exposing a traceback to the
+        client is a security decision, not a verbosity one: with it keyed off
+        LOG_LEVEL, a deployment that turns on DEBUG logging for troubleshooting
+        silently starts shipping stack traces — file paths, library versions and
+        sometimes data — to every caller that can trigger an error. Enabling it
+        now requires naming it explicitly.
+
+        Off by default; the traceback is always written to the server log.
+        """
+        return os.getenv("EXPOSE_ERROR_DETAILS", "").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+
     # Validation Configuration
     @property
     def max_upload_size_mb(self) -> int:

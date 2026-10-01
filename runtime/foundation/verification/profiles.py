@@ -131,7 +131,9 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-integration",
         name="Backend integration tests",
         profile="backend",
-        commands=[".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"],
+        commands=[
+            ".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"
+        ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=180,
@@ -261,7 +263,9 @@ _VERIFY_FULL_TASKS = (
         id="full-backend-integration",
         name="Backend integration tests",
         profile="full",
-        commands=[".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"],
+        commands=[
+            ".venv/bin/python -m pytest backend/tests/integration/ -x --tb=short -q"
+        ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=180,

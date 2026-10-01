@@ -7475,3 +7475,378 @@ Certify         -> Final verdict derived from artifacts alone
 - Environmental limitations: 2 (CI env unavailable, no full campaign per governing principle)
 
 **M9-C42.37 CERTIFIED — VERIFICATION SYSTEM OPERATIONALLY INTEGRATED — 82 TESTS PASSING — 14 SCENARIOS VALIDATED — 0 BLOCKERS**
+
+---
+
+## M9 Main Stabilization — Final Convergence
+
+### Starting state
+
+Verification Reconcile was red with two unmapped changed files, and the
+Reconcile gate is not branch-protected. The gate is not a red herring: it is
+the only thing that notices a change resolving to no verification obligation,
+so it was fixed rather than bypassed.
+
+```
+UNMAPPED capabilities require review (2):
+    - frontend:frontend_utility:frontend-shared:verify-mock-sync
+    - frontend:route:frontend-cashflow:cashflow
+```
+
+### Fixed defects
+
+**1. `frontend/scripts/verify-mock-sync.ts` resolved to no capability.**
+Registered against the existing `api-contracts` capability, in both
+`verification.yaml` (authoritative) and `registry.py` (defaults). The script's
+stated purpose is validating that MSW mock handler responses conform to the
+canonical Zod schemas in `frontend/lib/schemas` — the same obligation as that
+capability's existing `api-contract-frontend` requirement ("Frontend contract
+compliance", module `frontend/lib`). Registered as one file, not the whole
+`frontend/scripts` directory: the siblings there are test-metadata and
+parser-debug tooling, not contract obligations.
+
+**2. `frontend/app/platform/diagnostics/page.tsx` resolved to no capability.**
+Registered against the existing `runtime-verification` capability. That
+capability is already the declared owner of the Platform Console: every
+Platform Console hook edge in `runtime/generated/cross-layer-graph.json` is
+`frontend:hook:frontend-platform:* -> runtime-verification (capability,
+depends_on)`, so `frontend/lib/hooks/use-platform-*.ts` already resolved
+there. Only the route layer beneath it was unregistered. Registered
+`frontend/app/platform`.
+
+**3. The cashflow attribution was a fabricated owner.**
+`cross-layer-graph.json` stores absolute file paths while the planner
+normalises to repo-relative, so exact matching never fires and resolution
+falls through to a basename match. `page.tsx` is owned by 19 route
+capabilities; `_find_frontend_capability` returned `matches[0]`, so dict order
+decided that a Platform Console page claimed the cashflow route, and the
+fail-closed gate then blocked on a capability the change has nothing to do
+with. An ambiguous basename now reports no capability: the file is recorded as
+`UNMAPPED:<path>` and judged on its merits — suppressed only when
+independently path-resolved to a registered capability, still blocking when
+it was not. No gate was weakened and no unmapped result was suppressed.
+
+**4. `api-contracts.modules` pointed at a directory that does not exist.**
+`verification.yaml` declared `["backend/src", "frontend/src"]`. `frontend/src`
+is Program 1-4 scaffolding from `c04de0f1`; the frontend now lives in
+`app/`, `lib/`, `components/` and `hooks/`. Because the yaml overrides
+`registry.py`, it silently voided the `frontend/lib` value that commit
+112cc7fd ("Fix module paths: frontend/src -> frontend/lib for api-contracts
+capability") had added to `registry.py` — that fix had only ever reached half
+its intended targets. Both authorities now carry the same value. No effect on
+this change set (no `frontend/lib` file is in it), so it cannot have changed
+this run's plan.
+
+**5. Two runtime self-verification tests were budgeted below their own work.**
+`run_runtime_verification.sh` runs `pytest runtime/tests/ -q --timeout=30`.
+`test_scenario_15_ci_equivalent_execution` executes a full
+`pytest backend/tests/invariants` as a subprocess (30.2 s measured here), and
+`test_no_forbidden_nondeterminism` runs `runtime.verify doctor` three times
+(~11 s each). Both tests measure 37.3 s and 34.1 s in isolation on a 4-core
+workstation, so the Runtime Verification gate's colour was decided by host CPU
+speed rather than by correctness: green on GitHub's runners, red here on every
+run — twice as a `proc.wait` timeout at 180 s, once as a `pytest-timeout` at
+exactly 30.0 s. Each test now carries `@pytest.mark.timeout(180)`, the same
+bound the inner pipeline already uses and one already used elsewhere in the
+suite. The 3x comparison, the subprocesses, their individual
+`run_verify(..., timeout=30)` bounds, every assertion, and the suite-wide 30 s
+budget for the other 2522 tests are unchanged. No coverage, mutation or
+regression threshold was touched.
+
+**6. `dashboard.spec.ts` asserted on a fixed 500 ms sleep.** "should trigger
+upload on button click" clicked the Upload button, slept 500 ms, then checked
+whether `?upload=true` or a dialog was present. The handler is
+`router.push('?upload=true')` — a client-side route change resolved through an
+RSC fetch — so a fixed sleep is a race, not an assertion. It failed inside the
+reconcile with `Expected: true / Received: false` while the identical test
+passed in the `mobile-chrome` project in the very same run. The condition is
+unchanged and is now polled to a bounded 15 s, well inside the spec's 30 s
+global timeout.
+
+### KNOWN DEFECT — NOT FIXED IN THIS PASS (recorded, non-blocking)
+
+**Platform route over-match in `_classify_change`.** The route branch of
+`CapabilityResolver._classify_change` matches a frontend route to a capability
+with `feature in cap_id`, where `feature` is the first path segment. For a
+file under `frontend/app/platform/...`, `feature` is `"platform"`, which is a
+substring of all 23 `frontend:route:frontend-platform:*` capabilities — and
+also of any other capability id containing that substring. One changed Platform
+Console page therefore claims all 23 platform routes as directly affected,
+inflating the blast radius and scheduling obligations that the change does not
+touch. This is a *separate* defect from the fabricated cashflow owner (fix 3
+above): it affects `direct_caps`, not the planner's attribution, and the two
+have different consequences — the cashflow owner was a wrong capability, this
+one is a right-but-over-broad set.
+
+It does not affect this change set's certification: the affected set is a
+superset that already contains the correct owner, so every obligation it
+schedules is one that should run anyway, and the unmapped gate is evaluated
+from the planner's `unmapped_blast_capabilities`, not from `direct_caps`. It
+was left unrepaired rather than redesigned, because repairing it means
+reworking how route paths are matched against capability ids — planner
+architecture, explicitly out of scope for this pass. A correct repair would
+match on path segments (`route_path in cap_id` already does this) and drop the
+substring test entirely.
+
+### Verification boundary
+
+Two residual local-only failures are CPU-speed boundaries, not product defects,
+and were not hidden:
+
+- Playwright console/dashboard specs have wall-clock waits; they passed
+  28/28 in isolation and are green in the dedicated CI Playwright workflow.
+  Locally `retries: 0` (CI: 2), so a contention-induced overrun is final.
+- `test_doctor_consistent_across_runs` (2 doctor runs) measures 22.7 s against
+  the 30 s suite budget — 76% utilisation, and the next test in that file to
+  cross it. Left at the suite-wide budget deliberately; recorded here as a
+  watch item.
+
+Both are pre-existing and unrelated to the capability-mapping fixes: they
+reproduced identically on the baseline run taken before any change.
+
+### Second convergence pass — three further gate-blocking defects
+
+The first pass cleared the unmapped gate (`unmapped 2 -> 0`) but the
+reconcile still went red. Each failure below was reproduced and diagnosed, not
+worked around.
+
+**7. Two runtime tests budgeted below their own work** — covered as fix 5
+above. Confirmed by isolated measurement (37.3 s and 34.1 s against a 30 s
+suite budget) and re-verified green after the fix, at 40.6 s and 33.8 s.
+
+**8. The Platform Console readiness wait contradicted the spec's own budget.**
+`platform-c67.2.spec.ts` justifies `test.describe.configure({ timeout: 120_000 })`
+on the grounds that a console page resolves six API-backed queries and "on a
+loaded CI runner that legitimately exceeds the 30 s global default". But the
+binding constraint was never that budget — it was
+`waitForSelector(CONSOLE_RESOLVED, { timeout: 30_000 })`, still pinned to the
+global default. The declared 120 s could therefore never take effect, and a
+page needing 31 s to resolve failed with a bare
+`page.waitForSelector: Timeout 30000ms exceeded`. The readiness wait now has
+its own budget of 90 s — the same justification, still inside the 120 s test
+budget, with navigation and the title-bar probe left at 30 s. 28/28 pass.
+
+**9. A property test demanded changes that cannot exist.**
+`test_simulate_floating_rate_schedule_rate_application` failed inside the
+reconcile with `adjust_emi at month 2 with rate 501 did not change EMI or
+interest (was 33612, now 33612)`. The engine is correct in both situations the
+test hit, and both were verified directly:
+
+- The guard compared `change.new_rate_bps != initial_rate` while the loop
+  applies changes cumulatively, so from the second change on the rate in force
+  is the previous change's rate, not the initial one. A change repricing to the
+  rate already applied is a genuine no-op; the test demanded a difference.
+  The reported counterexample is that case exactly: interest of 279 paise on
+  an opening balance of 66806 paise is 501 bps to the paisa, so 501 bps was
+  already in force.
+- Rows are integer paise, so a 1 bps repricing on the smallest principal the
+  strategy generates (₹1,000) moves interest by 0.83 paise and rounds away.
+  A 500 → 501 bps change leaves every field of every row bit-identical, so
+  "must change the EMI" is unfalsifiable there, not stronger.
+
+Verified before changing anything: over 52,080 (principal, rate, tenure, month,
+new_rate) combinations spanning the strategy's space, **every** rate change of
+at least 50 bps is observable and there is no silent no-op. So the engine
+applies material repricings correctly and the assertion was unsound. The
+strategy now draws each change as a delta from the rate actually in force,
+never smaller than 50 bps, with a direction guaranteed to have that much
+headroom (a naive sign flip generates a negative rate when the delta is wider
+than the headroom on both sides — caught by the property itself). The
+assertion compares against the rate in force and accepts a difference anywhere
+in the recomputed schedule, so it is now strictly stronger than the single
+month, two-field check it replaces. Green across the stored Hypothesis database
+and five fresh seeds.
+
+### Environment boundaries recorded, not hidden
+
+- **The local symbol cache had grown to 100 MB** (396 files, `indent=2`).
+  `SymbolExtractor()` loads and re-serialises the whole file on construction,
+  so `test_symbol_resolution_accuracy.py` was blowing the 30 s per-test budget
+  purely on cache I/O. The cache is gitignored
+  (`.gitignore:183 runtime/generated/**/symbol-cache.json`) and rebuilt on
+  demand; removing it took those tests from >30 s (failing) to 0.13 s
+  (passing) and the cache back to 2.4 kB. The scalability defect behind that
+  growth is real and is recorded, not fixed — it is symbol-resolver
+  architecture.
+- **The frontend obligation's 360 s ceiling** is `2 × estimated_duration`
+  (180 s declared). Measured at 249 s wall clock for lint + typecheck + build +
+  1367 vitest tests, i.e. 69% of the ceiling. The one run that exceeded it
+  coincided with the machine under memory pressure (4.0 GiB used of 7.6 GiB,
+  2.8 GiB swap in use, the kernel logging "Under memory pressure, flushing
+  caches" continuously) while the 100 MB cache above was being read and
+  rewritten by concurrent processes. Relieving that returned the task to 249 s.
+  No timeout was changed.
+
+---
+
+## M9 Stabilization — Convergence Record and Post-Merge Refactor Backlog
+
+Final state: `Verification Reconcile = PASS`, `unmapped = 0`, all 13 GitHub
+workflows green, no threshold weakened, no gate bypassed.
+
+### Diagnostic infrastructure added (why the failures were findable at all)
+
+The intermittent failures in this pass were not diagnosable from the evidence
+the verification runtime produced. Two gaps were closed, both minimal:
+
+1. **Task logs are streamed, not buffered.** `_execute_shell_task` used
+   `subprocess.run(capture_output=True)`, so a task's log file stayed 0 bytes
+   for the whole run and received its contents only after the child exited. If
+   the orchestrator was interrupted or the child killed, the evidence for a
+   failing task was nothing at all — which is exactly what happened to reconcile
+   run `execplan-d210b2f3ea52`, where all 20 task logs were zero bytes. It now
+   runs the child in its own session with reader threads flushing per line, so a
+   kill, a signal or an orchestrator crash still leaves everything produced up to
+   that instant.
+2. **Per-test progress evidence.** `runtime/foundation/verification/pytest_progress.py`
+   records each test's start and each setup/call/teardown report into an
+   append-only JSONL stream plus an atomically-replaced state file, wired into
+   `runtime/tests/conftest.py` and `backend/conftest.py` behind a guarded import.
+   On SIGKILL mid-run the state file named
+   `test_m9_c50_operational_validation.py::...::test_scenario_15_ci_equivalent_execution`
+   as `last_started_test` with the previous test as `last_completed_test` — the
+   failing test identified immediately, with no re-run.
+3. **Termination classification.** A record now distinguishes EXIT_ZERO /
+   EXIT_NONZERO / WRAPPER_TIMEOUT / SIGNAL_TERMINATION / INFRASTRUCTURE, and
+   when the command ran pytest it names the inner cause
+   (TEST_ASSERTION_FAILURE / TEST_TIMEOUT / COLLECTION_OR_INTERNAL_ERROR) and
+   lists the failing nodeids. This is what turned "runtime suite failed" into
+   "14 of 15 failures were test timeouts inside `env._version`".
+4. **Workflow artifact upload.** The reconcile workflow uploaded
+   `evidence/`, `engineering-history.json` and `verification-cache.json`, but not
+   `m9-c49/logs/`. A run reporting `Result: PASS` alongside
+   `exec-0009 failed 229.32s` was therefore undiagnosable. All three streams are
+   now uploaded.
+
+### Known observation, not fixed (non-mandatory by design)
+
+Reconcile run `36868931034` (CI, SHA `460df5bd`): `Result: PASS`, 11/11
+obligations, 7 pass / 3 skipped escalations / 1 failed. The failure is
+`exec-0009`, the non-mandatory whole-repo coverage measurement
+(`verify.py measurement coverage .`): `execution_status: FAIL`,
+`completion_status: INFRASTRUCTURE_FAILURE`, `failure_classification:
+infrastructure`, 226.61 s. The system behaved correctly — the record carries
+`is_authoritative: false` and `may_certification_consume: false`, so incomplete
+coverage evidence was refused rather than consumed, and certification proceeded on
+the remaining authoritative measurements. The underlying infrastructure cause on
+the CI runner is not yet diagnosed and is deliberately left open rather than
+guessed at.
+
+### CodeQL alerts on PR #7 — assessment
+
+All three are pre-existing on `main` (every open alert shares the single
+`2026-09-26T11:12:47Z` analysis timestamp) and none is in a file this
+stabilization touched. They are reported as "new in this pull request" only
+because the diff covers 3,281 files; CodeQL's own annotation says so.
+
+1. **high — `py/clear-text-logging-sensitive-data`,
+   `backend/src/extraction/metadata_extractor.py:884`.** False positive. The
+   value is passed through `_redact_for_display()`, which recursively masks
+   `_SENSITIVE_KEYS` while preserving structure, and the statement is inside the
+   `if __name__ == "__main__":` CLI block — a developer entry point, not a
+   service log path. No change made; altering correct code to satisfy the rule
+   would be the wrong trade.
+2. **high — `py/path-injection`, `backend/src/routers/import_router.py:31`.**
+   False positive. The flagged expression is `candidate = UPLOAD_DIR / safe_name`
+   where `safe_name = Path(filename).name`, and the very next statement rejects
+   any escape: `if candidate.resolve().parent != UPLOAD_DIR.resolve(): raise
+   HTTPException(400)`. The module docstring documents this as the single
+   containment rule for every handler. No change made.
+3. **medium — `js/identity-replacement`,
+   `frontend/app/platform/diagnostics/page.tsx:389`.** **Genuine and fixed.**
+   `categoryColor.replace('text-', 'text-')` replaced a string with itself — a
+   leftover no-op. Removed; `categoryColor` is now passed to `cn()` as-is.
+   `tsc --noEmit` clean, `eslint` clean (6 pre-existing `no-explicit-any`
+   warnings elsewhere in the file, untouched).
+
+### Post-merge refactor backlog — from the four audits
+
+Recorded here rather than acted on: this stabilization's mandate is a green
+merge, and the runtime test suite is scheduled for a full refactor on the back
+of these findings. Ordered by measured value.
+
+**A. The suite is ~63% duplicated work in 9.9% of its files.** 15 of 152 modules
+account for 1,135 s of a ~1,800 s run. The dominant cost is *recursive nested
+pytest*: `test_m9_c55.py:950/125/497` and `test_m9_c53.py:671/695/719`
+re-execute modules the outer run already executed — 386.66 s, 34% of the entire
+suite. The fix is to assert the gate functions in-process instead of
+re-running whole modules through subprocesses.
+
+**B. `ExecutionOrchestrator.build_execution_plan` is unmemoised.** 3.3–4.4 s per
+call, 23 call sites in `runtime/tests` alone, ~85–100 s total, with no
+warm-up benefit. A memo keyed on `(repo_fingerprint, frozenset(changed_files))`
+is the single highest ratio of saving to diff size in the whole audit.
+
+**C. Nine idempotent subprocess spawns cost ~139 s.** `runtime.verify doctor`
+and `plan` are re-spawned 7 times across `test_m9c66_repeatability.py` and
+`test_m9c57_verification_self_contract.py` at ~10.5 s each, plus an
+`npx eslint --version` cold start. A session-scoped fixture for `doctor`/`plan`
+collapses 9 spawns to 3.
+
+**D. Duplicate source of truth: `runtime/tests/audit_final_freeze.py` is a
+byte-clone of `test_m9_c50_stop_gate9_failure_modes.py`** — 1,262 vs 1,263
+lines, differing by exactly one added `sys.path.insert`. It is not collected by
+pytest (no `test_` prefix), so it is a 1,262-line mirror that no fix to the
+collected copy will ever reach.
+
+**E. Tests that depend on accumulated workspace state.** This caused real
+damage in this pass: five `test_m9_c49.py` scenarios assert the
+stale-evidence → revalidation → authorization chain, whose precondition was that
+the on-disk mutation evidence *is* stale. That held only when nothing had
+recently written an authoritative record, so the assertions flipped with
+workspace history. Fixed hermetically here; the class remains. Also identified:
+tests that read CWD-relative `runtime/generated/...` artifacts (proven to flip
+pass↔fail on CWD alone with zero code change), a test that rewrites the real
+tracked `runtime/foundation/verification/verification.yaml` in place with a
+`coverage_threshold: 999` window (a process kill inside the window leaves the
+production config corrupt — the only finding that can permanently damage the
+repo), and a test whose `EvidenceRetention().cleanup()` targets the real
+`runtime/generated/` and would `rmtree` certification evidence the moment any
+`m9-cXX` directory crosses 90 days.
+
+**F. Duplicated test parameters, 23 groups.** Highest drift risk: property-test
+domain bounds declared 36 times across 6 loan files (identical today, one edit
+from diverging) and 13 times across credit-card files where
+`MAX_INTEREST_RATE_BPS` is **already** 3,600 in `test_emi_properties.py` and
+4,800 in `test_interest_properties.py` for the same engine. Also: 222 hard-coded
+`max_examples` values that bypass `HYPOTHESIS_PROFILE` entirely; 46 hand-computed
+`parents[n]` repo-root depths, one of which (`test_ai_orchestrator_run_id_containment.py:24`)
+already resolves to the *parent of the repo root*; 5 divergent `run_verify`
+wrappers with 2 different default timeouts and 3 different interpreter-selection
+strategies; and 4 sites that pass raw `os.environ` to children instead of the
+existing `env.child_process_env()`.
+
+**G. Naming and regroup — 139 files, 6 milestone dialects, and a real
+reference hazard.** `pyproject.toml` already registers 11 verification-kind
+markers and `backend/tests` already encodes kind in the directory; only
+`runtime/tests` encodes milestone in the filename, and 150 of 152 files use no
+registered marker at all. A validated old→new mapping (0 duplicate targets, 0
+basename collisions) exists for all 139. Critically: **the reconcile gate is
+inert for this tree** — all 154 `runtime/tests` paths resolve to zero
+capabilities, before and after any rename, so the gate neither constrains nor
+protects the rename. The real hazards are string references and `parents[N]`
+depth: 8 files are hard blockers with 30 reference sites (a `G25` certification
+gate does `.exists()` on them), and 21 files compute the repo root as
+`parents[2]`, which silently becomes `runtime/` the moment they are moved into a
+subdirectory. There is also a `startswith("runtime/tests/test_m9_c50")` prefix
+filter in two files that would silently drop the audit's scope from 13 files to
+1 with no error.
+
+**H. Known defects recorded, not fixed.**
+- `Classify_change`'s route branch matches with `feature in cap_id`, so one
+  changed Platform Console page claims all 23 platform routes. Separate from the
+  fabricated cashflow owner fixed earlier: the right owner in an over-broad set,
+  so it only inflates the blast radius. Repair means reworking route matching
+  against capability ids — planner architecture.
+- `TypeScriptSymbolResolver` still reads its cache with no mtime validation at
+  all, and holds two cache generations in one module.
+- The Python symbol cache is still read-modify-write with no locking: two
+  extractors built before either extracts lose one entry (reproduced). Bounded
+  in a strictly sequential run, unsafe under `xdist`.
+- `config_loader._load_yaml` is an `lru_cache(maxsize=1)` with no mtime in the
+  key, so any call with a different path evicts the no-arg entry and a rewritten
+  config is served stale (reproduced).
+- `networkidle` appears 84 times across 11 Playwright specs and is the largest
+  remaining flake surface in the E2E suite.
+- `test_doctor_consistent_across_runs` measures 22.7 s against the 30 s suite
+  budget — 76% utilisation, and the next test in that file to cross it.

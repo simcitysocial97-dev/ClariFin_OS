@@ -8,5 +8,6 @@ def __getattr__(name: str):
         from runtime.foundation.verification.executor_pipeline import (  # noqa: PLC0415
             ADAPTERS as _adapters,
         )
+
         return _adapters
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

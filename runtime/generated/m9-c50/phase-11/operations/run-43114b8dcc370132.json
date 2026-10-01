@@ -1,0 +1,17 @@
+{
+  "run_id": "43114b8dcc370132",
+  "timestamp": "2026-09-25T18:01:43.592197+00:00",
+  "repository_sha": "ce63c369568cb622498731702bda4a5ce41d8d19",
+  "scenario": "unchanged_repository",
+  "changed_files": [],
+  "resolved_capabilities": [],
+  "obligations": [],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "no_work_required",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

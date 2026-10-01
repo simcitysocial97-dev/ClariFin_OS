@@ -50,14 +50,24 @@ class EngineeringHealthReport:
         # run data. It answers: "Is the framework intact right now?"
         lines.append("## Current Framework Health")
         lines.append("")
-        lines.append("These dimensions describe the **operational state of the framework**.")
-        lines.append("They are computed from the live codebase, not from historical runs.")
+        lines.append(
+            "These dimensions describe the **operational state of the framework**."
+        )
+        lines.append(
+            "They are computed from the live codebase, not from historical runs."
+        )
         lines.append("")
         lines.append("### Framework Integrity")
         lines.append("- Status: OPERATIONAL")
-        lines.append("- Canonical command surface: coherent (9 operations, 7 inspect queries)")
-        lines.append("- Authority chain: CLI → ControlPlane → CapabilityRegistry → Planner → Executor → Measurement → Evidence")
-        lines.append("- Migration map: active (52 deprecated tokens routed through single canonical path)")
+        lines.append(
+            "- Canonical command surface: coherent (9 operations, 7 inspect queries)"
+        )
+        lines.append(
+            "- Authority chain: CLI → ControlPlane → CapabilityRegistry → Planner → Executor → Measurement → Evidence"
+        )
+        lines.append(
+            "- Migration map: active (52 deprecated tokens routed through single canonical path)"
+        )
         lines.append("")
         lines.append("### Data Freshness")
         lines.append("- Last framework check: live")
@@ -67,8 +77,12 @@ class EngineeringHealthReport:
 
         lines.append("## Historical Execution Statistics")
         lines.append("")
-        lines.append("These dimensions describe **past verification runs**. They answer:")
-        lines.append("'How have verification runs behaved over time?' This is NOT framework health.")
+        lines.append(
+            "These dimensions describe **past verification runs**. They answer:"
+        )
+        lines.append(
+            "'How have verification runs behaved over time?' This is NOT framework health."
+        )
         lines.append("")
 
         lines.append("## Verification Success")

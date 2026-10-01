@@ -24,14 +24,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 def test_semantic_blast_radius():
     """Verify blast radius computes financial concepts for engine changes."""
-    from runtime.foundation.verification.blast_radius import BlastRadiusEngine  # noqa: PLC0415
+    from runtime.foundation.verification.blast_radius import (
+        BlastRadiusEngine,
+    )  # noqa: PLC0415
 
     engine = BlastRadiusEngine()
-    contract = engine.compute(
-        explicit_files=["backend/src/engines/loan_engine/emi.py"]
-    )
+    contract = engine.compute(explicit_files=["backend/src/engines/loan_engine/emi.py"])
 
-    assert contract.directly_affected_capabilities, "Should detect affected capabilities"
+    assert (
+        contract.directly_affected_capabilities
+    ), "Should detect affected capabilities"
     assert contract.affected_components, "Should detect affected components"
     assert "loan-engine" in contract.directly_affected_capabilities
 
@@ -90,7 +92,10 @@ def test_semantic_assertion_failure_format():
         assert parsed is not None
         assert parsed.invariant_id == "closure_requires_zero_balance"
         assert parsed.remediation is not None
-        assert "payment" in parsed.remediation.lower() or "rounding" in parsed.remediation.lower()
+        assert (
+            "payment" in parsed.remediation.lower()
+            or "rounding" in parsed.remediation.lower()
+        )
 
 
 def test_semantic_parser_no_match():
@@ -337,7 +342,10 @@ def test_diagnostic_q10_financial_semantics():
     }
 
     report = agent.diagnose(record)
-    assert report.q10_financial_diagnosis.get("invariant_violated") == "closure_requires_zero_balance"
+    assert (
+        report.q10_financial_diagnosis.get("invariant_violated")
+        == "closure_requires_zero_balance"
+    )
     assert report.q11_minimal_fix.get("invariant_id") == "closure_requires_zero_balance"
 
 

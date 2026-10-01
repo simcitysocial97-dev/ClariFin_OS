@@ -41,7 +41,13 @@ class TestStaleEvidenceResistance:
         plan_id_1 = data1.get("plan_id", data1.get("set_id", ""))
 
         # Create a temporary change
-        marker = REPO_ROOT / "runtime" / "foundation" / "verification" / "_c66_test_marker.py"
+        marker = (
+            REPO_ROOT
+            / "runtime"
+            / "foundation"
+            / "verification"
+            / "_c66_test_marker.py"
+        )
         marker.write_text("# C66 test marker\n")
         try:
             r2 = run_verify("plan", "--json")
@@ -70,6 +76,7 @@ class TestStaleEvidenceResistance:
                 if "Capabilities:" in line:
                     # Extract just the number after "Capabilities:"
                     import re
+
                     match = re.search(r"Capabilities[:\s]*(\d+)", line)
                     if match:
                         counts.append(int(match.group(1)))
@@ -79,6 +86,7 @@ class TestStaleEvidenceResistance:
     def test_run_id_deterministic_for_same_command(self) -> None:
         """Same command+args should produce deterministic run_id in forensics module."""
         from runtime.foundation.verification.m9_c66_forensics import run_id_for
+
         id1 = run_id_for("plan", [])
         id2 = run_id_for("plan", [])
         assert id1 == id2
@@ -86,11 +94,13 @@ class TestStaleEvidenceResistance:
     def test_different_commands_have_different_run_ids(self) -> None:
         """Different commands should produce different run_ids."""
         from runtime.foundation.verification.m9_c66_forensics import run_id_for
+
         assert run_id_for("plan", []) != run_id_for("doctor", [])
 
     def test_commit_sha_matches_head(self) -> None:
         """Recorded commit SHA should match git HEAD."""
         from runtime.foundation.verification.m9_c66_forensics import git_head
+
         recorded, _, _ = git_head()
         r = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -122,10 +132,13 @@ class TestFalseEvidenceDetection:
     def test_checksum_mismatch_detected(self) -> None:
         """Evidence with wrong checksum should be flagged."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            f.write(json.dumps({"run_id": "test", "status": "pass", "checksum": "wrong"}))
+            f.write(
+                json.dumps({"run_id": "test", "status": "pass", "checksum": "wrong"})
+            )
             path = f.name
         try:
             import hashlib
+
             expected = hashlib.sha256(f.name.encode()).hexdigest()[:16]
             # The checksum is intentionally wrong
             assert expected != "wrong"
@@ -135,6 +148,7 @@ class TestFalseEvidenceDetection:
     def test_cross_commit_evidence_rejected(self) -> None:
         """Evidence from different commit should not match current."""
         from runtime.foundation.verification.m9_c66_forensics import git_head
+
         current_commit, _, _ = git_head()
         fake_commit = "a" * 40
         assert current_commit != fake_commit
@@ -154,6 +168,7 @@ class TestIdentityConsistency:
     def test_run_id_format(self) -> None:
         """Run IDs should be deterministic hex strings."""
         from runtime.foundation.verification.m9_c66_forensics import run_id_for
+
         rid = run_id_for("test", ["--flag"])
         assert len(rid) == 16
         int(rid, 16)  # Should be valid hex
@@ -161,6 +176,7 @@ class TestIdentityConsistency:
     def test_fingerprint_is_deterministic(self) -> None:
         """Fingerprints should be deterministic for same input."""
         from runtime.foundation.verification.m9_c66_forensics import fingerprint
+
         f1 = fingerprint("same-input")
         f2 = fingerprint("same-input")
         assert f1 == f2

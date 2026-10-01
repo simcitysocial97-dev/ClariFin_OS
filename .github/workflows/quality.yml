@@ -1,23 +1,63 @@
 # .github/workflows/quality.yml
 #
-# PURPOSE: Fast quality gate (lint, format, typecheck, unit, architecture, meta).
-# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
+# PURPOSE: Repository and static/application quality.
+# RESPONSIBILITY: Run `runtime verify quick` — the canonical static quality
+#   profile: ruff, black, mypy-strict, backend unit tests.
 # BLOCKS:  Merging if it fails.
 #
-# Rule 1: No engineering logic duplicated here. Rule 2: exactly one command.
-# Rule 3: shared artifacts generated once by bootstrap-runtime. Rule 8: delegate
-# to runtime/verify.py. Rule 9: append `verify.py status` to the job summary.
+# WHY THIS WORKFLOW EXISTS, AND WHY IT DOES NOT RUN `verify check`
+#
+# This workflow originally owned lint, format, unit and coverage. Commit
+# b326f08e ("Program 11 — Engineering Platform Closure") replaced those steps
+# with a single `runtime/verify.py quick` call, and later C70 work widened it to
+# `runtime verify check` — change-boundary capability verification. That is a
+# different responsibility, and verification-reconcile.yml already owns it.
+#
+# Running `verify check` here meant the same expensive repository-level runtime
+# verification executed twice for the same event (once here, once in
+# verification-reconcile), and it displaced the static checks rather than adding
+# to them.
+#
+#   Quality Gate          = repository/static/application quality (this file)
+#   Verification Reconcile = runtime change-boundary verification + reconciliation
+#
+# The split is by cost class as well as by subject: the checks here are static
+# and total (they read the whole tree regardless of the change boundary), while
+# verification is scoped to the boundary and is the expensive one.
+#
+# `quick` is the repository's existing definition of quality. Nothing here is a
+# replacement implementation: every command comes from the quick profile in
+# runtime/foundation/verification/profiles.py, so local and CI execute the same
+# checks and a profile change takes effect here automatically.
 
 name: Quality Gate
 
 on:
   push:
     branches:
-      - "**"
+      - "**"          # Every branch, every push
+    paths:
+      - "backend/**"
+      - "runtime/**"
+      - "frontend/**"
+      - "tools/**"
+      - "scripts/**"
+      - ".github/workflows/quality.yml"
+      - ".github/actions/**"
+      - "pyproject.toml"
   pull_request:
     branches:
       - main
       - develop
+    paths:
+      - "backend/**"
+      - "runtime/**"
+      - "frontend/**"
+      - "tools/**"
+      - "scripts/**"
+      - ".github/workflows/quality.yml"
+      - ".github/actions/**"
+      - "pyproject.toml"
   workflow_dispatch:
 
 concurrency:
@@ -31,7 +71,8 @@ jobs:
   quality:
     name: Quality Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 20
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -43,66 +84,56 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Setup Node.js runtime
+      # ruff, black, mypy-strict, backend unit tests. Each check reports through
+      # the runtime so a failure names the task and its output, not a bare
+      # non-zero exit.
+      - name: Static quality checks (canonical quick profile)
+        shell: bash
+        run: |
+          .venv/bin/python -m runtime.verify quick
+
+      - name: Frontend typecheck and lint
         uses: ./.github/actions/setup-node-runtime
         with:
           node-version: "24"
-          working-directory: "frontend"
 
-      - name: Run quality verification (canonical check)
-        env:
-          VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
-          VERIFICATION_HEAD_REF: ${{ github.sha }}
-        run: .venv/bin/python -m runtime.verify check
-
-      - name: Upload shared artifact — cross-layer-map
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: cross-layer-map
-          path: runtime/generated/cross-layer-map.json
-          retention-days: 14
-
-      - name: Upload shared artifact — knowledge-index
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: knowledge-index
-          path: runtime/generated/knowledge-index.json
-          retention-days: 14
-
-      - name: Upload shared artifact — verification-cache
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: verification-cache
-          path: runtime/generated/verification-cache.json
-          retention-days: 14
-
-      - name: Upload shared artifact — engineering-history
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: engineering-history
-          path: runtime/generated/engineering-history.json
-          retention-days: 14
-
-      - name: Upload quality report
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: quality-report
-          path: |
-            runtime/generated/verification-report.md
-            runtime/generated/verification/
-          retention-days: 14
-
-      - name: Upload evidence
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: fast-checks-evidence
-          path: runtime/generated/execution/
-          retention-days: 30
-
-      - name: Job Summary
-        if: always()
-        run: |
-          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+      - name: Frontend static checks (eslint, tsc, vitest)
         shell: bash
+        run: |
+          # Reuses the repository's existing frontend verification script, which
+          # already owns backend startup, phase isolation and evidence
+          # recording. Only the static phases are selected here; the production
+          # build stays with Frontend Verification so the two required workflows
+          # do not each pay for the other's work.
+          FRONTEND_VERIFICATION_PHASES="lint typecheck test" \
+            bash .github/scripts/run_frontend_verification.sh
+
+      - name: Upload Frontend test output
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: quality-frontend
+          path: |
+            frontend/test-results/**
+            frontend/coverage/**
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Runtime status
+        shell: bash
+        run: |
+          # Rule 9: the workflow summary records outcomes rather than the raw
+          # command surface. This is the cheap inspect query — it is not
+          # verification, and running it here does not duplicate
+          # verification-reconcile.yml.
+          .venv/bin/python -m runtime.verify status >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Quality summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Quality Gate"
+            echo ""
+            echo "- static checks: runtime verify quick (ruff, black, mypy, unit)"
+            echo "- frontend: eslint, tsc, vitest via run_frontend_verification.sh"
+          } >> "$GITHUB_STEP_SUMMARY"

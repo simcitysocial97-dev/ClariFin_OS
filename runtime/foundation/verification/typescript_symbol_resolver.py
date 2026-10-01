@@ -85,12 +85,22 @@ class TypeScriptSymbol:
             end_line=data.get("end_line") or data.get("endLine") or 0,
             parent_class=data.get("parent_class") or data.get("parentClass"),
             exported=data.get("exported", False),
-            is_default_export=data.get("is_default_export") or data.get("isDefaultExport") or False,
-            is_react_component=data.get("is_react_component") or data.get("isReactComponent") or False,
+            is_default_export=data.get("is_default_export")
+            or data.get("isDefaultExport")
+            or False,
+            is_react_component=data.get("is_react_component")
+            or data.get("isReactComponent")
+            or False,
             is_hook=data.get("is_hook") or data.get("isHook") or False,
-            is_api_client_call=data.get("is_api_client_call") or data.get("isApiClientCall") or False,
-            imported_symbols=data.get("imported_symbols") or data.get("importedSymbols") or [],
-            exported_symbols=data.get("exported_symbols") or data.get("exportedSymbols") or [],
+            is_api_client_call=data.get("is_api_client_call")
+            or data.get("isApiClientCall")
+            or False,
+            imported_symbols=data.get("imported_symbols")
+            or data.get("importedSymbols")
+            or [],
+            exported_symbols=data.get("exported_symbols")
+            or data.get("exportedSymbols")
+            or [],
         )
 
     def to_symbol(self) -> Symbol:
@@ -125,39 +135,103 @@ class TypeScriptSymbolExtractor:
     def __init__(self, cache_path: Path = None, frontend_root: Path = None):
         repo_root = Path(__file__).resolve().parents[3]
         self.frontend_root = frontend_root or repo_root / "frontend"
-        self.cache_path = cache_path or repo_root / "runtime/generated/typescript-symbol-cache/symbol-cache.json"
+        self.cache_path = (
+            cache_path
+            or repo_root / "runtime/generated/typescript-symbol-cache/symbol-cache.json"
+        )
         self.cache = self._load_cache()
-        self._ts_resolver_script = repo_root / "runtime/foundation/verification/typescript_symbol_resolver.ts"
+        self._ts_resolver_script = (
+            repo_root / "runtime/foundation/verification/typescript_symbol_resolver.ts"
+        )
+        self._dirty = False
 
     def _load_cache(self) -> dict:
         if self.cache_path.exists():
             try:
-                return json.loads(self.cache_path.read_text(encoding="utf-8"))
+                cache = json.loads(self.cache_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError) as e:
                 logger.warning(f"Failed to load TypeScript symbol cache: {e}")
+                return {}
+            return self._prune_cache(cache)
         return {}
 
+    def _prune_cache(self, cache: dict) -> dict:
+        """Drop entries that can never be served again.
+
+        This mirrors the Python extractor's pruning. Two classes of entry are
+        dead weight: paths under the system temp directory, whose files are gone
+        before the next run, and paths that no longer exist, whose mtime can
+        never match again. Without pruning this cache grew to 7.8 MB with
+        nothing evicting it, and because `_save_cache` re-serialised the whole
+        file on every extraction, that cost was paid again on every subsequent
+        lookup of any file.
+        """
+        if not cache:
+            return cache
+        temp_dir = Path(tempfile.gettempdir()).resolve()
+        keep: dict = {}
+        for key, entry in cache.items():
+            try:
+                path = Path(key)
+            except (TypeError, ValueError):
+                continue
+            try:
+                if path.is_relative_to(temp_dir):
+                    continue
+            except (OSError, ValueError):
+                pass
+            try:
+                if not path.exists():
+                    continue
+            except OSError:
+                continue
+            keep[key] = entry
+        return keep
+
+    def _is_cacheable(self, resolved: Path) -> bool:
+        """Whether a path belongs in the persistent cache.
+
+        Files under the system temp directory are excluded: their symbols cannot
+        be reused across processes, so persisting them is pure cost.
+        """
+        try:
+            return not resolved.is_relative_to(Path(tempfile.gettempdir()).resolve())
+        except (OSError, ValueError):
+            return True
+
     def _save_cache(self):
+        # Only rewrite when something changed. Rewriting unconditionally
+        # serialised the entire cache on every extraction, including on the
+        # read-only path where nothing had changed at all.
+        if not self._dirty:
+            return
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache_path.write_text(json.dumps(self.cache, indent=2))
+        self._dirty = False
 
     def _run_ts_resolver(self, target_path: Path) -> dict:
         """Run the TypeScript symbol resolver script via npx tsx."""
         repo_root = Path(__file__).resolve().parents[3]
-        target_abs = target_path if target_path.is_absolute() else repo_root / target_path
+        target_abs = (
+            target_path if target_path.is_absolute() else repo_root / target_path
+        )
         frontend_root = repo_root / "frontend"
         ts_resolver_script_abs = repo_root / self._ts_resolver_script
 
         if not ts_resolver_script_abs.exists():
-            raise FileNotFoundError(f"TypeScript resolver script not found: {ts_resolver_script_abs}")
+            raise FileNotFoundError(
+                f"TypeScript resolver script not found: {ts_resolver_script_abs}"
+            )
 
         target_rel_to_repo = target_abs.relative_to(repo_root)
 
         cmd = [
-            "npx", "tsx",
+            "npx",
+            "tsx",
             str(ts_resolver_script_abs),
             str(target_rel_to_repo),
-            "--cache-dir", str(self.cache_path.parent),
+            "--cache-dir",
+            str(self.cache_path.parent),
         ]
 
         env = os.environ.copy()
@@ -217,6 +291,7 @@ class TypeScriptSymbolExtractor:
             "mtime": file_mtime,
             "symbols": [s.to_dict() for s in symbols],
         }
+        self._dirty = True
         self._save_cache()
         return symbols
 
@@ -254,14 +329,17 @@ class TypeScriptSymbolExtractor:
                 return None
             path = Path(path_string)
             result[path] = [
-                TypeScriptSymbol.from_dict(symbol) for symbol in entry.get("symbols", [])
+                TypeScriptSymbol.from_dict(symbol)
+                for symbol in entry.get("symbols", [])
             ]
         if result:
             _DIRECTORY_CACHE[key] = (signature, result)
             return {path: list(symbols) for path, symbols in result.items()}
         return None
 
-    def extract_from_directory(self, directory: Path) -> dict[Path, list[TypeScriptSymbol]]:
+    def extract_from_directory(
+        self, directory: Path
+    ) -> dict[Path, list[TypeScriptSymbol]]:
         """Extract symbols from all TypeScript/TSX files in a directory recursively."""
         cached_result = self._cached_directory_symbols(Path(directory))
         if cached_result is not None:
@@ -275,7 +353,9 @@ class TypeScriptSymbolExtractor:
         for file_data in result_data.get("files", []):
             file_rel = Path(file_data["file"])
             file_abs = repo_root / file_rel
-            symbols = [TypeScriptSymbol.from_dict(s) for s in file_data.get("symbols", [])]
+            symbols = [
+                TypeScriptSymbol.from_dict(s) for s in file_data.get("symbols", [])
+            ]
             result[file_abs] = symbols
 
             file_key = str(file_abs.resolve())
@@ -285,6 +365,7 @@ class TypeScriptSymbolExtractor:
                     "mtime": mtime,
                     "symbols": [s.to_dict() for s in symbols],
                 }
+                self._dirty = True
             except OSError:
                 pass
 
@@ -296,7 +377,9 @@ class TypeScriptSymbolExtractor:
             )
         return result
 
-    def get_symbol_at_line(self, file_path: Path, line_number: int) -> TypeScriptSymbol | None:
+    def get_symbol_at_line(
+        self, file_path: Path, line_number: int
+    ) -> TypeScriptSymbol | None:
         """Find which symbol contains the given line number."""
         symbols = self.extract_from_file(file_path)
         for symbol in symbols:
@@ -329,12 +412,16 @@ class TypeScriptSymbolExtractor:
         if file_path:
             file_key = str(Path(file_path).resolve())
             self.cache.pop(file_key, None)
+            self._dirty = True
             self._save_cache()
         else:
             self.cache.clear()
+            self._dirty = True
             self._save_cache()
 
-    def find_symbol_by_name(self, name: str, directory: Path = None) -> list[TypeScriptSymbol]:
+    def find_symbol_by_name(
+        self, name: str, directory: Path = None
+    ) -> list[TypeScriptSymbol]:
         """Find all symbols with a given name in a directory."""
         search_dir = directory or self.frontend_root
         return [
@@ -348,10 +435,14 @@ class TypeScriptSymbolExtractor:
 class TypeScriptCoverageSymbolMapper:
     """Map test coverage data to TypeScript symbols (function/component/hook)."""
 
-    def __init__(self, coverage_file: Path = Path("frontend/coverage/coverage-final.json")):
+    def __init__(
+        self, coverage_file: Path = Path("frontend/coverage/coverage-final.json")
+    ):
         self.coverage_file = coverage_file
         self.extractor = TypeScriptSymbolExtractor()
-        self.symbol_test_map_path = Path("runtime/generated/typescript-symbol-test-map.json")
+        self.symbol_test_map_path = Path(
+            "runtime/generated/typescript-symbol-test-map.json"
+        )
         self.symbol_test_map = self._load_symbol_test_map()
 
     def _load_symbol_test_map(self) -> dict[str, list[str]]:
@@ -423,7 +514,9 @@ class TypeScriptCoverageSymbolMapper:
             cov_file = Path(tmpdir) / "coverage-final.json"
 
             cmd = [
-                "npx", "vitest", "run",
+                "npx",
+                "vitest",
+                "run",
                 str(test_path),
                 "--coverage",
                 "--coverage.reporter=json",
@@ -467,7 +560,9 @@ class TypeScriptCoverageSymbolMapper:
         if not force_rebuild and self._symbol_test_map_is_valid(test_directory):
             return self._reconstruct_symbol_to_test_map()
 
-        test_files = sorted(test_directory.rglob("*.test.ts")) + sorted(test_directory.rglob("*.test.tsx"))
+        test_files = sorted(test_directory.rglob("*.test.ts")) + sorted(
+            test_directory.rglob("*.test.tsx")
+        )
         if not test_files:
             logger.warning(f"No test files found in {test_directory}")
             return {}
@@ -514,9 +609,7 @@ class TypeScriptCoverageSymbolMapper:
             result[symbol_name] = {Path(tf) for tf in test_files}
         return result
 
-    def _save_symbol_test_map_from_result(
-        self, symbol_to_tests: dict[str, set[Path]]
-    ):
+    def _save_symbol_test_map_from_result(self, symbol_to_tests: dict[str, set[Path]]):
         """Save symbol-to-test map as JSON-serializable dict."""
         flat_map = {}
         for symbol_name, test_files in symbol_to_tests.items():
@@ -524,9 +617,7 @@ class TypeScriptCoverageSymbolMapper:
         self.symbol_test_map = flat_map
         self._save_symbol_test_map()
 
-    def get_coverage_for_symbol(
-        self, symbol_name: str
-    ) -> dict[str, set[str]]:
+    def get_coverage_for_symbol(self, symbol_name: str) -> dict[str, set[str]]:
         """Get which test files cover a specific symbol."""
         return self._reconstruct_symbol_to_test_map().get(symbol_name, set())
 

@@ -1,0 +1,21 @@
+{
+  "run_id": "14379ebdc17d588c",
+  "timestamp": "2026-09-28T08:03:49.662869+00:00",
+  "repository_sha": "ebe3d2e178869075ee3fb8ae1fa16c70de42b464",
+  "scenario": "cache_invalidation",
+  "changed_files": [
+    "test_file.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "cache_invalidated",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": [
+    "content hash mismatch"
+  ]
+}

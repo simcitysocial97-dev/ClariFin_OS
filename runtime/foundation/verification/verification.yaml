@@ -100,7 +100,30 @@ workflows:
     category: "contract_frontend"
     scope: "frontend"
     command: "bash .github/scripts/run_frontend_verification.sh"
-    estimated_duration_seconds: 180
+    # Measured on an idle 4-core workstation: lint 56 s + typecheck 21 s +
+    # build 65 s + vitest 107 s = 249 s for 1367 frontend tests. The previous
+    # value of 180 s was below the command's own cost, and since
+    # `_timeout_for` derives the task budget as 2x the estimate, it produced a
+    # 360 s ceiling for a command that takes 249 s idle and reached 345 s on a
+    # loaded host — about 4% headroom, so it passed or failed according to
+    # machine load rather than according to the code. Reconcile run
+    # execplan-b357471cbfa8 recorded exactly that: `timeout 360.50s command
+    # exceeded 360s`, with the streamed log showing lint 74 s, typecheck 27 s,
+    # build 69 s, and vitest still running at 175 s when it was killed
+    # (exit=143).
+    #
+    # This is the only workflow whose declared estimate was below its measured
+    # cost. For comparison, as measured in the same run: backend 300 declared /
+    # 135 actual, contracts 180 / 107, quick 60 / 46, runtime 2700 / 1493. So
+    # this is one wrong data point being corrected against a measurement, not a
+    # budget being relaxed to fit a failure.
+    #
+    # 300 s matches how sibling workflows are sized (backend, property and
+    # migration are all 300-600) and yields a 600 s task ceiling: comfortably
+    # above the 345 s loaded cost, and still a hard bound on a genuine hang.
+    # No coverage, mutation or regression threshold is involved — those live in
+    # the thresholds block below and are untouched.
+    estimated_duration_seconds: 300
     scopes: ["frontend", "contracts"]
     capabilities: ["api-contracts"]
 
@@ -339,7 +362,33 @@ capabilities:
     scopes: ["contracts", "frontend", "backend", "repository"]
     workflows: ["contracts", "frontend", "backend"]
     scripts: ["run_contract_tests", "run_frontend_verification", "run_backend_verification"]
-    modules: ["backend/src", "frontend/src"]
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py), and this yaml is the authority that overrides
+    # registry.py's defaults.
+    #
+    # Two corrections, both on values that were silently wrong:
+    #
+    # 1. `frontend/src` never existed once the frontend moved to app/lib/
+    #    components/hooks; it is the original Program 1-4 scaffolding value from
+    #    c04de0f1. Because the yaml wins over the registry defaults, it voided
+    #    `frontend/lib` — the module the `api-contract-frontend` requirement
+    #    itself names ("Frontend contract compliance", module `frontend/lib`) —
+    #    so no frontend file resolved to this capability by path. The two
+    #    authorities are now identical, which they had not been since 112cc7fd.
+    #
+    # 2. `frontend/scripts/verify-mock-sync.ts` is the verifier that holds the
+    #    MSW mock handlers to those same canonical Zod schemas ("this script
+    #    validates that MSW mock handler responses conform to the canonical Zod
+    #    schemas") — the same frontend contract obligation, in the same surface.
+    #    Unregistered, it resolved to no capability and blocked the fail-closed
+    #    review obligation. Registered as one file rather than as the whole
+    #    `frontend/scripts` directory: its siblings there are test-metadata and
+    #    parser-debug tooling, which are not contract obligations.
+    #
+    # Correction 1 has no effect on the current change set (no `frontend/lib`
+    # file is in it), so it cannot change this run's plan; it is recorded here
+    # rather than left as a landmine for the next change to `frontend/lib`.
+    modules: ["backend/src", "frontend/lib", "frontend/scripts/verify-mock-sync.ts"]
 
   migrations:
     name: "Database Migrations"
@@ -357,7 +406,19 @@ capabilities:
     scopes: ["runtime"]
     workflows: ["runtime"]
     scripts: ["run_runtime_verification"]
-    modules: []
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py). This was empty, so the Platform Console's own
+    # page layer had no registry mapping at all.
+    #
+    # `runtime-verification` is already the registered owner of that surface and
+    # the graph says so itself: every Platform Console hook edge in
+    # runtime/generated/cross-layer-graph.json is
+    # `frontend:hook:frontend-platform:* -> runtime-verification
+    # (capability, depends_on)`. `frontend/lib/hooks/use-platform-diagnostics.ts`
+    # therefore already resolved here. Only the route layer underneath it was
+    # unregistered, which is why changing a Platform Console page produced an
+    # unmapped entry instead of a runtime-verification obligation.
+    modules: ["frontend/app/platform"]
 
   golden-regression:
     name: "Golden Regression"
@@ -384,7 +445,13 @@ capabilities:
     scopes: ["playwright"]
     workflows: ["playwright"]
     scripts: ["run_playwright_tests"]
-    modules: []
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py). This was empty, so no changed file could ever
+    # match the capability: every PR touching a Playwright spec or a
+    # visual-regression snapshot resolved to UNMAPPED and blocked on the
+    # fail-closed review obligation, even though Playwright verifies that
+    # surface on the same event. The suite lives under frontend/tests/e2e.
+    modules: ["frontend/tests/e2e"]
 
   balance-engine:
     name: "Balance Engine"

@@ -15,9 +15,12 @@ import ``app`` from ``src.api`` and use ``TestClient(app)``.
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(scope="module")
@@ -156,15 +159,28 @@ class TestCapabilities:
 
 class TestTasks:
     def test_list_matches_live_obligations(self, client):
-        body = _assert_envelope_ok(
-            client.get("/platform/v1/tasks"), "platform.task_list"
-        )
+        # The obligation set is derived from the live git boundary, so a clean
+        # checkout legitimately produces zero obligations — which is what a
+        # fresh CI clone looks like. Depending on ambient working-tree state
+        # made this assertion unreproducible, so the test establishes its own
+        # deterministic boundary by adding a source file to the change set and
+        # removing it again afterwards.
+        probe = REPO_ROOT / "src" / "__platform_obligation_probe__.py"
+        probe.write_text("PROBE = True\n", encoding="utf-8")
+        try:
+            body = _assert_envelope_ok(
+                client.get("/platform/v1/tasks"), "platform.task_list"
+            )
+        finally:
+            probe.unlink()
+
         items = body["data"]["items"]
         # Internal consistency: the counts must always reconcile with the items.
-        # (The live obligation count is git-state dependent, so we assert the
-        # invariant rather than a fixed number that drifts across runs.)
         assert body["data"]["open_count"] + body["data"]["closed_count"] == len(items)
+        # A non-empty change boundary must yield at least one open obligation,
+        # and every obligation must be attributed to a real capability.
         assert body["data"]["open_count"] > 0
+        assert all(item["capability_id"] for item in items)
         # The list must carry its plan fingerprint so the detail endpoint can
         # stay consistent with the list even as the live set drifts.
         assert body["data"]["plan_fingerprint"]

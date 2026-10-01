@@ -1,0 +1,24 @@
+{
+  "run_id": "46961b6aee2d35d7",
+  "timestamp": "2026-09-25T10:07:05.447591+00:00",
+  "repository_sha": "5df524bf2b7fd7ee7af857179e1864a3abc08518",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmpdfgn7lt5.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

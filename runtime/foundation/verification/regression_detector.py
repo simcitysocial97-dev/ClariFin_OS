@@ -78,9 +78,7 @@ class RegressionDetector:
         run_file = branch_dir / f"{run_id}.json"
         payload = {
             "run_id": metrics.get("run_id", run_id),
-            "timestamp": metrics.get(
-                "timestamp", datetime.now(UTC).isoformat()
-            ),
+            "timestamp": metrics.get("timestamp", datetime.now(UTC).isoformat()),
             "branch": branch,
             "commit_sha": metrics.get("commit_sha", ""),
             "coverage_pct": float(metrics.get("coverage_pct", 0.0)),
@@ -106,9 +104,7 @@ class RegressionDetector:
         except (json.JSONDecodeError, OSError):
             return []
 
-    def _append_to_index(
-        self, branch: str, run_id: str, timestamp: str
-    ) -> None:
+    def _append_to_index(self, branch: str, run_id: str, timestamp: str) -> None:
         entries = self._load_index(branch)
         entry = {"run_id": run_id, "timestamp": timestamp}
         entries.append(entry)
@@ -120,9 +116,7 @@ class RegressionDetector:
 
     # ── Baseline ─────────────────────────────────────────────────────────────
 
-    def get_baseline_metrics(
-        self, branch: str = "main"
-    ) -> dict[str, Any] | None:
+    def get_baseline_metrics(self, branch: str = "main") -> dict[str, Any] | None:
         """Return the most recent stored run on *branch*, or None."""
         entries = self._load_index(branch)
         for entry in entries:
@@ -171,20 +165,26 @@ class RegressionDetector:
 
         alerts: list[str] = []
 
-        cov_warn = float(get_threshold("regression_thresholds", "coverage_drop_warning", 5))
-        cov_crit = float(get_threshold("regression_thresholds", "coverage_drop_critical", 10))
-        mut_warn = float(get_threshold("regression_thresholds", "mutation_drop_warning", 10))
-        mut_crit = float(get_threshold("regression_thresholds", "mutation_drop_critical", 15))
-        tc_warn = float(get_threshold("regression_thresholds", "test_count_drop_warning", 20))
+        cov_warn = float(
+            get_threshold("regression_thresholds", "coverage_drop_warning", 5)
+        )
+        cov_crit = float(
+            get_threshold("regression_thresholds", "coverage_drop_critical", 10)
+        )
+        mut_warn = float(
+            get_threshold("regression_thresholds", "mutation_drop_warning", 10)
+        )
+        mut_crit = float(
+            get_threshold("regression_thresholds", "mutation_drop_critical", 15)
+        )
+        tc_warn = float(
+            get_threshold("regression_thresholds", "test_count_drop_warning", 20)
+        )
 
         if coverage_delta < -cov_crit:
-            alerts.append(
-                f"CRITICAL: Coverage dropped by {abs(coverage_delta):.1f}%"
-            )
+            alerts.append(f"CRITICAL: Coverage dropped by {abs(coverage_delta):.1f}%")
         elif coverage_delta < -cov_warn:
-            alerts.append(
-                f"WARNING: Coverage dropped by {abs(coverage_delta):.1f}%"
-            )
+            alerts.append(f"WARNING: Coverage dropped by {abs(coverage_delta):.1f}%")
 
         if mutation_delta < -mut_crit:
             alerts.append(
@@ -198,9 +198,7 @@ class RegressionDetector:
         if test_delta < 0 and tc_base > 0:
             pct_drop = abs(test_delta) / tc_base * 100
             if pct_drop > tc_warn:
-                alerts.append(
-                    f"WARNING: Test count dropped by {pct_drop:.1f}%"
-                )
+                alerts.append(f"WARNING: Test count dropped by {pct_drop:.1f}%")
 
         return RegressionReport(
             has_regression=len(alerts) > 0,

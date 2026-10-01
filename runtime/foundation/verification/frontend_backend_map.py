@@ -169,9 +169,7 @@ class FrontendBackendMapper:
 
         self._file_mtimes = cached_mtimes
         raw_map: dict[str, dict] = data.get("consumer_map", {})
-        self._consumer_map = {
-            ep: ConsumerInfo(**info) for ep, info in raw_map.items()
-        }
+        self._consumer_map = {ep: ConsumerInfo(**info) for ep, info in raw_map.items()}
 
     def _persist_cache(self) -> None:
         self._cache_path.parent.mkdir(parents=True, exist_ok=True)

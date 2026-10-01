@@ -49,25 +49,82 @@ def __getattr__(name: str):
     import importlib  # noqa: PLC0415
 
     _MODULE_MAP: dict[str, tuple[str, str | None]] = {
-        "CompletionState": ("runtime.foundation.verification.orchestration.models", "CompletionState"),
-        "NON_PASS_STATES": ("runtime.foundation.verification.orchestration.models", "NON_PASS_STATES"),
-        "PASSING_STATES": ("runtime.foundation.verification.orchestration.models", "PASSING_STATES"),
-        "FailureStage": ("runtime.foundation.verification.orchestration.models", "FailureStage"),
-        "FinalDecision": ("runtime.foundation.verification.orchestration.models", "FinalDecision"),
-        "TaskOrigin": ("runtime.foundation.verification.orchestration.models", "TaskOrigin"),
-        "RepositoryFingerprint": ("runtime.foundation.verification.orchestration.models", "RepositoryFingerprint"),
-        "CAPABILITY_TO_MUTATION_TARGET": ("runtime.foundation.verification.orchestration.models", "CAPABILITY_TO_MUTATION_TARGET"),
-        "ExecutionTaskSpec": ("runtime.foundation.verification.orchestration.models", "ExecutionTaskSpec"),
-        "ExecutionPlan": ("runtime.foundation.verification.orchestration.models", "ExecutionPlan"),
-        "TaskExecutionRecord": ("runtime.foundation.verification.orchestration.models", "TaskExecutionRecord"),
-        "ExecutionReport": ("runtime.foundation.verification.orchestration.models", "ExecutionReport"),
-        "_capability_components": ("runtime.foundation.verification.orchestration.models", "_capability_components"),
-        "_measurement_kind_for_task": ("runtime.foundation.verification.orchestration.models", "_measurement_kind_for_task"),
-        "ExecutionOrchestrator": ("runtime.foundation.verification.orchestration.orchestrator", "ExecutionOrchestrator"),
-        "_profile_from_command": ("runtime.foundation.verification.orchestration.orchestrator", "_profile_from_command"),
-        "build_plan": ("runtime.foundation.verification.orchestration.orchestrator", "build_plan"),
-        "format_plan": ("runtime.foundation.verification.orchestration.orchestrator", "format_plan"),
-        "format_report": ("runtime.foundation.verification.orchestration.orchestrator", "format_report"),
+        "CompletionState": (
+            "runtime.foundation.verification.orchestration.models",
+            "CompletionState",
+        ),
+        "NON_PASS_STATES": (
+            "runtime.foundation.verification.orchestration.models",
+            "NON_PASS_STATES",
+        ),
+        "PASSING_STATES": (
+            "runtime.foundation.verification.orchestration.models",
+            "PASSING_STATES",
+        ),
+        "FailureStage": (
+            "runtime.foundation.verification.orchestration.models",
+            "FailureStage",
+        ),
+        "FinalDecision": (
+            "runtime.foundation.verification.orchestration.models",
+            "FinalDecision",
+        ),
+        "TaskOrigin": (
+            "runtime.foundation.verification.orchestration.models",
+            "TaskOrigin",
+        ),
+        "RepositoryFingerprint": (
+            "runtime.foundation.verification.orchestration.models",
+            "RepositoryFingerprint",
+        ),
+        "CAPABILITY_TO_MUTATION_TARGET": (
+            "runtime.foundation.verification.orchestration.models",
+            "CAPABILITY_TO_MUTATION_TARGET",
+        ),
+        "ExecutionTaskSpec": (
+            "runtime.foundation.verification.orchestration.models",
+            "ExecutionTaskSpec",
+        ),
+        "ExecutionPlan": (
+            "runtime.foundation.verification.orchestration.models",
+            "ExecutionPlan",
+        ),
+        "TaskExecutionRecord": (
+            "runtime.foundation.verification.orchestration.models",
+            "TaskExecutionRecord",
+        ),
+        "ExecutionReport": (
+            "runtime.foundation.verification.orchestration.models",
+            "ExecutionReport",
+        ),
+        "_capability_components": (
+            "runtime.foundation.verification.orchestration.models",
+            "_capability_components",
+        ),
+        "_measurement_kind_for_task": (
+            "runtime.foundation.verification.orchestration.models",
+            "_measurement_kind_for_task",
+        ),
+        "ExecutionOrchestrator": (
+            "runtime.foundation.verification.orchestration.orchestrator",
+            "ExecutionOrchestrator",
+        ),
+        "_profile_from_command": (
+            "runtime.foundation.verification.orchestration.orchestrator",
+            "_profile_from_command",
+        ),
+        "build_plan": (
+            "runtime.foundation.verification.orchestration.orchestrator",
+            "build_plan",
+        ),
+        "format_plan": (
+            "runtime.foundation.verification.orchestration.orchestrator",
+            "format_plan",
+        ),
+        "format_report": (
+            "runtime.foundation.verification.orchestration.orchestrator",
+            "format_report",
+        ),
     }
 
     if name in _MODULE_MAP:

@@ -284,25 +284,36 @@ class ControlPlanePlanner:
         task_counter = 0
 
         # M9-C50 Phase-3 (STOP GATE 3): unmapped changes must NOT silently fall
-        # through to generic testing. Every unmapped blast capability becomes an
-        # explicit fail-closed blocking task. Resolution of the mapping is a
-        # review obligation, not a silent pass.
-        for raw_unmapped in resolution.unmapped_blast_capabilities:
+        # through to generic testing. Unmapped capabilities become an explicit
+        # fail-closed blocking obligation. Resolution of the mapping is a review
+        # obligation, not a silent pass.
+        #
+        # All unmapped capabilities share ONE task rather than one task each.
+        # The obligation is still mandatory and still fails closed, so nothing
+        # is weakened, but the boundary no longer emits N identical
+        # always-failing tasks: a 244-commit branch produced 233 of them (and
+        # ~50 minutes of execution), and a change that regenerates 35 visual
+        # regression baselines produced 35 more. One fail-closed obligation that
+        # names every unmapped path is the same control with a usable signal.
+        if resolution.unmapped_blast_capabilities:
+            unmapped = sorted(resolution.unmapped_blast_capabilities)
+            listed = "\n".join(f"    - {item}" for item in unmapped)
             tasks.append(
                 VerificationTask(
-                    task_id=f"task-unmapped-{task_counter + 1:04d}",
-                    capability_id=f"unmapped:{raw_unmapped}",
+                    task_id="task-unmapped-review",
+                    capability_id=f"unmapped:UNMAPPED[{len(unmapped)}]",
                     verification_kind="capability",
                     command=(
-                        "echo 'UNMAPPED capability requires review: "
-                        f"{raw_unmapped}' && exit 1"
+                        "echo 'UNMAPPED capabilities require review "
+                        f"({len(unmapped)}):\n{listed}' && exit 1"
                     ),
                     profile="unmapped-review",
                     is_mandatory=True,
                     is_escalation=False,
                     reason=(
-                        "Change resolved to a capability with no verification-registry "
-                        f"mapping ({raw_unmapped}); blocked pending review obligation"
+                        f"{len(unmapped)} change(s) resolved to a capability with no "
+                        "verification-registry mapping; blocked pending a single "
+                        "review obligation. The full list is in the task command."
                     ),
                 )
             )

@@ -133,11 +133,14 @@ class TestM522RouteAuthority(unittest.TestCase):
             if e.capability_id.startswith("strengthen.")
         ]
         self.assertGreaterEqual(
-            len(strengthen_caps), 2,
+            len(strengthen_caps),
+            2,
             "must have at least strengthen.capability-pipeline and strengthen.forensic",
         )
         impl_map = {e.capability_id: e.implementation for e in catalog.entries}
-        self.assertIn("strengthening_pipeline", impl_map["strengthen.capability-pipeline"])
+        self.assertIn(
+            "strengthening_pipeline", impl_map["strengthen.capability-pipeline"]
+        )
         self.assertIn("forensic_cli", impl_map["strengthen.forensic"])
 
     def test_canonical_route_executes_pipeline_not_forensic(self):
@@ -165,10 +168,10 @@ class TestM522RouteAuthority(unittest.TestCase):
         shadowed = {r: caps for r, caps in routes.items() if len(caps) > 1}
         self.assertEqual(shadowed, {}, f"shadowed routes: {shadowed}")
         # strengthen-survivor must be owned (canonical route exists)
-        strengthen_routes = [
-            r for r in routes if "strengthen-survivor" in r
-        ]
-        self.assertTrue(strengthen_routes, "strengthen-survivor route must exist in catalog")
+        strengthen_routes = [r for r in routes if "strengthen-survivor" in r]
+        self.assertTrue(
+            strengthen_routes, "strengthen-survivor route must exist in catalog"
+        )
 
 
 class TestM523CliCapabilityMatrix(unittest.TestCase):

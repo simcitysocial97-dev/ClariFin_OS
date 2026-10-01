@@ -329,7 +329,15 @@ class VerificationRegistry:
                 category=VerificationCategory.CONTRACT_FRONTEND,
                 scope=VerificationScope.FRONTEND,
                 command="bash .github/scripts/run_frontend_verification.sh",
-                estimated_duration_seconds=180,
+                # Measured 249 s on an idle 4-core workstation (lint 56 +
+                # typecheck 21 + build 65 + vitest 107 for 1367 tests), and 345 s
+                # on a loaded host. The previous 180 s was below the command's own
+                # cost, so the derived task budget of 2x the estimate (360 s) left
+                # roughly 4% headroom and the obligation's result tracked machine
+                # load rather than the code. Corrected to the measurement; kept in
+                # step with verification.yaml, which overrides this default. See
+                # the full rationale in that file.
+                estimated_duration_seconds=300,
                 scopes=[VerificationScope.FRONTEND, VerificationScope.CONTRACTS],
             ),
             "contracts": VerificationWorkflow(
@@ -813,7 +821,25 @@ class VerificationRegistry:
                     "run_frontend_verification",
                     "run_backend_verification",
                 ],
-                modules=["backend/src", "frontend/lib"],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). Kept identical to verification.yaml:
+                # the yaml is the authority and wins over this default, so the
+                # two must not disagree.
+                #
+                # `frontend/scripts/verify-mock-sync.ts` is the verifier that
+                # holds the MSW mock handlers to the canonical Zod schemas in
+                # `frontend/lib/schemas` — the same frontend contract obligation
+                # the `api-contract-frontend` requirement above already names,
+                # in the same surface. It was unregistered, so a change to it
+                # resolved to no capability and tripped the fail-closed review
+                # obligation. One file, not the whole `frontend/scripts`
+                # directory: its siblings are test-metadata and parser-debug
+                # tooling, which are not contract obligations.
+                modules=[
+                    "backend/src",
+                    "frontend/lib",
+                    "frontend/scripts/verify-mock-sync.ts",
+                ],
             ),
             "migrations": VerificationCapability(
                 id="migrations",
@@ -880,7 +906,16 @@ class VerificationRegistry:
                 ],
                 workflows=["runtime"],
                 scripts=["run_runtime_verification"],
-                modules=[],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). This was empty, so the Platform
+                # Console's own page layer had no registry mapping. This
+                # capability is already the declared owner of that surface: every
+                # Platform Console hook edge in the cross-layer graph is
+                # `frontend:hook:frontend-platform:* -> runtime-verification
+                # (capability, depends_on)`, so the hooks under frontend/lib
+                # already resolved here and only the route layer was
+                # unregistered. Kept identical to verification.yaml.
+                modules=["frontend/app/platform"],
             ),
             "golden-regression": VerificationCapability(
                 id="golden-regression",
@@ -937,13 +972,22 @@ class VerificationRegistry:
                         severity=VerificationSeverity.HIGH,
                         description="Playwright E2E browser tests",
                         scope=VerificationScope.PLAYWRIGHT,
-                        module="frontend/e2e",
+                        # The Playwright suite lives under frontend/tests/e2e.
+                        # This said "frontend/e2e", which does not exist.
+                        module="frontend/tests/e2e",
                         capability="e2e-tests",
                     ),
                 ],
                 workflows=["playwright"],
                 scripts=["run_playwright_tests"],
-                modules=[],
+                # `affected_by_paths` is populated from `modules`
+                # (capability_contract.py). This list was empty, so no changed
+                # file could ever match the capability: every PR touching a
+                # Playwright spec, a visual-regression snapshot, or anything
+                # under frontend/tests/e2e resolved to UNMAPPED and blocked on
+                # the fail-closed review obligation, even though the surface is
+                # verified by the Playwright workflow on the same event.
+                modules=["frontend/tests/e2e"],
             ),
             "balance-engine": VerificationCapability(
                 id="balance-engine",

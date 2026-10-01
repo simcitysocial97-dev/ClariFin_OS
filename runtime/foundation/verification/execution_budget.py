@@ -122,9 +122,7 @@ class ExecutionBoundaryReport:
             f"  Completed:        {self.completed_obligations} / {self.total_obligations} obligations"
         )
         lines.append(f"  Elapsed:          {self.elapsed_seconds:.1f}s")
-        lines.append(
-            f"  Estimated remaining: {self.estimated_remaining_seconds:.0f}s"
-        )
+        lines.append(f"  Estimated remaining: {self.estimated_remaining_seconds:.0f}s")
         if self.current_obligation:
             lines.append(f"  Current:          {self.current_obligation}")
         lines.append(f"  Termination:      {self.termination_reason.value}")

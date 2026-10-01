@@ -16,7 +16,26 @@ from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
 
-REPO_ROOT = Path("/home/vasantha/AI-Projects/ClariFin_OS")
+
+def _repo_root() -> Path:
+    """Locate the repository root by marker file.
+
+    This script previously hardcoded an absolute developer-local path, so it
+    could only ever write inside one person's checkout. The root is now found
+    by walking up to the nearest directory that contains backend/pyproject.toml.
+    """
+
+    for candidate in Path(__file__).resolve().parents:
+        if (candidate / "backend" / "pyproject.toml").exists():
+            return candidate
+    raise RuntimeError(
+        "repository root not found: no ancestor of "
+        f"{Path(__file__).resolve()} contains backend/pyproject.toml"
+    )
+
+
+REPO_ROOT = _repo_root()
+
 BACKEND_SRC = REPO_ROOT / "backend" / "src"
 RUNTIME_DIR = REPO_ROOT / "runtime"
 FRONTEND_DIR = REPO_ROOT / "frontend"

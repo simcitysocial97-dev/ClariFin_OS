@@ -66,9 +66,9 @@ CARD = {
 
 def _assert_shape(projection: dict) -> None:
     """The promised keys must exist, with usable types, whatever the input."""
-    assert set(
-        projection
-    ) >= PROJECTION_KEYS, f"projection is missing {PROJECTION_KEYS - set(projection)}"
+    assert (
+        set(projection) >= PROJECTION_KEYS
+    ), f"projection is missing {PROJECTION_KEYS - set(projection)}"
     assert isinstance(projection["estimated_months"], int)
     assert isinstance(projection["interest_saved_paise"], (int, float))
     assert isinstance(projection["payoff_order"], list)

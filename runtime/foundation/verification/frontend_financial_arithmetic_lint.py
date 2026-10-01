@@ -144,9 +144,13 @@ def _is_format_or_display_context(line: str) -> bool:
         return True
     # Property/type declarations: e.g., `paise: number;` or
     # `credit_limit_paise?: number;` — no arithmetic.
-    if re.search(
-        r":\s*\w+(?:[\.<>\[\],\s\|]+(?:\w+|null))*;\s*(?://.*)?$", line.strip()
-    ):
+    # `\w+` already matches "null" (n, u, l, l are all word characters), so the
+    # alternation `(?:\w+|null)` matched the same language twice over: the literal
+    # alternative and the \w+ alternative. Under repetition that ambiguity is
+    # catastrophic — an input of "null " repeated 20 times took 316 ms and 40
+    # times exceeded 25 s (CWE-1333). Dropping the redundant alternative is a
+    # provable no-op for the matched language and removes the blowup.
+    if re.search(r":\s*\w+(?:[\.<>\[\],\s\|]+\w+)*;\s*(?://.*)?$", line.strip()):
         return True
     # Field declarations of object types.
     if ("amount:" in lower or "balance:" in lower or "paise:" in lower) and re.search(

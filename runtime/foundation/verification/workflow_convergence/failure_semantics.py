@@ -4,6 +4,7 @@ M9-C54 — Workflow failure semantics (Q8).
 Standalone module that defines the expected failure semantics for all
 failure types without depending on workflow inventory.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

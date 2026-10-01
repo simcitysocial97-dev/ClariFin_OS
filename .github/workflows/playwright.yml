@@ -36,8 +36,10 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  # Checkout only. This workflow reads the repository and uploads artifacts; it
+  # never calls a pull-request API, so the previous `pull-requests: write` grant
+  # was unearned privilege on a workflow that builds and runs arbitrary test code.
   contents: read
-  pull-requests: write
 
 jobs:
   test:

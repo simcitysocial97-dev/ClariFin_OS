@@ -362,7 +362,14 @@ def _merge_from_provider(
     mappers: list[MapperEntry],
     view_models: list[ViewModelEntry],
     components: list[ComponentEntry],
-) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry], list[MapperEntry], list[ViewModelEntry], list[ComponentEntry]]:
+) -> tuple[
+    list[EndpointEntry],
+    list[CapabilityEntry],
+    list[WorkspaceEntry],
+    list[MapperEntry],
+    list[ViewModelEntry],
+    list[ComponentEntry],
+]:
     """Augment the cross-layer extracted entries with canonical-provider entities.
 
     Program 13.2: the canonical provider is the single source of architectural
@@ -481,8 +488,10 @@ def build_index() -> KnowledgeIndex:
     workspaces = _extract_workspaces(cross_layer_map)
     components = _extract_components(cross_layer_map)
     graph_renderers = _extract_graph_renderers(cross_layer_map)
-    endpoints, capabilities, workspaces, mappers, view_models, components = _merge_from_provider(
-        endpoints, capabilities, workspaces, mappers, view_models, components
+    endpoints, capabilities, workspaces, mappers, view_models, components = (
+        _merge_from_provider(
+            endpoints, capabilities, workspaces, mappers, view_models, components
+        )
     )
     runtime_artifacts = _extract_runtime_artifacts()
     documentation = _extract_documentation()

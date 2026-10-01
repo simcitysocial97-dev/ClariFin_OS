@@ -28,6 +28,7 @@ OUTPUT_DIR = ARTIFACT_DIR / "command-output"
 # Data models
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class CommandResult:
     command: str
@@ -67,6 +68,7 @@ class Discrepancy:
 # Identity helpers
 # ---------------------------------------------------------------------------
 
+
 def git_head() -> tuple[str, str, str]:
     """Return (commit_sha, tree_sha, branch)."""
     sha = ""
@@ -74,16 +76,28 @@ def git_head() -> tuple[str, str, str]:
     branch = ""
     try:
         sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=5, check=True
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
         ).stdout.strip()
         tree = subprocess.run(
-            ["git", "rev-parse", "HEAD^{tree}"], cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=5, check=True
+            ["git", "rev-parse", "HEAD^{tree}"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
         ).stdout.strip()
         branch = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=str(REPO_ROOT),
-            capture_output=True, text=True, timeout=5, check=True
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
         ).stdout.strip()
     except Exception:
         pass
@@ -149,6 +163,7 @@ COMPATIBILITY_ALIASES: list[tuple[str, list[str]]] = [
 # ---------------------------------------------------------------------------
 # Execution
 # ---------------------------------------------------------------------------
+
 
 def _venv_python() -> str:
     """Return the canonical .venv Python interpreter, falling back to sys.executable."""
@@ -250,6 +265,7 @@ def classify_result(
 # Output helpers (forward refs resolved at call time)
 # ---------------------------------------------------------------------------
 
+
 def _check_stdout_vs_structured(r: CommandResult) -> tuple[bool, str]:
     if not r.structured_result:
         return True, "No structured output to compare"
@@ -258,7 +274,10 @@ def _check_stdout_vs_structured(r: CommandResult) -> tuple[bool, str]:
 
 def _check_stderr_vs_class(r: CommandResult) -> tuple[bool, str]:
     if r.exit_code == 0 and r.classification in ("FAILED", "EXTERNAL_BOUNDARY_TIMEOUT"):
-        return False, f"exit 0 but classified {r.classification} with stderr: {r.stderr[:100]}"
+        return (
+            False,
+            f"exit 0 but classified {r.classification} with stderr: {r.stderr[:100]}",
+        )
     return True, "OK"
 
 
@@ -288,14 +307,27 @@ def _check_commit(r: CommandResult) -> tuple[bool, str]:
 # Output Truth Reconciler
 # ---------------------------------------------------------------------------
 
+
 class OutputTruthReconciler:
     """Detects contradictions between CLI stdout, stderr, exit code, and
     structured output across a set of CommandResults."""
 
     QUESTION_TEMPLATES: list[tuple[str, str, Any]] = [
-        ("stdout_vs_structured", "Does stdout agree with structured output?", _check_stdout_vs_structured),
-        ("stderr_vs_classification", "Does stderr agree with classification?", _check_stderr_vs_class),
-        ("exit_code_vs_status", "Does exit code agree with status?", _check_exit_vs_status),
+        (
+            "stdout_vs_structured",
+            "Does stdout agree with structured output?",
+            _check_stdout_vs_structured,
+        ),
+        (
+            "stderr_vs_classification",
+            "Does stderr agree with classification?",
+            _check_stderr_vs_class,
+        ),
+        (
+            "exit_code_vs_status",
+            "Does exit code agree with status?",
+            _check_exit_vs_status,
+        ),
         ("run_id_consistency", "Does RunRecord agree with command?", _check_run_id),
         ("commit_consistency", "Does run agree with commit?", _check_commit),
     ]
@@ -313,27 +345,31 @@ class OutputTruthReconciler:
                     if ok:
                         checks_passed += 1
                     else:
-                        discrepancies.append({
+                        discrepancies.append(
+                            {
+                                "question": qdesc,
+                                "check": qname,
+                                "command": r.command,
+                                "arguments": r.arguments,
+                                "run_id": r.run_id,
+                                "detail": detail,
+                                "classified_as": r.classification,
+                                "resolution": "",
+                            }
+                        )
+                except Exception as exc:
+                    discrepancies.append(
+                        {
                             "question": qdesc,
                             "check": qname,
                             "command": r.command,
                             "arguments": r.arguments,
                             "run_id": r.run_id,
-                            "detail": detail,
+                            "detail": f"CHECK_ERROR: {exc}",
                             "classified_as": r.classification,
                             "resolution": "",
-                        })
-                except Exception as exc:
-                    discrepancies.append({
-                        "question": qdesc,
-                        "check": qname,
-                        "command": r.command,
-                        "arguments": r.arguments,
-                        "run_id": r.run_id,
-                        "detail": f"CHECK_ERROR: {exc}",
-                        "classified_as": r.classification,
-                        "resolution": "",
-                    })
+                        }
+                    )
 
         return {
             "schema": "m9-c66-output-truth-reconciliation/v1",
@@ -352,6 +388,7 @@ class OutputTruthReconciler:
 # Main orchestration
 # ---------------------------------------------------------------------------
 
+
 def run_command_matrix(
     timeout_per_command: int = 60,
     skip_profiles: bool = False,
@@ -365,12 +402,22 @@ def run_command_matrix(
             r = execute_command(sub, args, timeout=timeout_per_command)
             results.append(r)
         except Exception as exc:
-            results.append(CommandResult(
-                command=sub, arguments=args, environment={}, cwd=str(REPO_ROOT),
-                base_ref="", commit_sha="", run_id=run_id_for(sub, args),
-                exit_code=-1, stdout="", stderr=f"RUNTIME_ERROR: {exc}",
-                duration_seconds=0, classification="FAILED",
-            ))
+            results.append(
+                CommandResult(
+                    command=sub,
+                    arguments=args,
+                    environment={},
+                    cwd=str(REPO_ROOT),
+                    base_ref="",
+                    commit_sha="",
+                    run_id=run_id_for(sub, args),
+                    exit_code=-1,
+                    stdout="",
+                    stderr=f"RUNTIME_ERROR: {exc}",
+                    duration_seconds=0,
+                    classification="FAILED",
+                )
+            )
 
     # Profiles
     if not skip_profiles:
@@ -380,12 +427,22 @@ def run_command_matrix(
                 r = execute_command(sub, args, timeout=120)
                 results.append(r)
             except Exception as exc:
-                results.append(CommandResult(
-                    command=sub, arguments=args, environment={}, cwd=str(REPO_ROOT),
-                    base_ref="", commit_sha="", run_id=run_id_for(sub, args),
-                    exit_code=-1, stdout="", stderr=f"RUNTIME_ERROR: {exc}",
-                    duration_seconds=0, classification="FAILED",
-                ))
+                results.append(
+                    CommandResult(
+                        command=sub,
+                        arguments=args,
+                        environment={},
+                        cwd=str(REPO_ROOT),
+                        base_ref="",
+                        commit_sha="",
+                        run_id=run_id_for(sub, args),
+                        exit_code=-1,
+                        stdout="",
+                        stderr=f"RUNTIME_ERROR: {exc}",
+                        duration_seconds=0,
+                        classification="FAILED",
+                    )
+                )
 
     # Compatibility aliases
     for sub, args in COMPATIBILITY_ALIASES:
@@ -394,22 +451,42 @@ def run_command_matrix(
             r = execute_command(sub, args, timeout=30)
             results.append(r)
         except Exception as exc:
-            results.append(CommandResult(
-                command=sub, arguments=args, environment={}, cwd=str(REPO_ROOT),
-                base_ref="", commit_sha="", run_id=run_id_for(sub, args),
-                exit_code=-1, stdout="", stderr=f"RUNTIME_ERROR: {exc}",
-                duration_seconds=0, classification="FAILED",
-            ))
+            results.append(
+                CommandResult(
+                    command=sub,
+                    arguments=args,
+                    environment={},
+                    cwd=str(REPO_ROOT),
+                    base_ref="",
+                    commit_sha="",
+                    run_id=run_id_for(sub, args),
+                    exit_code=-1,
+                    stdout="",
+                    stderr=f"RUNTIME_ERROR: {exc}",
+                    duration_seconds=0,
+                    classification="FAILED",
+                )
+            )
 
     # Save individual outputs
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     for r in results:
-        safe_name = f"{r.command}_{'_'.join(r.arguments) if r.arguments else 'root'}.txt"
+        safe_name = (
+            f"{r.command}_{'_'.join(r.arguments) if r.arguments else 'root'}.txt"
+        )
         safe_name = safe_name.replace("/", "_")
         path = OUTPUT_DIR / safe_name
-        path.write_text(f"=== Command: verify {r.command} {' '.join(r.arguments)} ===\n")
-        path.write_text(path.read_text() + f"Exit: {r.exit_code}\nClass: {r.classification}\nDuration: {r.duration_seconds}s\n\n")
-        path.write_text(path.read_text() + f"--- STDOUT ---\n{r.stdout}\n\n--- STDERR ---\n{r.stderr}\n")
+        path.write_text(
+            f"=== Command: verify {r.command} {' '.join(r.arguments)} ===\n"
+        )
+        path.write_text(
+            path.read_text()
+            + f"Exit: {r.exit_code}\nClass: {r.classification}\nDuration: {r.duration_seconds}s\n\n"
+        )
+        path.write_text(
+            path.read_text()
+            + f"--- STDOUT ---\n{r.stdout}\n\n--- STDERR ---\n{r.stderr}\n"
+        )
 
     # Reconcile
     reconciler = OutputTruthReconciler()
@@ -425,11 +502,19 @@ def run_command_matrix(
         "results": [r.to_dict() for r in results],
         "reconciliation": reconciliation,
         "summary": {
-            "passed": sum(1 for r in results if r.classification in ("PASS", "PASS_WITH_DEPRECATION")),
+            "passed": sum(
+                1
+                for r in results
+                if r.classification in ("PASS", "PASS_WITH_DEPRECATION")
+            ),
             "failed": sum(1 for r in results if r.classification == "FAILED"),
-            "external_boundary": sum(1 for r in results if r.classification == "EXTERNAL_BOUNDARY_TIMEOUT"),
+            "external_boundary": sum(
+                1 for r in results if r.classification == "EXTERNAL_BOUNDARY_TIMEOUT"
+            ),
             "interrupted": sum(1 for r in results if r.classification == "INTERRUPTED"),
-            "discrepancies": reconciliation.get("summary", {}).get("discrepancy_count", 0),
+            "discrepancies": reconciliation.get("summary", {}).get(
+                "discrepancy_count", 0
+            ),
         },
     }
 
@@ -438,9 +523,16 @@ def run_command_matrix(
 
 def main() -> int:
     import argparse
-    parser = argparse.ArgumentParser(description="M9-C66 Certification Forensics — Command Matrix Runner")
-    parser.add_argument("--skip-profiles", action="store_true", help="Skip profile matrix")
-    parser.add_argument("--timeout", type=int, default=60, help="Per-command timeout (seconds)")
+
+    parser = argparse.ArgumentParser(
+        description="M9-C66 Certification Forensics — Command Matrix Runner"
+    )
+    parser.add_argument(
+        "--skip-profiles", action="store_true", help="Skip profile matrix"
+    )
+    parser.add_argument(
+        "--timeout", type=int, default=60, help="Per-command timeout (seconds)"
+    )
     parser.add_argument("--json", action="store_true", help="Output JSON to stdout")
     args = parser.parse_args()
 
@@ -461,9 +553,11 @@ def main() -> int:
         print(matrix_path.read_text())
     else:
         s = matrix["summary"]
-        print(f"\nDone. {s['passed']} passed, {s['failed']} failed, "
-              f"{s['external_boundary']} external boundary, "
-              f"{s['discrepancies']} discrepancies.")
+        print(
+            f"\nDone. {s['passed']} passed, {s['failed']} failed, "
+            f"{s['external_boundary']} external boundary, "
+            f"{s['discrepancies']} discrepancies."
+        )
         print(f"Full matrix: {matrix_path}")
 
     return 0 if s["failed"] == 0 and s["discrepancies"] == 0 else 1

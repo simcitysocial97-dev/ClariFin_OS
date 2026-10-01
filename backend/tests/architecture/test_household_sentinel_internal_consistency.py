@@ -22,8 +22,7 @@ def test_four_tables_agree_on_household_default(temp_db: str) -> None:
     conn = sqlite3.connect(temp_db)
     try:
         conn.execute(
-            "INSERT INTO behaviour_snapshots (snapshot_date) "
-            "VALUES ('2025-01-15')"
+            "INSERT INTO behaviour_snapshots (snapshot_date) " "VALUES ('2025-01-15')"
         )
         conn.execute(
             "INSERT INTO behaviour_patterns "
@@ -36,8 +35,7 @@ def test_four_tables_agree_on_household_default(temp_db: str) -> None:
             "VALUES ('spending', 'HIGH_SPEND', 'high', 'High spend')"
         )
         conn.execute(
-            "INSERT INTO financial_profiles (profile_type) "
-            "VALUES ('wellness')"
+            "INSERT INTO financial_profiles (profile_type) " "VALUES ('wellness')"
         )
         conn.commit()
 

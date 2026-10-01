@@ -3,6 +3,7 @@
 Traces FinancialInvariantViolation through parser and formatter to verify
 human-readable diagnostic output.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -53,6 +54,7 @@ class TestSemanticDiagnosticsE2E:
 
     def test_diagnostic_agent_has_q10_q11(self):
         from runtime.foundation.verification.diagnostic_agent import DiagnosticAgent
+
         agent = DiagnosticAgent()
         assert hasattr(agent, "_answer_q10")
         assert hasattr(agent, "_answer_q11")
