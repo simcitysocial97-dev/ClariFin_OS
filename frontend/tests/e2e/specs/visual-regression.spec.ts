@@ -72,22 +72,29 @@ function volatileRuntimeReadouts(page: import('@playwright/test').Page) {
  *
  * `waitForPageReady` waits for `domcontentloaded` and for React to hydrate
  * (the root element having children). Neither means the page's async queries
- * have resolved, so a data-driven page can still be showing its skeleton when
- * the screenshot is taken. Playwright's own stability check does not catch this
- * either — "stable" means no layout shift, not "data arrived".
+ * have resolved, so a data-driven page can still be showing its loading state
+ * when the screenshot is taken. Playwright's own stability check cannot catch
+ * this either — "stable" means no layout shift, not "data arrived" — and it
+ * reports "captured a stable screenshot" of a loading dashboard quite happily.
  *
- * That is what happened to the home-page baseline: the capture showed the
- * dashboard's four stat tiles, summary strip and Cashflow Trend / Financial
- * Health panels missing entirely, against a baseline that contains them — 12% of
- * all pixels differing, identically in the chromium and mobile-chrome projects,
- * which is the signature of a synchronisation problem rather than a rendering
- * difference. Every other page passed in the same run because their content is
- * not data-driven in the same way.
+ * That is what the home-page baseline was catching. On a cold CI container the
+ * dashboard is still in its loading state when the capture happens: the panel
+ * header renders, the body renders as two thin placeholder bars, and the whole
+ * KPI row, analytics summary bar and chart panels are absent. Against a baseline
+ * containing all of them, that is ~11% of all pixels differing, identically on
+ * all three attempts including both retries — a signature of a deterministic
+ * state, not a flake. The mobile-chrome job passed in the same run because its
+ * layout and timing differ.
  *
- * Every loading placeholder in this app is the same primitive,
- * `Skeleton` in components/ui/skeleton.tsx, which renders `div.animate-pulse`.
- * So waiting for no `.animate-pulse` to remain is a precise "the page has
- * finished loading" condition that works for all ten pages in PAGES.
+ * Two loading affordances have to be covered, and an earlier version of this
+ * helper only covered the first, which is why it did not work:
+ *
+ *   - `.animate-pulse` — the `Skeleton` primitive in components/ui/skeleton.tsx
+ *     and the in-place placeholders in chart-container.tsx and financial-table.tsx
+ *   - `.fin-loading` / `.fin-loading-pulse` — the `PanelBody loading` state in
+ *     components/primitives/panel/panel.tsx, which is what the dashboard and
+ *     every other panel-based page actually use. It renders no `.animate-pulse`
+ *     element at all, so waiting on `.animate-pulse` alone returns immediately.
  *
  * This is deliberately an assertion, not a swallowed wait: if a page never
  * settles, `toHaveCount(0)` fails and the screenshot is never taken. A page
@@ -95,8 +102,15 @@ function volatileRuntimeReadouts(page: import('@playwright/test').Page) {
  * snapshot comparison itself is unchanged — same pages, same baselines, same
  * `maxDiffPixels`, same `threshold`.
  */
+const LOADING_AFFORDANCES = [
+  '.animate-pulse',
+  '.fin-loading',
+  '.fin-loading-pulse',
+  '[class*="skeleton"]',
+].join(', ');
+
 async function waitForContentSettled(page: import('@playwright/test').Page) {
-  await expect(page.locator('.animate-pulse')).toHaveCount(0, { timeout: 15000 });
+  await expect(page.locator(LOADING_AFFORDANCES)).toHaveCount(0, { timeout: 30000 });
 }
 
 // ============================================================================
