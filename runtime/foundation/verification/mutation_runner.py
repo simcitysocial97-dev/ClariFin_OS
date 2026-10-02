@@ -162,12 +162,20 @@ class _MutationSafety:
         return unexpected
 
     def _check_dirty_worktree(self) -> list[str]:
-        """Check for unexpected tracked modifications in restore scope."""
-        # Determine restore scope
-        if self.mode == "full" or self.mode == "target":
-            scope = "backend/src"
-        else:
-            scope = str(SMOKE_DIR.relative_to(REPO_ROOT))
+        """Check for unexpected tracked modifications in the protected scope.
+
+        The scope is the mutation *target* — the source mutation must never
+        modify — and is deliberately the same for every mode. It is NOT the
+        smoke sandbox: `_capture_hashes` already documents that smoke runs in
+        `mutation_infra/`, which is expected to change (mutants, cache), and an
+        earlier version of this guard aborted whenever that sandbox showed a
+        tracked diff. Those two halves of one safety guard contradicted each
+        other, so smoke protected the directory it was about to modify while
+        leaving the source it must not touch unchecked. Checking the protected
+        scope for every mode is both consistent and strictly wider than what
+        smoke previously verified.
+        """
+        scope = "backend/src"
 
         try:
             out = subprocess.run(
