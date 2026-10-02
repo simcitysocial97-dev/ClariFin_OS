@@ -31,7 +31,14 @@ clarinfin_verification.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-memory-bank/
+# memory-bank/ and .kilo/plans/ hold deliberate, long-lived records — the
+# project brief, architecture notes, and the plan documents that are the audit
+# trail for past recovery work. They are version-controlled on purpose. Both
+# were previously matched by blanket ignore rules that contradicted 27 already
+# tracked files; those rules are removed rather than negated, because git does
+# not descend into an excluded directory and a `!` exception there is
+# unreachable for any new file. .kilo/node_modules/ and .kilo/worktrees/ stay
+# ignored — those really are machine-local.
 test-results/
 dependency-reports/
 
@@ -68,7 +75,6 @@ Thumbs.db
 .idea/
 .sublime-*
 .cursor/
-.kilo/plans/
 .kilo/worktrees/
 
 # ═══════════════════════════════════════════════════════════
