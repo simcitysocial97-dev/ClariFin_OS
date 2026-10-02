@@ -1,5 +1,41 @@
 # M10 Agent 1 — Slow-Test Report
 
+## Regression verification (what I actually ran, and what it shows)
+
+| Check | Result |
+|---|---|
+| `runtime/tests --collect-only` | **2,564** — identical to baseline |
+| `backend/tests --collect-only` | **4,144** — identical to baseline |
+| changed runtime modules | 7 passed |
+| changed backend module + sibling | 11 passed |
+| `backend` `unit` + `properties` + `invariants` | **3,556 passed, 1 xpassed, 0 failed** |
+| broad runtime sample (first 30 modules, 430 tests) | 421 passed, **9 failed** in 534.36 s |
+| `runtime verify mutation --smoke` ×2 consecutive | exit 0 both times, worktree clean after |
+| `ruff check` on all 3 changed test files | All checks passed |
+| `mypy` on the 2 changed runtime files | clean (2 pre-existing errors remain in `runtime/foundation/`) |
+
+### The 9 sample failures are not mine — attribution
+
+The sample's first 30 modules include `test_evidence_cleanup_stress.py` (one of the two files
+I changed), and **it passed**. The 9 failures decompose as:
+
+| Count | Module | Cause | Evidence |
+|---:|---|---|---|
+| 7 | `test_coverage_path_authority.py` | **Environment.** The module shells out to `Path(".venv/bin/coverage")` and runs `_coverage_run(max_runtime=60)`. This worktree has no `.venv`. | `FileNotFoundError: .../m10-agent1-repo-tests-1287161cee8c69ee/.venv/bin/coverage`; downstream `assert None is not None` on `CoverageResult(line_percent=None, ...)`; 3 tests hit their own 60 s cap; 1 hit my 120 s cap. |
+| 2 | `test_endpoint_normalization.py::TestDriftClassification` | **Pre-existing baseline failure.** | `git diff bfcf336b..HEAD` is empty for both `test_endpoint_normalization.py` and its only import target `runtime/foundation/verification/endpoint_normalize.py`, so neither the test nor anything it imports was touched. The docstring reads *"After C61, normalization mismatches should be 0 (resolved as edges)"* — it is tracking the M9-C58/C61 cross-layer normalization-drift work. |
+
+So: **0 regressions attributable to this branch.** Both causes are already reported in
+`m10-agent1-repository-inventory.md` (hardcoded `.venv` paths) and are independent of these
+changes.
+
+### Why there is no full-suite wall-time pair
+
+Stated once more, because it is the most important caveat in this report. A full `runtime/tests`
+run did not complete here: it reached 190/2,564 tests in ~16 min and projected ~3.6 h against
+the ~29 min the suite documents for itself, because 4 cores were at loadavg 15-18 with two other
+agents' workloads. A BEFORE/AFTER wall-time pair produced under those conditions would not be
+comparable to anything, including itself. The counts above *are* trustworthy and are unchanged.
+
 ## How these numbers were obtained, and what limits them
 
 `pytest --durations` only prints at the end of a run, so a run that is killed yields nothing.

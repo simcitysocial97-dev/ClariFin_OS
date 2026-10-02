@@ -133,7 +133,22 @@ Running the runtime suite rewrote **5 tracked files** (restored before committin
 | `runtime/generated/m9-c47/coverage/raw-coverage.json` | 1 line | same |
 | `runtime/generated/m9-c55/c56-readiness.json` | 1 line | same class |
 | `runtime/generated/metrics/test/.index.json` | +4 lines | metrics writer |
+| `runtime/generated/e2e-route-map.json` | rewritten | e2e route-map test |
+| `runtime/generated/metrics/smoke-test/.index.json` | rewritten | smoke-test metrics writer |
 | `backend/tests/mutation_infra/mutants/mutmut-stats.json` | 2 lines | `runtime.verify mutation --smoke` |
+
+A run also **creates untracked files that `.gitignore` does not cover**, so they surface in
+`git status` as `??` and are one careless `git add -A` away from being committed:
+
+- `runtime/generated/metrics/smoke-test/smoke-<epoch>.json` (observed `smoke-1790911076.json`)
+
+`.gitignore` filters `runtime/generated/` by *file signature* — `*.diff`, `*.log`,
+`__pycache__/`, `runtime/generated/execution/` — not by directory. It has no rule for
+`runtime/generated/metrics/`, so JSON metrics output is neither ignored nor meant to be tracked;
+`metrics/test/.index.json` is tracked, `metrics/smoke-test/.index.json` is tracked, and the
+per-run files beside them are not ignored. That is a gap in the signature list, in a directory
+whose other files *are* tracked — so the correct fix is a rule, not a `git rm`, and it belongs
+to whoever owns the generated-artifact policy.
 
 This matters beyond tidiness: `.coverage` is a binary SQLite coverage database that should
 never be version-controlled, and a careless `git add -A` after a test run commits one run's
