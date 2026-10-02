@@ -1,61 +1,77 @@
 @echo off
 chcp 65001 >nul
 
-REM ClariFin OS - Personal Finance MVP v1.0.0
-REM One-Click Launch Script for Windows (WSL2 delegation)
-REM ==========================================
+REM ============================================================================
+REM  ClariFin OS - canonical startup entry point for Windows.
+REM ============================================================================
+REM
+REM  This is a thin wrapper with no logic of its own: it delegates to the same
+REM  canonical launcher used by start.sh, reached through WSL2. Windows and
+REM  Unix therefore share ONE startup implementation and one set of URLs.
+REM
+REM  Usage:
+REM    start.bat                      Start the full application (canonical)
+REM    start.bat stop                 Canonical shutdown
+REM    start.bat console              Platform Console only (independent)
+REM    start.bat status ^| health ^| logs ^| check-env ^| restart
+REM    start.bat help                 Full command list
+REM
+REM  The WSL distribution is taken from the WSL_DISTRO_NAME environment
+REM  variable, falling back to Ubuntu. Override it by setting WSL_DISTRO_NAME.
+REM ============================================================================
 
 echo ═══════════════════════════════════════════════════════════
-echo   ClariFin OS - Personal Finance MVP v1.0.0
+echo   ClariFin OS
+echo   Canonical launcher: scripts/launch.sh (via WSL2)
 echo ═══════════════════════════════════════════════════════════
 echo.
 
-REM Get script directory (Windows path)
 set "SCRIPT_DIR=%~dp0"
-cd /d "%SCRIPT_DIR%"
 
-REM Check Python prerequisites (must be available in WSL, not required locally)
-python --version >nul 2>&1
-if errorlevel 1 (
-    echo [INFO] Python check skipped (local environment optional — running via WSL2)
-)
-
-REM Check Node.js prerequisite similarly
-node --version >nul 2>&1
-if errorlevel 1 (
-    echo [INFO] Node.js check skipped (local environment optional — running via WSL2)
-)
-
-echo [INFO] Starting ClariFin OS via WSL2 (canonical repository launcher)...
-echo.
-
-REM Locate WSL distribution (try common defaults; user may override WSL_DISTRO).
-REM The Windows+WSL2 architecture deploys the canonical runtime inside WSL; this
-REM launcher bridges from Windows to that single environment.
+REM Locate the WSL distribution hosting the repository.
 set "WSL_DISTRO=%WSL_DISTRO_NAME%"
 if "%WSL_DISTRO%"=="" set "WSL_DISTRO=Ubuntu"
 
-REM Convert the Windows script directory to a WSL-accessible path.
-REM wslpath -a prefers an absolute path and fails if no distro is accessible.
-for /f "delims=" %%i in ('wsl -d "%WSL_DISTRO%" wslpath -a "%SCRIPT_DIR%" ^| findstr /V "^$"') do set "WSL_SCRIPT_DIR=%%i"
+REM Convert the Windows script directory to a WSL-accessible POSIX path.
+REM wslpath -a yields an absolute POSIX path (forward slashes, e.g.
+REM /mnt/c/Users/...). An empty result means no usable distro was found.
+set "WSL_SCRIPT_DIR="
+for /f "delims=" %%i in ('wsl -d "%WSL_DISTRO%" wslpath -a "%SCRIPT_DIR%" 2^>nul ^| findstr /V "^$"') do set "WSL_SCRIPT_DIR=%%i"
+
 if "%WSL_SCRIPT_DIR%"=="" (
-    echo [ERROR] Could not resolve WSL path from %SCRIPT_DIR%.
-    echo        Ensure WSL is installed and the default distribution is accessible.
+    echo [ERROR] Could not resolve a WSL path from "%SCRIPT_DIR%".
+    echo         WSL did not return a path for distribution "%WSL_DISTRO%".
+    echo         Install WSL2, or set WSL_DISTRO_NAME to your distribution.
+    echo.
     pause
     exit /b 1
 )
 
-echo [INFO] WSL path: %WSL_SCRIPT_DIR%
-echo [INFO] Distro:   %WSL_DISTRO%
+echo [INFO] WSL path : %WSL_SCRIPT_DIR%
+echo [INFO] Distro   : %WSL_DISTRO%
 echo.
 
-REM Delegate to the canonical launcher via WSL. This preserves the WSL process
-REM lifecycle (background backend + foreground frontend serve).
-wsl -d "%WSL_DISTRO%" bash "%WSL_SCRIPT_DIR%\scripts\launch.sh" start
+REM Build the POSIX launcher path. wslpath already returns forward slashes;
+REM appending a Windows-style "\scripts\launch.sh" here would produce a path
+REM bash cannot resolve, so join with a literal forward slash.
+set "LAUNCHER=%WSL_SCRIPT_DIR%/scripts/launch.sh"
 
-REM If we reach here (user exited), clean up. Windows-side tasks are handled
-REM inside WSL by the launcher; nothing else to kill here.
+REM Forward arguments when present, otherwise default to `start`, so that
+REM "start.bat stop" stops the application rather than starting it again.
+if "%~1"=="" (
+    wsl -d "%WSL_DISTRO%" bash "%LAUNCHER%" start
+) else (
+    wsl -d "%WSL_DISTRO%" bash "%LAUNCHER%" %*
+)
+
+set "EXITCODE=%ERRORLEVEL%"
+
+REM The launcher tears down everything it started, including on Ctrl+C, so no
+REM Windows-side cleanup is required.
 echo.
-echo [OK] Goodbye!
-timeout /t 2 >nul
-pause >nul
+if "%EXITCODE%"=="0" (
+    echo [OK] Done.
+) else (
+    echo [ERROR] The launcher exited with code %EXITCODE%.
+)
+exit /b %EXITCODE%
