@@ -168,14 +168,12 @@ test.describe('Platform Console — dashboard health dimensions', () => {
   test('every dimension renders a status, never UNKNOWN', async ({ page }) => {
     await gotoConsole(page, '');
 
-    // Matched against the DOM text, which is title case; the uppercase styling
-    // is applied with the CSS `uppercase` class, and getByText compares rendered
-    // text content, not CSS text-transform. Asserting 'BACKEND' here could never
-    // match the real markup.
-    const labels = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
-    // Scoped to the dimension labels: 'Architecture' also matches a sidebar
-    // link, which made an unscoped getByText a strict-mode violation rather
-    // than an assertion about the health grid.
+    // The DOM text is title case, but the labels carry CSS `uppercase`, so the
+    // text an operator actually sees — and the text allInnerTexts() returns —
+    // is upper case. getByText() matches DOM text instead, which is why the
+    // original uppercase assertion never matched and a title-case one matched
+    // a sidebar link. Read the rendered text through the scoped testid.
+    const labels = ['BACKEND', 'FRONTEND', 'DATABASE', 'ARCHITECTURE', 'VERIFICATION', 'EVIDENCE', 'AI RUNTIME', 'FRAMEWORK INTEGRITY'];
     const grid = page.getByTestId('health-dimension-label');
     await expect(grid).toHaveCount(labels.length);
     const rendered = (await grid.allInnerTexts()).map((t) => t.trim());
