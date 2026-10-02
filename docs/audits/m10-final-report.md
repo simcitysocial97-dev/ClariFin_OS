@@ -59,8 +59,12 @@ Untouched, as required: `feature/program-12-platform-certification` @ `0c8410c3`
 ### Frontend / Platform Console
 11. **`/behaviour` was left in an error state.** Root cause, verified in backend source: `compute_financial_profile` stores `wellness_score_bps = int(wellness_score * 10000)` (`behaviour_service.py:217`), scaling an already-0-100 value again; `get_wellness_score` reads that column unscaled (`:328-333`). A hardcoded `Decimal("100")` no-data fallback (`:276-289`) is why an empty database masked it. The console now flags the out-of-contract value instead of rejecting a valid HTTP 200 or inventing a corrected one.
 12. **3 of Agent 3's own E2E tests were red** — an over-broad matcher flagging the repo's *own* route; a CSS-uppercase vs DOM-text mismatch; and a `not.toContain('UNKNOWN')` scanning every badge on the page when only the eight dimension badges are in scope. All fixed without weakening intent.
-13. **`/platform/runs/[runId]` did not exist** at baseline; added.
+13. **Three of Agent 3's own E2E tests were red** — an over-broad matcher flagging the repo's *own* route; a CSS-uppercase vs DOM-text mismatch; and a `not.toContain('UNKNOWN')` scanning every badge on the page when only the eight dimension badges are in scope. All fixed without weakening intent.
 14. **Two regressions I introduced and caught**: removing the lab's only `continue-on-error` steps turned three green detection tests red (restored on a step where it genuinely belongs); SHA-pinning invalidated six tests that matched on `@v3` suffixes (taught to accept immutable SHAs, regression-tested against a bogus pin).
+
+### Correction to an earlier claim of mine
+
+An earlier revision of this report stated that `/platform/runs/[runId]` "did not exist at baseline; added". **That was wrong.** It exists at `bfcf336b` — my inventory used `find -maxdepth 3`, which cannot reach that depth-5 path. Verified with `git cat-file -e bfcf336b:frontend/app/platform/runs/[runId]/page.tsx`. Agent 3 corrected it and no such change was made.
 
 ---
 
@@ -71,6 +75,13 @@ Untouched, as required: `feature/program-12-platform-certification` @ `0c8410c3`
 
 ### P2 — Backend wellness-score scale (finance domain)
 `WellnessScoreResponse.score` is documented 0-100 and `wellness.py` clamps to 0-100, but the stored column is `*10000` and is read without dividing. Minimal fix identified: divide by 100 on the read path in `get_wellness_score`. Deliberately not applied — it changes what every consumer and golden dataset sees. **Next:** finance-owner decision, then a golden-dataset review.
+
+### P2 — `/forecast` renders a fabricated cashflow projection (verified, owner refined)
+Independently reproduced against a live backend. `GET /api/v1/forecast` returns 12 `cashflow_projections` in which **every** row is `income_paise: 10000000` (₹1,00,000.00), `expenses_paise: 6000000` (₹60,000.00), `net_paise: 4000000` (₹40,000.00), and the month keys **repeat** (`2026-12` twice, `2027-03` twice) — identical to Agent 3's report.
+
+Agent 3 attributed this to frontend constants. **The owner is the backend**: `services/forecast_service.py:159` contains `income = 10000000  # ₹1,00,000` inside `_generate_cashflow_projections`, and `core/mappers/forecast_mapper.py` passes the values straight through. `git diff bfcf336b..HEAD -- backend/src` is empty, so this is untouched baseline behaviour. A sibling placeholder exists at `services/account_service.py:228` (`+ 100000  # Placeholder`).
+
+Future income and expense are presented to a user as a projection, in the same table as real net-worth projections. **Next:** implement a real projection in `forecast_service.py`, or stop presenting the series at all until it exists.
 
 ### P3 — `frontend-verify.yml` bypasses the `frontend` profile
 Delegates to `run_frontend_verification.sh` rather than the registered `frontend` profile (`profiles.py:468`). The last remaining validator error. **Next:** parity proof, then switch. Required check — needs care.
