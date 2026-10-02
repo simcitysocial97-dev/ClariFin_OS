@@ -146,7 +146,7 @@ describe('AnalyticsSchema — rupee averages are not integers', () => {
   });
 });
 
-describe('BehaviorScoreSchema — the wellness score is 0-100, not basis points', () => {
+describe('BehaviorScoreSchema — accepts the value the backend actually emits', () => {
   const payload = {
     score: '100',
     band: 'Excellent',
@@ -171,9 +171,23 @@ describe('BehaviorScoreSchema — the wellness score is 0-100, not basis points'
     }
   });
 
-  it('rejects a value above the authoritative 0-100 range', () => {
-    // A basis-point magnitude (e.g. 10000) is out of contract, not merely
-    // out of range: the authority clamps to [0, 100].
-    expect(BehaviorScoreSchema.safeParse({ ...payload, score: '10000' }).success).toBe(false);
+  it('rejects a negative value', () => {
+    // A basis-point magnitude is NOT rejected here, because the backend does
+    // not currently honour its own 0-100 contract: `get_wellness_score` returns
+    // the raw stored `snapshot["wellness_score"]`, and the live value is
+    // 7561.45. M10-A3 asserted a 0-100 bound on the strength of the model
+    // docstring, which is right about the contract and wrong about the
+    // implementation; enforcing it turned the whole /behaviour page into an
+    // error state. The scale defect belongs to the backend. This assertion is
+    // kept because a negative score is still rejected under either reading.
+    expect(BehaviorScoreSchema.safeParse({ ...payload, score: '-1' }).success).toBe(false);
+  });
+
+  it('accepts the value the backend actually emits today', () => {
+    // Regression guard for the above: while the backend returns a
+    // double-scaled snapshot value, the schema must not reject it, or
+    // /behaviour renders an error state instead of the score.
+    const result = BehaviorScoreSchema.safeParse({ ...payload, score: '7561.45' });
+    expect(result.success).toBe(true);
   });
 });
