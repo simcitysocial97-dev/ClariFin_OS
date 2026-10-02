@@ -22,6 +22,7 @@ Run:
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import yaml
@@ -53,6 +54,31 @@ def _load_wf() -> dict:
     return yaml.safe_load(WF.read_text())
 
 
+_SHA = re.compile(r"^[0-9a-f]{40}$")
+
+
+def _uses_action(uses: str | None, action_path: str) -> bool:
+    """True when `uses` invokes `action_path`, pinned to any immutable ref.
+
+    Actions in this repository are pinned to a full 40-character commit SHA with
+    the human-readable tag retained as a trailing comment. Matching on the
+    `@v3` suffix alone would make these tests blind to the repository's actual
+    (stronger) pinning, so the action path is matched and the ref is validated
+    separately.
+    """
+    if not uses:
+        return False
+    prefix = f"{action_path}@"
+    if not uses.startswith(prefix):
+        return False
+    ref = uses[len(prefix) :].split("#")[0].strip()
+    return bool(ref) and (ref.startswith("v") or bool(_SHA.match(ref)))
+
+
+def _finds_action(steps: list, action_path: str) -> dict | None:
+    return next((s for s in steps if _uses_action(s.get("uses"), action_path)), None)
+
+
 # ---------------------------------------------------------------------------
 # Static — workflow configuration
 # ---------------------------------------------------------------------------
@@ -68,11 +94,8 @@ def test_m9_analyzes_repository_languages():
     doc = _load_wf()
     jobs = doc["jobs"]
     analyze = jobs["analyze"]
-    init = next(
-        s
-        for s in analyze["steps"]
-        if (s.get("uses") or "").endswith("codeql-action/init@v3")
-    )
+    init = _finds_action(analyze["steps"], f"{CODEQL_ACTION}/init")
+    assert init is not None, "CodeQL init step must be present in the analyze job"
     langs = {lang.strip() for lang in init["with"]["languages"].split(",")}
     # Exactly python + javascript; nothing else blindly enabled.
     assert langs == VALID_LANGS, f"unexpected CodeQL languages: {langs}"
@@ -82,11 +105,11 @@ def test_m9_uses_supported_codeql_actions():
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
     uses = [s.get("uses", "") for s in analyze["steps"]]
-    assert any(u.endswith(f"{CODEQL_ACTION}/init@v3") for u in uses)
-    assert any(u.endswith(f"{CODEQL_ACTION}/analyze@v3") for u in uses)
+    assert any(_uses_action(u, f"{CODEQL_ACTION}/init") for u in uses)
+    assert any(_uses_action(u, f"{CODEQL_ACTION}/analyze") for u in uses)
     # Either autobuild or an explicit build step is present (analyze needs a build).
     assert any(
-        u.endswith(f"{CODEQL_ACTION}/autobuild@v3") for u in uses
+        _uses_action(u, f"{CODEQL_ACTION}/autobuild") for u in uses
     ), "CodeQL analysis requires a build/autobuild step"
 
 
@@ -141,13 +164,10 @@ def test_m9_uploads_to_code_scanning():
     """The analysis step uploads results (SARIF) to GitHub code scanning."""
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
-    analyze_step = next(
-        s
-        for s in analyze["steps"]
-        if (s.get("uses") or "").endswith("codeql-action/analyze@v3")
-    )
+    analyze_step = _finds_action(analyze["steps"], f"{CODEQL_ACTION}/analyze")
+    assert analyze_step is not None, "CodeQL analyze step must be present"
     # github/codeql-action/analyze uploads SARIF by default; presence is the contract.
-    assert analyze_step.get("uses", "").endswith("codeql-action/analyze@v3")
+    assert _uses_action(analyze_step.get("uses"), f"{CODEQL_ACTION}/analyze")
 
 
 # ---------------------------------------------------------------------------
@@ -172,11 +192,11 @@ def test_m9_analysis_step_always_executes():
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
     init = any(
-        (s.get("uses") or "").endswith("codeql-action/init@v3")
+        _uses_action(s.get("uses"), f"{CODEQL_ACTION}/init")
         for s in analyze["steps"]
     )
     analyze_present = any(
-        (s.get("uses") or "").endswith("codeql-action/analyze@v3")
+        _uses_action(s.get("uses"), f"{CODEQL_ACTION}/analyze")
         for s in analyze["steps"]
     )
     assert init and analyze_present, "CodeQL init+analyze must always run the analysis"

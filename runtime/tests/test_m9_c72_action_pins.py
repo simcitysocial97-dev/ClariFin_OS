@@ -67,7 +67,33 @@ VERIFIED_PINS: dict[str, set[str]] = {
 #: why it was chosen and why it broke.
 FORBIDDEN_DOWNLOAD_TAGS = {"v7.0.1"}
 
-USES_PATTERN = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)\s*$", re.MULTILINE)
+#: External actions pinned to an immutable commit SHA. M10 replaced every
+#: tag pin with a full 40-character SHA, keeping the tag as a trailing comment
+#: for humans. A SHA pin makes the D1 failure class structurally impossible — a
+#: tag can name a release that never existed; a commit cannot — but these tests
+#: still verify the pins offline and deterministically, so the resolved SHAs
+#: are declared here exactly as the tags are.
+#:
+#: Resolve with:
+#:     gh api repos/<owner>/<repo>/commits/<tag> --jq .sha
+VERIFIED_SHAS: dict[str, set[str]] = {
+    "actions/cache": {"55cc8345863c7cc4c66a329aec7e433d2d1c52a9"},
+    "actions/checkout": {"3d3c42e5aac5ba805825da76410c181273ba90b1"},
+    "actions/download-artifact": {"37930b1c2abaa49bbe596cd826c3c89aef350131"},
+    "actions/github-script": {"f28e40c7f34bde8b3046d885e986cb6290c5673b"},
+    "actions/setup-node": {"820762786026740c76f36085b0efc47a31fe5020"},
+    "actions/setup-python": {"5fda3b95a4ea91299a34e894583c3862153e4b97"},
+    "actions/upload-artifact": {"043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"},
+    "github/codeql-action/autobuild": {"1190a975f95ce23525efb6a3fc21ea29567c1b52"},
+    "github/codeql-action/analyze": {"1190a975f95ce23525efb6a3fc21ea29567c1b52"},
+    "github/codeql-action/init": {"1190a975f95ce23525efb6a3fc21ea29567c1b52"},
+}
+
+SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
+# A `uses:` directive, allowing for the trailing `# <tag>` comment that records
+# the human-readable version next to a SHA pin.
+USES_PATTERN = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)\s*(?:#.*)?$", re.MULTILINE)
 
 
 def _workflow_files() -> list[Path]:
@@ -109,20 +135,26 @@ class TestActionPinsAreVerified:
 
         assert len(pins) >= 5, f"only found {len(pins)} external action pins"
 
-    def test_every_pin_is_a_verified_tag(self):
-        """A pin outside the verified set has not been checked for existence.
+    def test_every_pin_is_a_verified_tag_or_sha(self):
+        """A pin outside the verified sets has not been checked for existence.
 
         This is the assertion that would have caught the D1 incident in a unit
-        test rather than after a full campaign.
+        test rather than after a full campaign. Since M10 the repository pins to
+        an immutable commit SHA with the tag retained as a comment, so a pin is
+        acceptable if it is a declared verified SHA *or* a declared verified tag.
         """
         unknown: list[str] = []
-        for repo, tag, path in _external_pins():
-            if tag not in VERIFIED_PINS.get(repo, set()):
-                unknown.append(f"{repo}@{tag} ({path.relative_to(REPO_ROOT)})")
+        for repo, ref, path in _external_pins():
+            if SHA_RE.match(ref):
+                if ref not in VERIFIED_SHAS.get(repo, set()):
+                    unknown.append(f"{repo}@{ref} ({path.relative_to(REPO_ROOT)})")
+            elif ref not in VERIFIED_PINS.get(repo, set()):
+                unknown.append(f"{repo}@{ref} ({path.relative_to(REPO_ROOT)})")
 
         assert not unknown, (
-            "action pins not present in VERIFIED_PINS — verify the tag exists "
-            "(`gh api repos/<owner>/<repo>/tags`) before using it:\n  "
+            "action pins not present in VERIFIED_SHAS/VERIFIED_PINS — resolve "
+            "and verify the ref exists (`gh api repos/<owner>/<repo>/commits/"
+            "<tag> --jq .sha`) before using it:\n  "
             + "\n  ".join(unknown)
         )
 
@@ -140,22 +172,30 @@ class TestActionPinsAreVerified:
         )
 
     def test_download_artifact_uses_a_tag_that_exists(self):
-        """download-artifact must be on a real tag, and v7.0.0 is the one."""
+        """download-artifact must resolve to a real published version.
+
+        Accepts either form of pin: a published tag, or a verified commit SHA
+        (which cannot name a nonexistent release at all). Either way the pin
+        must be one this repository has verified.
+        """
         download_pins = {
-            tag
-            for repo, tag, _ in _external_pins()
-            if repo == "actions/download-artifact"
+            ref for repo, ref, _ in _external_pins() if repo == "actions/download-artifact"
         }
 
         assert (
             download_pins
         ), "no download-artifact pin found — the aggregate gate cannot work"
-        for tag in download_pins:
-            assert tag in {
-                "v7.0.0",
-                "v8.0.0",
-                "v8.0.1",
-            }, f"actions/download-artifact@{tag} is not a published tag"
+        for ref in download_pins:
+            if SHA_RE.match(ref):
+                assert (
+                    ref in VERIFIED_SHAS["actions/download-artifact"]
+                ), f"actions/download-artifact@{ref} is not a verified commit SHA"
+            else:
+                assert ref in {
+                    "v7.0.0",
+                    "v8.0.0",
+                    "v8.0.1",
+                }, f"actions/download-artifact@{ref} is not a published tag"
 
 
 # ── the composite action contract ────────────────────────────────────────────
@@ -173,16 +213,37 @@ class TestDownloadActionContract:
         assert path.is_file(), "the canonical download action is missing"
 
     def test_it_pins_a_resolvable_version(self, download_action):
-        """The `uses:` directive must name a published tag.
+        """The `uses:` directive must name a resolvable version.
 
         Checked on the directive, not on raw text: the file deliberately
         documents the trap tag in a comment, and a raw substring check would
         forbid the very explanation that stops the next person repeating it.
+
+        Since M10 the directive is pinned to a verified commit SHA, so the
+        assertion is that the directive carries that SHA and that the version
+        it resolves from is recorded alongside it.
         """
         directives = [m.group(1) for m in USES_PATTERN.finditer(download_action)]
 
-        assert "actions/download-artifact@v7.0.0" in directives
-        assert "actions/download-artifact@v7.0.1" not in directives
+        assert not any(
+            d.endswith("@v7.0.1") for d in directives
+        ), "the nonexistent download-artifact v7.0.1 tag must never be pinned"
+        download_sha = VERIFIED_SHAS["actions/download-artifact"]
+        assert any(
+            d.startswith("actions/download-artifact@") and d.split("@", 1)[1] in download_sha
+            for d in directives
+        ), f"download-runtime must pin a verified download-artifact SHA: {directives}"
+        # The resolved version must stay readable next to the SHA, so the next
+        # person bumping this pin knows which release to verify first.
+        pin_lines = [
+            ln
+            for ln in download_action.splitlines()
+            if "uses: actions/download-artifact@" in ln
+        ]
+        assert pin_lines, "no download-artifact pin line found"
+        assert all(
+            "# v7.0.0" in ln for ln in pin_lines
+        ), f"the resolved version must be recorded on the pin line: {pin_lines}"
         assert "v7.0.1" in download_action, "the trap tag must be documented"
 
     def test_name_and_pattern_are_passed_exclusively(self, download_action):

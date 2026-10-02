@@ -26,6 +26,20 @@ import yaml
 
 REPO = Path(__file__).resolve().parent.parent.parent
 
+# CodeQL actions are pinned to an immutable 40-character commit SHA with the tag
+# retained as a trailing comment, so matching on an `@v3` suffix would make
+# these tests blind to the workflow. Match the action path and accept any
+# immutable ref (tag or SHA) instead.
+_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def _is_codeql_init(uses: str) -> bool:
+    prefix = "github/codeql-action/init@"
+    if not uses.startswith(prefix):
+        return False
+    ref = uses[len(prefix) :].split("#")[0].strip()
+    return bool(ref) and (ref.startswith("v") or bool(_SHA_RE.match(ref)))
+
 PY_ALERTS = {
     # py/path-injection — orchestrator.py x4, import_router.py x2. The alert is
     # reported at each site that TOUCHES the derived path, not at the one place
@@ -262,7 +276,7 @@ def test_the_vendored_bundle_exclusion_is_a_single_named_file():
     init = next(
         s
         for s in wf["jobs"]["analyze"]["steps"]
-        if s.get("uses", "").endswith("init@v3")
+        if _is_codeql_init(s.get("uses", ""))
     )
     config = yaml.safe_load(init["with"]["config"])
     assert config["paths-ignore"] == ["frontend/public/pdf.worker.mjs"]
@@ -280,7 +294,7 @@ def test_the_default_codeql_setup_is_not_also_active():
         next(
             s
             for s in wf["jobs"]["analyze"]["steps"]
-            if s.get("uses", "").endswith("init@v3")
+            if _is_codeql_init(s.get("uses", ""))
         )["with"]["languages"].split(", ")
     )
     assert langs == {
