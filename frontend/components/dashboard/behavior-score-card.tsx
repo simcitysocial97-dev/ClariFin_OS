@@ -5,6 +5,7 @@ import { ExplainButton } from '@/components/ui/explain-button';
 import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { WELLNESS_SCORE_DOCUMENTED_MAX } from '@/lib/schemas/behavior-score';
 
 // Score color mapping
 const getScoreColor = (score: number) => {
@@ -49,16 +50,26 @@ function ComponentBar({ label, value, invert = false }: { label: string; value: 
 export function BehaviorScoreCard() {
   const { data, isLoading, isError, refetch } = useBehaviorScore();
 
-  // The wellness score is a 0-100 magnitude (see lib/schemas/behavior-score.ts
-  // for the authority references), so it needs no rescaling.
+  // The score is rendered exactly as the authority states it.
   //
   // M10-A3: this read `financial_health_score ?? score` and then applied a
-  // `> 100 ? /100 : ` basis-point guess. The `??` silently preferred a different
-  // field from the same payload, and the guess is what made /dashboard and
-  // /behaviour disagree about one score. The schema now guarantees 0-100 for
-  // both fields, so the value is used as-is.
-  const rawScore = data?.score ?? data?.financial_health_score ?? 0;
-  const healthScore = rawScore;
+  // `> 100 ? /100 : ` basis-point guess. The `??` silently preferred a field
+  // that `GET /api/v1/behaviour/wellness-score` does not return at all (it has
+  // no `financial_health_score` key, so the fallback always resolved to
+  // `score`), and the guess is how one payload produced different numbers on
+  // /dashboard and /behaviour.
+  //
+  // Neither rescaling is adopted. `WellnessScoreResponse.score` is documented
+  // 0-100 but is observed emitting 7561.45 against real data, because the
+  // backend stores an already-0-100 value multiplied by 10000 again and reads
+  // it back unscaled (`lib/schemas/behavior-score.ts` documents this in full).
+  // The console does not correct a value it was given: it shows the score, and
+  // when the score is outside the documented range the ring is not filled from
+  // it and the discrepancy is stated, so the dashboard cannot quietly disagree
+  // with the authority the way it did.
+  const healthScore = data?.score ?? 0;
+  const scoreInDocumentedRange = healthScore <= WELLNESS_SCORE_DOCUMENTED_MAX;
+  const ringPercentage = scoreInDocumentedRange ? healthScore : 0;
   const isEmpty = !data;
 
   return (
@@ -91,16 +102,24 @@ export function BehaviorScoreCard() {
                     strokeWidth="8"
                     fill="none"
                   />
-                  {/* Progress ring */}
+                  {/* Progress ring.
+                      M10-A3: `healthScore / 100` with an out-of-contract score
+                      produced a dasharray far longer than the 283 circumference,
+                      so the ring drew multiple overlapping arcs. The fill is
+                      clamped to the documented range and the value itself is
+                      still shown verbatim, with a note below. */}
                   <circle
-                    className={cn("transition-all", getRingColor(healthScore))}
+                    className={cn(
+                      "transition-all",
+                      scoreInDocumentedRange ? getRingColor(healthScore) : "stroke-muted-foreground/40",
+                    )}
                     cx="50"
                     cy="50"
                     r="45"
                     strokeWidth="8"
                     fill="none"
                     strokeLinecap="round"
-                    strokeDasharray={`${(healthScore / 100) * 283} 283`}
+                    strokeDasharray={`${(ringPercentage / 100) * 283} 283`}
                     transform="rotate(-90 50 50)"
                   />
                   {/* Score text */}
@@ -109,13 +128,26 @@ export function BehaviorScoreCard() {
                     y="50"
                     dominantBaseline="middle"
                     textAnchor="middle"
-                    className={cn("text-3xl font-bold", getScoreColor(healthScore))}
+                    className={cn(
+                      "text-3xl font-bold",
+                      scoreInDocumentedRange ? getScoreColor(healthScore) : "fill-muted-foreground",
+                    )}
                   >
                     {Math.round(healthScore)}
                   </text>
                 </svg>
               </div>
             </div>
+
+            {!scoreInDocumentedRange && (
+              <p
+                data-testid="dashboard-score-out-of-range"
+                className="text-xs text-amber-600 text-center"
+              >
+                Reported score {healthScore} is outside the documented 0–
+                {WELLNESS_SCORE_DOCUMENTED_MAX} range, so the ring is not filled from it.
+              </p>
+            )}
 
             {/* Component scores */}
             <div className="space-y-2">

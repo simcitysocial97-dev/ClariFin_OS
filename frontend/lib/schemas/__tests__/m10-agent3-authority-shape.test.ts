@@ -14,9 +14,10 @@
  *     `average: 9974.17`. A rupee average is fractional by construction, but the
  *     schema declared both `z.number().int()` -> 7 issues, payload rejected.
  *  3. `GET /api/v1/behaviour/wellness-score` returns `score: "100"` with band
- *     `"Excellent"`. The authority's scale is 0-100
- *     (backend/src/models/behaviour.py:31, engines/behaviour_engine/wellness.py:83),
- *     but the schema validated against a basis-point 0-10000 range.
+ *     `"Excellent"` for the no-data fallback, but `score: "7561.45"` against
+ *     real data — the backend double-scales it. See the note on that describe
+ *     block: an earlier `.max(100)` here rejected a valid 200 and blanked the
+ *     whole /behaviour workspace.
  *
  * The fixtures below are trimmed copies of real responses captured from a
  * running backend, not invented shapes.
@@ -25,7 +26,7 @@
 import { describe, it, expect } from 'vitest';
 import { OverviewSchema } from '@/lib/schemas/overview';
 import { AnalyticsSchema } from '@/lib/schemas/analytics';
-import { BehaviorScoreSchema } from '@/lib/schemas/behavior-score';
+import { BehaviorScoreSchema, WELLNESS_SCORE_DOCUMENTED_MAX } from '@/lib/schemas/behavior-score';
 
 describe('OverviewSchema — nullable statement periods', () => {
   const base = {
@@ -146,8 +147,8 @@ describe('AnalyticsSchema — rupee averages are not integers', () => {
   });
 });
 
-describe('BehaviorScoreSchema — the wellness score is 0-100, not basis points', () => {
-  const payload = {
+describe('BehaviorScoreSchema — accepts what the authority actually emits', () => {
+  const noDataPayload = {
     score: '100',
     band: 'Excellent',
     components: {
@@ -162,8 +163,8 @@ describe('BehaviorScoreSchema — the wellness score is 0-100, not basis points'
     version: 1,
   };
 
-  it('accepts the string-encoded Decimal the API emits', () => {
-    const result = BehaviorScoreSchema.safeParse(payload);
+  it('accepts the string-encoded Decimal the no-data fallback emits', () => {
+    const result = BehaviorScoreSchema.safeParse(noDataPayload);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.score).toBe(100);
@@ -171,9 +172,60 @@ describe('BehaviorScoreSchema — the wellness score is 0-100, not basis points'
     }
   });
 
-  it('rejects a value above the authoritative 0-100 range', () => {
-    // A basis-point magnitude (e.g. 10000) is out of contract, not merely
-    // out of range: the authority clamps to [0, 100].
-    expect(BehaviorScoreSchema.safeParse({ ...payload, score: '10000' }).success).toBe(false);
+  /**
+   * M10-A3 regression, found by running the E2E suite rather than by reading
+   * the code: with real transaction data the endpoint returns `score:
+   * "7561.45"`, not a 0-100 value.
+   *
+   * `WellnessScoreResponse.score` is documented 0-100
+   * (backend/src/models/behaviour.py:31) and `compute_wellness_score` clamps to
+   * [0, 100] (wellness.py:88-89), but `compute_financial_profile` stores
+   * `wellness_score_bps = int(wellness_score * 10000)`
+   * (behaviour_service.py:217) — scaling an already-0-100 value again — and
+   * `get_wellness_score` reads that column back unscaled
+   * (behaviour_service.py:328-333, 548). The response is double-scaled.
+   *
+   * An earlier attempt at this pass added `.max(100)` on the strength of the
+   * docstring alone. That rejected a valid HTTP 200, blanked the whole
+   * /behaviour workspace with "API response shape mismatch", and broke
+   * `behavior.spec.ts` on both projects. The validator therefore must accept
+   * the authority's real output, and the UI flags the out-of-contract value
+   * rather than the validator rejecting it.
+   */
+  const realDataPayload = {
+    score: '7561.4500',
+    band: 'Excellent',
+    components: {
+      cashflow_health: '59.1100',
+      debt_health: '0.5',
+      savings_behaviour: '87.0800',
+      resilience: '57.1400',
+      lifestyle_control: '1',
+      credit_behaviour: '0.60',
+    },
+    snapshot_date: '2026-10-02',
+    version: 1,
+  };
+
+  it('accepts the out-of-contract score the backend actually returns', () => {
+    const result = BehaviorScoreSchema.safeParse(realDataPayload);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.score).toBe(7561.45);
+      expect(result.data.score).toBeGreaterThan(WELLNESS_SCORE_DOCUMENTED_MAX);
+    }
+  });
+
+  it('still rejects a score that is not a number', () => {
+    expect(BehaviorScoreSchema.safeParse({ ...realDataPayload, score: 'excellent' }).success).toBe(false);
+  });
+
+  it('still enforces the documented 0-100 range on components, which are not double-scaled', () => {
+    expect(
+      BehaviorScoreSchema.safeParse({
+        ...realDataPayload,
+        components: { ...realDataPayload.components, cashflow_health: '5955' },
+      }).success,
+    ).toBe(false);
   });
 });

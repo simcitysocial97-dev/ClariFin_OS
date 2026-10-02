@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Heart } from 'lucide-react';
 import type { BehaviourScoreViewModel } from '@/types/behaviour-view-model';
+import { WELLNESS_SCORE_DOCUMENTED_MAX } from '@/lib/schemas/behavior-score';
 
 /**
  * Behaviour Score Props
@@ -69,28 +70,37 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
     );
   }
 
-  // The wellness score is a 0-100 magnitude, not a basis-point quantity.
+  // The score is rendered exactly as the authority states it.
   //
-  // M10-A3: this component divided the score by 100 and compared it against
-  // 800/600 thresholds, i.e. it assumed basis points (0-10000). The authority
-  // does not use that scale: `WellnessScoreResponse.score` is documented
-  // "Wellness score between 0 and 100"
-  // (backend/src/models/behaviour.py:31) and is produced by
-  // `wellness_score * 100` clamped to `[0, 100]`
-  // (backend/src/engines/behaviour_engine/wellness.py:83-85), after which
-  // `classify_wellness_band` reads that same 0-100 value. Against a live score
-  // of 100 the old code rendered "1.0%", the ring at 1% fill, the "Excellent"
-  // band beside it, and always the negative colour because 800 is unreachable.
-  // The same score on /dashboard rendered as 76 — the same payload, two
-  // different answers on two screens.
-  const percentage = score.score.toFixed(1);
+  // M10-A3: this component previously divided the score by 100 and compared it
+  // against 800/600 thresholds, i.e. it assumed basis points, while
+  // `lib/schemas/behavior-score.ts` separately claimed a 0-100 range. Against
+  // the no-data fallback (`score: "100"`) that rendered "1.0%", the ring at 1%
+  // fill, the "Excellent" band beside it, and always the negative colour
+  // because 800 is unreachable.
+  //
+  // Neither belief is adopted here. The authority is observed emitting 7561.45
+  // against real data (see the schema for the backend double-scaling that
+  // causes it), and `classify_wellness_band` thresholds at 90/75/50/25, so the
+  // band the response supplies is only meaningful while the score is inside the
+  // documented 0-100 range. The console does not rescale a value it has been
+  // given, so:
+  //   - in range  -> the score and the authority's own band colours apply
+  //   - out of range -> the score is shown, the ring is not filled from it, the
+  //     colour is not derived from it, and the discrepancy is stated
+  const inDocumentedRange = score.score <= WELLNESS_SCORE_DOCUMENTED_MAX;
+  const percentage = inDocumentedRange ? score.score.toFixed(1) : String(score.score);
 
-  // Determine score color on the authoritative 0-100 scale.
-  const scoreColor = score.score >= 70
-    ? 'text-[var(--color-positive-600)]'
-    : score.score >= 40
-      ? 'text-[var(--color-warning-600)]'
-      : 'text-[var(--color-negative-600)]';
+  // Determine score color on the documented 0-100 scale. An out-of-contract
+  // score is never coloured as good or bad — the authority's band is not
+  // trustworthy for it, so no verdict is implied.
+  const scoreColor = !inDocumentedRange
+    ? 'text-[var(--text-tertiary)]'
+    : score.score >= 70
+      ? 'text-[var(--color-positive-600)]'
+      : score.score >= 40
+        ? 'text-[var(--color-warning-600)]'
+        : 'text-[var(--color-negative-600)]';
 
   return (
     <Card>
@@ -118,7 +128,9 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
                 className={scoreColor}
                 strokeWidth="8"
                 strokeDasharray="264"
-                strokeDashoffset={264 - (264 * score.score) / 100}
+                strokeDashoffset={
+                  inDocumentedRange ? 264 - (264 * score.score) / 100 : 264
+                }
                 strokeLinecap="round"
                 stroke="currentColor"
                 fill="transparent"
@@ -136,6 +148,20 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
           <p className="text-lg font-medium" aria-label="Score label">
             {score.label}
           </p>
+
+          {/* M10-A3: state the contract breach rather than silently rescaling
+              the value or colouring it from a score the authority's own band
+              thresholds cannot interpret. */}
+          {!inDocumentedRange && (
+            <p
+              data-testid="behaviour-score-out-of-range"
+              className="text-xs text-[var(--color-warning-600)]"
+            >
+              Reported score {score.score} is outside the documented 0–
+              {WELLNESS_SCORE_DOCUMENTED_MAX} range, so the band and ring above
+              are not derived from it.
+            </p>
+          )}
 
           {/* Factors */}
           {score.factors && score.factors.length > 0 && (

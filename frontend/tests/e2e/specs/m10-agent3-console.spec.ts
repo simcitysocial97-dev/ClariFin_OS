@@ -20,6 +20,20 @@ const BASE_URL = 'http://localhost:3000';
 const PLATFORM_BASE = `${BASE_URL}/platform`;
 const CONSOLE_TIMEOUT = 60_000;
 
+/**
+ * Budget for reaching a resolved console state.
+ *
+ * The platform snapshot build is expensive and serialises behind other
+ * requests: measured on this host, the first `/platform/v1/health` after a cold
+ * start took 39 s, and a batch of five console requests each logged
+ * `duration_ms=117218` behind it. This is the same ground
+ * `platform-c67.2.spec.ts` documents when it raises its own budget to 120 s and
+ * its inner wait to 90 s — and that spec's 90 s wait was observed to expire on
+ * this host under a 4-worker run. No assertion is relaxed: a console that never
+ * reaches a terminal state still fails, just later.
+ */
+const CONSOLE_RESOLVED_TIMEOUT = 120_000;
+
 /** A terminal console state: real data, explicit empty, or explicit unavailable. */
 const CONSOLE_RESOLVED = [
   '[data-testid="platform-dashboard"]',
@@ -35,9 +49,9 @@ const CONSOLE_RESOLVED = [
   '[data-testid="console-unavailable"]',
 ].join(', ');
 
-async function gotoConsole(page: import('@playwright/test').Page, path: string) {
+async function gotoResolvedConsole(page: import('@playwright/test').Page, path: string) {
   await page.goto(`${PLATFORM_BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: CONSOLE_TIMEOUT });
-  await page.waitForSelector(CONSOLE_RESOLVED, { timeout: CONSOLE_TIMEOUT });
+  await page.waitForSelector(CONSOLE_RESOLVED, { timeout: CONSOLE_RESOLVED_TIMEOUT });
 }
 
 /**
@@ -101,12 +115,12 @@ test.describe('Platform Console — independence from the financial application'
  */
 test.describe('Platform Console — no calls to non-existent endpoints', () => {
   test('diagnostic detail reads the local signature store, not the backend', async ({ page }) => {
-    const paths: string[] = [];
+    const backendRoute: string[] = [];
+    const localRoute: string[] = [];
     page.on('request', (request) => {
-      const url = request.url();
-      if (url.includes('/diagnostics/signatures') || url.includes('/api/diagnostic-signatures')) {
-        paths.push(url.replace('http://localhost:8000', ''));
-      }
+      const path = new URL(request.url()).pathname;
+      if (path === '/platform/v1/diagnostics/signatures') backendRoute.push(path);
+      if (path === '/api/diagnostic-signatures') localRoute.push(path);
     });
 
     await page.goto(`${PLATFORM_BASE}/diagnostics/detail/sig-70bebf3aa98d`, {
@@ -115,7 +129,8 @@ test.describe('Platform Console — no calls to non-existent endpoints', () => {
     });
     await page.waitForTimeout(8000);
 
-    expect(paths, 'must not request the non-existent backend signatures route').toEqual([]);
+    expect(backendRoute, 'must not request the non-existent backend signatures route').toEqual([]);
+    expect(localRoute.length, 'must read this app\u2019s own signature store route').toBeGreaterThan(0);
   });
 });
 
@@ -128,7 +143,16 @@ test.describe('Platform Console — no calls to non-existent endpoints', () => {
  */
 test.describe('Platform Console — internal links resolve', () => {
   test('every dashboard action link points at a real console page', async ({ page }) => {
-    await gotoConsole(page, '');
+    // The link inventory is read from the shell, which renders client-side from
+    // the sidebar and the dashboard's QuickActions row. It deliberately does
+    // NOT wait for the data-driven panel: this assertion is about which routes
+    // the console advertises, and making it depend on a data round trip would
+    // couple it to backend latency that has nothing to do with the invariant
+    // under test. `QuickActions` renders an unlabelled row of buttons, so the
+    // wait is on the links themselves rather than on a heading.
+    await page.goto(`${PLATFORM_BASE}/`, { waitUntil: 'domcontentloaded', timeout: CONSOLE_TIMEOUT });
+    await page.waitForSelector('[data-testid="platform-title-bar"]', { timeout: CONSOLE_TIMEOUT });
+    await page.waitForSelector('a[href^="/platform"]', { timeout: CONSOLE_TIMEOUT });
 
     const hrefs = await page.evaluate(() =>
       Array.from(document.querySelectorAll('a[href^="/platform"]')).map((a) =>
@@ -158,11 +182,23 @@ test.describe('Platform Console — internal links resolve', () => {
  */
 test.describe('Platform Console — dashboard health dimensions', () => {
   test('every dimension renders a status, never UNKNOWN', async ({ page }) => {
-    await gotoConsole(page, '');
+    // The dimension row is derived from the health snapshot, so this does wait
+    // for the resolved dashboard panel on the same budget every other
+    // data-driven console spec in this repo already declares.
+    await gotoResolvedConsole(page, '/');
 
-    const labels = ['BACKEND', 'FRONTEND', 'DATABASE', 'ARCHITECTURE', 'VERIFICATION', 'EVIDENCE', 'AI RUNTIME', 'FRAMEWORK INTEGRITY'];
+    // The labels are uppercased with CSS (`uppercase` class), so the DOM text
+    // is "Backend" while `innerText` is "BACKEND". Matching is therefore
+    // case-insensitive; asserting the DOM's own casing would couple the test to
+    // whether the uppercase is a CSS transform or baked into the string.
+    //
+    // `.first()` is required: several of these labels also appear in the sidebar
+    // nav and in the domain-breakdown table, so an unscoped `getByText` trips
+    // Playwright's strict mode. This loop is a readability check that the grid is
+    // populated; the badge assertion below is the actual invariant.
+    const labels = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
     for (const label of labels) {
-      await expect(page.getByText(label, { exact: true })).toBeVisible();
+      await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
     }
 
     const statuses = await page.evaluate(() =>
@@ -207,7 +243,7 @@ test.describe('Platform Console — error states are readable', () => {
       waitUntil: 'domcontentloaded',
       timeout: CONSOLE_TIMEOUT,
     });
-    await page.waitForSelector('[data-testid="console-unavailable"]', { timeout: CONSOLE_TIMEOUT });
+    await page.waitForSelector('[data-testid="console-unavailable"]', { timeout: CONSOLE_RESOLVED_TIMEOUT });
 
     const text = await page.evaluate(() => document.body.innerText);
     expect(text).not.toContain('"transient"');
