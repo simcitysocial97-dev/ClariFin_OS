@@ -189,6 +189,18 @@ runtime/generated/**/symbol-test-map.json
 # is a per-run execution log: one line appended per run, read by nothing, and
 # rewritten in place, so a tracked copy is a fixed point of a moving target.
 runtime/generated/git-fetch-events.jsonl
+# engineering-events.jsonl / engineering-history.json are the same class of
+# append-only run telemetry: every verification run appends a
+# VerificationCompleted event and rewrites the derived history document. The
+# canonical contracts gate alone dirties both, so a tracked copy is a fixed
+# point of a moving target and makes an otherwise clean worktree dirty after
+# every run. Same rationale as git-fetch-events.jsonl above.
+runtime/generated/engineering-events.jsonl
+runtime/generated/engineering-history.json
+# backend/.coverage is coverage.py's binary data file, rewritten by every
+# coverage run. It is machine-local state, not source.
+backend/.coverage
+.coverage
 
 # ── Regenerable bulk: machine-local mtime caches ──
 # frontend-backend-map.json is a cache keyed by absolute path and mtime
