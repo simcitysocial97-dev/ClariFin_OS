@@ -18,9 +18,10 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from runtime.foundation.verification.coverage_measurement import (
-    COVERAGE_DIR,
     BACKEND_DIR,
+    COVERAGE_DIR,
     REPO_ROOT,
+    VENV_BIN,
     _coverage_run,
     measure_coverage_cli,
 )
@@ -48,8 +49,9 @@ class TestCoveragePathAuthority:
         COVERAGE_DIR.mkdir(parents=True, exist_ok=True)
         assert COVERAGE_DIR.exists()
 
-    def test_coverage_run_resolves_from_backend_cwd(self):
-        """_coverage_run must succeed when invoked from any cwd."""
+    def test_coverage_run_resolves_from_backend_cwd(self, monkeypatch):
+        """_coverage_run must succeed when the caller sits in backend/."""
+        monkeypatch.chdir(BACKEND_DIR)
         cov, rc, timed_out, tail = _coverage_run(
             scope="tests/unit/engines/credit_card", max_runtime=60
         )
@@ -59,20 +61,42 @@ class TestCoveragePathAuthority:
         assert cov.line_percent >= 0.0
         assert cov.branches_total > 0
 
-    def test_coverage_run_from_subdirectory(self):
+    def test_coverage_run_from_subdirectory(self, monkeypatch):
         """_coverage_run must produce identical results from a subdirectory."""
-        cov_from_root, rc_root, _, tail_root = _coverage_run(
+        root_result, _, _, root_tail = _coverage_run(
             scope="tests/unit/engines/credit_card", max_runtime=60
         )
-        # Results should be consistent regardless of caller's cwd
-        assert cov_from_root.line_percent is not None
-        assert "not found" not in (tail_root or "").lower()
+        # Now actually move the caller somewhere else. Previously this test ran
+        # from the same cwd as the one above, so it asserted the same call twice
+        # and would still have passed if _coverage_run stopped pinning
+        # cwd=BACKEND_DIR — which is exactly what it is supposed to protect.
+        monkeypatch.chdir(REPO_ROOT / "frontend")
+        sub_result, _, _, sub_tail = _coverage_run(
+            scope="tests/unit/engines/credit_card", max_runtime=60
+        )
+        assert sub_result.line_percent is not None
+        assert "not found" not in (sub_tail or "").lower()
+        assert sub_result.line_percent == pytest.approx(root_result.line_percent)
 
     def test_coverage_report_uses_json_subcommand(self):
         """coverage report --format json is invalid; must use coverage json."""
+        # Resolve the coverage executable the same way coverage_measurement does,
+        # not by re-deriving a *relative* .venv path from the current working
+        # directory — that made the test fail whenever pytest ran from anywhere
+        # other than the repository root.
+        coverage_bin = (
+            str(VENV_BIN / "coverage")
+            if (VENV_BIN / "coverage").is_file()
+            else sys.executable
+        )
+        base = (
+            [coverage_bin]
+            if (VENV_BIN / "coverage").is_file()
+            else [sys.executable, "-m", "coverage"]
+        )
         # Verify `coverage report --format` does NOT include json option
         result = subprocess.run(
-            [str(Path(".venv/bin/coverage").resolve()), "report", "--help"],
+            [*base, "report", "--help"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -85,7 +109,7 @@ class TestCoveragePathAuthority:
         )
         # Verify `coverage json` is available
         result2 = subprocess.run(
-            [str(Path(".venv/bin/coverage").resolve()), "json", "--help"],
+            [*base, "json", "--help"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -124,10 +148,14 @@ class TestCoveragePathAuthority:
         # Should fail gracefully
         assert rc != 0 or timed_out
 
-    def test_coverage_clean_environment(self):
-        """_coverage_run must work when invoked with minimal env vars."""
-        # _coverage_run uses absolute paths (REPO_ROOT, BACKEND_DIR, COVERAGE_DIR)
-        # so it should be immune to PYTHONPATH or cwd contamination.
+    def test_coverage_clean_environment(self, monkeypatch):
+        """_coverage_run must work when PYTHONPATH and VIRTUAL_ENV are absent."""
+        # Actually clear the contamination this test claims to be immune to.
+        # Previously it ran with the ambient environment untouched, so it was a
+        # fourth copy of the same call rather than a distinct guarantee.
+        monkeypatch.delenv("PYTHONPATH", raising=False)
+        monkeypatch.delenv("VIRTUAL_ENV", raising=False)
+        monkeypatch.delenv("PYTHONHOME", raising=False)
         cov, rc, timed_out, tail = _coverage_run(
             scope="tests/unit/engines/credit_card", max_runtime=60
         )
@@ -135,8 +163,12 @@ class TestCoveragePathAuthority:
         assert cov.line_percent is not None
         assert "not found" not in (tail or "").lower()
 
-    def test_ci_like_environment(self):
+    def test_ci_like_environment(self, monkeypatch):
         """_coverage_run must work with CI-like environment variables."""
+        monkeypatch.setenv("CI", "true")
+        monkeypatch.setenv("GITHUB_ACTIONS", "true")
+        monkeypatch.setenv("RUNNER_OS", "Linux")
+        monkeypatch.setenv("COVERAGE", "true")
         cov, rc, timed_out, tail = _coverage_run(
             scope="tests/unit/engines/credit_card", max_runtime=60
         )
@@ -146,8 +178,9 @@ class TestCoveragePathAuthority:
 
     def test_direct_cli_runs_successfully(self):
         """measure_coverage_cli must write a valid measurement-truth record."""
-        rc = measure_coverage_cli(["tests/unit/engines/credit_card"])
-        # Exit code may be 1 (coverage below threshold) but record should be written
+        # Exit code may be 1 (coverage below threshold); the record is the
+        # contract under test, not the exit code.
+        measure_coverage_cli(["tests/unit/engines/credit_card"])
         record_path = COVERAGE_DIR / "measurement-truth-coverage.json"
         assert record_path.exists(), "measurement-truth-coverage.json must be written"
         record = json.loads(record_path.read_text())
