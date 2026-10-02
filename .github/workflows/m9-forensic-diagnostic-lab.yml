@@ -432,49 +432,15 @@ jobs:
             done
           } > runtime/generated/evidence/shell-differential.txt
 
-      - name: Run verify.py quick with complete capture
-        continue-on-error: true
-        run: |
-          set +e
-
-          START=$(date +%s)
-
-          .venv/bin/python -m runtime.verify quick \
-            > runtime/generated/evidence/verify-quick.stdout.log 2>&1
-
-          EXIT_CODE=$?
-
-          END=$(date +%s)
-
-          {
-            echo "profile=quick"
-            echo "exit_code=$EXIT_CODE"
-            echo "duration_seconds=$((END-START))"
-          } > runtime/generated/evidence/verify-quick.result
-
-          exit 0
-
-      - name: Run verify.py backend with complete capture
-        continue-on-error: true
-        run: |
-          set +e
-
-          START=$(date +%s)
-
-          .venv/bin/python -m runtime.verify backend \
-            > runtime/generated/evidence/verify-backend.stdout.log 2>&1
-
-          EXIT_CODE=$?
-
-          END=$(date +%s)
-
-          {
-            echo "profile=backend"
-            echo "exit_code=$EXIT_CODE"
-            echo "duration_seconds=$((END-START))"
-          } > runtime/generated/evidence/verify-backend.result
-
-          exit 0
+      # M10 consolidation: the two `runtime.verify quick` and
+      # `runtime.verify backend` invocations that used to live here are
+      # removed. They duplicated Quality Gate (quality.yml) and Backend
+      # Verification (backend-verify.yml) on every pull request — ~9 minutes
+      # of the lab's runtime, across 82 runs, producing no gate value: this
+      # workflow is not a required check. The forensic capture below and above
+      # these steps is the workflow's unique value and is unchanged. The
+      # diagnostic summary still reads verify-quick.result and
+      # verify-backend.result, and reports null for them, which is accurate.
 
       - name: Git working-tree cleanliness after diagnostics
         run: |
