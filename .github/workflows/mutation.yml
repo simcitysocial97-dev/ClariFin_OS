@@ -3,7 +3,9 @@
 # PURPOSE: Mutation testing — measures test effectiveness and gates quality.
 # RESPONSIBILITY: delegate to the canonical verification runtime. Rule 1: no
 # engineering logic in YAML. Rule 2: single responsibility. Rule 8: delegate to
-# `runtime.verify`. Rule 9: append `runtime.verify doctor` summary.
+# `runtime.verify`. Rule 9: append `runtime.verify status` summary.
+# (`runtime.verify doctor` is retained below only as the pre-campaign
+# environment preflight, not as the Rule 9 summary.)
 #
 # M9-C71 — SHARDED AUTHORITATIVE CAMPAIGN
 # --------------------------------------
@@ -136,7 +138,7 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — smoke" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash
 
   mutation-plan:
@@ -399,7 +401,7 @@ jobs:
             echo "⚠️ No shard summary was produced — the aggregate gate will fail this shard." >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
 
   mutation-replay:
     name: Mutation Replay (no measurement)
@@ -688,7 +690,7 @@ jobs:
             fi
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
 
       - name: Enforce campaign gate
         if: always()

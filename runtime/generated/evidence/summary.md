@@ -1,8 +1,8 @@
-## Verification Evidence — m10/consolidation — 8a3ac16
+## Verification Evidence — m10/consolidation — 5f6d94d
 
 **Status:** pass
 **Plan:** selective
-**Generated:** 2026-10-02T03:43:57.331662+00:00
+**Generated:** 2026-10-02T03:50:43.850122+00:00
 
 ### Test Results
 

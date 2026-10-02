@@ -155,7 +155,7 @@ def validate_workflow(path: Path) -> None:
                 found_inline_gen = True
             if "python -m runtime.verify" in run:
                 prof = run.strip().split("python -m runtime.verify")[-1].split()[0]
-                if prof in ("status", "env-check"):
+                if prof in ("status", "env-check", "doctor"):
                     # Auxiliary non-gate commands:
                     #   status    — Rule 9 job-summary append (never a verdict).
                     #   env-check — canonical environment fingerprint preflight
@@ -164,6 +164,12 @@ def validate_workflow(path: Path) -> None:
                     #              consistency report, never a verification
                     #              verdict, so it cannot duplicate or weaken the
                     #              single authoritative profile command (Rule 8).
+                    #   doctor    — richer environment diagnostic, used by the
+                    #              mutation workflows as a pre-campaign preflight
+                    #              (AGENTS.md "environment diagnostic guard"). Like
+                    #              env-check it reports; it never produces a gate.
+                    #              Rule 9 summaries use `status`; `doctor` appears
+                    #              only outside GITHUB_STEP_SUMMARY.
                     if prof == "status":
                         found_status = True
                     continue
@@ -175,7 +181,21 @@ def validate_workflow(path: Path) -> None:
                     expected = VERIFICATION_PROFILES[name]
                     if prof == expected:
                         found_verify_profile = True
+                    elif prof.startswith(expected + "-"):
+                        # A documented subcommand of this workflow's own
+                        # profile. Rule 8 requires the workflow to execute
+                        # `python runtime/verify.py`; it does not forbid one
+                        # profile from using that profile's own subcommands.
+                        # mutation.yml relies on this: the M9-C71 sharded
+                        # authoritative campaign is one responsibility (mutation)
+                        # expressed as plan -> shard -> aggregate -> trust, which
+                        # are `mutation-plan`, `mutation --shard`,
+                        # `mutation-aggregate` and `mutation-trust`.
+                        found_verify_profile = True
                     else:
+                        # A *different* profile. This is a genuine violation:
+                        # the workflow claims one responsibility and executes
+                        # another profile's command.
                         err(
                             f"{name}/{job_id}: runs `runtime.verify {prof}` but should be "
                             f"`runtime.verify {expected}` (Rule 8)"

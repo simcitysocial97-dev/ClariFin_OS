@@ -85,9 +85,10 @@ jobs:
 
       - name: Upload mutation report
         if: always() && steps.changed.outputs.changed == 'true'
-        uses: actions/upload-artifact@v7
+        uses: ./.github/actions/upload-runtime
         with:
           name: mutation-pr-report
+          if-condition: ${{ always() && steps.changed.outputs.changed == 'true' }}
           path: |
             mutation_output.txt
             changed-files.txt
