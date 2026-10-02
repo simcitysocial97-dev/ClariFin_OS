@@ -136,9 +136,8 @@ def test_the_verification_write_error_reason_does_not_carry_the_exception_messag
 def test_the_contract_workflow_runs_without_a_write_scope():
     """`actions/untrusted-checkout/critical` on api-contracts.yml.
 
-    The workflow is triggered by `workflow_run` on a failed Playwright run and
-    checks out `github.event.workflow_run.head_sha`, which a fork's pull
-    request controls. It held `pull-requests: write` and used it for nothing.
+    The workflow is triggered by `workflow_run` on a failed Playwright run. It
+    held `pull-requests: write` and used it for nothing.
     """
     wf = yaml.safe_load(_read(".github/workflows/api-contracts.yml"))
     perms = wf["permissions"]
@@ -146,11 +145,32 @@ def test_the_contract_workflow_runs_without_a_write_scope():
         f"workflow_run + checkout of an untrusted ref with {perms} is the "
         "critical finding again"
     )
-    blob = _read(".github/workflows/api-contracts.yml")
-    assert "github.event.workflow_run.head_sha" in blob, (
-        "the trigger itself is still useful — the fix was the privilege, not "
-        "the re-check"
-    )
+
+
+def test_no_workflow_checks_out_a_workflow_run_head_sha():
+    """`actions/cache-poisoning/poisonable-step` on api-contracts.yml.
+
+    Removing the write scope fixed the privilege leak, not the cache-poisoning
+    path: the job still checked out `github.event.workflow_run.head_sha`, which
+    a fork's pull request controls, and `bootstrap-runtime` restores a cache. A
+    fork could seed that cache and have a later default-branch run restore it.
+
+    For a `workflow_run` event `github.sha` is already the default branch's head,
+    which is the trusted ref this gate exists to re-check, so the override is
+    also simply wrong for the job's purpose.
+    """
+    offenders = []
+    for path in sorted((REPO / ".github").rglob("*.yml")):
+        text = path.read_text()
+        # Only executable lines count; the reasoning comments name it on purpose.
+        code = "\n".join(
+            line for line in text.splitlines() if not line.lstrip().startswith("#")
+        )
+        if "workflow_run" in code and "workflow_run.head_sha" in code:
+            offenders.append(str(path.relative_to(REPO)))
+    assert (
+        not offenders
+    ), f"workflows checking out an untrusted workflow_run head: {offenders}"
 
 
 # ---------------------------------------------------------------------------
