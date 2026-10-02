@@ -296,7 +296,6 @@ duplicated file had no schema to catch it. Consolidating removes a whole class o
 drift.
 
 ### 18. `lib/validation/__tests__/performance.test.tsx` is a timing flake
-
 `5 Card components render under 100ms` asserts a synchronous wall-clock render
 budget. On this 4-core machine it failed once during the full parallel run
 (438 ms measured) and passed 9/9 three times in isolation, and passed on the
@@ -314,3 +313,44 @@ network error visible in a naive probe** — the requests simply hang. Two of my
 early probe scripts misread this as "the console makes no API calls". Not a
 product defect, but a real trap for the next agent; `scripts/launch.sh` already
 avoids it.
+
+### 20. Visual-regression baseline needs a provenance-bound re-record (owner: whoever owns the snapshots)
+
+**Reproduction.** `npx playwright test --project=chromium
+tests/e2e/specs/visual-regression.spec.ts`. 9 snapshots fail against a
+**seeded** database: home, dashboard, transactions, analytics, import,
+transactions-mobile, personal mode, family mode, dark-mode dashboard. On the
+untouched baseline (`bfcf336`) with the same database, the same 9 fail with
+**larger** diffs (dark-mode-dashboard 40 546 px / 0.05 baseline vs 3 007 px /
+0.01 with these changes), which attributes the bulk of the difference to the
+data rather than to the code.
+
+**Why it was not fixed here.** `PROVENANCE.md` in the snapshot directory states
+snapshots may only be replaced by a deliberate, provenance-bound regeneration
+run and never re-recorded to hide a regression. Re-recording against a seeded
+local database would embed that seed into the baseline CI runs against. The
+`dashboard-page` baseline also legitimately needs updating for the duplicated
+"Cashflow Trend" heading removed in this pass.
+
+**Suggested resolution.** Re-record with a clean database, one project at a
+time, following the recorded provenance policy, and update the provenance table
+(Repository SHA, browser, viewport, run timestamp, verification run) in the same
+commit.
+
+### 21. A working E2E fixture seed (blocks reproducible chart validation)
+
+**Reproduction.** `PYTHONPATH=backend python3 tools/e2e_seed.py` — it calls
+`/api/transactions`, `/api/banks`, `/api/members`, `/api/accounts`,
+`/api/import/detect` and `/api/import/execute`, all of which 404; the registered
+paths are `/api/v1/...`. Nothing is seeded.
+
+**Why it matters beyond convenience.** A fresh worktree therefore has an empty
+database, every financial workspace renders in its empty state, and no chart can
+be validated for real data. M10 Agent 3 had to seed through the canonical
+`/api/v1/*` routes by hand to inspect the Cashflow Trend, Net Worth, Loans,
+Transactions, Accounts and Behaviour surfaces. Every future pass will hit the
+same wall, and will be tempted to conclude a chart is broken when the data was
+simply never there. The working recipe used in this pass is recorded in
+`m10-agent3-03-ui-and-charts.md` §3.
+
+**Owner.** `tools/` — outside Agent 3's boundary. Reported.

@@ -220,7 +220,6 @@ anywhere except `/forecast` (§3.4). INR values are correct and consistently
 ---
 
 ## 5. Direction observations (no redesign proposed)
-
 Present and working: dark, dense, legible shell; a consistent left nav grouped
 OVERVIEW / TRANSACTIONS / ACCOUNTS / INVESTMENTS / INTELLIGENCE / SETTINGS; a
 persistent bottom time rail (Day / Week / Month / Quarter / Year / Compare /
@@ -238,3 +237,57 @@ Gaps, described only:
   `GraphView` does render as an overlay.
 - **Metric hierarchy is flat.** `/net-worth` presents six equal-weight cards with
   no primary figure; the largest number (net worth) is not visually dominant.
+
+---
+
+## 6. Verification actually observed
+
+All commands run in this worktree against a live stack (uvicorn from the
+repo-root `.venv` per `AGENTS.md`, plus `next start`).
+
+| Check | Command | Result |
+|---|---|---|
+| Types | `npm run type-check` | **0 errors** |
+| Lint | `npm run lint` | **0 errors**, 179 warnings (200 on the untouched baseline) |
+| Unit | `npm run test` | **1381/1381 passed**, 109/109 files, 205.8 s |
+| Build | `npm run build` | **succeeded** |
+| E2E | `npx playwright test --project=chromium --project=mobile-chrome` | see §7 |
+
+An earlier full run reported one unit failure —
+`lib/validation/__tests__/performance.test.tsx` "5 Card components render under
+100ms" (438 ms measured against a 100 ms budget). It passes 9/9 in isolation
+three times running, and passed on the baseline before any change. It asserts
+synchronous wall-clock render time on a 4-core machine with 109 test files
+running in parallel; nothing in its import graph was touched. **Not modified** —
+per the rules, test assertions are not to be weakened, and this one is measuring
+the host, not the code. The final run above is green without it recurring.
+
+## 7. E2E: separating my failures from pre-existing ones
+
+A 36-failure run is not evidence on its own, so the failing specs were re-run
+against the **baseline** (`bfcf336`) with the identical seeded database, to
+attribute each failure.
+
+| Failure class | Baseline result | Attribution |
+|---|---|---|
+| `visual-regression.spec.ts` — 9 snapshots (home, dashboard, transactions, analytics, import, transactions-mobile, personal, family, dark-mode) | **also fails, with larger diffs** (dark-mode-dashboard 40 546 px / 0.05 on baseline vs 3 007 px / 0.01 with these changes) | **data-driven.** I seeded 2 accounts, 2 loans and 30 transactions to validate charts; the baseline was captured against a clean database. |
+| `behavior.spec.ts` "should display page title" | **passes on baseline** | **mine** — the behaviour-score regression described in §1.6, since fixed; now green on both projects. |
+| `platform-c67.2.spec.ts` content rendering (2 tests) | not re-run in isolation; failure was `waitForSelector` at 90 s | **environmental.** The platform snapshot build queues behind other requests (117 s measured), so the console did not reach a terminal state within the spec's own documented 90 s budget under a 4-worker run. |
+| `performance.spec.ts` (4 tests) | not re-run in isolation | **environmental.** Same cause: API response-time budgets measured against a saturated single-worker backend. |
+| `m10-agent3-console.spec.ts` (4 tests) | n/a — new spec | **mine**, and all three causes were bugs in my own tests: an assertion that had inverted itself into something that could never pass, a selector for a "Quick Actions" heading the component does not render, and CSS-uppercased label text. Now 42/42 green on both projects. |
+
+### Visual-regression snapshots were deliberately NOT re-recorded
+
+`tests/e2e/specs/visual-regression.spec.ts-snapshots/PROVENANCE.md` is explicit
+that snapshots are provenance-bound artifacts, may only be replaced by a
+deliberate regeneration run, and must never be re-recorded to hide a regression.
+Two independent reasons not to re-record here:
+
+1. Re-recording against my **seeded** local database would bake that seed into
+   the baseline. The committed baseline was captured against a clean database at
+   SHA `96ae2e64` on 2026-09-29, which is also what CI runs against.
+2. The `dashboard-page` diff legitimately contains an intentional change from
+   this pass — the duplicated "Cashflow Trend" heading removal.
+
+Re-baselining is the snapshot owner's decision and needs a provenance-bound run
+against a clean database. It is recorded as a remaining issue, not taken here.
