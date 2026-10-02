@@ -38,6 +38,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from runtime.foundation.verification.config_loader import get_threshold
 from runtime.foundation.verification.env import REPO_ROOT
@@ -1011,7 +1012,34 @@ def run_plan_cli(argv: list[str]) -> int:
         shards
     )
 
-    matrix = {
+    matrix = plan_payload(shards, reasons=reasons, diff_safe=safe, timeout=timeout)
+    print(json.dumps(matrix, indent=2))
+    return 0
+
+
+def plan_payload(
+    shards: list[MutationShard] | None = None,
+    *,
+    reasons: dict[str, list[str]] | None = None,
+    diff_safe: bool = True,
+    timeout: int = 0,
+) -> dict[str, Any]:
+    """Build the campaign plan document ``verify.py mutation-plan`` prints.
+
+    The document is richer than a GitHub matrix on purpose: ``shard_count``,
+    ``total_shards``, ``diff_safe`` and ``recommended_timeout_minutes`` are what
+    the run summary reports, and the workflow reads all of them with ``jq``.
+
+    It is NOT matrix-shaped, and that distinction is load-bearing. GitHub reads
+    every top-level key of a ``strategy.matrix`` other than ``include``/
+    ``exclude`` as a dimension whose value must be a list, so handing this
+    document to ``fromJson`` verbatim is rejected before a runner is ever
+    involved. The workflow narrows it to ``include`` (mutation.yml, the
+    ``MATRIX_JSON`` assignment) and reads the rest from this same document.
+    """
+    reasons = reasons or {}
+    shards = shard_plan() if shards is None else shards
+    return {
         "include": [
             {
                 "shard": s.shard_id,
@@ -1026,11 +1054,10 @@ def run_plan_cli(argv: list[str]) -> int:
         ],
         "shard_count": len(shards),
         "total_shards": len(shard_plan()),
-        "diff_safe": safe,
-        "recommended_timeout_minutes": timeout,
+        "diff_safe": diff_safe,
+        "recommended_timeout_minutes": timeout
+        or recommended_shard_timeout_minutes(shards),
     }
-    print(json.dumps(matrix, indent=2))
-    return 0
 
 
 def run_aggregate_cli(argv: list[str]) -> int:

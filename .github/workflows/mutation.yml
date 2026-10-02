@@ -143,10 +143,20 @@ jobs:
     name: Mutation Campaign Plan
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Every value another job reads through `needs.<job>.outputs.<name>` must be
+    # declared here. An undeclared step output evaluates to the empty string, and
+    # `timeout-minutes: ''` is not a number — GitHub rejects the job definition
+    # and creates ZERO shard jobs. The signature was a run whose plan and smoke
+    # jobs both succeeded, whose shard jobs did not exist at all, and whose
+    # aggregate gate skipped: `failure` with nothing to fix. `timeout` was read by
+    # the shard job's `timeout-minutes:` but never declared, which is exactly that.
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       components: ${{ steps.plan.outputs.components }}
       count: ${{ steps.plan.outputs.count }}
+      total: ${{ steps.plan.outputs.total }}
+      diff_safe: ${{ steps.plan.outputs.diff_safe }}
+      timeout: ${{ steps.plan.outputs.timeout }}
       mode: ${{ steps.plan.outputs.mode }}
     steps:
       - name: Checkout code
@@ -190,9 +200,34 @@ jobs:
           else
             MATRIX="$(.venv/bin/python -m runtime.verify mutation-plan)"
           fi
+          # `fromJson` is handed this document verbatim, and GitHub builds a matrix
+          # out of it: every value in the object is a matrix cell, and every
+          # top-level key other than `include`/`exclude` is a DIMENSION whose
+          # value must be a list. The plan document has neither shape.
+          #
+          # It carries `shard_count`, `total_shards`, `diff_safe` and
+          # `recommended_timeout_minutes` as scalars — the evaluator reads
+          # those as dimensions and rejects the matrix before a runner is even
+          # involved ("the matrix must define at least one vector"). And each
+          # `include` entry carries `reasons`, a LIST, which a matrix cell
+          # never is.
+          #
+          # Either defect alone is enough to cost the whole campaign: the shard
+          # job is never created, the aggregate reconciles zero measured
+          # shards, and the run concludes `failure` in 105 seconds having
+          # measured nothing — with no failing job anywhere to point at. Both
+          # were live at once, which is why fixing one at a time looked like it
+          # was not working.
+          #
+          # The matrix therefore carries exactly the scalar fields the shard job
+          # reads: `shard`, `component`, `tier`, `file_count`, `byte_size`,
+          # `source_paths`. `reasons` and the metadata stay in `$MATRIX`, which
+          # the run summary below still reads.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, component, tier, file_count, byte_size, source_paths}]}' <<< "$MATRIX")"
+          echo "Matrix published: $(jq -r '.include | length' <<< "$MATRIX_JSON") shard(s), ${#MATRIX_JSON} bytes" >> $GITHUB_STEP_SUMMARY
           {
             echo "matrix<<MUTMATRIX_EOF"
-            echo "$MATRIX"
+            echo "$MATRIX_JSON"
             echo "MUTMATRIX_EOF"
             echo "components=$(jq -r '[.include[].component] | join(" ")' <<< "$MATRIX")"
             echo "count=$(jq -r '.include | length' <<< "$MATRIX")"
@@ -231,17 +266,36 @@ jobs:
     # available in a job-level `if:`, and using it makes the workflow file
     # unparseable ("Unrecognized named-value: 'env'"). `needs.<job>.outputs` is
     # available there, so the plan job is the right place to publish it.
+    #
+    # `count != '0'` rather than `matrix != '[]'`: an incremental campaign that
+    # selects no shard is a real, legitimate outcome, and the plan already
+    # publishes the selected-shard count for exactly that decision. Comparing
+    # the matrix document against a two-character literal was a guess at a
+    # serialisation that the producer is free to change.
     if: >-
       needs.mutation-plan.outputs.mode != 'replay'
       && needs.mutation-plan.result == 'success'
-      && needs.mutation-plan.outputs.matrix != '[]'
+      && needs.mutation-plan.outputs.count != '0'
     runs-on: ubuntu-latest
-    # M9-C72 — derived from measured p95 x2 by mutation-plan, not a flat 90.
-    # With the slowest shard measured at 693 s this lands at 21 min, so a
-    # pathological shard fails visibly instead of holding a parallel slot for
-    # 90 minutes and reporting an ambiguous timeout. The plan job always emits
-    # this output, including when the diff lookup fails.
-    timeout-minutes: ${{ needs.mutation-plan.outputs.timeout }}
+    # M9-C72 sizes the per-shard budget from measured p95 x2, not a flat 90
+    # minutes, and publishes it as a plan output.
+    #
+    # It CANNOT be applied through `timeout-minutes:`. A matrix job whose
+    # `timeout-minutes` is an expression reading `needs.<job>.outputs` is never
+    # created: GitHub evaluates a matrix job's own properties in a context that
+    # does not have the matrix, the definition fails, and the job silently
+    # vanishes. That is what made this campaign look alive and useless for its
+    # whole life — plan and smoke green, no shard jobs anywhere, aggregate gate
+    # failing on an empty measured population, run `failure` in 105 seconds.
+    # A literal `timeout-minutes` on the same job expands normally; a dynamic
+    # one does not, whatever the shape of the matrix behind it.
+    #
+    # The measured budget is therefore enforced where a dynamic value is
+    # actually evaluated: inside the step, with GNU `timeout`. The static
+    # `timeout-minutes` below is only the backstop for a runner that has
+    # outlived its own budget, and sits above the largest budget the planner can
+    # emit so it never fires first.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       max-parallel: 7
@@ -267,7 +321,23 @@ jobs:
         run: .venv/bin/python -m runtime.verify doctor
 
       - name: Measure shard mutation (canonical check)
-        run: .venv/bin/python -m runtime.verify mutation --shard "${{ matrix.shard }}"
+        env:
+          # The measured budget. Read as an env var, not interpolated into the
+          # command line, so a shard name can never reach the shell as syntax.
+          MUTATION_SHARD: ${{ matrix.shard }}
+          MUTATION_SHARD_TIMEOUT: ${{ needs.mutation-plan.outputs.timeout }}
+        run: |
+          echo "Shard $MUTATION_SHARD budget: ${MUTATION_SHARD_TIMEOUT}m (measured p95 x2)"
+          set +e
+          timeout --signal=TERM --kill-after=60s "${MUTATION_SHARD_TIMEOUT}m" \
+            .venv/bin/python -m runtime.verify mutation --shard "$MUTATION_SHARD"
+          rc=$?
+          set -e
+          if [ "$rc" -eq 124 ]; then
+            echo "::error::Shard $MUTATION_SHARD overran its ${MUTATION_SHARD_TIMEOUT}-minute measured budget. Raise the cap only after checking whether the shard is genuinely pathological or the measurement drifted."
+            exit 1
+          fi
+          exit "$rc"
 
       - name: Upload shard summary
         if: always()
@@ -477,11 +547,19 @@ jobs:
 
   mutation-aggregate:
     name: Mutation Aggregate Gate
-    needs: [mutation]
-    # When the shard matrix is empty (incremental with no affected shard) the
-    # matrix job is skipped; the gate must proceed on that signal rather than
-    # waiting for a job that will never start.
-    if: needs.mutation.result != 'skipped' && needs.mutation.result != 'cancelled'
+    # The gate is the ONLY thing that turns shard evidence into a verdict, so it
+    # must run whenever a measurement mode was requested — including the case
+    # where the shard matrix expanded to nothing. `always()` plus an explicit mode
+    # check replaces `needs.mutation.result != 'skipped'`: a skipped dependency
+    # made this gate skip too, so a campaign that measured NOTHING reported the
+    # same `failure` as a campaign that measured badly, with no shard evidence
+    # and no explanation. Now the gate runs, finds an empty measured population,
+    # and fails it as NOT EVALUABLE — which is the truth.
+    needs: [mutation-plan, mutation]
+    if: >-
+      always()
+      && needs.mutation-plan.result == 'success'
+      && needs.mutation-plan.outputs.mode != 'replay'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

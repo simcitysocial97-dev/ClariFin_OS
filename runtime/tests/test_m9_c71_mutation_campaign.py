@@ -25,9 +25,11 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -653,15 +655,102 @@ class TestShardedWorkflowTopology:
     def test_an_empty_incremental_plan_does_not_strand_the_aggregate(
         self, mutation_workflow
     ):
-        """If incremental mode selects zero shards, the shard matrix is empty.
+        """An empty shard matrix must still reach the aggregate gate.
 
-        GitHub renders that as an empty matrix, which would otherwise leave the
-        aggregate waiting on a job that never starts. The shard job is skipped
-        and the aggregate is explicitly allowed to proceed on that signal.
+        GitHub renders a zero-entry matrix as "no jobs", so the aggregate's
+        dependency never produces a result to inspect. Gating the aggregate on
+        `needs.mutation.result != 'skipped'` made it skip with it: a campaign
+        that measured NOTHING reported the same bare `failure` as one that
+        measured badly, with no shard evidence to point at. The gate must run
+        whenever a measurement mode was requested and reconcile whatever
+        arrived — an empty population is a verdict, not an absence.
         """
         assert "!=" in str(mutation_workflow["jobs"]["mutation"]["if"])
-        aggregate_if = str(mutation_workflow["jobs"]["mutation-aggregate"]["if"])
-        assert "skipped" in aggregate_if and "cancelled" in aggregate_if
+        aggregate = mutation_workflow["jobs"]["mutation-aggregate"]
+        aggregate_if = str(aggregate["if"])
+        assert (
+            "always()" in aggregate_if
+        ), "the aggregate must survive a dependency that produced no jobs"
+        assert "needs.mutation-plan" in aggregate_if, (
+            "the aggregate must key off the plan's mode, not off the shard "
+            "matrix's job result, which does not exist when the matrix is empty"
+        )
+        assert "mutation-plan" in str(aggregate["needs"])
+        assert (
+            "'replay'" in aggregate_if
+        ), "replay reconciles its own evidence and must not run this gate twice"
+
+    def test_a_matrix_job_never_sizes_itself_from_a_needs_output(
+        self, mutation_workflow
+    ):
+        """The measured per-shard budget must not be a dynamic `timeout-minutes`.
+
+        A matrix job whose `timeout-minutes` is an expression reading
+        `needs.<job>.outputs` is never created. GitHub evaluates a matrix job's
+        own properties in a context that does not have the matrix, the job
+        definition fails, and the job silently disappears — no check run, no
+        annotation, no failing job. The run still concludes `failure`, because
+        the aggregate gate reconciles a measured population of zero.
+
+        Verified against GitHub with an isolated probe: identical plan/matrix
+        plumbing produced shard jobs with a literal `timeout-minutes` and none at
+        all with the expression, with the matrix shape held constant.
+
+        The measured budget is therefore enforced inside the step with GNU
+        `timeout`, and the static `timeout-minutes` is only a backstop that must
+        exceed it.
+        """
+        shard = mutation_workflow["jobs"]["mutation"]
+        assert "matrix" in shard["strategy"], "the shard job must still be a matrix"
+        timeout = shard["timeout-minutes"]
+        assert not isinstance(timeout, str) or "${{" not in timeout, (
+            f"timeout-minutes: {timeout!r} — a dynamic value here removes the "
+            "matrix job entirely"
+        )
+        assert isinstance(timeout, int), "the backstop must be a literal number"
+
+        # The measured budget survives, enforced where a dynamic value is
+        # actually evaluated.
+        measure = next(
+            s
+            for s in shard["steps"]
+            if s.get("name") == "Measure shard mutation (canonical check)"
+        )
+        assert measure["env"]["MUTATION_SHARD_TIMEOUT"] == (
+            "${{ needs.mutation-plan.outputs.timeout }}"
+        )
+        assert "timeout --signal=TERM" in measure["run"]
+        assert "124" in measure["run"], "an overrun must be reported, not absorbed"
+        assert timeout > 60, (
+            "the static backstop must exceed any budget the planner can emit, "
+            "or it fires before the measured one"
+        )
+
+    def test_a_plan_output_read_by_a_downstream_job_is_declared(
+        self, mutation_workflow
+    ):
+        """`needs.<job>.outputs.<name>` only resolves for DECLARED outputs.
+
+        An undeclared step output evaluates to the empty string, so a consumer
+        reading it gets `''` and has to cope with that. `timeout` was read by
+        the shard job and never declared, which is one of the two reasons the
+        campaign measured nothing.
+        """
+        jobs = mutation_workflow["jobs"]
+        reads: dict[str, set[str]] = {}
+        pattern = re.compile(r"needs\.([A-Za-z0-9_-]+)\.outputs\.([A-Za-z0-9_-]+)")
+        for job in jobs.values():
+            blob = yaml.safe_dump(job)
+            for producer, name in pattern.findall(blob):
+                reads.setdefault(producer, set()).add(name)
+
+        for producer, names in reads.items():
+            declared = set(jobs[producer].get("outputs") or {})
+            missing = names - declared
+            assert not missing, (
+                f"job {producer!r} must declare {sorted(missing)} as job outputs; "
+                "an undeclared output reads as an empty string downstream"
+            )
 
     def test_shards_come_from_the_canonical_plan(self, mutation_workflow):
         matrix = mutation_workflow["jobs"]["mutation"]["strategy"]["matrix"]
@@ -669,6 +758,68 @@ class TestShardedWorkflowTopology:
         # A hard-coded shard list in YAML would be a second source of truth.
         assert "shard:" not in str(matrix)
         assert "component:" not in str(matrix)
+
+    def test_the_published_matrix_carries_nothing_but_include(self, mutation_workflow):
+        """GitHub reads every top-level key other than include/exclude as a
+        matrix DIMENSION, and a dimension's value must be a LIST.
+
+        The plan document also reports `shard_count`, `total_shards`,
+        `diff_safe` and `recommended_timeout_minutes` for the run summary, and
+        publishing it verbatim handed the evaluator scalars where it expected
+        lists. It rejected the matrix before a runner was involved — "the matrix
+        must define at least one vector" — so the shard job was never created,
+        the aggregate gate reconciled zero measured shards, and every scheduled
+        campaign failed in 105 seconds having measured nothing.
+
+        The matrix output must therefore be `include` alone.
+        """
+        plan_steps = mutation_workflow["jobs"]["mutation-plan"]["steps"]
+        emit = next(s for s in plan_steps if s.get("id") == "plan")
+        script = str(emit["run"])
+
+        shaped = re.search(r"MATRIX_JSON=\"\$\(jq -c '(?P<filter>[^']+)'", script)
+        assert shaped, "the plan step must shape its matrix output explicitly"
+
+        # The document being narrowed genuinely carries the values a matrix cell
+        # can hold and the two shapes a matrix cannot: scalar metadata keys at
+        # the top level, and a LIST inside each entry. Publishing it verbatim is
+        # a live failure mode rather than a stale one.
+        payload = ms.plan_payload()
+        assert set(payload) > {"include"}, "the plan reports metadata beside `include`"
+        assert any(
+            isinstance(v, list) for v in payload["include"][0].values()
+        ), "an include entry carries a LIST, which a matrix cell never is"
+
+        # Every key the shard job reads must be a scalar in the published
+        # matrix, and no key outside `include` may be a dimension.
+        import json  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+
+        published = json.loads(
+            subprocess.run(
+                ["jq", "-c", shaped.group("filter")],
+                input=json.dumps(payload),
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout
+        )
+        assert set(published) == {"include"}, (
+            f"matrix keys {sorted(published)} — only 'include' and 'exclude' "
+            "are accepted; every other top-level key is read as a dimension "
+            "whose value must be a list"
+        )
+        assert published["include"], "the full plan must select at least one shard"
+        for entry in published["include"]:
+            for key, value in entry.items():
+                assert not isinstance(
+                    value, (list, dict)
+                ), f"matrix cell {key!r} is a {type(value).__name__}"
+        # The shard job's identity and sizing fields must survive the narrowing.
+        shard = published["include"][0]
+        for key in ("shard", "component", "tier", "file_count", "byte_size"):
+            assert key in shard, f"the shard job reads matrix.{key}"
+        assert shard["shard"] and shard["component"] and shard["tier"]
 
     def test_aggregate_gate_is_the_authoritative_decision(self, mutation_workflow):
         steps = mutation_workflow["jobs"]["mutation-aggregate"]["steps"]
