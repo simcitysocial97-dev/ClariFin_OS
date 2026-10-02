@@ -1044,7 +1044,18 @@ class TestC5Observability:
         ), f"No per-step progress emitted; output was:\n{out}"
 
     def test_orchestrator_respects_overall_timeout(self, tmp_path: Path):
-        """When total wall-clock exceeds ``overall_timeout``, remaining steps abort."""
+        """When total wall-clock exceeds ``overall_timeout``, remaining steps abort.
+
+        A budget of zero means "already exhausted", and that has to be true on
+        the FIRST step. With a `>` guard it was only true if `datetime.now()`
+        happened to land on a later clock tick than the run start, so the same
+        commit could execute its whole first step or abort it depending on the
+        runner's timer resolution — and a run whose budget was already spent
+        reported a plain success.
+        """
+        import io
+        from contextlib import redirect_stdout
+
         from runtime.foundation.verification.models import VerificationScope
         from runtime.foundation.verification.orchestrator import (
             VerificationOrchestrator,
@@ -1059,7 +1070,19 @@ class TestC5Observability:
         orch._changed_files = []
         orch.analyze_cross_layer()
         orch.generate_plan(scope=VerificationScope.QUICK)
-        results = orch.execute()
-        # At least one result must carry the timeout error.
+
+        # No step may execute: the budget is spent before the first one starts.
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            results = orch.execute()
+        assert "Running step" not in buf.getvalue(), (
+            "a step ran with a zero budget:\n" + buf.getvalue()
+        )
+
+        # And the run says so, rather than reporting success.
         timed_out = [r for r in results if r.error and "timeout" in r.error.lower()]
         assert timed_out, "Expected at least one TIMEOUT-result when overall_timeout=0"
+        assert all(
+            r.classification is not None and r.classification.value == "TIMEOUT"
+            for r in timed_out
+        )

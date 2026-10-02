@@ -1080,7 +1080,14 @@ class VerificationOrchestrator:
 
         for idx, step in enumerate(self._plan.steps, start=1):
             elapsed = (datetime.now(UTC) - self._run_start).total_seconds()
-            if elapsed > self._overall_timeout:
+            # `>=`, not `>`. A zero budget means "already exhausted", and with
+            # `>` the first step escaped the ceiling whenever `datetime.now()`
+            # landed on the same clock tick as `_run_start` — a race that made
+            # the whole verification run depend on the runner's timer
+            # resolution, and made an exhausted run look like a successful one.
+            # For a real budget the difference is one step at the exact
+            # boundary, which is what a wall-clock ceiling means.
+            if elapsed >= self._overall_timeout:
                 # C5.2: hard ceiling — abort remaining steps rather than running
                 # forever when the per-step timeout misfires.
                 remaining = self._plan.steps[idx - 1 :]
