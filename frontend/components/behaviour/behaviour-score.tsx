@@ -69,14 +69,27 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
     );
   }
 
-  // Convert basis points to percentage
-  const percentage = (score.score / 100).toFixed(1);
+  // The wellness score is a 0-100 magnitude, not a basis-point quantity.
+  //
+  // M10-A3: this component divided the score by 100 and compared it against
+  // 800/600 thresholds, i.e. it assumed basis points (0-10000). The authority
+  // does not use that scale: `WellnessScoreResponse.score` is documented
+  // "Wellness score between 0 and 100"
+  // (backend/src/models/behaviour.py:31) and is produced by
+  // `wellness_score * 100` clamped to `[0, 100]`
+  // (backend/src/engines/behaviour_engine/wellness.py:83-85), after which
+  // `classify_wellness_band` reads that same 0-100 value. Against a live score
+  // of 100 the old code rendered "1.0%", the ring at 1% fill, the "Excellent"
+  // band beside it, and always the negative colour because 800 is unreachable.
+  // The same score on /dashboard rendered as 76 — the same payload, two
+  // different answers on two screens.
+  const percentage = score.score.toFixed(1);
 
-  // Determine score color
-  const scoreColor = score.score >= 800 
-    ? 'text-[var(--color-positive-600)]' 
-    : score.score >= 600 
-      ? 'text-[var(--color-warning-600)]' 
+  // Determine score color on the authoritative 0-100 scale.
+  const scoreColor = score.score >= 70
+    ? 'text-[var(--color-positive-600)]'
+    : score.score >= 40
+      ? 'text-[var(--color-warning-600)]'
       : 'text-[var(--color-negative-600)]';
 
   return (
@@ -105,7 +118,7 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
                 className={scoreColor}
                 strokeWidth="8"
                 strokeDasharray="264"
-                strokeDashoffset={264 - (264 * score.score) / 10000}
+                strokeDashoffset={264 - (264 * score.score) / 100}
                 strokeLinecap="round"
                 stroke="currentColor"
                 fill="transparent"
@@ -115,7 +128,7 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
               />
             </svg>
             <span className={`absolute text-2xl font-bold ${scoreColor}`} aria-label="Health score">
-              {percentage}%
+              {percentage}
             </span>
           </div>
 

@@ -39,6 +39,29 @@ export interface PlatformHealthResponse {
 
 const STALE_TIME_MS = 60_000; // 1 minute, matches cache TTL
 
+/**
+ * The eight dimensions the console reports, in display order.
+ *
+ * M10-A3: these are the labels the dashboard renders as a status row. The
+ * authoritative status for each one is a *top-level* field of the health
+ * snapshot (`backend`, `frontend`, `database`, `architecture`, `verification`,
+ * `evidence`, `ai`, `framework_integrity`) — NOT an entry in `data.domains`.
+ * `data.domains` only carries the sub-authority breakdown (Verification,
+ * EventStore, Framework Integrity), so looking the labels up there is what made
+ * the operations dashboard print UNKNOWN for seven of eight dimensions while
+ * the API was reporting HEALTHY/SAFE/CURRENT/VALID/READY.
+ */
+export const HEALTH_DIMENSIONS = [
+  { label: 'Backend', field: 'backend' },
+  { label: 'Frontend', field: 'frontend' },
+  { label: 'Database', field: 'database' },
+  { label: 'Architecture', field: 'architecture' },
+  { label: 'Verification', field: 'verification' },
+  { label: 'Evidence', field: 'evidence' },
+  { label: 'AI Runtime', field: 'ai' },
+  { label: 'Framework Integrity', field: 'framework_integrity' },
+] as const satisfies ReadonlyArray<{ label: string; field: keyof PlatformHealthData }>;
+
 export function usePlatformHealth() {
   return useQuery<PlatformHealthResponse, Error>({
     queryKey: ['platform', 'health'],
@@ -73,7 +96,27 @@ export function usePlatformHealthSummary() {
       data?.data?.domains?.filter((d) => d.status === 'UNHEALTHY' || d.status === 'DEGRAD') ??
       [],
     verificationSuccessRate: computeSuccessRate(data),
+    // M10-A3: expose the raw snapshot slices so surfaces render what the API
+    // actually reported instead of re-deriving (and losing) it.
+    dimensions: HEALTH_DIMENSIONS.map(({ label, field }) => ({
+      label,
+      // Top-level field is authoritative. A `data.domains` entry with the same
+      // name is only a fallback for the two dimensions that also appear in the
+      // sub-authority breakdown.
+      status: data?.data?.[field] ?? matchDomain(data, label) ?? 'UNKNOWN',
+    })),
+    domains: data?.data?.domains ?? [],
   };
+}
+
+/** Case-insensitive lookup of a sub-authority domain by display label. */
+function matchDomain(
+  data: PlatformHealthResponse | undefined,
+  label: string,
+): string | undefined {
+  const domains = data?.data?.domains ?? [];
+  const wanted = label.toLowerCase();
+  return domains.find((d) => d.name.toLowerCase() === wanted)?.status;
 }
 
 function computeSuccessRate(data: PlatformHealthResponse | undefined): number | null {

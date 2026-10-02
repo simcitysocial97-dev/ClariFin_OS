@@ -46,6 +46,19 @@ export const API_BACKEND_URL: string =
     ? process.env.NEXT_PUBLIC_API_URL
     : 'http://localhost:8000';
 
+/**
+ * Base URL that keeps a request on the Next.js origin.
+ *
+ * M10-A3: a relative path passed to `apiFetch`/`apiFetchJson` is resolved
+ * against `API_BACKEND_URL`, so a same-origin call to one of this app's own
+ * route handlers (e.g. `/api/diagnostic-signatures`) would silently be sent to
+ * the FastAPI backend, which has no such route. Passing this constant as
+ * `baseUrl` yields a relative URL, which `fetch` resolves against the document
+ * — the behaviour the caller actually asked for. It is named rather than passed
+ * as a bare `''` so the intent survives review.
+ */
+export const SAME_ORIGIN_BASE_URL = '';
+
 // ---------------------------------------------------------------------------
 // Error taxonomy
 // ---------------------------------------------------------------------------
@@ -58,6 +71,14 @@ export class ApiError extends Error {
   readonly status: number;
   readonly transient: boolean;
   readonly body: string;
+  /**
+   * The request path that failed.
+   *
+   * M10-A3: previously only folded into `message`, so anything that wanted to
+   * report WHICH request failed had to parse the message string back apart. The
+   * platform console needs it to name the endpoint in its unavailable state.
+   */
+  readonly path: string;
 
   constructor(status: number, path: string, body: string = '') {
     super(`API ${status} ${path}`);
@@ -66,6 +87,7 @@ export class ApiError extends Error {
     // 5xx and 429 are transient — the server may recover
     this.transient = status >= 500 || status === 429;
     this.body = body;
+    this.path = path;
   }
 }
 

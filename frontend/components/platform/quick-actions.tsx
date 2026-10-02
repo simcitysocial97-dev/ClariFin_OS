@@ -3,6 +3,15 @@
  *
  * Set of action buttons for the dashboard.
  * Each action navigates to the corresponding platform sub-page.
+ *
+ * M10-A3: the previous "Settings" entry pointed at `/platform/settings`, a route
+ * that has never existed — `GET /platform/settings` returns HTTP 404. Unlike the
+ * dead sidebar link removed in M9-C71 this one used `router.push`, so it cost no
+ * prefetch, but it still landed the operator on a 404 from the primary
+ * operations screen. The entry was replaced with Framework Integrity, a real
+ * console surface the dashboard did not previously link to. Every href here
+ * must resolve to an existing `app/platform/**` route; `tests/e2e/specs/
+ * platform-c67.2.spec.ts` enforces the same invariant for the sidebar.
  */
 
 'use client';
@@ -116,9 +125,9 @@ export function QuickActions({
         href="/platform/diagnostics/change"
       />
       <ActionButton
-        label="Settings"
+        label="Framework Integrity"
         icon={<Gauge className="h-4 w-4" />}
-        href="/platform/settings"
+        href="/platform/framework"
       />
     </div>
   );

@@ -65,40 +65,34 @@ function SystemStatusCard({ platform, frameworkIntegrity }: { platform: string; 
 }
 
 function DimensionsGrid({
+  dimensions,
   domains,
-  platformStatus: _platformStatus,
-  frameworkIntegrityStatus,
 }: {
+  dimensions: { label: string; status: string }[];
   domains: { name: string; status: string; last_check: string; source: string; detail?: string }[];
-  platformStatus: string;
-  frameworkIntegrityStatus: string;
 }) {
-  // Show top-level statuses from actual health domains
-  const topLevelNames = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
-
   return (
     <div className="flex flex-col gap-3">
-      {/* Top-level summary row */}
+      {/* Top-level summary row.
+          M10-A3: `dimensions` comes from the top-level fields of the health
+          snapshot. It used to be derived by looking each of these labels up in
+          `data.domains`, which only carries the sub-authority breakdown, so the
+          primary operations screen reported UNKNOWN for Backend, Frontend,
+          Database, Architecture, Evidence and AI Runtime while the API was
+          reporting HEALTHY / SAFE / VALID / READY for them. */}
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-        {topLevelNames.map((label) => {
-          let status: string;
-          if (label === 'Framework Integrity') {
-            status = frameworkIntegrityStatus;
-          } else {
-            status = domains.find((d) => d.name === label)?.status ?? 'UNKNOWN';
-          }
-          return (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <HealthBadge status={status} size="sm" showLabel={false} />
-              <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center">
-                {label}
-              </span>
-            </div>
-          );
-        })}
+        {dimensions.map(({ label, status }) => (
+          <div key={label} className="flex flex-col items-center gap-1">
+            <HealthBadge status={status} size="sm" showLabel={false} />
+            <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center">
+              {label}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Domain detail table */}
+      {/* Domain detail table — the sub-authority breakdown, which was passed in
+          as a hardcoded `[]` and therefore never rendered at all. */}
       {domains.length > 0 && (
         <div className="border-t border-[var(--border-subtle)] pt-2 mt-1">
           <div className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2">
@@ -203,11 +197,16 @@ function VerificationStatusCard() {
 }
 
 function CapabilitiesSummary({ count, stages }: { count: number; stages: number }) {
+  // M10-A3: the subtitle used to read a hardcoded "0 issues". The
+  // `/platform/v1/capabilities` payload carries no issue count at all, so that
+  // number was a claim the console could not support. It now reports only what
+  // the API returned: the capability count and the number of stages in the
+  // catalog.
   return (
     <MetricTile
       label="Capabilities"
       value={count}
-      subtitle={`${stages} stages · 0 issues`}
+      subtitle={`${stages} ${stages === 1 ? 'stage' : 'stages'} in C50 catalog`}
       accent="positive"
     />
   );
@@ -225,6 +224,8 @@ export default function PlatformDashboardPage() {
     platformStatus,
     frameworkIntegrityStatus,
     unhealthyDomains,
+    dimensions,
+    domains,
   } = usePlatformHealthSummary();
   const { data: eventsData, isLoading: eventsLoading } = usePlatformEvents(8);
   const errorCount = useCurrentErrorCount();
@@ -299,9 +300,8 @@ export default function PlatformDashboardPage() {
               <SystemStatusCard platform={platformStatus} frameworkIntegrity={frameworkIntegrityStatus} />
             </div>
             <DimensionsGrid
-              domains={[]} // Will be populated from health data
-              platformStatus={platformStatus}
-              frameworkIntegrityStatus={frameworkIntegrityStatus}
+              dimensions={dimensions}
+              domains={domains}
             />
           </div>
 

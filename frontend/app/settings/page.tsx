@@ -109,7 +109,7 @@ export default function SettingsPage() {
                 <h2 className="text-lg font-semibold">About</h2>
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-3xl">💳</div>
-                  <div><p className="font-bold text-lg">FinTrack</p><p className="text-sm text-[var(--text-tertiary)]">Bank Statement Parser Dashboard</p><p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p></div>
+                  <div><p className="font-bold text-lg">ClariFin</p><p className="text-sm text-[var(--text-tertiary)]">Financial OS</p><p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p></div>
                 </div>
               </Stack>
             </Surface>

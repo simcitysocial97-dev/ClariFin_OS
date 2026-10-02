@@ -49,9 +49,16 @@ function ComponentBar({ label, value, invert = false }: { label: string; value: 
 export function BehaviorScoreCard() {
   const { data, isLoading, isError, refetch } = useBehaviorScore();
 
-  // Backend wellness score is in basis points (0-10000); normalise to 0-100 for display.
-  const rawScore = data?.financial_health_score ?? data?.score ?? 0;
-  const healthScore = rawScore > 100 ? rawScore / 100 : rawScore;
+  // The wellness score is a 0-100 magnitude (see lib/schemas/behavior-score.ts
+  // for the authority references), so it needs no rescaling.
+  //
+  // M10-A3: this read `financial_health_score ?? score` and then applied a
+  // `> 100 ? /100 : ` basis-point guess. The `??` silently preferred a different
+  // field from the same payload, and the guess is what made /dashboard and
+  // /behaviour disagree about one score. The schema now guarantees 0-100 for
+  // both fields, so the value is used as-is.
+  const rawScore = data?.score ?? data?.financial_health_score ?? 0;
+  const healthScore = rawScore;
   const isEmpty = !data;
 
   return (
