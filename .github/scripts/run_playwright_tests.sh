@@ -40,10 +40,20 @@ echo -e "\n${YELLOW}Building frontend...${NC}"
 npm run build
 
 echo -e "\n${YELLOW}Running Playwright test suite...${NC}"
+# PLAYWRIGHT_UPDATE_SNAPSHOTS=1 regenerates the visual baselines. It must only
+# ever be set on a GitHub runner: baselines are rasterisation-specific, so a
+# workstation running with a different font stack produces images that look
+# correct locally and fail in CI.
+update_flag=()
+if [ "${PLAYWRIGHT_UPDATE_SNAPSHOTS:-}" = "1" ]; then
+  echo -e "${YELLOW}PLAYWRIGHT_UPDATE_SNAPSHOTS=1 — regenerating visual baselines${NC}"
+  update_flag=(--update-snapshots)
+fi
+
 if [ -n "${PLAYWRIGHT_PROJECT:-}" ]; then
-  npx playwright test --project="${PLAYWRIGHT_PROJECT}" --reporter=list
+  npx playwright test --project="${PLAYWRIGHT_PROJECT}" --reporter=list "${update_flag[@]}"
 else
-  npx playwright test --reporter=list
+  npx playwright test --reporter=list "${update_flag[@]}"
 fi
 
 status=$?
