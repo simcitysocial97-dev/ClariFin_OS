@@ -4,10 +4,10 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
 import { ShellBoundary } from '@/components/os-shell/shell-boundary';
+import { MemberBoundary } from '@/components/os-shell/member-boundary';
 import { RuntimeProvider } from '@/lib/runtime';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -35,7 +35,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <QueryProvider>
-              <MemberProvider>
+              <MemberBoundary>
                 <RuntimeProvider>
                   <ErrorBoundary>
                     {/* M9-C71: the Platform Console is a standalone operational
@@ -46,7 +46,7 @@ export default function RootLayout({
                   </ErrorBoundary>
                   <Toaster />
                 </RuntimeProvider>
-              </MemberProvider>
+              </MemberBoundary>
             </QueryProvider>
           </ThemeProvider>
         </TooltipProvider>

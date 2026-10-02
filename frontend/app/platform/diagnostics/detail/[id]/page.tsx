@@ -28,7 +28,7 @@ import {
   ExternalLink,
   Search,
  } from 'lucide-react';
-import { apiFetch } from '@/lib/api/gateway';
+import { apiFetch, SAME_ORIGIN_BASE_URL } from '@/lib/api/gateway';
 
 interface DiagnosticDetail {
   id: string;
@@ -309,9 +309,20 @@ function ProvenanceField({ label, value }: { label: string; value: string }) {
 // ---------------------------------------------------------------------------
 
 async function fetchDiagnosticDetail(id: string): Promise<DiagnosticDetail | null> {
-  // Try to load from local diagnostic signatures store
+  // Try to load from local diagnostic signatures store.
+  //
+  // M10-A3: this requested `/platform/v1/diagnostics/signatures`, which the
+  // backend does not expose, so it always 404'd and every detail lookup fell
+  // through to "Diagnostic finding not found" — the page could not show a
+  // signature even for ids that exist in the store. The store is served by this
+  // app's own route handler; `SAME_ORIGIN_BASE_URL` keeps the request on the
+  // Next.js origin instead of the backend.
   try {
-    const response = await apiFetch('/platform/v1/diagnostics/signatures');
+    const response = await apiFetch(
+      '/api/diagnostic-signatures',
+      undefined,
+      SAME_ORIGIN_BASE_URL,
+    );
     if (response.ok) {
       const store = await response.json();
       const sig = store.signatures?.find((s: any) => s.id === id);
