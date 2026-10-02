@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import time
 import unittest
 from datetime import UTC, datetime
@@ -124,7 +125,7 @@ class TestC55BaselinePreservation(unittest.TestCase):
     def test_g1_regression_green(self):
         result = subprocess.run(
             [
-                ".venv/bin/python",
+                sys.executable,
                 "-m",
                 "pytest",
                 "runtime/tests/test_m9_c54.py",
@@ -498,7 +499,7 @@ class TestC55ReproducibilityExperiments(unittest.TestCase):
         """Experiment A: Same repo state + same env → repeated test execution."""
         result1 = subprocess.run(
             [
-                ".venv/bin/python",
+                sys.executable,
                 "-m",
                 "pytest",
                 "runtime/tests/test_m9_c54.py",
@@ -512,7 +513,7 @@ class TestC55ReproducibilityExperiments(unittest.TestCase):
         )
         result2 = subprocess.run(
             [
-                ".venv/bin/python",
+                sys.executable,
                 "-m",
                 "pytest",
                 "runtime/tests/test_m9_c54.py",
@@ -951,7 +952,7 @@ class TestC55CertificationGates(unittest.TestCase):
     def test_g30_regression_green(self):
         result = subprocess.run(
             [
-                ".venv/bin/python",
+                sys.executable,
                 "-m",
                 "pytest",
                 "runtime/tests/test_m9_c52.py",

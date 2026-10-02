@@ -433,7 +433,13 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         # serialised run.
         commands=[
             "cd frontend && npm run build && npx playwright test "
-            '${PLAYWRIGHT_PROJECT:+--project="$PLAYWRIGHT_PROJECT"}'
+            '${PLAYWRIGHT_PROJECT:+--project="$PLAYWRIGHT_PROJECT"} '
+            # Visual baselines are rasterisation-specific and must be produced by
+            # the same environment that asserts on them. This is only ever set by
+            # the playwright workflow's workflow_dispatch input, never on a
+            # pull_request run. .github/scripts/run_playwright_tests.sh honours
+            # the same variable for the equivalent direct path.
+            "${PLAYWRIGHT_UPDATE_SNAPSHOTS:+--update-snapshots}"
         ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,

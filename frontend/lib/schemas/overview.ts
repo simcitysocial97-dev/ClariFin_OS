@@ -38,8 +38,15 @@ const RecentTransactionSchema = z.object({
   member: z.string(),
   bank: z.string(),
   statement_file: z.string().optional(),
-  statement_period_from: z.string().optional(),
-  statement_period_to: z.string().optional(),
+  // M10-A3: these were `z.string().optional()`, which accepts `undefined` but
+  // NOT `null`. `GET /api/v1/overview` emits `"statement_period_from": null`
+  // and `"statement_period_to": null` for every imported transaction that has no
+  // statement period, so safeParse failed with 2 issues per row and the whole
+  // dashboard rendered "Unable to load data / Try again" against a 200 response.
+  // `subcategory` and `raw_description` below already model a nullable field
+  // correctly; these two did not.
+  statement_period_from: z.string().nullable().optional(),
+  statement_period_to: z.string().nullable().optional(),
   parsed_date: z.string().optional(),
   date_display: z.string().optional(),
   month_key: z.string().optional(),

@@ -94,6 +94,46 @@ function CompareContent() {
 
   const d = data?.data;
 
+  // M10-A3: this page is only ever reached with `?current=<runId>`, so reaching
+  // it directly (bookmark, browser history, a prefetched RSC request) rendered
+  // a bare "Run Comparison" heading and nothing else — the query is disabled
+  // without `current`, so no loading, no error and no empty state could ever
+  // appear. An operator cannot tell a broken page from one that is still
+  // working, which is the exact failure `components/platform/console-state.tsx`
+  // exists to prevent. It now states the missing input and offers the way to
+  // supply it.
+  if (!currentId) {
+    return (
+      <div className="flex flex-col gap-4 max-w-5xl">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push('/platform/history')}
+            className="text-xs text-[var(--text-tertiary)] underline hover:text-[var(--text-secondary)]"
+          >
+            ← History
+          </button>
+        </div>
+        <div
+          data-testid="compare-no-run-selected"
+          className="flex flex-col items-start gap-2 py-12"
+        >
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Run Comparison</h1>
+          <p className="text-sm text-[var(--text-secondary)]">
+            No run selected. A comparison needs a current run to measure against a
+            baseline.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push('/platform/history')}
+            className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-raised)]"
+          >
+            Choose a run from Run History
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4 max-w-5xl">
       {/* Header */}

@@ -54,7 +54,7 @@ runs:
     #    string when a caller sets only `pattern`) selects the wrong lookup
     #    mode, so only the one the caller actually supplied is passed on.
     - name: Download ${{ inputs.name || inputs.pattern }}
-      uses: actions/download-artifact@v7.0.0
+      uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
       with:
         name: ${{ inputs.name != '' && inputs.name || null }}
         pattern: ${{ inputs.pattern != '' && inputs.pattern || null }}

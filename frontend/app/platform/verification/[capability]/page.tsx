@@ -3,6 +3,8 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCapabilityDetail, useVerificationRun } from '@/lib/hooks/use-verification-center';
+import { ConsoleUnavailableState } from '@/components/platform/console-state';
+import { describeError } from '@/lib/api/errors';
 import { useState } from 'react';
 
 export default function CapabilityDetailPage() {
@@ -23,7 +25,22 @@ export default function CapabilityDetailPage() {
 
   if (!capId) return <div className="text-xs text-[var(--text-tertiary)]">Missing capability</div>;
   if (detail.isLoading) return <div className="text-xs text-[var(--text-tertiary)]">Loading {capId}…</div>;
-  if (detail.isError) return <div className="text-xs text-red-400">Failed: {String(detail.error)}</div>;
+  // M10-A3: this rendered `String(detail.error)`, which for the canonical
+  // `ApiError` is the raw stringified object — an operator navigating to a
+  // capability that does not exist saw a wall of `{ "status": 404,
+  // "transient": false, "body": "{...escaped JSON...}" }` with no indication of
+  // what was wrong or what to do. Errors are now reported as the console's
+  // terminal unavailable state, which states the situation and offers a retry.
+  if (detail.isError) {
+    return (
+      <ConsoleUnavailableState
+        heading={`Capability ${capId}`}
+        subject={`No capability record to show for "${capId}" — the platform API rejected the request, so nothing about this capability can be reported.`}
+        message={describeError(detail.error)}
+        onRetry={() => void detail.refetch()}
+      />
+    );
+  }
   const d = detail.data?.data;
   if (!d) return <div className="text-xs text-[var(--text-tertiary)]">No data for {capId}</div>;
 

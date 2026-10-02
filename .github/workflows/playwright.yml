@@ -30,6 +30,14 @@ on:
       - "e2e/**"
       - "runtime/**"
   workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: >-
+          Regenerate the visual-regression baselines on this runner and upload
+          them as an artifact. Baselines are rasterisation-specific, so they must
+          be produced by a GitHub runner, never by a workstation.
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -54,7 +62,7 @@ jobs:
           - mobile-chrome
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -79,7 +87,22 @@ jobs:
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
           CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          PLAYWRIGHT_UPDATE_SNAPSHOTS: ${{ inputs.update_snapshots && '1' || '' }}
         run: .venv/bin/python -m runtime.verify playwright
+
+      # Visual baselines are only valid when produced by the same rendering
+      # environment that will assert on them. This job IS that environment, so
+      # the regenerated images are uploaded for download and commit rather than
+      # being regenerated on a workstation.
+      - name: Upload regenerated visual baselines
+        if: ${{ inputs.update_snapshots == true }}
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: regenerated-visual-baselines-${{ matrix.project }}
+          if-no-files-found: ignore
+          path: |
+            frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/
+            frontend/test-results/
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -128,5 +151,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

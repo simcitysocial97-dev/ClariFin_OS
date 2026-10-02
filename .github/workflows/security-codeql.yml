@@ -69,26 +69,47 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
         with:
           # Explicit ownership for every security-relevant language.
           #
           # `actions` is included deliberately. GitHub's default CodeQL setup is
-          # `not-configured` on this repository, so this workflow is the only
-          # analysis surface. Without `actions`, workflow files had no owner:
-          # the actions database was last written on 2026-08-10 by the retired
-          # default setup, and the 12 actions/missing-workflow-permissions alerts
-          # it raised have never been re-analysed. Including it restores that
-          # ownership and lets those alerts be confirmed or cleared by a real
-          # re-analysis rather than closed on age.
+          # not configured on this repository, so this workflow is the only
+          # analysis surface. Without `actions`, workflow files had no owner: the
+          # actions database was written on 2026-08-10 by the now-retired default
+          # setup and never again until this workflow added the language.
+          #
+          # That ownership gap is now closed. Verified 2026-10-02 against the
+          # code-scanning databases API: python-database, javascript-database and
+          # actions-database are all maintained by this workflow (each last
+          # written 2026-10-02T00:58:4xZ by run #110 on main). The 12
+          # actions/missing-workflow-permissions alerts the retired default setup
+          # raised on 2026-08-10 have since been re-analysed and all 12 are
+          # dismissed; each points at a workflow that does declare an explicit
+          # `permissions:` block, so dismissal is the correct disposition rather
+          # than closure on age.
           #
           # Default setup remains disabled, so there is no duplicate analysis of
           # python or javascript.
+          #
+          # WHY THE ACTIONS LIST STILL SHOWS THREE "CodeQL" ENTRIES. This is a
+          # display artefact of dead registrations, not a second analysis, and is
+          # deliberately NOT "fixed" by reducing coverage here:
+          #   - "CodeQL" (id 330860652, dynamic/github-code-scanning/codeql) is the
+          #     retired default setup. Its last run was 2026-08-12; it has not run
+          #     since, because this workflow is now the active surface.
+          #   - "CodeQL Security Analysis" (id 332570115, codeql.yml) never existed
+          #     on main. It was created and deleted on the branch
+          #     verification-framework-codeql-integration and retains one cancelled
+          #     run from 2026-08-12.
+          #   - this workflow (id 332453015, security-codeql.yml) is the live one.
+          # Only this workflow writes the three databases above, which is the
+          # decisive evidence that default setup is not running alongside it.
           languages: python, javascript, actions
           config: |
             # One vendored, upstream-generated bundle is excluded, and nothing
@@ -109,10 +130,10 @@ jobs:
               - frontend/public/pdf.worker.mjs
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
 
       - name: Job Summary
         if: always()

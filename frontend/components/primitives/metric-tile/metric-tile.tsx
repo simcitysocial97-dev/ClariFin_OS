@@ -14,6 +14,19 @@ interface MetricTileProps {
   valuePaise?: number;
   change?: number;
   changePercent?: number;
+  /**
+   * How to render `value`. Defaults to `'money'`, which is the only correct
+   * treatment for a paise amount and preserves every existing caller.
+   *
+   * M10-A3: the Command Center metrics strip routes percentage metrics
+   * (Debt Ratio, Investment Return, Forecast Confidence) through this tile, so
+   * they were rendered by `MoneyValue` as rupees — a debt ratio of 42% was
+   * displayed as "₹4,20,000.00". Money representation must not be applied to a
+   * dimensionless quantity.
+   */
+  format?: 'money' | 'percent' | 'number';
+  /** Decimal places for the non-money formats. */
+  precision?: number;
   className?: string;
 }
 
@@ -30,15 +43,25 @@ export function MetricTile({
   valuePaise,
   change,
   changePercent,
+  format = 'money',
+  precision = 1,
   className,
 }: MetricTileProps) {
-  const displayPaise = valuePaise ?? value;
+  const displayValue = valuePaise ?? value;
   const isPositive = (change ?? 0) >= 0;
 
   return (
     <div className={cn('p-4', className)}>
       <p className="fin-caption text-[var(--text-tertiary)] mb-1">{label}</p>
-      <MoneyValue paise={displayPaise} variant="default" className="text-[var(--text-primary)]" />
+      {format === 'money' ? (
+        <MoneyValue paise={displayValue} variant="default" className="text-[var(--text-primary)]" />
+      ) : (
+        <p className="fin-amount tabular-nums text-[var(--text-primary)]">
+          {format === 'percent'
+            ? `${displayValue.toFixed(precision)}%`
+            : displayValue.toFixed(precision)}
+        </p>
+      )}
       {change !== undefined && (
         <p className={cn(
           'fin-caption mt-1',

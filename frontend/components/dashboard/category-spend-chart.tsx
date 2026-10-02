@@ -40,7 +40,6 @@ export function CategorySpendChart() {
         isError={isError}
         isEmpty={isEmpty}
         onRetry={refetch}
-        title="Category Spend"
       >
         {sortedCategories.length > 0 && (
           <div className="h-[250px]">

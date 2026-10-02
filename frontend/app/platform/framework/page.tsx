@@ -89,6 +89,19 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: 'text-slate-400 bg-slate-500/10 border-slate-500/30',
 };
 
+/**
+ * M10-A3: the API reports `severity` in inconsistent case — the C62 detector
+ * emits `MEDIUM` / `LOW` while its own summary counters are keyed lowercase.
+ * The lookup below was a bare `SEVERITY_COLORS[severity]`, so every
+ * upper-case finding silently fell through to the grey `info` styling and a
+ * MEDIUM artifact-integrity defect was rendered as an informational note.
+ * Normalising the case keeps the severity colour honest whichever form the
+ * authority emits; an unrecognised severity still degrades to `info`.
+ */
+function severityColor(severity: string): string {
+  return SEVERITY_COLORS[severity.toLowerCase()] ?? SEVERITY_COLORS.info;
+}
+
 const CLASSIFICATION_LABELS: Record<string, string> = {
   IMPLEMENTATION_DEFECT: 'Implementation Defect',
   AUTHORITY_DRIFT: 'Authority Drift',
@@ -164,6 +177,27 @@ export default function FrameworkIntegrityPage() {
             info={d.info_count}
             total={d.total_findings}
           />
+
+          {/* M10-A3: the C62 authority's severity counters do not reconcile
+              with the findings it returns — live payload reports
+              total_findings=5 with critical/high/medium/low/info all 0, while
+              the findings themselves carry `MEDIUM`/`LOW` severities. The
+              console does not recompute an authority's tally (see
+              components/platform/console-state.tsx: it never derives a verdict
+              locally), so it reports the inconsistency instead of presenting
+              "Total 0 / Medium 0" next to "Detector Findings (5)" as if both
+              were true. Backend fix is required; this makes it visible. */}
+          {d.findings.length !== (d.critical_count + d.high_count + d.medium_count + d.low_count + d.info_count) && (
+            <div
+              data-testid="framework-counter-mismatch"
+              className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-300"
+            >
+              Severity counters do not reconcile with the returned findings:{' '}
+              {d.critical_count + d.high_count + d.medium_count + d.low_count + d.info_count} counted
+              across five severities vs {d.findings.length} finding(s) reported. The counters are
+              reported verbatim from the C62 authority — they are not recomputed here.
+            </div>
+          )}
 
           {/* Self-Tests */}
           <SelfTestsPanel tests={st?.results ?? []} passed={st?.passed ?? 0} total={st?.total ?? 0} loading={selfTestsLoading} />
@@ -387,10 +421,10 @@ function ClassificationGroup({
 }
 
 function FindingRow({ finding }: { finding: DriftFinding }) {
-  const severityColor = SEVERITY_COLORS[finding.severity] ?? SEVERITY_COLORS.info;
+  const severityColorClass = severityColor(finding.severity);
 
   return (
-    <div className={cn('rounded border p-3 text-xs', severityColor)}>
+    <div className={cn('rounded border p-3 text-xs', severityColorClass)}>
       <div className="flex items-start gap-2">
         <span className="font-mono shrink-0 text-[var(--text-secondary)] w-36 truncate">
           {finding.check_name}

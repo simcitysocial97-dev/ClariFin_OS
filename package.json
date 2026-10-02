@@ -1,4 +1,18 @@
 {
+  "name": "clarifin-os",
+  "private": true,
+  "scripts": {
+    "start": "bash ./start.sh",
+    "stop": "bash ./start.sh stop",
+    "restart": "bash ./start.sh restart",
+    "status": "bash ./start.sh status",
+    "health": "bash ./start.sh health",
+    "console": "bash ./start.sh console",
+    "platform": "bash ./start.sh platform",
+    "logs": "bash ./start.sh logs",
+    "check-env": "bash ./start.sh check-env",
+    "bootstrap": "bash ./scripts/bootstrap.sh"
+  },
   "devDependencies": {
     "vite-tsconfig-paths": "^6.1.1"
   }

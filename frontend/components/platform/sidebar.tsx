@@ -29,14 +29,25 @@ interface NavItem {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  badge?: string | number;
+  /**
+   * M10-A3: the Diagnostics entry carried a hardcoded `badge: '5'`, so every
+   * console page displayed a red "5" next to Diagnostics no matter what the
+   * platform actually reported — including on the Diagnostics page itself,
+   * which was simultaneously stating "0 finding(s)". A nav badge is a live
+   * signal, so it may only carry a live number. Restoring one is tracked as a
+   * product issue rather than re-hardcoded here: the console has no cheap
+   * console-wide source for the finding count (deriving it in this layout would
+   * add an unconditional diagnostic query to every console page, and
+   * `useConsolidatedDiagnostics` reads health + errors + tasks), and the
+   * Diagnostics page already owns and reports that number in its own heading.
+   */
 }
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/platform', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/platform/health', label: 'Health', icon: HeartPulse },
   { href: '/platform/verification', label: 'Verification', icon: TestTube },
-  { href: '/platform/diagnostics', label: 'Diagnostics', icon: Bug, badge: '5' },
+  { href: '/platform/diagnostics', label: 'Diagnostics', icon: Bug },
   { href: '/platform/diagnostics/change', label: 'Change Intelligence', icon: Zap },
   { href: '/platform/framework', label: 'Framework', icon: ShieldCheck },
   { href: '/platform/workflows', label: 'Workflows', icon: Terminal },
@@ -85,11 +96,6 @@ export function PlatformSidebar() {
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span className="truncate flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
-                  {item.badge}
-                </span>
-              )}
             </Link>
           );
         })}
