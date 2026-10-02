@@ -202,6 +202,28 @@ INR values. Loading, error, empty and data states are all present and distinct
 anywhere except `/forecast` (§3.4). INR values are correct and consistently
 `en-IN` grouped (`₹99,200.00`, `₹3,85,000.00`, `₹4,16,000.00`).
 
+### 3.7 The seeding recipe this pass used (no working fixture seed exists)
+
+Every chart conclusion above required real data, and a fresh worktree has none.
+`tools/e2e_seed.py` cannot supply it (see remaining issue #21), so data was
+created through the canonical routes the frontend actually consumes — this is
+the recipe, and it is the only part of this audit that is environment setup
+rather than code:
+
+```
+POST /api/v1/accounts      {"name","account_type","bank","balance_paise","account_number_last4"}
+POST /api/v1/loans         {"name","lender","loan_type","principal_paise","outstanding_paise",
+                            "rate_bps","tenure_months","disbursed_date","emi_paise"}
+POST /api/v1/investments   500 — see issue #5
+POST /api/v1/import/detect    (multipart "file")  -> detect the CSV columns
+POST /api/v1/import/execute   {"filename","mapping":{...},"bank_name","member"}
+```
+
+`/api/v1/import/detect` + `/execute` is the useful discovery: it is the one
+import path that works, and it populated 30 transactions across 6 months
+(the canonical CSV header it accepts is
+`date,description,amount,type,category`).
+
 ---
 
 ## 4. Recorded as NOT defects (extraction artifacts)
