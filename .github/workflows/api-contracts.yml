@@ -42,6 +42,17 @@ on:
   # With `contents: read` only, the checkout can no longer reach anything the
   # untrusted code could escalate through, and the finding is closed by removing
   # the privilege rather than by removing the safety net.
+  #
+  # The checkout deliberately does NOT use `github.event.workflow_run.head_sha`.
+  # For a `workflow_run` event `github.sha` is already the default branch's head,
+  # which is the trusted ref this gate is meant to re-check; `head_sha` is the
+  # commit the untrusted run executed, and a fork's pull request controls it.
+  # Checking it out let untrusted code seed the Actions cache that
+  # `bootstrap-runtime` restores on later default-branch runs
+  # (`actions/cache-poisoning/poisonable-step`, high), which the removal of
+  # `pull-requests: write` did not address — the write scope was the privilege
+  # leak, the checkout was the cache-poisoning path, and they are separate
+  # findings with separate fixes.
   workflow_run:
     workflows: ["Playwright Tests"]
     types:
@@ -64,7 +75,6 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Bootstrap Engineering Runtime
         uses: ./.github/actions/bootstrap-runtime
