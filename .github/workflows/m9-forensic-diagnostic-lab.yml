@@ -84,6 +84,12 @@ jobs:
           } >> runtime/generated/evidence/base-resolution.txt
 
       - name: Compare all Git changed-file calculations
+        # Best-effort probe: this lab exists to capture as much forensic
+        # evidence as possible, so a probe that cannot complete must not abort
+        # the remaining captures. (The flag was previously carried only by the
+        # two duplicated `runtime.verify` steps removed in M10; this is its
+        # true home.)
+        continue-on-error: true
         run: |
           set +e
 
