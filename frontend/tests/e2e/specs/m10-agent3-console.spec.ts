@@ -179,13 +179,20 @@ test.describe('Platform Console — dashboard health dimensions', () => {
     const rendered = (await grid.allInnerTexts()).map((t) => t.trim());
     expect(rendered, 'every health dimension must be labelled').toEqual(labels);
 
+    // Scoped to the dimension grid. The page also renders framework-integrity and
+    // domain-detail badges, and those legitimately report UNKNOWN when the
+    // authority has no data for them in a given environment. Asserting across
+    // every badge on the page made the test fail for reasons outside the eight
+    // dimensions it exists to protect.
     const statuses = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('[data-testid="health-status-badge"]')).map((e) =>
-        e.getAttribute('data-status'),
-      ),
+      Array.from(
+        document.querySelectorAll(
+          '[data-testid="health-dimensions-grid"] [data-testid="health-status-badge"]',
+        ),
+      ).map((e) => e.getAttribute('data-status')),
     );
     expect(statuses.length).toBeGreaterThanOrEqual(labels.length);
-    expect(statuses, 'no dimension may be rendered UNKNOWN while the API has a status').not.toContain('UNKNOWN');
+    expect(statuses, 'no health dimension may be rendered UNKNOWN while the API has a status').not.toContain('UNKNOWN');
   });
 });
 

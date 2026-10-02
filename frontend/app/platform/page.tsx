@@ -80,7 +80,7 @@ function DimensionsGrid({
           primary operations screen reported UNKNOWN for Backend, Frontend,
           Database, Architecture, Evidence and AI Runtime while the API was
           reporting HEALTHY / SAFE / VALID / READY for them. */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+      <div data-testid="health-dimensions-grid" className="grid grid-cols-4 sm:grid-cols-8 gap-2">
         {dimensions.map(({ label, status }) => (
           <div key={label} className="flex flex-col items-center gap-1">
             <HealthBadge status={status} size="sm" showLabel={false} />
