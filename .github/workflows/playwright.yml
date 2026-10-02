@@ -95,10 +95,10 @@ jobs:
       # the regenerated images are uploaded for download and commit rather than
       # being regenerated on a workstation.
       - name: Upload regenerated visual baselines
-        if: ${{ inputs.update_snapshots == true && matrix.project == 'chromium' }}
+        if: ${{ inputs.update_snapshots == true }}
         uses: ./.github/actions/upload-runtime
         with:
-          name: regenerated-visual-baselines
+          name: regenerated-visual-baselines-${{ matrix.project }}
           if-no-files-found: ignore
           path: |
             frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/
