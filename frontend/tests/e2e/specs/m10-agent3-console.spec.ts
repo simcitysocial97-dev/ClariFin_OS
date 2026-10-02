@@ -104,7 +104,15 @@ test.describe('Platform Console — no calls to non-existent endpoints', () => {
     const paths: string[] = [];
     page.on('request', (request) => {
       const url = request.url();
-      if (url.includes('/diagnostics/signatures') || url.includes('/api/diagnostic-signatures')) {
+      // Only BACKEND requests are forbidden. `/api/diagnostic-signatures` on the
+      // FRONTEND origin is this repository's own Next.js route handler — the
+      // local signature store the test is asserting we DO use. Matching on the
+      // path alone flagged the very route under test.
+      const isBackend = url.includes('localhost:8000') || url.includes('/api/v1/');
+      if (
+        isBackend &&
+        (url.includes('/diagnostics/signatures') || url.includes('/api/diagnostic-signatures'))
+      ) {
         paths.push(url.replace('http://localhost:8000', ''));
       }
     });
@@ -160,10 +168,18 @@ test.describe('Platform Console — dashboard health dimensions', () => {
   test('every dimension renders a status, never UNKNOWN', async ({ page }) => {
     await gotoConsole(page, '');
 
-    const labels = ['BACKEND', 'FRONTEND', 'DATABASE', 'ARCHITECTURE', 'VERIFICATION', 'EVIDENCE', 'AI RUNTIME', 'FRAMEWORK INTEGRITY'];
-    for (const label of labels) {
-      await expect(page.getByText(label, { exact: true })).toBeVisible();
-    }
+    // Matched against the DOM text, which is title case; the uppercase styling
+    // is applied with the CSS `uppercase` class, and getByText compares rendered
+    // text content, not CSS text-transform. Asserting 'BACKEND' here could never
+    // match the real markup.
+    const labels = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
+    // Scoped to the dimension labels: 'Architecture' also matches a sidebar
+    // link, which made an unscoped getByText a strict-mode violation rather
+    // than an assertion about the health grid.
+    const grid = page.getByTestId('health-dimension-label');
+    await expect(grid).toHaveCount(labels.length);
+    const rendered = (await grid.allInnerTexts()).map((t) => t.trim());
+    expect(rendered, 'every health dimension must be labelled').toEqual(labels);
 
     const statuses = await page.evaluate(() =>
       Array.from(document.querySelectorAll('[data-testid="health-status-badge"]')).map((e) =>

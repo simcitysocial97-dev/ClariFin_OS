@@ -84,7 +84,10 @@ function DimensionsGrid({
         {dimensions.map(({ label, status }) => (
           <div key={label} className="flex flex-col items-center gap-1">
             <HealthBadge status={status} size="sm" showLabel={false} />
-            <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center">
+            <span
+              data-testid="health-dimension-label"
+              className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center"
+            >
               {label}
             </span>
           </div>
