@@ -244,3 +244,38 @@ Actions UI). This is deliberately **not** performed here:
 
 Targets: `332570115` (`codeql.yml`, ghost) and `330860652` (`dynamic/…/codeql`,
 retired default setup).
+---
+
+## 9. Follow-up attempted during M10 integration: the dead entries are NOT removable
+
+The follow-up in §8 was attempted during integration and **failed structurally**.
+All three dead registrations were targeted with the documented endpoint, with an
+`admin: true` token (`{"admin":true,"maintain":true,"pull":true,"push":true}`):
+
+| Workflow id | Name | Path | `DELETE` result |
+|---|---|---|---|
+| `332570115` | CodeQL Security Analysis | `.github/workflows/codeql.yml` | `HTTP/2.0 404 Not Found` |
+| `372442200` | Matrix Shape Probe | `.github/workflows/zz-matrix-probe.yml` | `HTTP/2.0 404 Not Found` |
+| `330860652` | CodeQL | `dynamic/github-code-scanning/codeql` | `HTTP/2.0 404 Not Found` |
+
+The registry is unchanged at 18 entries after the attempts.
+
+**Root cause.** `DELETE /repos/{owner}/{repo}/actions/workflows/{workflow_id}`
+resolves the workflow through the default branch's tree. All three targets are
+absent from `main`'s tree (or are `dynamic/` pseudo-paths with no file at all),
+so the lookup misses and the endpoint returns 404 regardless of privilege. This
+is not an authorization failure and not a permissions problem — it is not
+reachable by the repository owner at any privilege level.
+
+**Consequence — this is now a permanent known limitation, not an open task.**
+
+- The two "CodeQL Security Analysis" entries will remain in the Actions list
+  until GitHub garbage-collects the registrations for deleted files.
+- `code-scanning/default-setup` is `not-configured`, so entry `330860652`
+  cannot be supplying analysis. Security coverage is unaffected: `python-
+  database`, `javascript-database` and `actions-database` were all written
+  `2026-10-02T00:58:4xZ` by `security-codeql.yml`, and that remains the single
+  authoritative analysis.
+- **Do not** "fix" the duplicate by disabling security coverage, narrowing
+  `languages:`, or removing the `Analyze` job. The duplicate is cosmetic; the
+  coverage is not.
