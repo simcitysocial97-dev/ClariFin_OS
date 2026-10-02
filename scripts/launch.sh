@@ -1492,7 +1492,9 @@ run_verify() {
 
 check_platform() {
     echo "Opening Platform Console..."
-    _require_console_running
+    # Propagate the failure: without this the browser opens a dead URL and the
+    # command still reports success.
+    _require_console_running || return 1
     _open_browser "$PLATFORM_CONSOLE_URL"
 }
 
