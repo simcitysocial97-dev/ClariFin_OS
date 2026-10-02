@@ -192,8 +192,7 @@ def test_m9_analysis_step_always_executes():
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
     init = any(
-        _uses_action(s.get("uses"), f"{CODEQL_ACTION}/init")
-        for s in analyze["steps"]
+        _uses_action(s.get("uses"), f"{CODEQL_ACTION}/init") for s in analyze["steps"]
     )
     analyze_present = any(
         _uses_action(s.get("uses"), f"{CODEQL_ACTION}/analyze")

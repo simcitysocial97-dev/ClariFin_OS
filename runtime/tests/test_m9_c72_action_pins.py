@@ -154,8 +154,7 @@ class TestActionPinsAreVerified:
         assert not unknown, (
             "action pins not present in VERIFIED_SHAS/VERIFIED_PINS — resolve "
             "and verify the ref exists (`gh api repos/<owner>/<repo>/commits/"
-            "<tag> --jq .sha`) before using it:\n  "
-            + "\n  ".join(unknown)
+            "<tag> --jq .sha`) before using it:\n  " + "\n  ".join(unknown)
         )
 
     def test_download_artifact_never_uses_a_nonexistent_tag(self):
@@ -179,7 +178,9 @@ class TestActionPinsAreVerified:
         must be one this repository has verified.
         """
         download_pins = {
-            ref for repo, ref, _ in _external_pins() if repo == "actions/download-artifact"
+            ref
+            for repo, ref, _ in _external_pins()
+            if repo == "actions/download-artifact"
         }
 
         assert (
@@ -230,7 +231,8 @@ class TestDownloadActionContract:
         ), "the nonexistent download-artifact v7.0.1 tag must never be pinned"
         download_sha = VERIFIED_SHAS["actions/download-artifact"]
         assert any(
-            d.startswith("actions/download-artifact@") and d.split("@", 1)[1] in download_sha
+            d.startswith("actions/download-artifact@")
+            and d.split("@", 1)[1] in download_sha
             for d in directives
         ), f"download-runtime must pin a verified download-artifact SHA: {directives}"
         # The resolved version must stay readable next to the SHA, so the next

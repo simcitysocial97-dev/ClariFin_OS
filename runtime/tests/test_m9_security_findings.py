@@ -40,6 +40,7 @@ def _is_codeql_init(uses: str) -> bool:
     ref = uses[len(prefix) :].split("#")[0].strip()
     return bool(ref) and (ref.startswith("v") or bool(_SHA_RE.match(ref)))
 
+
 PY_ALERTS = {
     # py/path-injection — orchestrator.py x4, import_router.py x2. The alert is
     # reported at each site that TOUCHES the derived path, not at the one place
@@ -274,9 +275,7 @@ def test_the_vendored_bundle_exclusion_is_a_single_named_file():
     """
     wf = yaml.safe_load(_read(".github/workflows/security-codeql.yml"))
     init = next(
-        s
-        for s in wf["jobs"]["analyze"]["steps"]
-        if _is_codeql_init(s.get("uses", ""))
+        s for s in wf["jobs"]["analyze"]["steps"] if _is_codeql_init(s.get("uses", ""))
     )
     config = yaml.safe_load(init["with"]["config"])
     assert config["paths-ignore"] == ["frontend/public/pdf.worker.mjs"]
