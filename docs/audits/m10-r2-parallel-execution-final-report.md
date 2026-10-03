@@ -254,8 +254,72 @@ single task (`mypy`) dominates, so there is nothing to overlap. This is the same
 indivisibility floor as the shard ceiling, and reporting it as such is more useful than
 hiding it.
 
-**Not yet measured:** CI elapsed time. That requires a real run of the restructured
-workflow and is the remaining acceptance item.
+### 6.1 CI dependency graph — the final topology
+
+Three workflows now expose independent canonical obligations to GitHub. None of them
+introduces an artificial `needs:` chain.
+
+```
+verification-runtime.yml     backend-verify.yml              verification-reconcile.yml
+  runtime-plan                  backend-plan                    reconcile-plan
+       |                             |                               |
+  runtime-shard (MATRIX 4)     backend-obligation (MATRIX 4)   reconcile-shard (MATRIX 7)
+       |                             |                               |
+  verify-runtime  <- required   verify  <- required              reconcile-gate
+  "Runtime Verification"        "Backend Verification"           "Verification Reconcile"
+```
+
+`Analyze` (security-codeql.yml) is untouched. `Frontend Verification` is deliberately
+unchanged: the `frontend` profile has **one** obligation, so there is nothing to fan out.
+
+| Gate | Before | After | Available |
+|---|---|---|---|
+| Runtime Verification | 1 job, ~26 min serial pytest | plan + 4 shards + required aggregate | ~4x (160 files, est 676s vs 2701s) |
+| Backend Verification | 1 job, 6 obligations serial in-process | plan + 6 legs + required aggregate | 3.33x (600s est vs 180s) |
+| Verification Reconcile | 1 job, all tasks serial | plan + ≤7 shards + aggregate | ~2.6x (floor = heaviest task) |
+
+Required identities are byte-identical: `verify-runtime` is still "Runtime Verification",
+`verify` is still "Backend Verification", `reconcile-gate` is still "Verification
+Reconcile". The plan and matrix legs are implementation workers, not required checks.
+
+**Rule 8 satisfied with no validator change.** The operations are named
+`runtime-plan`/`runtime-shard`/`runtime-aggregate` and
+`backend-plan`/`backend-task`/`backend-aggregate`, landing inside the rule's *existing*
+`prof.startswith(expected + "-")` allowance — the precedent Rule 8 itself cites is
+mutation.yml's `mutation-plan`/`mutation-aggregate`/`mutation-trust`. `validate_actions.py`
+was not modified and no rule was weakened.
+
+### 6.2 Gate safety, verified live
+
+| Scenario | Result |
+|---|---|
+| 1 of 4 runtime shards | `NOT CERTIFIED: expected 4 shard(s), 1 reported; missing: …` exit 1 |
+| 3 of 4 shards failing | `not_certified`, exit 1, each failure named |
+| 4 of 4 shards passing | certified, `files_covered: 160` (complete, exactly once) |
+| 2 of 6 backend obligations | `NOT CERTIFIED: missing 4 of 6 obligation(s): …` exit 1 |
+| 6 of 6 obligations passing | `CERTIFIED` exit 0 |
+
+There is no path by which a failed or absent leg yields a green required check.
+
+### 6.3 Workstation contention — the one caveat a local box cannot settle
+
+Running three obligations (or shards) concurrently on this 4-core workstation, at
+loadavg ~5, produced failures that do **not** occur one at a time:
+
+* `backend-integration` failed on an endpoint response that took **148 seconds**; the
+  identical obligation passed alone in 180.3 s.
+* Three concurrent runtime shards hit the suite's hard-coded 30 s / 120 s subprocess
+  budgets; shard 0 alone passed 647 tests in 241 s.
+
+This is the same contention that disqualified `pytest -n auto` (M10-R2-C2), and it is
+precisely what dedicated per-runner shards exist to avoid. The gate logic was correct in
+both cases — it reported NOT CERTIFIED for failures that were genuinely non-zero exits.
+But **a shared workstation cannot validate the per-runner budget**, so the projected
+speedups above are the plan's arithmetic on measured per-leg durations, not a measured CI
+result. Confirming them requires one live CI run.
+
+**Not yet measured:** CI elapsed time end to end. That is the remaining acceptance item,
+and it cannot be settled locally.
 
 ### 6.1 Bugs found by running, not by reading
 
