@@ -83,11 +83,46 @@ jobs:
           working-directory: "frontend"
           browsers: chromium
 
+      # M11 — deterministic E2E data.
+      #
+      # The webServer below starts uvicorn against the backend's DEFAULT
+      # database, and nothing seeded it. Every surface the tests exercised was
+      # therefore created by whichever specs happened to run first, so the data
+      # a visual-regression spec observed depended on test ordering, retries and
+      # worker scheduling.
+      #
+      # The visible symptom was a Cashflow Trend Y-axis tick appearing in some
+      # runs and not others. `formatPaiseForChart` derives the tick set from
+      # `domain={[0, 'dataMax + 100000']}`, so a varying dataMax moves the
+      # ticks: one `₹72K` label, 1 740 differing pixels, and a red gate on a
+      # chart that had not changed. Four other pages in the same run matched
+      # their baselines exactly, which is what identified it as data variance
+      # rather than a rendering or rasterisation change.
+      #
+      # `tools/e2e_seed.py` is reused here rather than introducing a second
+      # seeding framework. It is the M11 E2E-seed deliverable, it was verified
+      # byte-identical across two fresh runs, and `--reset` was fixed in M11 to
+      # work without `--db` (it used to be a silent no-op).
+      #
+      # Seeding runs BEFORE the webServer starts, against an explicit path, so
+      # the file the tests read is exactly the file this step wrote.
+      - name: Seed deterministic E2E dataset
+        shell: bash
+        env:
+          E2E_DB: ${{ github.workspace }}/backend/data/e2e-playwright.db
+        run: |
+          mkdir -p "$(dirname "$E2E_DB")"
+          PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py \
+            --db "$E2E_DB" --reset
+
       - name: Run playwright verification (canonical check)
         env:
           PLAYWRIGHT_PROJECT: ${{ matrix.project }}
           CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
           PLAYWRIGHT_UPDATE_SNAPSHOTS: ${{ inputs.update_snapshots && '1' || '' }}
+          # The seeded database, so the webServer reads the file the step above
+          # wrote rather than falling back to the backend default.
+          FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-playwright.db
         run: .venv/bin/python -m runtime.verify playwright
 
       # Visual baselines are only valid when produced by the same rendering
