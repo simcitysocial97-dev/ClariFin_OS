@@ -13,6 +13,98 @@ from runtime.foundation.verification.registry import (
     reset_registry,
 )
 
+# ---------------------------------------------------------------------------
+# M10-R2 (C2) — runtime/tests xdist pilot: MEASURED, AND REJECTED.
+# ---------------------------------------------------------------------------
+#
+# `runtime/tests` is the longest single task in the `runtime` profile (~22 min serial),
+# so parallelising it was the cheapest large win available. It was piloted and the
+# result is recorded here because the negative is the finding.
+#
+# Measured on this host (4 cores, loadavg 4.6-6.7 during the run):
+#
+#   serial          2685 passed, 16 skipped   1601 s (26m41s)
+#   -n 4            2584 passed, 16 skipped   1344 s (22m24s)   1.19x, 6 FAILED
+#
+# Every one of those 6 failures is budget exhaustion under contention, not a logic
+# error:
+#
+#   * `runtime.verify doctor` / `runtime.verify status` timed out after 30 s
+#     (they had ~2 s of headroom serially).
+#   * nested suites `test_m9_c50.py` / `test_m9_c51.py` timed out after 120 s.
+#   * two `test_m9_c49` scenarios asserted `diagnostic` / `awaiting_authorization`
+#     and observed `validation_blocked`, because the run exceeded its own budget and
+#     the fingerprint check correctly refused to certify a tree that had drifted
+#     mid-run.
+#
+# A 1.19x gain is not worth a gate that fails intermittently. Trading a 22-minute
+# deterministic gate for a 22-minute flaky one is strictly worse, so `-n` is NOT
+# enabled on this suite.
+#
+# The cost profile explains why: the suite's time is dominated by a handful of very
+# long tests (nested suites, mutation campaigns, coverage measurement), so there is
+# little short-test parallelism to win. The remaining headroom here is not in
+# pytest distribution at all — it is the C4 reconcile matrix, which shards whole
+# verification *tasks* across runners rather than tests within one runner.
+#
+# These three files additionally cannot be parallelised, independent of the above:
+#
+# 1. `test_mutation_infra.py` writes and restores the REAL `backend/pyproject.toml`,
+#    which `RepositoryFingerprint.capture()` hashes. Observed live during this
+#    milestone: an interrupted run left `source_paths` pointing at `loan_engine` in
+#    the working tree.
+# 2. `test_full_pipeline_integration.py` writes and restores the REAL
+#    `backend/src/engines/loan_engine/emi.py`, inside the tree `_hash_tree` walks.
+# 3. `test_m9_c55.py::test_g20_backend_repeated_verification` runs
+#    `pytest runtime/tests/test_m9_c54.py` twice and asserts both runs agree. The
+#    repetition IS the certification claim — it proves reproducibility. Running
+#    `test_m9_c54.py` concurrently elsewhere would let the two nested runs
+#    legitimately disagree and fail a correct build. `test_g22` additionally writes
+#    a shared `.coverage`, and `test_g23` runs a nested mutation smoke campaign.
+#
+# The guard below is therefore a live trap rather than dead commentary: if anyone
+# enables `-n` on this suite later, these files are skipped under xdist only, so a
+# serial run still collects everything.
+SERIAL_ONLY_TESTS: tuple[str, ...] = (
+    "test_mutation_infra.py",
+    "test_full_pipeline_integration.py",
+    "test_m9_c55.py",
+)
+
+
+def _xdist_active(config) -> bool:
+    """True only when this collection is happening inside an xdist worker.
+
+    ``config.option.numprocesses`` is **not** usable here: pytest-xdist strips it in
+    the worker process (measured — it reads back as ``None`` with ``dist='no'`` even
+    under ``-n 2``), because the worker is told what to do through ``workerinput``,
+    not through the option namespace. ``workerinput`` is therefore the signal, with
+    the option check kept as a secondary path for the controller.
+    """
+    if hasattr(config, "workerinput"):
+        return True
+    if getattr(config.option, "numprocesses", None) not in (None, 0, "0"):
+        return True
+    return getattr(config.option, "dist", "no") not in ("no", None)
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip the non-parallelisable files when (and only when) xdist is active.
+
+    Serial collection is deliberately untouched: every test in this suite still runs
+    on a normal `pytest runtime/tests/`.
+    """
+    if not _xdist_active(config):
+        return
+
+    skip_files = set(SERIAL_ONLY_TESTS)
+    for item in items:
+        if str(getattr(item, "fspath", "")).rsplit("/", 1)[-1] in skip_files:
+            item.add_marker(
+                pytest.mark.skip(reason="serial-only: shared repo/evidence state")
+            )
+
+
 # Test-level progress evidence (M9 stabilization, 2026-09-30).
 #
 # This suite takes ~29 minutes, and before this the only record of a failing
