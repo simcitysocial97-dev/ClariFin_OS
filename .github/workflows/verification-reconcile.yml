@@ -343,13 +343,14 @@ jobs:
           # Report what actually landed, before deciding anything. The previous
           # version failed with "No execution plan was recovered" and no evidence of
           # what *was* there, which made the cause unguessable from the run page.
-          echo "Collected shard artifacts:" >> "$GITHUB_STEP_SUMMARY"
-          {
-            echo '```'
-            ls -1 runtime/generated/shards 2>&1 || echo "(no shards directory)"
-            find runtime/generated/shards -name '*.json' 2>&1 | head -40
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          # To STDOUT, not only the step summary: a job summary is not readable from
+          # the CLI, so a failure diagnosed only there is a failure that cannot be
+          # diagnosed from a terminal or an agent.
+          echo "::group::collected shard artifacts"
+          echo "cwd: $(pwd)"
+          echo "shards dir:"; ls -la runtime/generated/shards 2>&1 | head -20
+          echo "json files found:"; find runtime/generated/shards -name '*.json' 2>&1 | head -40
+          echo "::endgroup::"
 
           PLAN="$(find runtime/generated/shards -name plan.json 2>/dev/null | sort | head -1)"
           if [ -z "$PLAN" ] || [ ! -f "$PLAN" ]; then
