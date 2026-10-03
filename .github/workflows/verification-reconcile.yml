@@ -212,8 +212,8 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          SHARD_INDEX=$(( {{ matrix.shard }} ))
-          SHARD_TOTAL="{{ matrix.shard_count }}"
+          SHARD_INDEX=$(( ${{ matrix.shard }} ))
+          SHARD_TOTAL="${{ matrix.shard_count }}"
           OUT_DIR="runtime/generated/execution/shards"
           mkdir -p "$OUT_DIR"
 
@@ -236,6 +236,21 @@ jobs:
           SHARD_RC=$?
           set -e
           echo "shard ${SHARD_INDEX} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
+          # The task streams to evidence files, so the job log alone shows nothing
+          # actionable. Surface the report's own verdict inline, so a failed shard is
+          # diagnosable without downloading artifacts.
+          if [ -s "$OUT_DIR/shard-${SHARD_INDEX}.json" ]; then
+            {
+              echo "### Reconcile shard ${SHARD_INDEX}"
+              echo '```json'
+              jq -c '{final_decision, decision_reason, efficiency}' \
+                "$OUT_DIR/shard-${SHARD_INDEX}.json" 2>/dev/null || cat \
+                "$OUT_DIR/shard-${SHARD_INDEX}.json"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::shard ${SHARD_INDEX} produced no report; its tasks are unreported."
+          fi
           exit "$SHARD_RC"
 
       - name: Upload shard artifacts

@@ -165,6 +165,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Required, and not optional. The pre-fan-out single job installed Node, and
+      # the runtime suite depends on it: the TypeScript symbol resolver shells out to
+      # node, and `test_m9_c55.py::TestC55EnvironmentContract` asserts node/npm match
+      # the engine pin outright. Omitting this produced 12 shard failures on the first
+      # live run — `TypeScript resolver failed: node:internal/modules/cjs/loader` —
+      # which surfaced as frontend capabilities resolving to UNMAPPED.
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
       - name: Run this shard of the runtime suite
         shell: bash
         run: |
@@ -184,6 +196,20 @@ jobs:
           SHARD_RC=$?
           set -e
           echo "shard ${{ matrix.shard_id }} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
+          # pytest streams into evidence files, so without this the job log shows only
+          # an exit code. Echo the failure names inline — a red shard must be
+          # diagnosable from the run page, not only from a downloaded artifact.
+          if [ "$SHARD_RC" -ne 0 ]; then
+            SHARD_LOG="runtime/generated/runtime-shard-logs/${{ matrix.shard_id }}/stdout.log"
+            {
+              echo "### ${{ matrix.shard_id }} failed (exit ${SHARD_RC})"
+              echo '```'
+              grep -E '^FAILED |^ERROR ' "$SHARD_LOG" 2>/dev/null | head -25 \
+                || echo "(no FAILED lines captured; see the uploaded artifact)"
+              tail -5 "$SHARD_LOG" 2>/dev/null
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
           exit "$SHARD_RC"
 
       - name: Upload shard artifacts
