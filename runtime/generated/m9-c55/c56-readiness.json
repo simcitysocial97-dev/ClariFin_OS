@@ -1,6 +1,6 @@
 {
   "schema": "m9-c55/c56-readiness/v1",
-  "generated_at": "2026-10-03T02:17:56.157972+00:00",
+  "generated_at": "2026-10-01T19:27:59.343901+00:00",
   "current_test_coverage": "to_be_measured_by_C56",
   "current_mutation_coverage": "64.3% (financial_events target)",
   "measurement_reproducibility": "confirmed_for_python_backend",

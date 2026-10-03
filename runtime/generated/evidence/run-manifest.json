@@ -1,42 +1,12 @@
 {
   "schema": "run-manifest/v1",
-  "commit": "b5fa3ac1ced1070aed53938913aec4e394975b61",
-  "branch": "m11/parallelism-correctness",
-  "generated_at": "2026-10-03T02:28:52.364216+00:00",
+  "commit": "6d3d64d2dc862159607da857dcb36d6b9c1cdf13",
+  "branch": "m9-stabilize-platform-routing-cache",
+  "generated_at": "2026-09-29T10:17:42.928435+00:00",
   "profile": "backend",
   "steps": [
     {
       "step_id": "step-0001",
-      "unit_id": "backend-unit",
-      "contributing_units": [
-        "backend-unit",
-        "unit-targeted"
-      ],
-      "command": "bash .github/scripts/run_backend_verification.sh",
-      "exit_code": 0,
-      "status": "passed",
-      "duration_seconds": 0.5,
-      "stdout_path": "/tmp/stdout.log",
-      "stderr_path": "/tmp/stderr.log",
-      "workflow": "backend",
-      "script": "run_contract_tests",
-      "provenance": {
-        "capabilities": [
-          "loan-engine"
-        ],
-        "impact_kinds": [
-          "contract"
-        ],
-        "source": "registry-workflow-mapping",
-        "contributing_units": [
-          "backend-unit",
-          "unit-targeted"
-        ],
-        "workflow": "backend"
-      }
-    },
-    {
-      "step_id": "step-0002",
       "unit_id": "runtime-self-test",
       "contributing_units": [
         "runtime-self-test"
@@ -64,7 +34,51 @@
       }
     },
     {
+      "step_id": "step-0002",
+      "unit_id": "backend-unit",
+      "contributing_units": [
+        "backend-unit",
+        "unit-targeted"
+      ],
+      "command": "bash .github/scripts/run_backend_verification.sh",
+      "exit_code": 0,
+      "status": "passed",
+      "duration_seconds": 0.5,
+      "stdout_path": "/tmp/stdout.log",
+      "stderr_path": "/tmp/stderr.log",
+      "workflow": "backend",
+      "script": "run_contract_tests",
+      "provenance": {
+        "capabilities": [
+          "ledger"
+        ],
+        "impact_kinds": [
+          "contract"
+        ],
+        "source": "registry-workflow-mapping",
+        "contributing_units": [
+          "backend-unit",
+          "unit-targeted"
+        ],
+        "workflow": "backend"
+      }
+    },
+    {
       "step_id": "step-0003",
+      "unit_id": "UNMAPPED",
+      "contributing_units": [],
+      "command": "bash .github/scripts/run_fast_checks.sh",
+      "exit_code": 0,
+      "status": "passed",
+      "duration_seconds": 0.5,
+      "stdout_path": "/tmp/stdout.log",
+      "stderr_path": "/tmp/stderr.log",
+      "workflow": "quick",
+      "script": "run_fast_checks",
+      "provenance": {}
+    },
+    {
+      "step_id": "step-0004",
       "unit_id": "frontend-typecheck-build",
       "contributing_units": [
         "frontend-typecheck-build",
@@ -92,25 +106,11 @@
         ],
         "workflow": "frontend"
       }
-    },
-    {
-      "step_id": "step-0004",
-      "unit_id": "UNMAPPED",
-      "contributing_units": [],
-      "command": "bash .github/scripts/run_fast_checks.sh",
-      "exit_code": 0,
-      "status": "passed",
-      "duration_seconds": 0.5,
-      "stdout_path": "/tmp/stdout.log",
-      "stderr_path": "/tmp/stderr.log",
-      "workflow": "quick",
-      "script": "run_fast_checks",
-      "provenance": {}
     }
   ],
   "unmapped": [
     {
-      "step_id": "step-0004",
+      "step_id": "step-0003",
       "command": "bash .github/scripts/run_fast_checks.sh",
       "reason": "no UNIT_TO_WORKFLOW mapping decision resolved for the owning registry workflow"
     }
