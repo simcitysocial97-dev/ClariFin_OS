@@ -833,6 +833,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.out:
         Path(args.out).write_text(json.dumps(payload, indent=2) + "\n")
     if args.json:
+        # codeql[py/clear-text-logging-sensitive-data] False positive, scoped.
+        # The only fields printed are counts, this tool's own surface labels, and
+        # a SHA-256 fingerprint — see `_log_projection`. No credential, key,
+        # token, personal field or response body content is emitted; the full
+        # payloads are written to `--out` instead. The counts and labels are
+        # *derived* from parsed responses, which is what CodeQL's model treats
+        # as private, and that derivation cannot be removed without abandoning
+        # the read-back verification this tool exists to perform. The rule stays
+        # enabled for every other file.
         print(json.dumps(_log_projection(report), indent=2))
 
     if not (args.json or args.out):
@@ -842,6 +851,9 @@ def main(argv: list[str] | None = None) -> int:
         w = log["written"]
         print(f"database : {log['database']} ({log['mode']})")
         print(
+            # codeql[py/clear-text-logging-sensitive-data] False positive, scoped.
+            # Integer row counts and this tool's own labels; see the `--json`
+            # suppression above for the full justification.
             "seeded   : "
             f"{w['accounts']} accounts, {w['transactions_imported']} transactions, "
             f"{w['loans']} loans, {w['credit_cards']} cards, "
