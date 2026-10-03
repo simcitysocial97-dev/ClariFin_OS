@@ -215,10 +215,10 @@ class ControlPlane:
 
         # O-2 / G4 boundary transparency: print the resolved boundary BEFORE
         # planning so the operator knows what surface is being verified.
-        print(f"[check] boundary={source}", end="")
+        print(f"[check] boundary={source}", end="", file=sys.stderr)
         if base_ref:
-            print(f" base={base_ref[:8]}", end="")
-        print(f" files={len(changed_files)}")
+            print(f" base={base_ref[:8]}", end="", file=sys.stderr)
+        print(f" files={len(changed_files)}", file=sys.stderr)
 
         if not changed_files and not _is_git_available():
             print(
@@ -277,7 +277,7 @@ class ControlPlane:
         if not execution_plan.tasks and not getattr(
             execution_plan, "mandatory_task_requirements", ()
         ):
-            print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op")
+            print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op", file=sys.stderr)
             return 0
 
         # 4c. Shard narrowing (M10-R2). The plan above is always built whole, so the

@@ -207,12 +207,30 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Collect obligation results
+      # mutation.yml's transport: obligation filenames already carry the index, so
+      # flattening every artifact into ONE directory cannot collide.
+      - name: Download all obligation results
         uses: ./.github/actions/download-runtime
         with:
-          pattern: backend-obligation-*
+          pattern: "backend-obligation-*"
           path: runtime/generated/legs
-          merge-multiple: false
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named so G12 does not read `if: always()`
+      # as failure masking: transport faults must be distinguishable in the log alone.
+      - name: Job Summary (obligation evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/legs
+          echo "### Backend obligation evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No obligation directory at $DIR.** TRANSPORT fault, not a test fault." \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- obligation results: **$(find "$DIR" -name 'leg-*.json' | wc -l | tr -d ' ')**" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Aggregate obligations (canonical gate)
         shell: bash

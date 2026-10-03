@@ -254,12 +254,30 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      - name: Collect shard results
+      # mutation.yml's transport: shard filenames already carry the shard id, so
+      # flattening every artifact into ONE directory cannot collide.
+      - name: Download all shard results
         uses: ./.github/actions/download-runtime
         with:
-          pattern: runtime-shard-*
+          pattern: "runtime-shard-*"
           path: runtime/generated/shards
-          merge-multiple: false
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named so G12 does not read `if: always()`
+      # as failure masking: transport faults must be distinguishable in the log alone.
+      - name: Job Summary (shard evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/shards
+          echo "### Runtime shard evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No shard directory at $DIR.** TRANSPORT fault, not a test fault." \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- shard results: **$(find "$DIR" -name 'shard-*.json' | wc -l | tr -d ' ')**" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Aggregate shards and run the integrity obligation
         shell: bash

@@ -140,14 +140,25 @@ jobs:
             echo "decidable once the mandatory set is complete."
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Serialise and upload the execution plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The plan is written ONCE, here, and published as its own artifact. Before
+          # this, every shard also wrote a plan.json, so the aggregate received seven
+          # identical copies and had no principled way to choose between them.
+          # One producer, one artifact, one authority.
+          mkdir -p runtime/generated/execution
+          .venv/bin/python -m runtime.verify plan --shard-plan \
+            --out runtime/generated/execution/plan.json
+
       - name: Upload the execution plan
-        # The aggregate job needs the plan verbatim: it is what the record set is
-        # checked against, and it is the only way to name a task that went missing.
+        # The aggregate needs the plan verbatim: it is what the record set is checked
+        # against, and it is the only way to name a task that went missing.
         uses: ./.github/actions/upload-runtime
         with:
           name: reconcile-plan
-          path: |
-            runtime/generated/execution/
+          path: runtime/generated/execution/plan.json
           retention-days: 14
 
   # ---------------------------------------------------------------------
@@ -217,11 +228,10 @@ jobs:
           OUT_DIR="runtime/generated/execution/shards"
           mkdir -p "$OUT_DIR"
 
-          # The shard is handed the plan it was assigned, not asked to re-derive one.
-          # `run --plan` is authoritative as of M10-R2: before that, a supplied plan
-          # was loaded and then discarded in favour of a fresh full plan, so every
-          # "shard" would silently have re-run the entire boundary.
-          .venv/bin/python -m runtime.verify plan --shard-plan --out "$OUT_DIR/plan.json"
+          # The plan is NOT regenerated here. The plan job published it once; every
+          # shard rebuilding it produced seven identical copies that the aggregate then
+          # had to disambiguate. `check --shard` derives the same plan from the same
+          # boundary, which is why all shards agree on plan_fingerprint.
 
           # `|| true` is deliberate and narrow: a red shard must still write its
           # report, because the aggregate needs to know this leg ran and failed.
@@ -302,19 +312,42 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Collect shard artifacts
-        # Artifact collection must survive a failed "Reconcile" step: without it the
-        # gate has no evidence to reason about and the run ends with no conclusion.
-        # This is artifact collection, not failure masking — the "Reconcile" step
-        # below still exits with the gate's verdict, so a red run stays red.
+      - name: Download the execution plan
         uses: ./.github/actions/download-runtime
         with:
-          # Every shard's artifacts. `merge-multiple: false` keeps each leg's
-          # directory distinct, so two shards writing the same measurement path
-          # cannot silently overwrite one another on the way in.
-          pattern: reconcile-shard-*
+          name: reconcile-plan
+          path: runtime/generated/plan
+          merge-multiple: "true"
+
+      # mutation.yml's transport, unchanged: shard evidence filenames already carry the
+      # shard index (`shard-<n>.json`), so flattening every artifact into ONE directory
+      # cannot collide. The nested-directory variant used previously forced the
+      # aggregate into `find`-and-guess across a tree it did not own.
+      - name: Download all shard evidence
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "reconcile-shard-*"
           path: runtime/generated/shards
-          merge-multiple: false
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named like mutation.yml's so G12 does not
+      # read `if: always()` as failure masking: a transport fault and a quality
+      # regression must be distinguishable from the log alone.
+      - name: Job Summary (shard evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/shards
+          echo "### Shard evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No evidence directory at $DIR.** TRANSPORT fault, not a measurement fault." \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- shard reports downloaded: **$(find "$DIR" -name 'shard-*.json' | wc -l | tr -d ' ')**" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "- plan present: $([ -f runtime/generated/plan/plan.json ] && echo yes || echo NO)" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Reconcile
         shell: bash
@@ -341,28 +374,21 @@ jobs:
           # Flatten shard reports next to the plan. A plan that no shard could be
           # checked against is itself a hard error below, not a silent pass.
           # Report what actually landed, before deciding anything. The previous
-          # version failed with "No execution plan was recovered" and no evidence of
-          # what *was* there, which made the cause unguessable from the run page.
-          # To STDOUT, not only the step summary: a job summary is not readable from
-          # the CLI, so a failure diagnosed only there is a failure that cannot be
-          # diagnosed from a terminal or an agent.
-          echo "::group::collected shard artifacts"
-          echo "cwd: $(pwd)"
-          echo "shards dir:"; ls -la runtime/generated/shards 2>&1 | head -20
-          echo "json files found:"; find runtime/generated/shards -name '*.json' 2>&1 | head -40
-          echo "::endgroup::"
-
-          PLAN="$(find runtime/generated/shards -name plan.json 2>/dev/null | sort | head -1)"
-          if [ -z "$PLAN" ] || [ ! -f "$PLAN" ]; then
-            echo "::error::No execution plan was recovered from any shard (searched runtime/generated/shards). The gate cannot form a verdict."
+          # Known, flat locations -- the same shape mutation.yml aggregates from.
+          PLAN=runtime/generated/plan/plan.json
+          if [ ! -f "$PLAN" ]; then
+            echo "::error::No execution plan recovered from the reconcile-plan artifact at $PLAN. The gate cannot form a verdict."
             exit 2
           fi
           cp "$PLAN" "$AGG/plan.json"
-          # Every shard report, flattened. `-r` is not used: two shards legitimately
-          # produce same-named files and the later copy must win deterministically
-          # rather than nesting directories.
-          find runtime/generated/shards -name 'shard-*.json' -exec cp {} "$AGG"/ \; 2>/dev/null || true
-          echo "Aggregated $(find "$AGG" -name 'shard-*.json' | wc -l) shard report(s) with plan $PLAN" >> "$GITHUB_STEP_SUMMARY"
+          cp runtime/generated/shards/shard-*.json "$AGG"/ 2>/dev/null || true
+          COUNT=$(find "$AGG" -name 'shard-*.json' | wc -l | tr -d ' ')
+          echo "Aggregated ${COUNT} shard report(s) with plan ${PLAN}" >> "$GITHUB_STEP_SUMMARY"
+          echo "::group::aggregated inputs"
+          echo "plan: ${PLAN}"
+          echo "shard reports: ${COUNT}"
+          ls -1 "$AGG"
+          echo "::endgroup::"
 
           set +e
           .venv/bin/python -m runtime.verify run --aggregate "$AGG" | tee "$AGG/aggregate-output.txt"
