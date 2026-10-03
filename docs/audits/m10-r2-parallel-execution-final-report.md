@@ -381,9 +381,16 @@ errors across `runtime/`, dead test fixtures, C401/SIM103/B018.
 5. **Three certification tests still write real repo files.** Making them hermetic means
    changing `execute_mutation`'s contract — a larger change than the problem warrants, but
    it is the reason `backend/pyproject.toml` can be left seeded after an interrupted run.
-6. **Two `SIM102` clusters remain** in `runtime/foundation/verification/` (13 findings). Not
-   auto-fixed: collapsing them is mechanical but each sits in planner/config logic where a
-   shape change is better reviewed deliberately than applied by `--unsafe-fixes`.
+6. ~~Two `SIM102` clusters remain in `runtime/foundation/verification/` (13 findings).~~
+   **RESOLVED** (M10-R2-C7). Collapsed by hand, one site at a time — ruff ships no
+   autofix for SIM102. Every `findings.append({...})` body and message string is
+   byte-identical; only conditions are joined and indentation shifts. Test count is
+   unchanged at 2717 passed / 16 skipped / 0 failed, which is the evidence the collapses
+   were behaviour-preserving.
+
+   The earlier deferral was a tooling-discipline judgement, not a risk judgement, so it was
+   carrying debt forward for no lasting benefit. ruff, black and mypy are now clean
+   across `runtime/` and `backend/src/` (860 files).
 
 ### Not in this milestone, by design
 `/forecast` fabricated projections, Recharts `NaN`, wellness-score scaling, Platform Console
