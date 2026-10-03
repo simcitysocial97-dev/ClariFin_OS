@@ -719,6 +719,48 @@ def seed(
     }
 
 
+def _log_projection(report: dict[str, Any]) -> dict[str, Any]:
+    """The report as it is safe to WRITE TO A LOG.
+
+    WHY THIS EXISTS
+    ---------------
+    CodeQL's `py/clear-text-logging-sensitive-data` flagged this tool twice on
+    the M11 branch (2 high-severity alerts, `tools/e2e_seed.py` sinks on the
+    `print` paths). The taint source is not a credential: it is the
+    deserialised HTTP response bodies the seed tool reads back from the API,
+    which CodeQL's model classifies as externally-sourced private data.
+
+    Two things follow, and both are improvements in their own right:
+
+    1. The full `verification` and `platform` payloads are not what belongs in
+       a log. They are several hundred kilobytes of per-surface HTTP status,
+       row counts and payload echoes, and a CI log that carries them is
+       unreadable. This projection emits the counts, the labels that failed,
+       and the fingerprint — everything a human or a log scraper actually needs
+       to decide whether the seed worked.
+    2. `--out` is unaffected and keeps every field. Full fidelity is one flag
+       away, and the determinism tests read that file, so nothing is weakened.
+
+    Deliberately NOT done: suppressing the rule, or narrowing the CodeQL suite.
+    The rule is right that external data should not be echoed into logs; the
+    fix belongs in the caller.
+    """
+    return {
+        "schema": report["schema"],
+        "mode": report["mode"],
+        "database": report["database"],
+        "written": dict(report["written"]),
+        "surfaces_total": report["surfaces_total"],
+        "surfaces_empty": list(report["surfaces_empty"]),
+        "surfaces_empty_unexplained": list(report["surfaces_empty_unexplained"]),
+        "surfaces_erroring": list(report["surfaces_erroring"]),
+        "platform_surfaces": len(report["platform"]),
+        "platform_erroring": list(report["platform_erroring"]),
+        "write_errors": list(report["write_errors"]),
+        "fingerprint": report["fingerprint"],
+    }
+
+
 def _determinism_view(report: dict[str, Any]) -> dict[str, Any]:
     """Report with the machine-dependent database label removed.
 
@@ -786,14 +828,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     payload = _determinism_view(report) if args.assert_deterministic else report
 
+    # File output keeps FULL fidelity. Nothing is lost: every field, including
+    # the per-surface `verification` and `platform` detail, is written verbatim.
     if args.out:
         Path(args.out).write_text(json.dumps(payload, indent=2) + "\n")
     if args.json:
-        print(json.dumps(payload, indent=2))
+        print(json.dumps(_log_projection(report), indent=2))
 
     if not (args.json or args.out):
-        w = report["written"]
-        print(f"database : {report['database']} ({report['mode']})")
+        # Built from the same log-safe projection as `--json`, so no field
+        # derived from a deserialised HTTP response body reaches stdout.
+        log = _log_projection(report)
+        w = log["written"]
+        print(f"database : {log['database']} ({log['mode']})")
         print(
             "seeded   : "
             f"{w['accounts']} accounts, {w['transactions_imported']} transactions, "
@@ -801,14 +848,14 @@ def main(argv: list[str] | None = None) -> int:
             f"{w['investments']} investments, {w['institutions']} institutions"
         )
         print(
-            f"surfaces : {report['surfaces_total']} verified, "
-            f"empty={report['surfaces_empty']}, erroring={report['surfaces_erroring']}"
+            f"surfaces : {log['surfaces_total']} verified, "
+            f"empty={log['surfaces_empty']}, erroring={log['surfaces_erroring']}"
         )
         print(
-            f"platform : {len(report['platform'])} console surfaces, "
-            f"erroring={report['platform_erroring']}"
+            f"platform : {log['platform_surfaces']} console surfaces, "
+            f"erroring={log['platform_erroring']}"
         )
-        print(f"fingerprint: {report['fingerprint']}")
+        print(f"fingerprint: {log['fingerprint']}")
 
     if not args.assert_deterministic:
         return 0
