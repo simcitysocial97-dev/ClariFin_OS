@@ -475,6 +475,14 @@ class ExecutionPlan:
         }
 
     def to_json(self) -> str:
+        """Serialise to a JSON **document**.
+
+        Returns a string, not a dict. Callers producing machine-readable output must
+        print this directly: wrapping it in ``json.dumps`` (M10-R2) yields a JSON
+        string *literal* containing escaped JSON, which a parser reads back as one
+        string rather than as an object. That bug made ``run --json`` unreadable to
+        the reconcile aggregate job, which consumes shard reports.
+        """
         return json.dumps(self.to_dict(), indent=2, default=str)
 
     def validate(self) -> list[str]:
@@ -1630,7 +1638,29 @@ class ExecutionOrchestrator:
 
         # Collect into plan order regardless of completion order, so evidence output
         # can never depend on scheduling.
-        independent_outcomes = execute_tasks_in_parallel(independent, _run_one)
+        #
+        # M10-R2: mutation and authorization-gated tasks run on the *calling*
+        # thread. mutmut installs signal handlers (ValueError off the main thread)
+        # and rewrites source, so it must neither race the pool nor the fingerprint
+        # hash. Everything else — including coverage, which is one of the longest
+        # tasks and was proven safe concurrently — fans out.
+        main_thread_tasks = [s for s in independent if self._requires_main_thread(s)]
+        concurrent_tasks = [s for s in independent if not self._requires_main_thread(s)]
+
+        outcomes_by_id: dict[str, Any] = {}
+        for spec, outcome in zip(
+            concurrent_tasks,
+            execute_tasks_in_parallel(concurrent_tasks, _run_one),
+            strict=True,
+        ):
+            outcomes_by_id[spec.task_id] = outcome
+        for spec in main_thread_tasks:
+            try:
+                outcomes_by_id[spec.task_id] = _run_one(spec)
+            except Exception as exc:  # noqa: BLE001 - one task must not erase the rest
+                outcomes_by_id[spec.task_id] = exc
+
+        independent_outcomes = [outcomes_by_id[spec.task_id] for spec in independent]
 
         for spec, outcome in zip(independent, independent_outcomes, strict=True):
             if isinstance(outcome, Exception):
@@ -1774,6 +1804,36 @@ class ExecutionOrchestrator:
             escalations_triggered=escalations_triggered,
             decisions=decisions,
         )
+
+    @staticmethod
+    def _requires_main_thread(spec: ExecutionTaskSpec) -> bool:
+        """Tasks that must not run on a worker thread, and why.
+
+        Discovered by running the plan, not by inspection: with the fan-out enabled,
+        ``exec-0007`` failed with ``ValueError: signal only works in main thread of
+        the main interpreter`` because mutmut installs a signal handler when it runs.
+        A ``ThreadPoolExecutor`` worker is not the main thread, so the handler
+        registration raises and the mutation campaign never starts.
+
+        Two classes are excluded:
+
+        * **Mutation tasks** (``verification_kind == "mutation"``, or any spec
+          carrying a ``mutation_target``). They need the main thread for signal
+          handlers, *and* they rewrite source files while the run is in flight —
+          exactly the race the fingerprint check guards against. Running one
+          concurrently with a coverage measurement walking ``backend/src`` would
+          produce spurious ``VALIDATION_BLOCKED`` verdicts.
+        * **Authorization-gated tasks.** By definition these are the sensitive
+          ones; they run serially so their side effects stay ordered and
+          observable.
+
+        Coverage is deliberately *not* excluded: it was exercised concurrently and
+        passes, and it is one of the longest tasks, so excluding it would cost most
+        of the win.
+        """
+        if spec.authorization_required:
+            return True
+        return bool(spec.verification_kind == "mutation" or spec.mutation_target)
 
     def _check_fingerprint_integrity(
         self,

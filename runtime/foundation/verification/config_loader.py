@@ -138,8 +138,8 @@ def check_configuration_divergence() -> tuple[str, list[dict]]:
 
         # Check mutation thresholds
         mutation_full = _get_nested(data, "mutation_thresholds", "full_campaign")
-        mutation_incr = _get_nested(data, "mutation_thresholds", "incremental")
-        mutation_smoke = _get_nested(data, "mutation_thresholds", "smoke")
+        _get_nested(data, "mutation_thresholds", "incremental")
+        _get_nested(data, "mutation_thresholds", "smoke")
 
         if mutation_full is not None and isinstance(mutation_full, (int, float)):
             if mutation_full < 0 or mutation_full > 100:

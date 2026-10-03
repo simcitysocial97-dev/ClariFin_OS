@@ -412,6 +412,14 @@ class TestNoWorkflowFilesTouched:
             #                        and the launcher readiness regression.
             ".github/workflows/backend-verify.yml",
             ".github/workflows/quality.yml",
+            # M10-R2: verification-reconcile.yml restructured to
+            #   plan -> matrix -> aggregate. The reported check identity is unchanged
+            #   (the gate job is still named `Verification Reconcile`), and this
+            #   workflow is not one of the four required contexts, so no branch
+            #   protection rule was touched. Declared here for the same reason the
+            #   entries above are: a declared change is reviewable; an undeclared one
+            #   is what this guard exists to catch.
+            ".github/workflows/verification-reconcile.yml",
         }
         lines = [
             line.strip() for line in result.stdout.strip().split("\n") if line.strip()

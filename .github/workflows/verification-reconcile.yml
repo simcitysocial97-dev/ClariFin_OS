@@ -1,5 +1,42 @@
 name: Verification Reconcile
 
+# M10-R2 — plan -> matrix -> aggregate.
+#
+# The workflow name and the gate job's display name (`Verification Reconcile`) are
+# unchanged, so the reported check identity is identical to before this restructure.
+# This workflow is NOT one of the four required contexts — `validate_actions.py`
+# pins Backend Verification, Frontend Verification, Runtime Verification and Analyze
+# (rules 7a/15) — so its job topology is free to change. The required gates keep
+# their single-profile shape and receive only the runtime-internal parallelism from
+# the same milestone.
+#
+# What changed and why:
+#
+#   Before: one job ran `verify check`, which executed every task serially inside a
+#   single runner. Wall clock equalled the SUM of the tasks.
+#   After:  a plan job derives the execution plan once and publishes a shard matrix;
+#           one job per shard executes its assigned tasks; the gate merges every
+#           shard's report and forms the single verdict. Wall clock approaches the
+#           MAXIMUM single task.
+#
+# The bound on that claim is worth stating plainly: a task cannot be split across
+# runners, so the critical path cannot fall below the slowest single task. On a
+# 40-file boundary the heaviest task is the coverage measurement (~1800s of a
+# ~4741s total), so 7 shards reach ~1800s — a ~2.6x reduction, not 7x. This is
+# asserted in `runtime/tests/test_verify_sharding.py`.
+#
+# Two rules learned the hard way in `mutation.yml` are load-bearing here and are
+# commented at the point of use:
+#
+#   * A matrix job whose OWN properties are dynamic expressions reading
+#     `needs.<job>.outputs` is never created. `timeout-minutes` is enforced inside
+#     the step with GNU `timeout`; `timeout-minutes` itself stays literal.
+#   * `fail-fast: false` is required. With `true`, the first red shard cancels the
+#     rest, their evidence is lost, and the gate reports "incomplete" instead of the
+#     real failure.
+#   * The gate uses `if: always()`. Without it a single red shard skips the gate and
+#     the run reports no conclusion at all.
+
 on:
   pull_request:
     branches:
@@ -18,10 +55,125 @@ permissions:
   contents: read
 
 jobs:
-  reconcile-gate:
-    name: Plan / Execute / Reconcile
+  # ---------------------------------------------------------------------
+  # 1. Plan. Builds the execution plan once and publishes the partition.
+  # ---------------------------------------------------------------------
+  reconcile-plan:
+    name: Reconcile Plan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      shard_count: ${{ steps.plan.outputs.shard_count }}
+      plan_id: ${{ steps.plan.outputs.plan_id }}
+      plan_fingerprint: ${{ steps.plan.outputs.plan_fingerprint }}
+      partition_fingerprint: ${{ steps.plan.outputs.partition_fingerprint }}
+      critical_path_estimate: ${{ steps.plan.outputs.critical_path_estimate }}
+      suggested_max_parallel: ${{ steps.plan.outputs.suggested_max_parallel }}
+    env:
+      VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
+      VERIFICATION_HEAD_REF: ${{ github.sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Emit shard matrix
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The runtime owns shard selection. Diff logic and partitioning stay in
+          # Python so there is exactly one authority for "what must run" — the same
+          # reason mutation.yml delegates to `mutation-plan`.
+          #
+          # The matrix document is produced by the same code path that assigns the
+          # shards, so the plan job and every shard leg cannot disagree about the
+          # partition without `partition_fingerprint` changing.
+          MATRIX="$(
+            .venv/bin/python -m runtime.verify plan \
+              --shard-matrix \
+              --shard-count "${SHARD_COUNT:-7}"
+          )"
+          echo "matrix<<EOF_MATRIX" >> "$GITHUB_OUTPUT"
+          echo "$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "EOF_MATRIX"
+          for key in shard_count plan_id plan_fingerprint partition_fingerprint \
+                     critical_path_estimate suggested_max_parallel; do
+            value="$(jq -r ".${key}" <<< "$MATRIX")"
+            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
+          done
+
+          {
+            echo "## Reconciliation plan"
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Plan | \`$(jq -r '.plan_id' <<< "$MATRIX")\` |"
+            echo "| Plan fingerprint | \`$(jq -r '.plan_fingerprint' <<< "$MATRIX")\` |"
+            echo "| Partition fingerprint | \`$(jq -r '.partition_fingerprint' <<< "$MATRIX")\` |"
+            echo "| Tasks | $(jq -r '.task_count' <<< "$MATRIX") |"
+            echo "| Shards | $(jq -r '.shard_count' <<< "$MATRIX") |"
+            echo "| Estimated critical path | $(jq -r '.critical_path_estimate_seconds' <<< "$MATRIX")s |"
+            echo "| Estimated serial total | $(jq -r '[.include[].estimated_seconds] | add' <<< "$MATRIX")s |"
+            echo ""
+            echo "| Shard | Tasks | Est. seconds | Carries escalation |"
+            echo "|---|---|---|---|"
+            jq -r '.include[] | "| \(.shard) | \(.task_count) | \(.estimated_seconds) | \(.includes_escalation) |"' \
+              <<< "$MATRIX"
+            echo ""
+            echo "A shard executes **only** its assigned tasks. Escalation tasks are"
+            echo "replicated into every shard because stop-on-sufficiency is only"
+            echo "decidable once the mandatory set is complete."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the execution plan
+        # The aggregate job needs the plan verbatim: it is what the record set is
+        # checked against, and it is the only way to name a task that went missing.
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: reconcile-plan
+          path: |
+            runtime/generated/execution/
+          retention-days: 14
+
+  # ---------------------------------------------------------------------
+  # 2. Shards. One runner per partition; each runs only its own tasks.
+  # ---------------------------------------------------------------------
+  reconcile-shard:
+    name: Reconcile Shard ${{ matrix.shard }}
+    needs: [reconcile-plan]
+    # `count != '0'` rather than `matrix != '[]'`: comparing the document against a
+    # serialisation literal is a guess at a format the producer is free to change,
+    # and the plan already publishes the shard count for exactly this decision.
+    if: >-
+      needs.reconcile-plan.result == 'success'
+      && needs.reconcile-plan.outputs.shard_count != '0'
+    runs-on: ubuntu-latest
+    # LITERAL. A dynamic value here derived from `needs.<job>.outputs` would make
+    # this job silently never be created (see the header note and mutation.yml).
+    # The real per-shard budget is enforced inside the step with GNU `timeout`;
+    # this is only the backstop for a runner that has outlived its own budget.
     timeout-minutes: 90
+    strategy:
+      # Required. With `true` the first red shard cancels every remaining leg, their
+      # evidence is lost, and the gate reports "shard coverage incomplete" — hiding
+      # the actual failure behind a bookkeeping error.
+      fail-fast: false
+      # LITERAL, for the same reason as `timeout-minutes`. The plan job publishes
+      # `suggested_max_parallel` for the summary above; it is deliberately not
+      # wired into job properties.
+      max-parallel: 7
+      matrix: ${{ fromJson(needs.reconcile-plan.outputs.matrix) }}
+    env:
+      VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
+      VERIFICATION_HEAD_REF: ${{ github.sha }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -39,42 +191,169 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      # The planner can schedule run_playwright_tests.sh when the boundary
-      # touches frontend E2E. That script's ED6 pre-flight check exits 1 when the
-      # required browser revision is absent, so without this step the task failed
-      # in 0.79 s before running anything. Reuses the same composite the
-      # Playwright workflow uses, including its browser cache.
+      # The planner can schedule run_playwright_tests.sh when the boundary touches
+      # frontend E2E. That script's ED6 pre-flight exits 1 when the required browser
+      # revision is absent, so without this step the task failed in 0.79 s having
+      # run nothing. Reuses the Playwright workflow's composite and its browser cache.
       - name: Install Playwright browsers
         uses: ./.github/actions/setup-playwright
         with:
           working-directory: "frontend"
           browsers: chromium
 
-      - name: Run canonical verification
-        env:
-          VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
-          VERIFICATION_HEAD_REF: ${{ github.sha }}
-        run: .venv/bin/python -m runtime.verify check
+      - name: Run this shard's tasks
         shell: bash
+        run: |
+          set -uo pipefail
+          SHARD_INDEX=$(( {{ matrix.shard }} ))
+          SHARD_TOTAL="{{ matrix.shard_count }}"
+          OUT_DIR="runtime/generated/execution/shards"
+          mkdir -p "$OUT_DIR"
+
+          # The shard is handed the plan it was assigned, not asked to re-derive one.
+          # `run --plan` is authoritative as of M10-R2: before that, a supplied plan
+          # was loaded and then discarded in favour of a fresh full plan, so every
+          # "shard" would silently have re-run the entire boundary.
+          .venv/bin/python -m runtime.verify plan --shard-plan --out "$OUT_DIR/plan.json"
+
+          # `|| true` is deliberate and narrow: a red shard must still write its
+          # report, because the aggregate needs to know this leg ran and failed.
+          # Omitting the record would make the gate report "incomplete" rather than
+          # the real failure. The shard's exit status is re-asserted below.
+          set +e
+          timeout "${SHARD_TIMEOUT_MINUTES:-85}" \
+            .venv/bin/python -m runtime.verify check \
+              --shard "$SHARD_INDEX" \
+              --shard-count "$SHARD_TOTAL" \
+              --json > "$OUT_DIR/shard-${SHARD_INDEX}.json"
+          SHARD_RC=$?
+          set -e
+          echo "shard ${SHARD_INDEX} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
+          exit "$SHARD_RC"
+
+      - name: Upload shard artifacts
+        # `if: always()`: a failed shard is the case where the evidence matters most.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: reconcile-shard-${{ matrix.shard }}
+          # The plan and the shard report travel together because the aggregate
+          # refuses to form a verdict from reports it cannot check against a plan.
+          path: |
+            runtime/generated/execution/shards/
+            runtime/generated/m9-c49/logs/
+            runtime/generated/m9-c49/measurements/
+            runtime/generated/evidence/
+            runtime/generated/engineering-history.json
+            runtime/generated/verification-cache.json
+            runtime/generated/verification-progress/
+          retention-days: 14
+
+      - name: Record canonical status
+        # No `if: always()`: this is an informational print, not evidence. Making it
+        # unconditional would be failure masking (certification gate G12). The shard's
+        # own per-task summary goes to stderr and its artifacts are uploaded
+        # unconditionally above, so a failed shard is still fully diagnosable.
+        run: .venv/bin/python -m runtime.verify status
+        shell: bash
+
+  # ---------------------------------------------------------------------
+  # 3. Gate. Merges every shard's report and forms the single verdict.
+  # ---------------------------------------------------------------------
+  reconcile-gate:
+    name: Verification Reconcile
+    needs: [reconcile-plan, reconcile-shard]
+    # `always()` so one red shard cannot suppress the gate. Without it the run ends
+    # with no conclusion at all, which is strictly worse than a red one.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Collect shard artifacts
+        # Artifact collection must survive a failed "Reconcile" step: without it the
+        # gate has no evidence to reason about and the run ends with no conclusion.
+        # This is artifact collection, not failure masking — the "Reconcile" step
+        # below still exits with the gate's verdict, so a red run stays red.
+        uses: ./.github/actions/download-runtime
+        with:
+          # Every shard's artifacts. `merge-multiple: false` keeps each leg's
+          # directory distinct, so two shards writing the same measurement path
+          # cannot silently overwrite one another on the way in.
+          pattern: reconcile-shard-*
+          path: runtime/generated/shards
+          merge-multiple: false
+
+      - name: Reconcile
+        shell: bash
+        run: |
+          set -uo pipefail
+          AGG="runtime/generated/aggregation"
+          mkdir -p "$AGG"
+
+          # The aggregate needs every task log to reconstruct what each shard
+          # actually executed. These are the streams the worker writes incrementally,
+          # so a shard that was killed still left output up to that instant.
+          find runtime/generated/shards -type d -name 'm9-c49' -exec \
+            cp -r {} "$AGG"/ \; 2>/dev/null || true
+          find runtime/generated/shards -type d -name 'measurements' -exec \
+            cp -r {} "$AGG"/ \; 2>/dev/null || true
+
+          # Flatten shard reports next to the plan. A plan that no shard could be
+          # checked against is itself a hard error below, not a silent pass.
+          PLAN="$(ls runtime/generated/execution/shards/plan.json 2>/dev/null | head -1)"
+          if [ -z "$PLAN" ]; then
+            PLAN="$(find runtime/generated/shards -name plan.json 2>/dev/null | head -1)"
+          fi
+          if [ -z "$PLAN" ] || [ ! -f "$PLAN" ]; then
+            echo "::error::No execution plan was recovered from any shard. The gate cannot form a verdict."
+            exit 2
+          fi
+          cp "$PLAN" "$AGG/plan.json"
+          find runtime/generated/shards -name 'shard-*.json' -exec cp {} "$AGG"/ \; 2>/dev/null || true
+
+          set +e
+          .venv/bin/python -m runtime.verify run --aggregate "$AGG" | tee "$AGG/aggregate-output.txt"
+          GATE_RC=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$GATE_RC" -ne 0 ]; then
+            echo "::error::Reconciliation did not certify. See the aggregate output above and the shard artifacts."
+          fi
+          exit "$GATE_RC"
+
+      # Diagnostic-only enrichment on a red build. It reports; it never gates.
+      # Reconcile is not a profile workflow, so a non-profile subcommand is
+      # unconstrained here (validate_actions.py rule 8 exempts anything outside
+      # VERIFICATION_PROFILES). Guarded so a red build cannot become a confusing
+      # second, unrelated failure.
+      - name: Runtime boundary analysis (diagnostic)
+        if: failure()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          .venv/bin/python -m runtime.verify diagnose >> "$GITHUB_STEP_SUMMARY" || \
+            echo "diagnostic unavailable for this boundary (this is informational)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload reconciliation artifacts
         if: always()
         uses: ./.github/actions/upload-runtime
         with:
           name: reconciliation-report
-          # m9-c49/logs holds the per-task stdout/stderr the orchestrator writes
-          # as each task runs, plus the per-command logs for the coverage and
-          # measurement steps. Without it a failed obligation leaves nothing but
-          # a task id and an exit code: on 2026-10-01 a run that reported
-          # `Result: PASS` alongside `exec-0009 failed 229.32s` could not be
-          # diagnosed at all, because engineering-history.json records only
-          # per-state counts ({pass: 7, skipped: 3, failed: 1}) and the logs were
-          # never uploaded. These are the same streams the orchestrator now
-          # writes incrementally, so they are present even when a task is killed
-          # or the job is cancelled.
           path: |
+            runtime/generated/aggregation/
             runtime/generated/evidence/
-            runtime/generated/m9-c49/logs/
             runtime/generated/engineering-history.json
             runtime/generated/verification-cache.json
             runtime/generated/verification-progress/
@@ -83,7 +362,13 @@ jobs:
       - name: Job Summary
         if: always()
         run: |
-          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## ${{ github.workflow }} — Run #${{ github.run_number }}"
+            echo ""
+            echo "| Plan | \`${{ needs.reconcile-plan.outputs.plan_id }}\` |"
+            echo "| Shards | ${{ needs.reconcile-plan.outputs.shard_count }} |"
+            echo "| Partition | \`${{ needs.reconcile-plan.outputs.partition_fingerprint }}\` |"
+            echo ""
+            .venv/bin/python -m runtime.verify status
+          } >> $GITHUB_STEP_SUMMARY
         shell: bash

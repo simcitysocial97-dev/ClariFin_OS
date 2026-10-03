@@ -6,14 +6,10 @@ detection and false evidence resistance.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 VENV_PYTHON = str(REPO_ROOT / ".venv" / "bin" / "python")
@@ -53,7 +49,7 @@ class TestStaleEvidenceResistance:
             r2 = run_verify("plan", "--json")
             assert r2.returncode == 0
             data2 = json.loads(r2.stdout)
-            plan_id_2 = data2.get("plan_id", data2.get("set_id", ""))
+            data2.get("plan_id", data2.get("set_id", ""))
             # Plan IDs may differ due to new obligation
             assert isinstance(plan_id_1, str) and len(plan_id_1) > 0
         finally:

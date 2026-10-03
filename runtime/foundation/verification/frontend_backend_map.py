@@ -21,6 +21,7 @@ only recomputed when any scanned source file's mtime changes.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import re
@@ -97,9 +98,7 @@ def _is_comment_line(line: str) -> bool:
         return True
     # Also skip lines that are entirely an inline block comment.
     stripped = line.strip()
-    if stripped.startswith("/*") and stripped.endswith("*/"):
-        return True
-    return False
+    return bool(stripped.startswith("/*") and stripped.endswith("*/"))
 
 
 # ---------------------------------------------------------------------------
@@ -184,10 +183,8 @@ class FrontendBackendMapper:
     def _compute_all_mtimes(self) -> dict[str, float]:
         mtimes: dict[str, float] = {}
         for fp in self._iter_source_files():
-            try:
+            with contextlib.suppress(OSError):
                 mtimes[str(fp)] = fp.stat().st_mtime
-            except OSError:
-                pass
         return mtimes
 
     # ------------------------------------------------------------------

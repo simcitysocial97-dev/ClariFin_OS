@@ -7,10 +7,6 @@ from __future__ import annotations
 
 import subprocess
 import sys
-import tempfile
-from pathlib import Path
-
-import pytest
 
 
 class TestRegressionSuite:
@@ -50,7 +46,7 @@ class TestRegressionSuite:
         )
 
         detector = RegressionDetector()
-        metrics = RunMetrics(
+        RunMetrics(
             run_id="regression-test",
             timestamp="2024-01-01T00:00:00",
             branch="test",

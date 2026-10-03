@@ -181,6 +181,7 @@ class ControlPlane:
         changed_files: list[str] | None = None,
         *,
         shard: tuple[int | None, int | None] = (None, None),
+        json_out: bool = False,
     ) -> int:
         """
         Primary verification entrypoint.
@@ -403,6 +404,25 @@ class ControlPlane:
         record_execution_report("check", report, time.monotonic() - run_start)
 
         # 7. Print the compact per-task summary (truthful evidence of what ran).
+        if json_out:
+            # M10-R2. A reconcile shard runner pipes stdout to `shard-N.json`, and the
+            # aggregate job parses it back into an ExecutionReport. That only works if
+            # stdout is *machine-readable* on request; the human summary and the
+            # verdict banner go to stderr instead so they still reach the log without
+            # corrupting the JSON document.
+            print(report.to_json())
+            print(_format_task_summary(report), file=sys.stderr)
+            decision = getattr(report, "final_decision", "unknown")
+            print(
+                (
+                    "✓ Verification CERTIFIED"
+                    if decision == "certified"
+                    else f"✗ Verification FAILED: {getattr(report, 'decision_reason', 'unknown')}"
+                ),
+                file=sys.stderr,
+            )
+            return 0 if decision == "certified" else 1
+
         print(_format_task_summary(report))
 
         # 8. Evidence → Verdict (exit-code contract unchanged).
@@ -417,7 +437,13 @@ class ControlPlane:
             return 1
 
     def plan(
-        self, changed_files: list[str] | None = None, *, json_out: bool = False
+        self,
+        changed_files: list[str] | None = None,
+        *,
+        json_out: bool = False,
+        shard_matrix: bool = False,
+        shard_count: int | None = None,
+        shard_plan_out: str | None = None,
     ) -> int:
         """
         Plan-only mode.
@@ -431,6 +457,17 @@ class ControlPlane:
           - skipped/deferred tasks
           - reasons
           - evidence reuse decisions.
+
+        M10-R2 adds two machine-readable modes for the reconcile
+        ``plan -> matrix -> aggregate`` topology. They exist so the partition is
+        produced by the same code that assigns shards, rather than by YAML or a
+        second implementation:
+
+        * ``shard_matrix`` prints the GitHub Actions dynamic-matrix document for
+          ``shard_count`` shards and nothing else, so the plan job can publish it via
+          ``$GITHUB_OUTPUT`` without parsing prose.
+        * ``shard_plan_out`` writes the serialized ``ExecutionPlan`` to a file, so a
+          shard runner is handed the plan it was assigned instead of re-deriving one.
         """
         if changed_files is None:
             changed_files = _collect_changed_files()
@@ -440,6 +477,38 @@ class ControlPlane:
                 file=sys.stderr,
             )
             return 1
+
+        if shard_matrix or shard_plan_out is not None:
+            from runtime.foundation.verification.execution_shards import (
+                assign_shards,
+                plan_matrix,
+            )
+
+            execution_plan = self.orchestrator.build_execution_plan(changed_files)
+            if not execution_plan.tasks:
+                print(
+                    "No tasks for this boundary; nothing to shard.",
+                    file=sys.stderr,
+                )
+                return 1
+
+            if shard_plan_out is not None:
+                out = Path(shard_plan_out)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(
+                    json.dumps(execution_plan.to_dict(), indent=2, default=str),
+                    encoding="utf-8",
+                )
+                print(
+                    f"[plan] wrote {execution_plan.plan_id} "
+                    f"({len(execution_plan.tasks)} task(s)) to {out}",
+                    file=sys.stderr,
+                )
+
+            if shard_matrix:
+                assignment = assign_shards(execution_plan, shard_count or 1)
+                print(plan_matrix(assignment, execution_plan))
+            return 0
 
         plan: ControlPlanePlan = self.planner.plan(changed_files)
         obligations: ObligationSet = self._plan_to_obligations(plan, changed_files)
@@ -457,6 +526,7 @@ class ControlPlane:
         plan_path: str | None = None,
         json_out: bool = False,
         shard: tuple[int, int] | None = None,
+        aggregate: str | None = None,
     ) -> int:
         """
         Execute an explicit or generated verification plan.
@@ -476,6 +546,12 @@ class ControlPlane:
         capability-level tasks, so it cannot express a shard, and
         ``CapabilityResolution`` has no faithful reverse mapping. Sharding operates
         on the C49 plan, so that is what a plan file carries.
+
+        ``aggregate`` merges the reports of every shard run over one plan and is the
+        single place a verdict is formed for a fanned-out run. This is deliberately a
+        flag on ``run`` rather than a new canonical operation: the operation
+        vocabulary is a governed surface, and aggregation is a mode of executing a
+        supplied plan rather than a different kind of request.
         """
         import time
 
@@ -486,6 +562,9 @@ class ControlPlane:
             assign_shards,
             validate_shard_request,
         )
+
+        if aggregate is not None:
+            return self._aggregate_shard_reports(aggregate, json_out=json_out)
 
         supplied: ExecutionPlan | None = None
 
@@ -636,11 +715,142 @@ class ControlPlane:
         record_execution_report("run", report, time.monotonic() - run_start)
 
         if json_out:
-            print(json.dumps(report.to_json(), indent=2, default=str))
+            print(report.to_json())
         else:
             self._print_execution_report(report)
             print(_format_task_summary(report))
 
+        return 0 if report.final_decision == "certified" else 1
+
+    def _aggregate_shard_reports(
+        self, shard_dir: str, *, json_out: bool = False
+    ) -> int:
+        """Merge every shard's report over one plan and form the single verdict.
+
+        This is the M10-R2 reconcile aggregate step. The property that makes it safe
+        is asserted in ``execution_shards.merge_shard_reports`` and re-stated here
+        because it is the whole reason this step exists: a set of records that does
+        not cover every task in the plan can only produce ``NOT_CERTIFIABLE``, with
+        the missing ids named. There is no configuration in which a shard that
+        silently failed to report leaves the run certifiable.
+        """
+
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionPlan,
+            ExecutionReport,
+            TaskExecutionRecord,
+        )
+        from runtime.foundation.verification.execution_shards import (
+            merge_shard_reports,
+        )
+
+        root = Path(shard_dir)
+        plan_file = root / "plan.json"
+        if not plan_file.exists():
+            print(
+                f"[aggregate] no plan.json in {shard_dir}; the aggregate job must "
+                "receive the plan artifact alongside the shard reports",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            plan = ExecutionPlan.from_dict(json.loads(plan_file.read_text()))
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"[aggregate] unreadable plan {plan_file}: {exc}", file=sys.stderr)
+            return 2
+
+        shard_files = sorted(root.glob("shard-*.json"))
+        if not shard_files:
+            print(
+                f"[aggregate] no shard-*.json reports in {shard_dir}; a gate that "
+                "aggregates zero shards would certify nothing and must not report "
+                "success",
+                file=sys.stderr,
+            )
+            return 2
+
+        reports: list[ExecutionReport] = []
+        unreadable: list[str] = []
+        for path in shard_files:
+            try:
+                payload = json.loads(path.read_text())
+            except (OSError, json.JSONDecodeError) as exc:
+                # A shard that died mid-flight — wrapper timeout, OOM, cancellation —
+                # leaves no readable report. That is not a reason for the gate to
+                # produce no verdict at all: it is exactly the "shard coverage
+                # incomplete" case, and it must be decided NOT_CERTIFIABLE with the
+                # offending file named, never as an opaque exit 2 with nothing to act
+                # on. Its tasks then simply never appear in the record set, which is
+                # what the missing-task guard is for.
+                print(
+                    f"[aggregate] shard report {path.name} is unreadable "
+                    f"({type(exc).__name__}); its tasks count as unreported: {exc}",
+                    file=sys.stderr,
+                )
+                unreadable.append(path.name)
+                continue
+            if payload.get("plan_id") not in (None, plan.plan_id):
+                print(
+                    f"[aggregate] {path.name} reports plan_id={payload['plan_id']} but "
+                    f"the aggregate plan is {plan.plan_id}; the shards did not agree "
+                    "on the plan",
+                    file=sys.stderr,
+                )
+                return 2
+            records = []
+            for record in payload.get("records") or []:
+                record["completion_state"] = _as_state(record.get("completion_state"))
+                records.append(TaskExecutionRecord(**record))
+            reports.append(
+                ExecutionReport(
+                    report_id=payload.get("report_id", path.stem),
+                    plan_id=payload.get("plan_id", plan.plan_id),
+                    plan_fingerprint=payload.get(
+                        "plan_fingerprint", plan.plan_fingerprint
+                    ),
+                    started_at=payload.get("started_at", ""),
+                    completed_at=payload.get("completed_at", ""),
+                    total_duration_seconds=payload.get("total_duration_seconds", 0.0),
+                    records=records,
+                    efficiency=payload.get("efficiency") or {},
+                    final_decision=payload.get("final_decision", "unknown"),
+                    decision_reason=payload.get("decision_reason", ""),
+                    evidence_reused=payload.get("evidence_reused") or [],
+                    escalations_triggered=payload.get("escalations_triggered") or [],
+                    decisions=payload.get("decisions") or [],
+                )
+            )
+
+        print(
+            f"[aggregate] plan={plan.plan_id} tasks={len(plan.tasks)} "
+            f"shards={len(reports)} unreadable={len(unreadable)}",
+            file=sys.stderr,
+        )
+        report = merge_shard_reports(plan, reports, live_fp=plan.repository_fingerprint)
+
+        if unreadable:
+            report.final_decision = "not_certifiable"
+            report.decision_reason = (
+                f"{report.decision_reason} | shard report(s) unreadable, so their "
+                f"tasks are unreported: {', '.join(unreadable)}"
+            )
+            report.efficiency["unreadable_shard_reports"] = len(unreadable)
+
+        from runtime.verify import record_execution_report
+
+        record_execution_report("run", report, 0.0)
+
+        if json_out:
+            print(report.to_json())
+        else:
+            self._print_execution_report(report)
+            print(_format_task_summary(report))
+
+        if report.final_decision != "certified":
+            print(
+                f"[aggregate] {report.final_decision}: {report.decision_reason}",
+                file=sys.stderr,
+            )
         return 0 if report.final_decision == "certified" else 1
 
     def diagnose(self, changed_files: list[str] | None = None) -> int:
@@ -1794,18 +2004,53 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         except ValueError as exc:
             print(str(exc), file=sys.stderr)
             return 2
-        return cp.check(shard=(shard, shard_count))
+        # M10-R2: `--json` makes stdout a machine-readable ExecutionReport so a
+        # reconcile shard runner can pipe it to disk for the aggregate job.
+        check_json = "--json" in args
+        if check_json:
+            args = [a for a in args if a != "--json"]
+        return cp.check(shard=(shard, shard_count), json_out=check_json)
     if operation == CanonicalOperation.PLAN.value:
-        # Handle --json flag
+        # Handle --json
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
+        # M10-R2: machine-readable plan modes for the reconcile topology.
+        shard_matrix = "--shard-matrix" in args
+        shard_count = None
+        for flag in ("--shard-count", "--shards"):
+            if flag in args:
+                idx = args.index(flag)
+                try:
+                    shard_count = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print(f"{flag} expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+        shard_plan_out = None
+        if "--shard-plan" in args:
+            idx = args.index("--shard-plan")
+            if "--out" in args:
+                out_idx = args.index("--out")
+                shard_plan_out = args[out_idx + 1]
+                args = args[:out_idx] + args[out_idx + 2 :]
+            else:
+                print("--shard-plan requires --out <path>", file=sys.stderr)
+                return 2
+            args = args[:idx] + args[idx + 1 :]
         # Handle --changed-files flag
         changed_files = _find_changed_files_arg(args)
-        return cp.plan(changed_files=changed_files, json_out=json_out)
+        return cp.plan(
+            changed_files=changed_files,
+            json_out=json_out,
+            shard_matrix=shard_matrix,
+            shard_count=shard_count,
+            shard_plan_out=shard_plan_out,
+        )
     if operation == CanonicalOperation.RUN.value:
-        # Handle --plan and --json
+        # Handle --plan, --aggregate and --json
         plan_path = None
+        aggregate = None
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
@@ -1813,6 +2058,11 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         if "--plan" in args:
             idx = args.index("--plan")
             plan_path = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        # Simple --aggregate <dir> parsing (M10-R2 reconcile aggregate step)
+        if "--aggregate" in args:
+            idx = args.index("--aggregate")
+            aggregate = args[idx + 1]
             args = args[:idx] + args[idx + 2 :]
         try:
             shard, shard_count = _parse_shard_arg(args)
@@ -1823,6 +2073,7 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             plan_path=plan_path,
             json_out=json_out,
             shard=(shard, shard_count),
+            aggregate=aggregate,
         )
     if operation == CanonicalOperation.DIAGNOSE.value:
         return cp.diagnose()
@@ -1843,6 +2094,35 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return cp.doctor()
     print(f"Unknown canonical operation: {operation}", file=sys.stderr)
     return 1
+
+
+def _as_state(value: Any) -> Any:
+    """Coerce a serialised completion state back into the enum member.
+
+    Shard reports cross a process boundary, so ``CompletionState.PASS`` arrives as a
+    string. Two shapes reach us and both must work:
+
+    * ``"pass"`` — the enum's value, which is what a report stores when the value was
+      serialised explicitly.
+    * ``"CompletionState.PASS"`` — ``str()`` of the member. ``CompletionState`` is a
+      ``str``-mixin enum, so ``str(member)`` is the qualified name rather than the
+      value, and ``json.dumps(..., default=str)`` writes exactly that.
+
+    Rejecting the second form would silently downgrade every task to INFRASTRUCTURE
+    and fail the whole reconciliation, so both are accepted. An unrecognised value is
+    never coerced to a passing state.
+    """
+    from runtime.foundation.verification.execution_orchestrator import CompletionState
+
+    if isinstance(value, CompletionState):
+        return value
+    text = str(value)
+    if "." in text and text.rsplit(".", 1)[0].endswith("CompletionState"):
+        text = text.rsplit(".", 1)[1]
+    try:
+        return CompletionState(text)
+    except ValueError:
+        return CompletionState.INFRASTRUCTURE
 
 
 def _parse_shard_arg(args: list[str]) -> tuple[int | None, int | None]:

@@ -17,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from runtime.foundation.verification.workflow_inspection import (
     BoundaryClassification,
     WorkflowJob,
-    WorkflowRecord,
     cmd_inspect_workflows,
     enumerate_workflows,
     format_workflows_table,
@@ -222,7 +221,7 @@ class TestInspectWorkflows:
     def test_no_capability_resolver_delegation(self):
         """inspect workflows must NOT delegate to help-resolve/capability discovery."""
         import io
-        from contextlib import redirect_stdout, redirect_stderr
+        from contextlib import redirect_stderr, redirect_stdout
 
         stdout_buf = io.StringIO()
         stderr_buf = io.StringIO()

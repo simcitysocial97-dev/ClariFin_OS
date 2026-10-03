@@ -361,11 +361,24 @@ def merge_shard_reports(
         total_duration_seconds=wall,
         records=ordered,
         efficiency={
+            "tasks_selected": len(plan.tasks),
             "tasks_total": len(plan.tasks),
+            "tasks_executed": len(ordered),
             "tasks_reported": len(ordered),
             "tasks_passed": passed,
             "tasks_failed": failed,
             "tasks_missing": len(missing),
+            "tasks_reused": sum(
+                1 for r in ordered if str(r.completion_state).endswith("REUSED")
+            ),
+            "tasks_skipped": sum(
+                1 for r in ordered if str(r.completion_state).endswith("SKIPPED")
+            ),
+            "tasks_authorization_required": sum(
+                1
+                for r in ordered
+                if str(r.completion_state).endswith("AUTHORIZATION_REQUIRED")
+            ),
             "shards_merged": len(shard_reports),
             "shard_partition": (
                 "complete" if not completeness_problems else "incomplete"

@@ -155,12 +155,44 @@ def test_m81_stale_workflows_match_vea5_concurrency_and_retention():
 
 
 def test_m82_reconcile_job_identity_is_deterministic():
+    """Exactly one job may claim the required reconciliation identity.
+
+    M10-R2 restructured the workflow from one job into
+    ``reconcile-plan`` / ``reconcile-shard`` (matrix) / ``reconcile-gate``. The
+    invariant this test exists to protect is unchanged — a *stable check name for
+    branch protection* — but "exactly one job" was only ever a proxy for it. With a
+    fan-out there are legitimately several jobs, and the property that actually
+    matters is that precisely one of them reports the identity.
+
+    So the assertion is restated rather than dropped: the gate job exists, it still
+    carries the identity's display name, and no sibling job claims the same name. A
+    future edit that renamed the gate, or gave a shard leg the gate's name, fails
+    here exactly as the old count check would have.
+    """
     doc = yaml.safe_load((WORKFLOWS / "verification-reconcile.yml").read_text())
+    jobs = doc["jobs"]
+
     assert (
-        "reconcile-gate" in doc["jobs"]
-    ), "required-check identity must be 'reconcile-gate'"
-    # Exactly one job -> stable check name for branch protection.
-    assert len(doc["jobs"]) == 1
+        "reconcile-gate" in jobs
+    ), "required-check identity must be produced by 'reconcile-gate'"
+
+    gate_name = jobs["reconcile-gate"]["name"]
+    assert gate_name == "Verification Reconcile", (
+        "the gate job's display name IS the reported check identity; changing it "
+        f"silently renames the branch-protection context (found {gate_name!r})"
+    )
+
+    # Exactly one job may report that identity, or branch protection sees a
+    # duplicate/ambiguous context.
+    claimants = [name for name, spec in jobs.items() if spec.get("name") == gate_name]
+    assert claimants == [
+        "reconcile-gate"
+    ], f"more than one job reports {gate_name!r}: {claimants}"
+
+    # The gate must be reachable no matter how the shards turned out, otherwise a
+    # single red shard leaves the run with no conclusion at all.
+    assert jobs["reconcile-gate"].get("if") == "always()"
+    assert set(jobs["reconcile-gate"]["needs"]) == {"reconcile-plan", "reconcile-shard"}
 
 
 def test_m82_planning_divergence_blocks_merge_exit_2(tmp_path):

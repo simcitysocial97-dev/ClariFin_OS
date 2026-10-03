@@ -251,7 +251,7 @@ class CapabilityResolver:
         router_caps: dict[str, set[str]] = {}
 
         # Map from backend_capabilities which are dicts with router and capability
-        for cap_id, cap_data in clg.backend_capabilities.items():
+        for _cap_id, cap_data in clg.backend_capabilities.items():
             if isinstance(cap_data, dict):
                 router_name = cap_data.get("router")
                 capability = cap_data.get("capability")
@@ -674,9 +674,8 @@ class CapabilityResolver:
                                         if (
                                             edge.relationship == "depends_on"
                                             and edge.target_type == "capability"
-                                        ):
-                                            if edge.target_id not in direct_caps:
-                                                direct_caps.append(edge.target_id)
+                                        ) and edge.target_id not in direct_caps:
+                                            direct_caps.append(edge.target_id)
                                 except Exception:
                                     pass
 

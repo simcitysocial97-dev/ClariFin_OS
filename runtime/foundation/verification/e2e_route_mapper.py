@@ -201,7 +201,7 @@ class E2ERouteMapper:
             payload = {
                 "schema": "e2e-route-map/v1",
                 "routes": list(route_map.keys()),
-                "mapping": {k: v for k, v in sorted(route_map.items())},
+                "mapping": dict(sorted(route_map.items())),
                 "generated_at": __import__("datetime")
                 .datetime.now(__import__("datetime").timezone.utc)
                 .isoformat(),

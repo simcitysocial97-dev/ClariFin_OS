@@ -5,11 +5,8 @@ Integration tests that verify the runtime correctly handles failure scenarios.
 
 from __future__ import annotations
 
-import json
 import subprocess
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 VENV_PYTHON = str(REPO_ROOT / ".venv" / "bin" / "python")

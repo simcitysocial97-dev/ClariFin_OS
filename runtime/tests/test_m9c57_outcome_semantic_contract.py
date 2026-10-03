@@ -17,14 +17,13 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
 import runtime.system.observability.analytics as analytics_mod
 import runtime.system.observability.event_store as es_mod
 import runtime.system.observability.repository as repo_mod
-from runtime.verify import _record_verification_event, _normalize_status
+from runtime.verify import _normalize_status, _record_verification_event
 
 # ---------------------------------------------------------------------------
 # G4 — Outcome normalisation

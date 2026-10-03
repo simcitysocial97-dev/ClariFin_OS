@@ -487,17 +487,116 @@ def test_concurrent_tasks_write_distinct_evidence_files():
     assert len(seen) == 16
 
 
-def test_worker_is_not_used_for_authorization_gated_mutations():
-    """Mutation and authorization-gated tasks mutate the tree by definition, so they
-    must never be in a concurrent set (they would race the fingerprint hash).
+def test_mutation_tasks_are_excluded_from_the_concurrent_set():
+    """Regression, found by running the plan rather than by inspection.
 
-    The orchestrator asserts this by keeping such tasks out of the independent pool's
-    default path; here we pin that a task flagged ``authorization_required`` is
-    recognised as such rather than silently fanned out."""
-    spec = dataclasses.replace(_task("exec-0001"), authorization_required=True)
-    assert spec.authorization_required is True
+    With the fan-out enabled, the mutation task failed with
+    ``ValueError: signal only works in main thread of the main interpreter`` because
+    mutmut installs a signal handler, which a ``ThreadPoolExecutor`` worker cannot
+    register. Two reasons mutation is excluded, not one: it needs the main thread,
+    *and* it rewrites source files while the run is in flight, which is the race the
+    fingerprint check exists to catch.
+    """
+    from runtime.foundation.verification.execution_orchestrator import (
+        ExecutionOrchestrator,
+    )
+
+    needs = ExecutionOrchestrator._requires_main_thread
+
+    assert needs(dataclasses.replace(_task("exec-0001"), verification_kind="mutation"))
+    # A spec carrying only a mutation_target is equally excluded.
+    assert needs(dataclasses.replace(_task("exec-0001"), mutation_target="src/x.py"))
+    # Authorization-gated tasks are the sensitive ones; serial by design.
+    assert needs(dataclasses.replace(_task("exec-0001"), authorization_required=True))
+    # Coverage is deliberately NOT excluded — proven safe concurrently, and one of the
+    # longest tasks, so excluding it would cost most of the speedup.
+    assert not needs(
+        dataclasses.replace(_task("exec-0001"), verification_kind="coverage")
+    )
+    assert not needs(_task("exec-0001"))
+
+
+def test_a_mutation_task_actually_runs_on_the_main_thread():
+    """The exclusion must be real, not merely declared.
+
+    ``execute`` is called from this test's thread, so "the main thread" means the
+    calling thread. The mutation task must land there; the ordinary task may or may
+    not, depending on worker availability, so it is not asserted either way.
+    """
+    import threading
+
+    from runtime.foundation.verification.execution_orchestrator import (
+        CompletionState,
+        TaskExecutionRecord,
+    )
+
+    caller = threading.get_ident()
+    ran_on: dict[str, int] = {}
+
+    def _spec(task_id: str, kind: str) -> ExecutionTaskSpec:
+        return dataclasses.replace(
+            _task(task_id), verification_kind=kind, command="true", timeout_seconds=60
+        )
+
+    plan = ExecutionPlan(
+        plan_id="execplan-mt",
+        source_plan_id="cp-mt",
+        repository_fingerprint=RepositoryFingerprint.capture(),
+        changed_files=[],
+        affected_capabilities=["test-capability"],
+        affected_components=[],
+        invalidated_evidence=[],
+        reusable_evidence=[],
+        tasks=[_spec("exec-0001", "mutation"), _spec("exec-0002", "unit")],
+        escalation_conditions=[],
+        measurement_requirements=[],
+        certification_requirements=[],
+        rationale="main-thread probe",
+        plan_fingerprint="mt",
+        generated_at="",
+        revalidation_sources=[],
+        reusable_measurements=[],
+    )
+
+    def _probe(spec, p, live_fp):
+        ran_on[spec.task_id] = threading.get_ident()
+        return TaskExecutionRecord(
+            record_id=f"r-{spec.task_id}",
+            plan_id=p.plan_id,
+            task_id=spec.task_id,
+            primary_capability=spec.primary_capability,
+            capabilities=list(spec.capabilities),
+            command=spec.command,
+            scope=spec.scope,
+            is_mandatory=spec.is_mandatory,
+            is_escalation=spec.is_escalation,
+            verification_kind=spec.verification_kind,
+            completion_state=CompletionState.PASS.value,
+            started_at="",
+            completed_at="",
+            duration_seconds=0.0,
+            exit_code=0,
+            stdout_path="",
+            stderr_path="",
+            artifacts=[],
+            measurement_truth=None,
+            diagnostic=None,
+            next_action="",
+            prerequisites_satisfied=True,
+            termination=None,
+            reason="probe",
+        )
+
     orch = ExecutionOrchestrator()
-    assert orch._command_overrides == {}
+    orch._execute_task = lambda spec, p, live_fp: _probe(spec, p, live_fp)
+    orch.execute(plan, authorize={t.task_id for t in plan.tasks})
+
+    assert ran_on["exec-0001"] == caller, (
+        "the mutation task must run on the calling (main) thread, because mutmut "
+        "installs a signal handler that a pool worker cannot register"
+    )
+    assert ran_on["exec-0002"] != 0  # the ordinary task ran somewhere
+    assert set(ran_on) == {"exec-0001", "exec-0002"}
 
 
 def test_env_is_not_leaked_into_worker_concurrency():

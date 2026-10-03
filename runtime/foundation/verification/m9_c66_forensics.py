@@ -15,7 +15,7 @@ import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -373,7 +373,7 @@ class OutputTruthReconciler:
 
         return {
             "schema": "m9-c66-output-truth-reconciliation/v1",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "total_checks": checks_performed,
             "checks_passed": checks_passed,
             "discrepancies": discrepancies,
@@ -495,7 +495,7 @@ def run_command_matrix(
     # Build command matrix summary
     matrix = {
         "schema": "m9-c66-command-matrix/v1",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "commit_sha": git_head()[0],
         "base_ref": "23e4b66187709b909cea5f84a5f03a8efa8ab320",
         "total_commands": len(results),

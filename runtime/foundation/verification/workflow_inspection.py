@@ -172,7 +172,7 @@ def enumerate_workflows(workflow_dir: Path | None = None) -> list[WorkflowRecord
         # Triggers
         on = doc.get("on", [])
         if isinstance(on, dict):
-            triggers = [str(k) for k in on.keys()]
+            triggers = [str(k) for k in on]
         elif isinstance(on, list):
             triggers = [str(x) for x in on]
         else:

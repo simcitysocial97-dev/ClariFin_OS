@@ -6,11 +6,8 @@ single structured output, not duplicated across multiple print calls.
 
 from __future__ import annotations
 
-import io
 import sys
-from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -24,15 +21,15 @@ class TestE2EDeduplication:
         """inspect plan stderr must contain E2E IMPACT header exactly once."""
         # We can't easily call the internal planner from here, so we verify
         # the format function produces a single consolidated block.
-        from runtime.foundation.verification.control_plane import (
-            ControlPlanePlanner,
-        )
-
         # The key invariant: when e2e_impact.has_e2e_impact is True,
         # all E2E info is collected into e2e_notice_lines and printed once.
         # Verify by inspection of the source that there is only ONE loop
         # over e2e_notice_lines.
         import inspect
+
+        from runtime.foundation.verification.control_plane import (
+            ControlPlanePlanner,
+        )
 
         source = inspect.getsource(ControlPlanePlanner.plan)
         # Must collect notice lines into a list and iterate once
@@ -78,6 +75,7 @@ class TestE2EDeduplication:
     def test_old_duplicate_pattern_eliminated(self):
         """Old pattern of separate print() for header, stats, and added-task must not exist."""
         import inspect
+
         from runtime.foundation.verification.control_plane import ControlPlanePlanner
 
         source = inspect.getsource(ControlPlanePlanner.plan)

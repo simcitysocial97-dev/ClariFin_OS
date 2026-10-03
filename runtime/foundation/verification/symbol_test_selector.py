@@ -112,7 +112,7 @@ class SymbolTestSelector:
 
         mapper = CoverageSymbolMapper()
         symbol_to_tests = mapper.build_symbol_to_test_map(test_directory)
-        self.symbol_to_tests = {k: v for k, v in symbol_to_tests.items()}
+        self.symbol_to_tests = dict(symbol_to_tests.items())
         self._save_map()
         return self.symbol_to_tests
 

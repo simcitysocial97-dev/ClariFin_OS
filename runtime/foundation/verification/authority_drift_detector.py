@@ -185,13 +185,12 @@ def _scan_imports(
                     results.append(
                         (alias.name, alias.asname or alias.name, node.lineno)
                     )
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                top = node.module.split(".")[0]
-                if top in target_dotted:
-                    for alias in node.names:
-                        full = f"{node.module}.{alias.name}"
-                        results.append((full, alias.asname or alias.name, node.lineno))
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            top = node.module.split(".")[0]
+            if top in target_dotted:
+                for alias in node.names:
+                    full = f"{node.module}.{alias.name}"
+                    results.append((full, alias.asname or alias.name, node.lineno))
 
     return results
 
