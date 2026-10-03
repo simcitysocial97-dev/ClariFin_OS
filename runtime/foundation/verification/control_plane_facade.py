@@ -759,6 +759,78 @@ class ControlPlane:
 
         return 0 if report.final_decision == "certified" else 1
 
+    def aggregate_playwright_legs(
+        self,
+        results_dir: str,
+        *,
+        shard_count: int | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Aggregate the Playwright fan-out into one verdict (M10-R2).
+
+        The gate is the authority. It refuses to certify unless every leg the plan
+        declared reported exactly once and passed — functional shards *and* one visual
+        leg per project. A missing leg means its tests never ran, which must never
+        certify, and the visual legs are checked exactly like the functional ones so a
+        dropped screenshot pass cannot pass unnoticed.
+        """
+        import time
+
+        from runtime.foundation.verification.playwright_shards import (
+            expected_leg_ids,
+            read_leg_results,
+            verify_legs,
+        )
+
+        started = time.monotonic()
+        results, unreadable = read_leg_results(Path(results_dir))
+        expected = expected_leg_ids(shard_count or 4)
+
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "leg result(s) unreadable, their tests are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(verify_legs(expected, results))
+
+        passed = sum(1 for r in results if r.ok)
+        visual = [r for r in results if r.shard_id.endswith("-visual")]
+        certified = not problems
+        reason = (
+            f"all {len(expected)} leg(s) passed ({len(visual)} visual, "
+            f"{len(results) - len(visual)} functional)"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "legs_expected": expected,
+                        "legs_reported": len(results),
+                        "legs_passed": passed,
+                        "visual_legs": len(visual),
+                        "leg_results": [r.to_dict() for r in results],
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[playwright-gate] "
+                f"{'CERTIFIED' if certified else 'NOT CERTIFIED'}: {reason}"
+            )
+
+        return 0 if certified else 1
+
     def run_test_shards(
         self,
         *,
@@ -1962,6 +2034,9 @@ PROFILE_SUBCOMMANDS: frozenset[str] = frozenset(
         "backend-plan",
         "backend-task",
         "backend-aggregate",
+        # playwright
+        "playwright-plan",
+        "playwright-aggregate",
     }
 )
 
@@ -2109,6 +2184,22 @@ def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> in
     cp = ControlPlane()
 
     if verb == "plan":
+        if profile == "playwright":
+            from runtime.foundation.verification.playwright_shards import (
+                playwright_matrix,
+            )
+
+            try:
+                print(
+                    playwright_matrix(
+                        shard_count=shard_count or 4,
+                        with_counts=with_counts,
+                    )
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            return 0
         if profile == "runtime":
             return cp.plan(
                 shard_matrix=False,
@@ -2161,6 +2252,10 @@ def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> in
                 file=sys.stderr,
             )
             return 2
+        if profile == "playwright":
+            return cp.aggregate_playwright_legs(
+                target, shard_count=shard_count, json_out=json_out
+            )
         if profile == "runtime":
             return cp.run_test_shards(
                 verify_dir=target, shard_count=shard_count, json_out=json_out

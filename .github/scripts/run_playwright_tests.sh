@@ -79,9 +79,68 @@ fi
 # `workers=1` on the visual pass removes worker scheduling from the equation;
 # without writes to read, serial execution is safe and costs only a few seconds
 # for ~50 screenshot assertions.
-echo -e "${YELLOW}Pass 1/2 — functional suite (visual regression excluded)${NC}"
-npx playwright test "${project_flag[@]}" --reporter=list \
-  --grep-invert "Visual Regression"
+# M10-R2 — the functional pass can be sharded across runners.
+#
+# SAFETY. Every spec shares one SQLite file and the suite WRITES to it (see the WHY
+# block above). Sharding is safe *across* runners precisely because each runner has its
+# own checkout and therefore its own database, freshly seeded by the workflow — which is
+# a stronger isolation guarantee than the single-runner case this script was written
+# for. Within one shard the ordering caveats above still hold unchanged, because a shard
+# is still a single process against a single database.
+#
+# `PLAYWRIGHT_SPEC_FILES` restricts the pass to an explicit list of spec files, assigned
+# deterministically by the plan job. Whole files only: a shard never splits a spec, so
+# `test.describe` blocks and their fixtures stay inside one process.
+spec_filter=()
+if [ -n "${PLAYWRIGHT_SPEC_FILES:-}" ]; then
+  # shellcheck disable=SC2206 # deliberate word splitting: this is a file list
+  spec_filter=(${PLAYWRIGHT_SPEC_FILES})
+  echo -e "${GREEN}Shard scope: ${#spec_filter[@]} spec file(s)${NC}"
+fi
+
+# `PLAYWRIGHT_PASS` lets a leg run exactly one of the two passes. Without it the script
+# runs both, which is the original single-runner behaviour.
+run_pass() {
+  case "${PLAYWRIGHT_PASS:-all}" in
+    functional) return 0 ;;
+    visual) return 1 ;;
+    all) return 0 ;;
+    *) echo -e "${RED}✗ Unknown PLAYWRIGHT_PASS=${PLAYWRIGHT_PASS}${NC}"; exit 1 ;;
+  esac
+}
+
+if [ "$(run_pass; echo $?)" = "0" ]; then
+  echo -e "${YELLOW}Pass 1/2 — functional suite (visual regression excluded)${NC}"
+  npx playwright test "${project_flag[@]}" "${spec_filter[@]}" --reporter=list \
+    --grep-invert "Visual Regression"
+fi
+
+if [ "$(run_pass; echo $?)" = "1" ]; then
+  echo -e "\n${YELLOW}Pass 2/2 — visual regression (immutable, serial)${NC}"
+  # Deliberately no spec filter: the visual pass is one serial sweep, and narrowing it
+  # would silently drop screenshot assertions. The WHY block above explains why it must
+  # not be sharded.
+  if [ -n "${FINANCE_DB_PATH:-}" ]; then
+    rm -f "${FINANCE_DB_PATH}" "${FINANCE_DB_PATH}-wal" "${FINANCE_DB_PATH}-shm"
+    (cd "$REPO_ROOT" && PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py --reset)
+  else
+    echo -e "${RED}✗ FINANCE_DB_PATH is not set.${NC}"
+    exit 1
+  fi
+  set +e
+  npx playwright test "${project_flag[@]}" --reporter=list \
+    --grep "Visual Regression" --workers=1 "${update_flag[@]}"
+  status=$?
+  set -e
+  if [ "$status" -eq 0 ]; then
+    echo -e "${GREEN}✓ All Playwright tests passed${NC}"
+    echo "================================================"
+    exit 0
+  fi
+  echo -e "${RED}✗ Playwright tests failed${NC}"
+  echo "================================================"
+  exit "$status"
+fi
 
 echo -e "\n${YELLOW}Re-seeding the database for a deterministic visual pass...${NC}"
 if [ -n "${FINANCE_DB_PATH:-}" ]; then
