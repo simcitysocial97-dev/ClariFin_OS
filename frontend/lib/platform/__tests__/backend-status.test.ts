@@ -29,6 +29,7 @@ import {
   BACKEND_STATUS_SHORT,
   classifyLiveness,
   classifyPlatformRead,
+  resolveConsoleTerminalState,
   type BackendStatus,
 } from '@/lib/platform/backend-status';
 
@@ -168,5 +169,61 @@ describe('console backend states — vocabulary', () => {
   it('gives every state a distinct short form for the status strip', () => {
     const shorts = Object.values(BACKEND_STATUS_SHORT);
     expect(new Set(shorts).size).toBe(shorts.length);
+  });
+});
+
+/**
+ * The terminal-state gate every platform screen applies before rendering its
+ * dashboard.
+ *
+ * REGRESSION. The first implementation inlined
+ * `backend.status === 'unavailable' || backend.status === 'starting'` as the
+ * terminal condition. That made `starting` terminal, and on CI it broke a
+ * console spec outright: during a cold start `GET /health` exceeds the 3 s
+ * LIVENESS deadline while the application is still importing `camelot`, `cv2`
+ * and `pandas`, so the screen rendered the terminal panel and the health
+ * dimensions grid never appeared.
+ *
+ * Two independent faults, both pinned below:
+ *   - `starting` must never be terminal, because "the backend is booting" is a
+ *     WAIT condition, not an ACT condition.
+ *   - data that has already landed must always win over a 3 s liveness opinion.
+ */
+describe('resolveConsoleTerminalState', () => {
+  const terminal = (over: Partial<Parameters<typeof resolveConsoleTerminalState>[0]> = {}) =>
+    resolveConsoleTerminalState({
+      readFailure: null,
+      backendStatus: 'unknown' as BackendStatus,
+      hasData: false,
+      ...over,
+    });
+
+  it('never treats a starting backend as terminal', () => {
+    // The regression. Cold start, nothing read yet: the screen must fall through
+    // to the loading state, which carries the "wait, do not restart" copy.
+    expect(terminal({ backendStatus: 'starting' })).toBeNull();
+  });
+
+  it('reports nothing-listening as terminal even before any read fails', () => {
+    const verdict = terminal({ backendStatus: 'unavailable' });
+    expect(verdict?.status).toBe('unavailable');
+    expect(verdict?.source).toBe('liveness');
+  });
+
+  it('lets real data win over a starting or unavailable verdict', () => {
+    // A read landed, so the dashboard is correct to render. The liveness probe
+    // is a 3 s opinion; the read is the authority.
+    expect(terminal({ backendStatus: 'starting', hasData: true })).toBeNull();
+    expect(terminal({ backendStatus: 'unavailable', hasData: true })).toBeNull();
+  });
+
+  it('passes a classified read failure straight through', () => {
+    const failure = classifyPlatformRead({ error: new ApiTimeoutError('/platform/v1/health', 20_000), path: '/platform/v1/health' }, false);
+    expect(terminal({ readFailure: failure, backendStatus: 'ready', hasData: true })).toBe(failure);
+  });
+
+  it('still returns null while a healthy backend has simply not answered yet', () => {
+    expect(terminal({ backendStatus: 'ready' })).toBeNull();
+    expect(terminal({ backendStatus: 'unknown' })).toBeNull();
   });
 });

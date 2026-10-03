@@ -240,6 +240,57 @@ export function classifyPlatformRead(
   };
 }
 
+/**
+ * Decide whether a console screen must show a TERMINAL "cannot show data" panel.
+ *
+ * This is the gate every platform page applies before rendering its dashboard,
+ * so it lives here rather than inline in each page: the four-state vocabulary
+ * must not be re-derived per page, which is how it drifted in the first place.
+ *
+ * Two rules, both of which the console got wrong on its first implementation:
+ *
+ * 1. `starting` is NOT terminal. It means the connection was accepted and
+ *    `GET /health` did not answer inside the 3 s LIVENESS deadline — which is the
+ *    normal condition during a cold start, because the application spends ~16 s
+ *    importing its module graph before it can serve anything. Showing a terminal
+ *    panel there tells the operator to intervene during the window where
+ *    intervening is most expensive. `starting` falls through to the loading state,
+ *    which already carries the correct "wait, do not restart" copy.
+ *
+ * 2. Real data always wins. Once a platform read has landed, the dashboard is
+ *    correct to render regardless of the liveness probe, because the probe is a
+ *    3 s opinion and the read is the authority.
+ *
+ * `unavailable` (nothing listening) is terminal on its own; `readFailure` (a real
+ * deadline breach or error, already classified against the liveness verdict) is
+ * terminal by construction.
+ *
+ * A screen in `starting` with reads still in flight converges on its own: the
+ * platform read carries the 20 s PLATFORM_API deadline, so the breach arrives as
+ * `readFailure` and this gate returns a terminal state. Nothing spins forever.
+ */
+export function resolveConsoleTerminalState(input: {
+  /** Classified platform read failure, if the governing read errored. */
+  readFailure: BackendStatusDetail | null;
+  /** Current liveness verdict from {@link useBackendStatus}. */
+  backendStatus: BackendStatus;
+  /** Whether a platform read has already produced data for this screen. */
+  hasData: boolean;
+}): BackendStatusDetail | null {
+  const { readFailure, backendStatus, hasData } = input;
+  if (readFailure) return readFailure;
+  if (!hasData && backendStatus === 'unavailable') {
+    return {
+      status: 'unavailable',
+      source: 'liveness',
+      reason: 'Nothing is listening on the backend port.',
+      timedOut: false,
+      elapsedMs: 0,
+    };
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------

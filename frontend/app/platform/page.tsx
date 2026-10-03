@@ -34,6 +34,7 @@ import {
 } from '@/components/platform/console-state';
 import {
   classifyPlatformRead,
+  resolveConsoleTerminalState,
   useBackendStatus,
   type BackendStatusDetail,
 } from '@/lib/platform/backend-status';
@@ -260,7 +261,19 @@ export default function PlatformDashboardPage() {
       ? classifyPlatformRead({ error: capsError, path: '/platform/v1/capabilities' }, backend.status === 'ready')
       : null;
 
-  const unavailable = failure ?? (backend.status === 'unavailable' || backend.status === 'starting' ? backend : null);
+  // M11 (integration fix). `starting` is NOT a terminal state, and treating it
+  // as one was a real defect rather than a test artefact — see
+  // `resolveConsoleTerminalState` for the full argument. In short: the backend
+  // spends ~16 s importing its module graph before it can answer `GET /health`,
+  // so `starting` is the NORMAL cold-start condition, and a terminal panel
+  // there told the operator to act during the window where acting is most
+  // expensive. It also made the "Waiting for the backend to start serving…"
+  // loading copy below unreachable, because this gate ran first.
+  const unavailable = resolveConsoleTerminalState({
+    readFailure: failure,
+    backendStatus: backend.status,
+    hasData: Boolean(dimensions ?? capsData),
+  });
 
   if (unavailable) {
     return (
