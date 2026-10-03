@@ -50,11 +50,54 @@ if [ "${PLAYWRIGHT_UPDATE_SNAPSHOTS:-}" = "1" ]; then
   update_flag=(--update-snapshots)
 fi
 
+project_flag=()
 if [ -n "${PLAYWRIGHT_PROJECT:-}" ]; then
-  npx playwright test --project="${PLAYWRIGHT_PROJECT}" --reporter=list "${update_flag[@]}"
-else
-  npx playwright test --reporter=list "${update_flag[@]}"
+  project_flag=(--project="${PLAYWRIGHT_PROJECT}")
 fi
+
+# M11 — visual regression runs as its own pass against an immutable database.
+#
+# WHY
+# ---
+# Every spec shares one SQLite file. The suite WRITES to it: 14 POSTs were
+# observed in a single run of `playwright.yml`, so by the time a
+# visual-regression spec reaches its first screenshot, the data on screen
+# depends on which specs ran before it, how many workers were active, and how
+# many times a test was retried. Cashflow Trend's Y-axis ticks are derived from
+# `domain={[0, 'dataMax + 100000']}`, so a varying dataMax moves the ticks and
+# one `₹72K` label becomes 1 740 differing pixels — a red gate on a chart that
+# did not change. In the worst observed run 11 of 13 snapshots drifted, one by
+# 23% of the frame.
+#
+# Seeding the database (playwright.yml) fixes the STARTING state but not the
+# problem: the suite then mutates it. So the visual specs are split out and run
+# last, against a database re-seeded immediately beforehand and read-only for
+# the duration of that pass.
+#
+# The main suite therefore excludes the visual specs. Both passes still run, so
+# coverage is unchanged — only the order in which state is observed is fixed.
+# `workers=1` on the visual pass removes worker scheduling from the equation;
+# without writes to read, serial execution is safe and costs only a few seconds
+# for ~50 screenshot assertions.
+echo -e "${YELLOW}Pass 1/2 — functional suite (visual regression excluded)${NC}"
+npx playwright test "${project_flag[@]}" --reporter=list \
+  --grep-invert "Visual Regression"
+
+echo -e "\n${YELLOW}Re-seeding the database for a deterministic visual pass...${NC}"
+if [ -n "${FINANCE_DB_PATH:-}" ]; then
+  rm -f "${FINANCE_DB_PATH}" "${FINANCE_DB_PATH}-wal" "${FINANCE_DB_PATH}-shm"
+  (cd "$REPO_ROOT" && PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py --reset)
+else
+  echo -e "${RED}✗ FINANCE_DB_PATH is not set.${NC}"
+  echo -e "${RED}  Visual regression needs a dedicated, re-seedable database:${NC}"
+  echo -e "${RED}  without one it would be compared against order-dependent${NC}"
+  echo -e "${RED}  state. Set FINANCE_DB_PATH in the job environment.${NC}"
+  exit 1
+fi
+
+echo -e "\n${YELLOW}Pass 2/2 — visual regression (immutable, serial)${NC}"
+npx playwright test "${project_flag[@]}" --reporter=list \
+  --grep "Visual Regression" --workers=1 "${update_flag[@]}"
 
 status=$?
 if [ "$status" -eq 0 ]; then
