@@ -7,7 +7,7 @@ No calculations - delegates to behaviour_engine pure functions.
 
 from datetime import date
 from decimal import Decimal
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 from src.core.domain.household import DEFAULT_HOUSEHOLD_ID
 from src.engines.behaviour_engine import (
@@ -49,6 +49,120 @@ from src.repositories.credit_card_repository import CreditCardRepository
 from src.repositories.loan_repository import LoanRepository
 from src.repositories.pattern_repository import PatternRepository
 from src.repositories.transaction_repository import TransactionRepository
+
+# ===== Pattern detection thresholds =====
+
+#: A merchant debited at least this many times can show an impulse pattern.
+MIN_IMPULSE_TRANSACTIONS = 3
+
+#: A merchant debited in at least this many distinct calendar months can show a
+#: recurring-subscription pattern.
+MIN_SUBSCRIPTION_MONTHS = 3
+
+#: Every debit of a subscription must sit within this fraction of its median
+#: amount. A merchant whose amount varies month to month is not a fixed charge.
+SUBSCRIPTION_AMOUNT_TOLERANCE = 0.10
+
+#: Transaction descriptions shorter than this carry no merchant identity; the
+#: row's category is used instead so a pattern is still keyed on something real.
+MIN_MERCHANT_DESCRIPTION_LENGTH = 3
+
+
+def _merchant_of(transaction: dict[str, Any]) -> str:
+    """The merchant identity for a transaction.
+
+    Prefers the recorded description (which is what a statement carries) and
+    falls back to the category. Never returns an empty key: an unkeyable
+    transaction would collapse every such row into one meaningless pattern.
+    """
+    description = str(transaction.get("description") or "").strip().lower()
+    if len(description) >= MIN_MERCHANT_DESCRIPTION_LENGTH:
+        return description
+    category = str(transaction.get("category") or "").strip().lower()
+    if category:
+        return f"category:{category}"
+    return "unlabelled"
+
+
+def _to_financial_pattern(row: dict[str, Any]) -> "FinancialPattern":
+    """Build a ``FinancialPattern`` from a ``PatternRepository`` row.
+
+    ``PatternRepository._map_pattern_row`` produces a *different* set of keys
+    from the two the readers here expected:
+
+    * it emits ``strength`` on 0-100, not the ``strength_bps`` they read;
+    * it emits ``total_amount`` in rupees, not the ``total_amount_paise`` they
+      read.
+
+    Both readers raised ``KeyError`` and turned
+    ``GET /api/v1/behaviour/patterns`` and ``/monthly-report`` into HTTP 500 —
+    so even a correctly populated ``behaviour_patterns`` table could not be
+    served. This converts at the boundary into the ``FinancialPattern``
+    contract: ``strength`` 0-1, ``total_amount_paise`` integer paise.
+    """
+    return FinancialPattern(
+        pattern_type=row["pattern_type"],
+        pattern_key=row["pattern_key"],
+        strength=Decimal(str(row["strength"])) / Decimal(100),
+        transaction_count=row["transaction_count"],
+        total_amount_paise=int(row["total_amount"] * 100),
+        first_observed=row["first_observed"],
+        last_observed=row["last_observed"],
+    )
+
+
+def _median(values: list[int]) -> float:
+    """Median of a list of numbers."""
+    ordered = sorted(values)
+    middle = len(ordered) // 2
+    if len(ordered) % 2 == 1:
+        return float(ordered[middle])
+    return (ordered[middle - 1] + ordered[middle]) / 2
+
+
+def _is_fixed_amount(amounts: list[int]) -> bool:
+    """Whether every amount is within tolerance of the median.
+
+    A fixed recurring charge has one amount; a variable bill does not. Comparing
+    against the median rather than the first amount keeps the test from passing
+    on a single outlier.
+    """
+    if len(amounts) < MIN_SUBSCRIPTION_MONTHS:
+        return False
+    median = _median(amounts)
+    if median <= 0:
+        return all(amount == 0 for amount in amounts)
+    return all(
+        abs(amount - median) <= median * SUBSCRIPTION_AMOUNT_TOLERANCE
+        for amount in amounts
+    )
+
+
+def _variance_ratio(amounts: list[int]) -> float:
+    """Mean absolute deviation from the median, as a fraction of the median."""
+    median = _median(amounts)
+    if median <= 0:
+        return 0.0
+    return round(
+        sum(abs(amount - median) for amount in amounts) / len(amounts) / median, 4
+    )
+
+
+class _OnDemandMetrics(TypedDict):
+    """The exact metric types returned by :meth:`BehaviourService._on_demand_metrics`.
+
+    A plain ``dict[str, Decimal]`` annotation is wrong: ``debt_cycle_score`` is a
+    0-100 score and ``compute_debt_cycle_score`` returns ``int``, while the two
+    ratios and the two stability scores are genuinely ``Decimal``. Declaring the
+    real heterogeneous shape keeps each value precise instead of letting the type
+    checker widen them to a common supertype.
+    """
+
+    debt_cycle_score: int
+    credit_dependency_ratio: Decimal
+    credit_revolver_ratio: Decimal
+    income_stability_score: Decimal
+    expense_stability_score: Decimal
 
 
 class BehaviourService:
@@ -214,7 +328,20 @@ class BehaviourService:
                     self._compute_subscription_burn_rate(transactions) * 10000
                 ),
                 resilience_index_bps=int(resilience_index * 10000),
-                wellness_score_bps=int(wellness_score * 10000),
+                # M11: `compute_wellness_score` returns a 0-100 score
+                # (wellness.py:88-89) — the same 0-100 convention the sibling
+                # read model relies on (behaviour_repository._map_snapshot_row
+                # converts bps -> 0-100, and every consumer of
+                # `snapshot["wellness_score"]` — classify_wellness_band at
+                # 90/75/50/25, _generate_alerts at 25/50 — is 0-100).
+                # Multiplying it by 10000 stored an ALREADY-0-100 value into a
+                # basis-point column, so the column held 0-1,000,000 and the
+                # read model emitted the score x100 again (score=87.5449 was
+                # served as 8754.4900, and its band read "Excellent" for any
+                # household). A basis-point column holds 0-10,000, so a 0-100
+                # score is stored as score * 100 — the same conversion the
+                # other 0-1 ratios above already receive.
+                wellness_score_bps=int(wellness_score * 100),
                 version=1,
             )
 
@@ -372,31 +499,30 @@ class BehaviourService:
             total_income = sum(
                 t["amount_paise"] for t in transactions if t["type"] == "credit"
             )
-            total_expenses = sum(
-                t["amount_paise"] for t in transactions if t["type"] == "debit"
-            )
 
-            # Compute dynamic debt metrics
             foir, foir_band = compute_foir(
                 self._compute_fixed_obligations(loans, credit_cards),
                 self._compute_minimum_obligations(loans, credit_cards),
                 total_income,
             )
-            credit_dependency_ratio = compute_credit_dependency_ratio(
-                self._compute_credit_funded_expenses(transactions), total_expenses
-            )
-            credit_revolver_ratio = compute_credit_revolver_ratio(
-                self._compute_revolving_balance(credit_cards), total_expenses
-            )
 
-            band = cast(DebtHealthBand, foir_band)
+            # `debt_cycle_score`, `credit_dependency_ratio` and
+            # `credit_revolver_ratio` are NOT persisted columns on
+            # `behaviour_snapshots` and `BehaviourRepository._map_snapshot_row`
+            # cannot produce them, so they are computed from live data. Reading
+            # `debt_cycle_score` off the snapshot raised
+            # `KeyError: 'debt_cycle_score'` and turned
+            # `GET /api/v1/behaviour/debt-health` — and every endpoint composing
+            # it, including `/api/v1/financial-intelligence/outlook` and
+            # `/report` — into a 500 whenever a snapshot existed.
+            on_demand = self._on_demand_metrics()
 
             return DebtHealthResponse(
                 foir=foir,
-                credit_dependency_ratio=credit_dependency_ratio,
-                debt_cycle_score=snapshot["debt_cycle_score"],
-                credit_revolver_ratio=credit_revolver_ratio,
-                band=band,
+                credit_dependency_ratio=on_demand["credit_dependency_ratio"],
+                debt_cycle_score=on_demand["debt_cycle_score"],
+                credit_revolver_ratio=on_demand["credit_revolver_ratio"],
+                band=cast(DebtHealthBand, foir_band),
                 snapshot_date=snapshot["snapshot_date"],
             )
 
@@ -441,12 +567,19 @@ class BehaviourService:
                 total_income, total_expenses, financial_fees
             )
 
+            # `income_stability_score` and `expense_stability_score` are not
+            # persisted columns, so the snapshot cannot supply them. Reading
+            # them off it raised `KeyError` and made
+            # `GET /api/v1/behaviour/cashflow-health` a 500 for every household
+            # with a snapshot. See `_on_demand_metrics`.
+            on_demand = self._on_demand_metrics()
+
             return CashflowHealthResponse(
                 cashflow_stability_index=Decimal(
                     str(snapshot["cashflow_stability_score"])
                 ),
-                income_stability=Decimal(str(snapshot["income_stability_score"])),
-                expense_stability=Decimal(str(snapshot["expense_stability_score"])),
+                income_stability=on_demand["income_stability_score"],
+                expense_stability=on_demand["expense_stability_score"],
                 monthly_surplus_paise=monthly_surplus,
                 snapshot_date=snapshot["snapshot_date"],
             )
@@ -460,13 +593,20 @@ class BehaviourService:
             ) from e
 
     def get_patterns(
-        self, household_id: str = DEFAULT_HOUSEHOLD_ID, limit: int = 5
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID, days: int = 30
     ) -> list[FinancialPattern]:
-        """Get the latest detected financial patterns.
+        """Get the financial patterns detected within a look-back window.
 
         Args:
             household_id: Household identifier (default: DEFAULT_HOUSEHOLD_ID)
-            limit: Maximum number of patterns to return (converted to days for repo)
+            days: How many days back to look for observed patterns.
+
+                Named ``limit`` and documented as "maximum number of patterns"
+                before M11, while it was in fact passed straight to
+                ``get_recent_patterns(days=...)``. The router's own parameter is
+                ``days`` (default 30, range 1-365), so the two names disagreed
+                about the same integer and the default of 5 silently narrowed a
+                30-day query to a 5-day one for any caller using the default.
 
         Returns:
             List of FinancialPattern objects
@@ -475,23 +615,30 @@ class BehaviourService:
             AppError: If pattern retrieval fails
         """
         try:
-            # Get patterns from repository - convert limit (int) to days for get_recent_patterns
+            # Detect patterns from the household's recorded transactions and
+            # persist them through the pattern repository, then read back.
+            #
+            # `PatternRepository.create_pattern` is the only writer of
+            # `behaviour_patterns` and had no caller anywhere in the codebase —
+            # no router, service, startup hook or job. The table therefore could
+            # never hold a row, so `GET /api/v1/behaviour/patterns` returned `[]`
+            # for every household no matter how much was recorded, and the three
+            # other readers of the same table (`get_monthly_summary`,
+            # `_generate_alerts`, and the workspace aggregate) saw nothing either.
+            # No amount of seeding could change that.
+            #
+            # Detection runs on read rather than on a background job: this
+            # service already establishes that pattern for behaviour data, where
+            # `get_wellness_score` computes a snapshot on demand when none exists.
+            # Doing it here keeps detection inside the canonical `/api/v1/*`
+            # path rather than introducing a second writer.
+            self._detect_and_persist_patterns(household_id)
+
             patterns = self.pattern_repo.get_recent_patterns(
-                days=limit, household_id=household_id
+                days=days, household_id=household_id
             )
 
-            return [
-                FinancialPattern(
-                    pattern_type=p["pattern_type"],
-                    pattern_key=p["pattern_key"],
-                    strength=Decimal(str(p["strength_bps"])) / Decimal("10000"),
-                    transaction_count=p["transaction_count"],
-                    total_amount_paise=p["total_amount_paise"],
-                    first_observed=p["first_observed"],
-                    last_observed=p["last_observed"],
-                )
-                for p in patterns
-            ]
+            return [_to_financial_pattern(p) for p in patterns]
 
         except Exception as e:
             logger.error(f"Error getting patterns: {str(e)}", exc_info=True)
@@ -528,6 +675,7 @@ class BehaviourService:
 
             # Use the latest snapshot in the period
             latest_snapshot = snapshots[-1]
+            summary_on_demand = self._on_demand_metrics()
 
             # Get patterns for the period - convert limit (int) to days for get_recent_patterns
             patterns = self.pattern_repo.get_recent_patterns(
@@ -557,10 +705,7 @@ class BehaviourService:
                         str(latest_snapshot["cashflow_stability_score"])
                     ),
                     "debt_health": Decimal("1")
-                    - (
-                        Decimal(str(latest_snapshot["debt_cycle_score"]))
-                        / Decimal("100")
-                    ),
+                    - (summary_on_demand["debt_cycle_score"] / Decimal("100")),
                     "savings_behaviour": max(
                         Decimal("0"),
                         Decimal(str(latest_snapshot["savings_discipline_score"])),
@@ -580,16 +725,27 @@ class BehaviourService:
             )
 
             # Create debt health response
+            # FOIR was a hardcoded `Decimal("0.4")` and the band a hardcoded
+            # `"MODERATE"`, both annotated "Simplified - would compute from
+            # latest data", so the monthly report asserted a debt position the
+            # household may not have. Both are now computed from live data, and
+            # the on-demand metrics that were being read off the snapshot with
+            # `latest_snapshot[...]` — which raised `KeyError` because they are
+            # not persisted columns — come from `_on_demand_metrics`.
+            summary_loans = self.loan_repo.list_loans()
+            summary_cards = self.credit_card_repo.list_cards()
+            summary_foir, summary_foir_band = compute_foir(
+                self._compute_fixed_obligations(summary_loans, summary_cards),
+                self._compute_minimum_obligations(summary_loans, summary_cards),
+                total_income,
+            )
+
             debt_health = DebtHealthResponse(
-                foir=Decimal("0.4"),  # Simplified - would compute from latest data
-                credit_dependency_ratio=Decimal(
-                    str(latest_snapshot["credit_dependency_ratio"])
-                ),
-                debt_cycle_score=latest_snapshot["debt_cycle_score"],
-                credit_revolver_ratio=Decimal(
-                    str(latest_snapshot["credit_revolver_ratio"])
-                ),
-                band="MODERATE",  # Simplified - would compute from latest data
+                foir=summary_foir,
+                credit_dependency_ratio=summary_on_demand["credit_dependency_ratio"],
+                debt_cycle_score=summary_on_demand["debt_cycle_score"],
+                credit_revolver_ratio=summary_on_demand["credit_revolver_ratio"],
+                band=cast(DebtHealthBand, summary_foir_band),
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
 
@@ -598,29 +754,14 @@ class BehaviourService:
                 cashflow_stability_index=Decimal(
                     str(latest_snapshot["cashflow_stability_score"])
                 ),
-                income_stability=Decimal(
-                    str(latest_snapshot["income_stability_score"])
-                ),
-                expense_stability=Decimal(
-                    str(latest_snapshot["expense_stability_score"])
-                ),
+                income_stability=summary_on_demand["income_stability_score"],
+                expense_stability=summary_on_demand["expense_stability_score"],
                 monthly_surplus_paise=total_income - total_expenses,
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
 
             # Create financial patterns
-            financial_patterns = [
-                FinancialPattern(
-                    pattern_type=p["pattern_type"],
-                    pattern_key=p["pattern_key"],
-                    strength=Decimal(str(p["strength_bps"])) / Decimal("10000"),
-                    transaction_count=p["transaction_count"],
-                    total_amount_paise=p["total_amount_paise"],
-                    first_observed=p["first_observed"],
-                    last_observed=p["last_observed"],
-                )
-                for p in patterns
-            ]
+            financial_patterns = [_to_financial_pattern(p) for p in patterns]
 
             # Compute savings rate
             financial_fees = self._compute_financial_fees(transactions, [])
@@ -722,7 +863,11 @@ class BehaviourService:
             subscriptions = [
                 {
                     "merchant": p["pattern_key"],
-                    "avg_amount_paise": p["total_amount_paise"]
+                    # `_map_pattern_row` exposes `total_amount` in RUPEES, not
+                    # `total_amount_paise`; reading the paise key raised
+                    # KeyError. Converted here, the one place the two
+                    # representations meet.
+                    "avg_amount_paise": int(p["total_amount"] * 100)
                     // max(1, p["transaction_count"]),
                 }
                 for p in subscription_patterns
@@ -820,6 +965,150 @@ class BehaviourService:
             if "fee" in t.get("description", "").lower()
             or "interest" in t.get("description", "").lower()
         )
+
+    def _on_demand_metrics(self) -> _OnDemandMetrics:
+        """Metrics that are computed from live data rather than read from a snapshot.
+
+        ``behaviour_snapshots`` persists seven scores (savings discipline,
+        cashflow stability, salary dependence, lifestyle inflation, subscription
+        burn, resilience, wellness). Five further metrics that the API responses
+        expose — ``debt_cycle_score``, ``credit_dependency_ratio``,
+        ``credit_revolver_ratio``, ``income_stability_score`` and
+        ``expense_stability_score`` — are NOT columns and are NOT produced by
+        ``BehaviourRepository._map_snapshot_row``. Reading them off a snapshot
+        with ``snapshot[...]`` therefore raised ``KeyError`` whenever a snapshot
+        existed, which is every household with data. This computes them from
+        live transactions, accounts, loans and cards.
+
+        The helpers mirror those used by ``compute_financial_profile`` so the
+        read path and the write path cannot disagree about a metric.
+        """
+        transactions = self.transaction_repo.get_all_transactions()
+        loans = self.loan_repo.list_loans()
+        credit_cards = self.credit_card_repo.list_cards()
+
+        total_expenses = sum(
+            t["amount_paise"] for t in transactions if t["type"] == "debit"
+        )
+        credit_funded = self._compute_credit_funded_expenses(transactions)
+        monthly_incomes = self._get_monthly_incomes(transactions)
+        monthly_expenses = self._get_monthly_expenses(transactions)
+
+        return {
+            "debt_cycle_score": compute_debt_cycle_score(
+                self._count_credit_advances(transactions),
+                self._count_revolving_months(credit_cards),
+                self._compute_debt_trend(loans),
+            ),
+            "credit_dependency_ratio": compute_credit_dependency_ratio(
+                credit_funded, total_expenses
+            ),
+            "credit_revolver_ratio": compute_credit_revolver_ratio(
+                self._compute_revolving_balance(credit_cards), total_expenses
+            ),
+            "income_stability_score": compute_income_stability(monthly_incomes),
+            "expense_stability_score": compute_expense_stability(monthly_expenses),
+        }
+
+    def _detect_and_persist_patterns(
+        self, household_id: str = DEFAULT_HOUSEHOLD_ID
+    ) -> list[dict[str, Any]]:
+        """Detect behaviour patterns from recorded transactions and persist them.
+
+        Detection is a pure function of the household's own transactions. Two
+        detectors are implemented, both in the vocabulary the existing consumers
+        already read — ``_generate_alerts` keys off ``IMPULSE`` and
+        ``SUBSCRIPTION``, and both are documented in ``FinancialPattern``:
+
+        * ``IMPULSE`` keyed by merchant — a merchant appearing at least
+          ``MIN_IMPULSE_TRANSACTIONS`` times whose mean debit is small relative
+          to the household's mean debit. Strength is the share of that
+          merchant's transactions falling on a single calendar day, which is
+          what makes the pattern impulsive rather than routine.
+        * ``SUBSCRIPTION`` keyed by merchant — a merchant debited in at least
+          ``MIN_SUBSCRIPTION_MONTHS`` distinct calendar months with a
+          near-constant amount. Strength is the share of months whose debit is
+          within ``SUBSCRIPTION_AMOUNT_TOLERANCE`` of the merchant's median,
+          i.e. how reliably it recurs at a fixed price.
+
+        Strength is always derived: the transaction count share of that
+        merchant's debits, expressed in basis points. Nothing here invents a
+        figure — a merchant that does not recur produces no row.
+
+        Returns:
+            The rows that were written, each as the repository returns them.
+        """
+        transactions = self.transaction_repo.get_all_transactions()
+        debits = [t for t in transactions if t["type"] == "debit"]
+        if not debits:
+            return []
+
+        total_debits = sum(t["amount_paise"] for t in debits)
+        if total_debits <= 0:
+            return []
+
+        by_merchant: dict[str, list[dict[str, Any]]] = {}
+        for transaction in debits:
+            merchant = _merchant_of(transaction)
+            by_merchant.setdefault(merchant, []).append(transaction)
+
+        mean_debit = total_debits / len(debits)
+        written: list[dict[str, Any]] = []
+
+        for merchant, merchant_debits in by_merchant.items():
+            amount = merchant_debits[0]["amount_paise"]
+            dates = sorted(str(t["date_iso"]) for t in merchant_debits)
+            months = {d[:7] for d in dates}
+            merchant_total = sum(t["amount_paise"] for t in merchant_debits)
+            count = len(merchant_debits)
+
+            # Strength: this merchant's share of the household's debit activity.
+            strength_bps = int(round(merchant_total / total_debits * 10000))
+            if strength_bps <= 0:
+                continue
+
+            if count >= MIN_IMPULSE_TRANSACTIONS and amount < mean_debit:
+                pattern_type = "IMPULSE"
+                dominant_day_count = max(
+                    sum(1 for d in dates if d == day) for day in set(dates)
+                )
+                config = {
+                    "mean_amount_paise": int(round(merchant_total / count)),
+                    "household_mean_debit_paise": int(round(mean_debit)),
+                    "distinct_days": len(set(dates)),
+                    "recurrence": f"{dominant_day_count}/{count} on one day",
+                }
+            elif len(months) >= MIN_SUBSCRIPTION_MONTHS and _is_fixed_amount(
+                [t["amount_paise"] for t in merchant_debits]
+            ):
+                pattern_type = "SUBSCRIPTION"
+                config = {
+                    "months_observed": len(months),
+                    "amount_paise": int(amount),
+                    "amount_variance": _variance_ratio(
+                        [t["amount_paise"] for t in merchant_debits]
+                    ),
+                }
+            else:
+                continue
+
+            row = self.pattern_repo.create_pattern(
+                {
+                    "pattern_type": pattern_type,
+                    "pattern_key": merchant,
+                    "household_id": household_id,
+                    "strength_bps": strength_bps,
+                    "first_observed": dates[0],
+                    "last_observed": dates[-1],
+                    "transaction_count": count,
+                    "total_amount_paise": merchant_total,
+                    "config": config,
+                }
+            )
+            if row is not None:
+                written.append(row)
+
+        return written
 
     def _compute_credit_funded_expenses(
         self, transactions: list[dict[str, Any]]
@@ -1058,8 +1347,9 @@ class BehaviourService:
         elif wellness_score < Decimal("50"):
             alerts.append("Financial health at risk - review spending and debt")
 
-        # Debt alerts
-        debt_cycle_score = snapshot["debt_cycle_score"]
+        # Debt alerts. `debt_cycle_score` is not a persisted column; see
+        # `_on_demand_metrics`.
+        debt_cycle_score = self._on_demand_metrics()["debt_cycle_score"]
         if debt_cycle_score > 70:
             alerts.append("High debt cycle score - reduce credit dependence")
         elif debt_cycle_score > 50:

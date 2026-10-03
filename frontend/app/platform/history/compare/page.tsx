@@ -13,7 +13,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, GitCompareArrows, GitCommit, Calendar } from 'lucide-react';
  import { cn } from '@/lib/utils';
-import { apiFetch } from '@/lib/api/gateway';
+import { apiFetch, platformReadRetry } from '@/lib/api/gateway';
 
 interface DeltaResponse {
   kind: string;
@@ -90,6 +90,7 @@ function CompareContent() {
     },
     enabled: !!currentId,
     staleTime: 60_000,
+    retry: platformReadRetry,
   });
 
   const d = data?.data;

@@ -147,7 +147,7 @@ describe('AnalyticsSchema — rupee averages are not integers', () => {
   });
 });
 
-describe('BehaviorScoreSchema — accepts what the authority actually emits', () => {
+describe('BehaviorScoreSchema — enforces the documented 0-100 contract', () => {
   const noDataPayload = {
     score: '100',
     band: 'Excellent',
@@ -173,26 +173,31 @@ describe('BehaviorScoreSchema — accepts what the authority actually emits', ()
   });
 
   /**
-   * M10-A3 regression, found by running the E2E suite rather than by reading
-   * the code: with real transaction data the endpoint returns `score:
-   * "7561.45"`, not a 0-100 value.
+   * M10-A3 found this payload: with real transaction data the endpoint returned
+   * `score: "7561.45"` instead of a 0-100 value, and M10 concluded the
+   * validator must accept it because a `.max(100)` bound "rejects a valid HTTP
+   * 200 and blanks the whole /behaviour workspace".
    *
-   * `WellnessScoreResponse.score` is documented 0-100
-   * (backend/src/models/behaviour.py:31) and `compute_wellness_score` clamps to
-   * [0, 100] (wellness.py:88-89), but `compute_financial_profile` stores
-   * `wellness_score_bps = int(wellness_score * 10000)`
-   * (behaviour_service.py:217) — scaling an already-0-100 value again — and
-   * `get_wellness_score` reads that column back unscaled
-   * (behaviour_service.py:328-333, 548). The response is double-scaled.
+   * That conclusion was correct about the RESPONSE being wrong and wrong about
+   * the response being the contract. M11 fixed the authority instead:
+   * `compute_financial_profile` was storing
+   * `wellness_score_bps = int(wellness_score * 10000)` on a value that is
+   * ALREADY 0-100 (`wellness.py:88-89`), so the basis-point column held
+   * 0-1,000,000 instead of 0-10,000, and `BehaviourRepository._map_snapshot_row`
+   * multiplied by 100 again on read. `behaviour_service.py` now stores
+   * `int(wellness_score * 100)` and `run_migrations` rescales persisted rows
+   * above 10000.
    *
-   * An earlier attempt at this pass added `.max(100)` on the strength of the
-   * docstring alone. That rejected a valid HTTP 200, blanked the whole
-   * /behaviour workspace with "API response shape mismatch", and broke
-   * `behavior.spec.ts` on both projects. The validator therefore must accept
-   * the authority's real output, and the UI flags the out-of-contract value
-   * rather than the validator rejecting it.
+   * The live response for the same seed data is now `score: "87.5400"` with
+   * band `"Healthy"` (87.54 is in the 75-89 band), and every sibling column in
+   * the same snapshot row was already a true basis-point value
+   * (`cashflow_stability_score_bps` = 8230, `resilience_index_bps` = 9860).
+   *
+   * The bound is therefore restored. The payload below is what the authority
+   * emitted BEFORE the backend fix; it is retained as a regression assertion
+   * that a recurrence is now rejected rather than silently rendered.
    */
-  const realDataPayload = {
+  const preFixPayload = {
     score: '7561.4500',
     band: 'Excellent',
     components: {
@@ -207,24 +212,48 @@ describe('BehaviorScoreSchema — accepts what the authority actually emits', ()
     version: 1,
   };
 
-  it('accepts the out-of-contract score the backend actually returns', () => {
-    const result = BehaviorScoreSchema.safeParse(realDataPayload);
+  it('accepts the post-fix score the backend now returns', () => {
+    const result = BehaviorScoreSchema.safeParse({
+      ...preFixPayload,
+      score: '87.5400',
+      band: 'Healthy',
+    });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.score).toBe(7561.45);
-      expect(result.data.score).toBeGreaterThan(WELLNESS_SCORE_DOCUMENTED_MAX);
+      expect(result.data.score).toBe(87.54);
+      expect(result.data.score).toBeLessThanOrEqual(WELLNESS_SCORE_DOCUMENTED_MAX);
+      expect(result.data.band).toBe('Healthy');
     }
   });
 
-  it('still rejects a score that is not a number', () => {
-    expect(BehaviorScoreSchema.safeParse({ ...realDataPayload, score: 'excellent' }).success).toBe(false);
+  it('REJECTS the double-scaled score the backend used to return', () => {
+    expect(BehaviorScoreSchema.safeParse(preFixPayload).success).toBe(false);
   });
 
-  it('still enforces the documented 0-100 range on components, which are not double-scaled', () => {
+  it('rejects a score above the documented maximum', () => {
+    expect(
+      BehaviorScoreSchema.safeParse({ ...preFixPayload, score: '100.01', band: 'Excellent' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('accepts the exact documented boundaries', () => {
+    expect(BehaviorScoreSchema.safeParse({ ...preFixPayload, score: '0', band: 'Critical' }).success).toBe(true);
+    expect(
+      BehaviorScoreSchema.safeParse({ ...preFixPayload, score: '100', band: 'Excellent' }).success,
+    ).toBe(true);
+  });
+
+  it('still rejects a score that is not a number', () => {
+    expect(BehaviorScoreSchema.safeParse({ ...preFixPayload, score: 'excellent' }).success).toBe(false);
+  });
+
+  it('still enforces the documented 0-100 range on components', () => {
     expect(
       BehaviorScoreSchema.safeParse({
-        ...realDataPayload,
-        components: { ...realDataPayload.components, cashflow_health: '5955' },
+        ...preFixPayload,
+        score: '87.54',
+        components: { ...preFixPayload.components, cashflow_health: '5955' },
       }).success,
     ).toBe(false);
   });

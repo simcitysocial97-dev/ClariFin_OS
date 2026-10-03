@@ -11,18 +11,86 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 ARTIFACT_DIR = REPO_ROOT / "runtime" / "generated" / "m9-c55"
+
+#: Every lock/config file the environment contract hashes. A drift experiment
+#: needs all of them present, because `hash_file()` returns the literal string
+#: ``"missing"`` for an absent path and the experiment compares real hashes.
+CONTRACT_HASHED_FILES = (
+    "pyproject.toml",
+    "requirements.lock",
+    "backend/pyproject.toml",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+)
+
+
+@contextlib.contextmanager
+def repo_file_sandbox():
+    """Point the environment contract at throwaway copies of the files it hashes.
+
+    M11 (Task 2 — Runtime Verification critical path).
+
+    ``TestC55DriftExperiments`` previously proved that the contract detects
+    drift by appending a comment to the REAL ``pyproject.toml`` and the REAL
+    ``requirements.lock`` and then restoring them in a ``finally``. That has
+    three consequences, none of which are acceptable in a suite that other
+    processes read concurrently:
+
+    1. A window exists, for the whole duration of two ``build_environment_
+       contract()`` calls, in which the repository's single declared dependency
+       authority is modified content. Every env-contract reader hashes it —
+       ``test_config_divergence.py``, ``test_m9_c51.py``, ``test_m9_c50.py`` —
+       so any of them executing inside that window sees drift that is not real
+       and fails spuriously. This is the mechanism behind the constraint that
+       ``test_m9_c55.py`` can never be split away from the env-contract readers
+       when the runtime suite is sharded.
+    2. If the process dies between the write and the restore, the real
+       ``pyproject.toml`` is left corrupted. Every ``pip install -e ".[all]"``
+       in the repository reads that file; a test would have broken the
+       toolchain.
+    3. The test depends on write-then-restore for its own correctness, so it
+       cannot run concurrently with itself.
+
+    Redirecting ``env_contract.REPO_ROOT`` at a temporary tree removes all
+    three. The subject under test is unchanged — the contract still hashes
+    ``<root>/pyproject.toml`` and the hash still changes when its bytes change
+    — and the git-derived fields of the contract (``baseline_sha``, worktree
+    state) become meaningless for the duration, which is irrelevant because
+    these two tests assert only on ``root_pyproject_hash`` and
+    ``requirements_lock_hash``.
+
+    This is a correctness and isolation fix, not a wall-clock one. Measured on
+    the reference host the two experiments cost 6.50 s and 4.29 s; the cost is
+    the ~8 subprocess-spawning tool-version probes inside
+    ``build_environment_contract()``, which this change does not remove.
+    """
+    from runtime.foundation.verification import env_contract
+
+    with tempfile.TemporaryDirectory(prefix="c55-drift-sandbox-") as tmp:
+        sandbox = Path(tmp)
+        for relative in CONTRACT_HASHED_FILES:
+            source = REPO_ROOT / relative
+            destination = sandbox / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+        with mock.patch.object(env_contract, "REPO_ROOT", sandbox):
+            yield sandbox
 
 
 def _make_evidence(**overrides):
@@ -569,42 +637,58 @@ class TestC55DriftExperiments(unittest.TestCase):
     """Experiment E & F: Drift detection."""
 
     def test_experiment_e_config_drift_detected(self):
-        """Experiment E: Intentional config change detected."""
+        """Experiment E: Intentional config change detected.
+
+        M11: the experiment mutates a SANDBOX COPY of `pyproject.toml`, never
+        the repository's own dependency authority. See `repo_file_sandbox`.
+        """
         from runtime.foundation.verification.env_contract import (
             build_environment_contract,
         )
 
-        contract = build_environment_contract()
-        original_hash = contract.root_pyproject_hash
+        real_pyproject = REPO_ROOT / "pyproject.toml"
+        before = real_pyproject.read_text()
 
-        pyproject_path = REPO_ROOT / "pyproject.toml"
-        original = pyproject_path.read_text()
-        try:
-            pyproject_path.write_text(original + "\n# C55 drift test\n")
+        with repo_file_sandbox() as sandbox:
+            contract = build_environment_contract()
+            original_hash = contract.root_pyproject_hash
+
+            pyproject_path = sandbox / "pyproject.toml"
+            pyproject_path.write_text(
+                pyproject_path.read_text() + "\n# C55 drift test\n"
+            )
             contract_after = build_environment_contract()
             self.assertNotEqual(contract_after.root_pyproject_hash, original_hash)
-        finally:
-            pyproject_path.write_text(original)
+
+        # The real dependency authority was never opened for writing.
+        self.assertEqual(real_pyproject.read_text(), before)
 
     def test_experiment_f_dependency_drift_detected(self):
-        """Experiment F: Dependency lock change detected."""
+        """Experiment F: Dependency lock change detected.
+
+        M11: the experiment mutates a SANDBOX COPY of `requirements.lock`. See
+        `repo_file_sandbox`.
+        """
         from runtime.foundation.verification.env_contract import (
             build_environment_contract,
         )
 
-        contract = build_environment_contract()
-        original_lock_hash = contract.requirements_lock_hash
+        real_lock = REPO_ROOT / "requirements.lock"
+        before = real_lock.read_text()
 
-        req_lock = REPO_ROOT / "requirements.lock"
-        original_lock = req_lock.read_text()
-        try:
-            req_lock.write_text(original_lock + "\n# drift test\n")
+        with repo_file_sandbox() as sandbox:
+            contract = build_environment_contract()
+            original_lock_hash = contract.requirements_lock_hash
+
+            req_lock = sandbox / "requirements.lock"
+            req_lock.write_text(req_lock.read_text() + "\n# drift test\n")
             contract_after = build_environment_contract()
             self.assertNotEqual(
                 contract_after.requirements_lock_hash, original_lock_hash
             )
-        finally:
-            req_lock.write_text(original_lock)
+
+        # The real lockfile was never opened for writing.
+        self.assertEqual(real_lock.read_text(), before)
 
 
 class TestC55ControlPlaneEnforcement(unittest.TestCase):

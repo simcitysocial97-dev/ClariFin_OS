@@ -14,6 +14,7 @@ REM    start.bat                      Start the full application (canonical)
 REM    start.bat stop                 Canonical shutdown
 REM    start.bat console              Platform Console only (independent)
 REM    start.bat status ^| health ^| logs ^| check-env ^| restart
+REM    start.bat platform-status      Platform API readiness only
 REM    start.bat help                 Full command list
 REM
 REM  The WSL distribution is taken from the WSL_DISTRO_NAME environment

@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -21,7 +22,7 @@ def test_complete_development_workflow():
 
         print("\n=== STEP 1: Running verification plan ===")
         result = subprocess.run(
-            ["python", "-m", "runtime.verify", "plan", "--scope", "backend"],
+            [sys.executable, "-m", "runtime.verify", "plan", "--scope", "backend"],
             capture_output=True,
             text=True,
             timeout=120,
@@ -45,7 +46,7 @@ def test_complete_development_workflow():
 
         print("\n=== STEP 4: Checking framework health ===")
         health_result = subprocess.run(
-            ["python", "-m", "runtime.verify", "inspect", "health"],
+            [sys.executable, "-m", "runtime.verify", "inspect", "health"],
             capture_output=True,
             text=True,
             timeout=30,

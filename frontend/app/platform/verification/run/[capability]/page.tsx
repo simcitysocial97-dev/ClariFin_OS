@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState, useCallback, useTransition } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, apiFetch } from '@/lib/api/gateway';
+import { apiFetchJson, apiFetch, platformReadRetry } from '@/lib/api/gateway';
 import { useLiveExecution } from '@/lib/hooks/use-live-execution';
 
 type ExecutionDetail = {
@@ -79,6 +79,10 @@ export default function LiveExecutionPage() {
       apiFetchJson(`/platform/v1/executions/${encodeURIComponent(executionId!)}`) as Promise<ExecutionDetail>,
     enabled: !!executionId,
     refetchOnWindowFocus: false,
+    // M11: this page is reachable during a cold start, and a timed-out platform
+    // read must surface as a state with a retry rather than 3 more attempts
+    // behind the same blocked event loop.
+    retry: platformReadRetry,
   });
 
   // Live SSE stream.

@@ -12,10 +12,17 @@
 #   ./start.sh stop               Canonical shutdown
 #   ./start.sh console            Platform Console only (independent)
 #   ./start.sh status | health | logs | check-env | restart
+#   ./start.sh platform-status    Platform API readiness only, in the four
+#                                 states the console renders
 #   ./start.sh help               Full command list
 #
 # Startup performs, in order: environment validation -> backend -> frontend ->
 # readiness verification -> URL printout. Shutdown is idempotent.
+#
+# The startup banner reports the financial application's readiness and the
+# Platform API's readiness separately: the first is cheap (GET /ready measured
+# 5-24 ms), the second is a snapshot build (13.8-37.8 s cold). Only the first
+# gates startup.
 
 set -e
 

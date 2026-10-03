@@ -32,6 +32,29 @@ export interface CashflowProjectionViewModel {
   net_paise: number;
 }
 
+/**
+ * Provenance of the cashflow projection series, as reported by the authority.
+ *
+ * `status: 'unavailable'` is a statement that no defensible projection exists
+ * from the data present — NOT a projection of zero, and NOT an empty chart.
+ * The reason is the authority's own explanation and is rendered verbatim.
+ */
+export interface CashflowForecastBasisViewModel {
+  status: 'available' | 'unavailable';
+  /** Why no projection was produced, or the caveat on one that was. */
+  reason?: string | null;
+  /** Forecast model identifier, e.g. `v1.0-weightedaverage`. */
+  model?: string | null;
+  /** Model confidence in basis points (0-10000). */
+  confidence_bps?: number | null;
+  /** Measured months of history the projection used. */
+  history_months: number;
+  /** Months actually projected. */
+  projected_months: number;
+  /** Horizon requested before any model limit was applied. */
+  requested_horizon_months: number;
+}
+
 // ===== Forecast Scenario Types =====
 export interface ForecastScenarioViewModel {
   /** Scenario name */
@@ -45,12 +68,21 @@ export interface ForecastScenarioViewModel {
   /** Cashflow projections for this scenario */
   cashflow_projections: CashflowProjectionViewModel[];
 }
-
 // ===== Confidence Interval Types =====
-export type ConfidenceLevel = 90 | 95 | 99;
+
+/**
+ * The confidence level is a percentage (0-100) that the measurement supports.
+ *
+ * It is not drawn from a fixed menu of levels: the authority derives it from
+ * the variance of the household's own historical surplus. The previous
+ * three-value union (90 | 95 | 99) encoded the assumption that bounds were
+ * chosen from a preset list, which is how three identical bounds came to be
+ * presented as three different confidence levels.
+ */
+export type ConfidenceLevel = number;
 
 export interface ConfidenceIntervalViewModel {
-  /** Confidence level (90, 95, or 99) */
+  /** Confidence level as a percentage (0-100) */
   level: ConfidenceLevel;
   /** Lower bound in paise */
   lower_paise: number;
@@ -152,6 +184,8 @@ export interface ForecastViewModel {
   net_worth_projections: NetWorthProjectionViewModel[];
   /** Cashflow projections */
   cashflow_projections: CashflowProjectionViewModel[];
+  /** Provenance of cashflow_projections. Always present. */
+  cashflow_forecast_basis: CashflowForecastBasisViewModel;
   /** Forecast scenarios */
   scenarios: ForecastScenarioViewModel[];
   /** Confidence intervals */

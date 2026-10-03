@@ -44,8 +44,17 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  # M11 (Task 8 — permissions minimisation): `pull-requests: write` removed.
+  # This job calls no pull-request API — checkout, the bootstrap composite,
+  # `runtime.verify backend`, four artifact uploads and a job summary — so the
+  # scope was unearned privilege on a job that executes untrusted repository
+  # code (pytest, mutmut, mypy over the PR's own backend). Same reasoning, and
+  # the same prior art, as api-contracts.yml, which removed the identical scope
+  # from the workflow that checks out `workflow_run.head_sha`.
+  # `security-events: write` is deliberately NOT granted here: SARIF upload
+  # belongs to security-codeql.yml alone, which does need it for PR
+  # annotations and does declare it.
   contents: read
-  pull-requests: write
 
 jobs:
   verify:

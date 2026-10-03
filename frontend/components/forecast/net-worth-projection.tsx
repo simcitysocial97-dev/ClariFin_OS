@@ -3,6 +3,12 @@
  *
  * Displays net worth projection chart.
  *
+ * Geometry comes from `lib/visualization/chart-geometry`, which is total: it
+ * emits finite coordinates for an empty series, a single point, a zero range
+ * and non-numeric input alike. The arithmetic here previously produced
+ * `NaN` (`i / (length - 1)` with one point, `(v - min) / range` with a flat
+ * series) and the browser rejected the resulting `<path>`/`<polyline>`.
+ *
  * Architecture Flow: Backend → API → DTO → Mapper → ViewModel → Capability → Workspace → Components → Page
  */
 
@@ -10,6 +16,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, TrendingUp } from 'lucide-react';
 import { formatINR } from '@/lib/utils/format';
+import {
+  describeRejections,
+  projectSeries,
+  toPathData,
+  toPolylinePoints,
+} from '@/lib/visualization/chart-geometry';
 import type { NetWorthProjectionViewModel } from '@/types/forecast-view-model';
 
 /**
@@ -73,10 +85,13 @@ export function NetWorthProjection({ projections, loading, error }: NetWorthProj
     );
   }
 
-  // Calculate chart dimensions
-  const maxValue = Math.max(...projections.map(p => p.upper_bound_paise));
-  const minValue = Math.min(...projections.map(p => p.lower_bound_paise));
-  const range = maxValue - minValue;
+  // Invalid backend data is rejected and disclosed, not drawn. A value the
+  // authority could not produce is never coerced into geometry.
+  const projection = projectSeries(projections.map((p) => p.projected_paise));
+  const rejectionNote = describeRejections(projection.rejected);
+  const linePoints = toPolylinePoints(projection.samples);
+  const bandPath = toPathData(projection.samples);
+  const drawable = projection.samples.length >= 2;
 
   return (
     <Card>
@@ -90,7 +105,7 @@ export function NetWorthProjection({ projections, loading, error }: NetWorthProj
         <div className="space-y-4">
           {/* Simple Line Chart Visualization */}
           <div className="relative h-48">
-            <svg viewBox="0 0 400 180" className="w-full h-full">
+            <svg viewBox="0 0 400 180" className="w-full h-full" data-testid="net-worth-projection-chart">
               {/* Grid lines */}
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <line
@@ -104,31 +119,45 @@ export function NetWorthProjection({ projections, loading, error }: NetWorthProj
                   strokeWidth="1"
                 />
               ))}
-              
-              {/* Confidence interval area - simplified */}
-              <path
-                d={`M ${projections.map((p, i) => {
-                  const x = (i / (projections.length - 1)) * 380 + 10;
-                  const y = 30 + (1 - (p.projected_paise - minValue) / range) * 120;
-                  return `${x},${y}`;
-                }).join(' ')}`}
-                fill="rgba(99, 103, 241, 0.1)"
-                stroke="none"
-              />
-              
-              {/* Projection line */}
-              <polyline
-                points={projections.map((p, i) => {
-                  const x = (i / (projections.length - 1)) * 380 + 10;
-                  const y = 30 + (1 - (p.projected_paise - minValue) / range) * 120;
-                  return `${x},${y}`;
-                }).join(' ')}
-                fill="none"
-                stroke="rgb(99, 103, 241)"
-                strokeWidth="2"
-              />
+
+              {/* A line needs two points. One point is drawn as a marker, not
+                  as a zero-length segment, so no invalid geometry is emitted. */}
+              {drawable ? (
+                <>
+                  <path d={bandPath} fill="rgba(99, 103, 241, 0.1)" stroke="none" />
+                  <polyline
+                    points={linePoints}
+                    fill="none"
+                    stroke="rgb(99, 103, 241)"
+                    strokeWidth="2"
+                  />
+                </>
+              ) : (
+                projection.samples.map((sample, i) => (
+                  <circle
+                    key={i}
+                    cx={sample.x}
+                    cy={sample.y}
+                    r="3"
+                    fill="rgb(99, 103, 241)"
+                    data-testid="net-worth-projection-single-point"
+                  />
+                ))
+              )}
             </svg>
           </div>
+
+          {projection.isDegenerateRange && drawable && (
+            <p className="text-xs text-gray-500" data-testid="net-worth-projection-flat">
+              Every projected month is identical, so the series is drawn on one level.
+            </p>
+          )}
+
+          {rejectionNote && (
+            <p className="text-xs text-amber-700" data-testid="net-worth-projection-rejected">
+              {rejectionNote} projection value(s) were rejected and are not drawn.
+            </p>
+          )}
 
           {/* Projection Data Table */}
           <div className="overflow-x-auto">
@@ -141,15 +170,15 @@ export function NetWorthProjection({ projections, loading, error }: NetWorthProj
                 </tr>
               </thead>
               <tbody>
-                {projections.slice(0, 6).map((projection) => (
-                  <tr key={projection.date} className="border-b">
-                    <td className="py-2">{new Date(projection.date).toLocaleDateString('en-IN')}</td>
+                {projections.slice(0, 6).map((projectionRow) => (
+                  <tr key={projectionRow.date} className="border-b">
+                    <td className="py-2">{new Date(projectionRow.date).toLocaleDateString('en-IN')}</td>
                     <td className="py-2 text-right" aria-label="Projected net worth">
-                      {formatINR(projection.projected_paise)}
+                      {formatINR(projectionRow.projected_paise)}
                     </td>
                     <td className="py-2 text-right" aria-label="Confidence range">
                       <span className="text-xs text-gray-500">
-                        {formatINR(projection.lower_bound_paise)} - {formatINR(projection.upper_bound_paise)}
+                        {formatINR(projectionRow.lower_bound_paise)} - {formatINR(projectionRow.upper_bound_paise)}
                       </span>
                     </td>
                   </tr>

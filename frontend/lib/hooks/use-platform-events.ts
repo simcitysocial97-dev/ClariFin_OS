@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface PlatformEvent {
   id: string;
@@ -37,6 +37,6 @@ export function usePlatformEvents(limit = 20) {
     queryFn: () =>
       apiFetchJson(`/platform/v1/events?limit=${limit}`) as Promise<EventsListResponse>,
     staleTime: 30_000,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }

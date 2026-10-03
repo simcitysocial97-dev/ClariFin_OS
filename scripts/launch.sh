@@ -57,6 +57,19 @@ FORCE_TIMEOUT=2
 BACKEND_READY_TIMEOUT=60
 FRONTEND_READY_TIMEOUT=90
 
+# M11: every HTTP probe the launcher makes is individually bounded.
+#
+# `curl` has no default timeout, so an unbounded probe against a host that has
+# accepted the connection but not answered blocks forever. That is not
+# hypothetical here: during a cold start the backend binds its port and then runs
+# expensive first-request builds, so `curl http://localhost:8000/health` against
+# a *hanging* listener never returns. Measured healthy probes are 3.8-24.3 ms,
+# so 5 s is ~200x the observed cost and still bounds the failure.
+#
+# This was found by `scripts/test-platform-readiness.sh`, which drives a TCP
+# server that accepts and never answers — i.e. the exact cold-start shape.
+HTTP_PROBE_MAX_TIME="${CLARIFIN_HTTP_PROBE_MAX_TIME:-5}"
+
 # Canonical URLs. The Platform Console is a Next.js route served by the
 # frontend on FRONTEND_PORT — it is NOT a backend route. The backend only
 # exposes the console's JSON API under /platform/v1.
@@ -105,7 +118,14 @@ Commands:
     stop          Deterministically terminate every launcher-owned process
     restart       Stop then start (deterministic lifecycle reset)
     status        Report actual process ownership/state for each component
-    health        Check runtime health via process + HTTP probes
+    health        Check runtime health via process + HTTP probes, plus a
+                   separate Platform API (console data path) verdict
+    platform-status
+                   Report ONLY the Platform API readiness, in the same four
+                   states the console renders: PLATFORM READY / PLATFORM
+                   STARTING / PLATFORM ENDPOINT FAILED / BACKEND UNAVAILABLE.
+                   Bounded probe; exits 0 only when the platform API answers.
+                   Usage: ./scripts/launch.sh platform-status [timeout_seconds]
     check-env     Validate the environment without starting anything
     logs          Show recently captured runtime output (backend/frontend/console)
                    Usage: ./scripts/launch.sh logs [backend|frontend|console]
@@ -119,6 +139,7 @@ Examples:
     ./scripts/launch.sh console
     ./scripts/launch.sh status
     ./scripts/launch.sh health
+    ./scripts/launch.sh platform-status
     ./scripts/launch.sh stop
     ./scripts/launch.sh logs backend
     ./scripts/launch.sh check-env
@@ -674,6 +695,60 @@ _port_listener_is_ours() {
     esac
 }
 
+# M11 — ownership, which is strictly stronger than _port_listener_is_ours.
+#
+# DEFECT FOUND AND FIXED HERE (reproduced against a real process)
+# -------------------------------------------------------------
+# `_stop` used to sweep "orphans" by matching the listener's COMMAND LINE
+# alone. Measured against pid 1704145 — a 5h45m-old `../.venv/bin/python -m
+# uvicorn src.api:app --host 0.0.0.0 --port 8000` left over from a previous
+# session, re-parented to init because its process-group leader had exited, and
+# with NO pid record in runtime/generated/launcher/state/ — `./scripts/launch.sh
+# stop` killed it:
+#
+#     Killing backend orphan on port 8000: 1704145
+#
+# A command-line signature is not ownership. That predicate can only tell you a
+# process LOOKS like a ClariFin component; it cannot tell you this launcher
+# started it. The M10 audit claimed this path "re-validates each PID before
+# signalling, so an unrelated service is never terminated", and on this host
+# that claim did not hold: a process from another session, holding the
+# canonical port, was destroyed by a `stop` that never spawned it.
+#
+# THE RULE NOW ENFORCED
+# ----------------------
+# A listener is killed only if this launcher can prove it started it:
+#   1. a pid record exists for that component AND
+#   2. the listener is that recorded pid, or shares its process group, AND
+#   3. the command line matches the component's signature.
+# With no record, the listener is REPORTED and LEFT ALONE. The cost is that a
+# genuine orphan whose state directory was deleted now needs a manual kill; the
+# benefit is that `stop` can never destroy another session's server, another
+# worktree's server, or an unrelated service that happens to use port 8000.
+_port_listener_is_owned() {
+    local component="$1"
+    local pid="$2"
+    local recorded recorded_pgid pgid
+
+    _port_listener_is_ours "$component" "$pid" || return 1
+
+    recorded=$(_read_pid "$component")
+    # No record at all: we cannot prove we started it. Report, never kill.
+    [ -n "$recorded" ] || return 1
+
+    if [ "$pid" = "$recorded" ]; then
+        return 0
+    fi
+
+    # The recorded pid is the session leader; uvicorn/npm may fork a child that
+    # is the actual listener. Same process group is the second proof.
+    recorded_pgid=$(ps -o pgid= -p "$recorded" 2>/dev/null | tr -d ' ' || true)
+    [ -n "$recorded_pgid" ] || return 1
+    pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d ' ' || true)
+    [ -n "$pgid" ] || return 1
+    [ "$pgid" = "$recorded_pgid" ]
+}
+
 _detect_orphans() {
     local orphans=()
 
@@ -700,7 +775,11 @@ _detect_orphans() {
         for o in "${orphans[@]}"; do
             echo "  $o"
         done
-        echo "  Run './scripts/launch.sh stop' to clean up."
+        echo "  They are reported only. 'stop' will NOT terminate a listener it"
+        echo "  has no pid record for, so verify ownership before killing anything:"
+        echo "    ps -o pid,ppid,pgid,lstart,args -p <PID>"
+        echo "  If it is yours: kill <PID>    If not: stop, and use another port:"
+        echo "    CLARIFIN_BACKEND_PORT=8010 CLARIFIN_FRONTEND_PORT=3010 ./start.sh"
         return 1
     fi
 
@@ -743,6 +822,40 @@ _print_running_banner() {
     echo "  Backend API        $BACKEND_URL"
     echo "  API Docs           $BACKEND_URL/docs"
     echo "  Health / Readiness $BACKEND_URL/health  $BACKEND_URL/ready"
+    echo ""
+
+    # M11: report the console's data-path readiness SEPARATELY from the
+    # financial app's. They are different questions with different costs, and
+    # conflating them is what made a cold console look like a broken backend.
+    #
+    # The probe is bounded (default 25 s) and NEVER gates startup. Measured, the
+    # first cold `/platform/v1/health` costs 13.8-37.8 s and a cold
+    # `/platform/v1/evidence` costs 53.8-118.6 s; waiting those out before
+    # printing the URLs would delay the very message that tells the operator the
+    # console is already usable. The console renders its own BACKEND STARTING
+    # state for the remainder.
+    local platform_verdict platform_state p_a1 p_a2
+    platform_verdict=$(_platform_readiness)
+    read -r platform_state p_a1 p_a2 <<<"$platform_verdict"
+    case "$platform_state" in
+        ready)
+            echo "  Platform API       READY (GET /platform/v1/health -> 200 in ${p_a1} ms)"
+            ;;
+        starting)
+            echo "  Platform API       STARTING (no response within ${p_a1} ms)"
+            echo "                     The console is usable now and will show BACKEND"
+            echo "                     STARTING until its first snapshot finishes building."
+            echo "                     Do NOT restart. Re-check: ./scripts/launch.sh platform-status"
+            ;;
+        endpoint-failed)
+            echo "  Platform API       ENDPOINT FAILED (GET /platform/v1/health -> HTTP ${p_a1} in ${p_a2} ms)"
+            echo "                     The backend is serving; the platform endpoint is at fault."
+            ;;
+        *)
+            echo "  Platform API       BACKEND UNAVAILABLE (connection refused)"
+            echo "                     The console will show BACKEND UNAVAILABLE."
+            ;;
+    esac
     echo ""
     echo "  Stop: ./scripts/launch.sh stop    (or Ctrl+C in this terminal)"
     echo "═══════════════════════════════════════════════════════════"
@@ -805,9 +918,10 @@ _stop() {
 
     if [ "$backend_free" = false ] || [ "$frontend_free" = false ]; then
         echo "Some ports still occupied. Attempting orphan cleanup..."
-        # Port-scoped and re-validated per PID: only listeners on this
-        # launcher's own ports that also match the expected component command
-        # are signalled. An unrelated service on another port is never touched.
+        # M11: ownership is proven from a pid record + process group + command
+        # signature (see _port_listener_is_owned). A listener that merely LOOKS
+        # like one of our components is reported and left running — `stop` must
+        # never destroy a process it did not spawn.
         local orphans_killed=false
         local comp port op
         for comp in backend frontend console; do
@@ -818,25 +932,43 @@ _stop() {
             [ "$port" = "$BACKEND_PORT" ] && [ "$backend_free" = true ] && continue
             [ "$port" = "$FRONTEND_PORT" ] && [ "$frontend_free" = true ] && continue
             for op in $(_port_listener_pids "$port"); do
-                _port_listener_is_ours "$comp" "$op" || continue
-                echo "  Killing $comp orphan on port $port: $op"
-                kill -TERM "$op" 2>/dev/null || true
+                if _port_listener_is_owned "$comp" "$op"; then
+                    echo "  Killing $comp orphan on port $port: $op"
+                    kill -TERM "$op" 2>/dev/null || true
+                    orphans_killed=true
+                elif _port_listener_is_ours "$comp" "$op"; then
+                    echo "  LEAVING UNOWNED $comp-shaped listener on port $port: PID $op"
+                    echo "    It matches a ClariFin component but has no pid record for this"
+                    echo "    launcher, so it was started by something else (another session,"
+                    echo "    another worktree, or by hand). Not terminated."
+                    echo "    Command: $(ps -o args= -p "$op" 2>/dev/null || echo '?')"
+                fi
             done
-            orphans_killed=true
         done
         [ "$orphans_killed" = true ] && sleep "$FORCE_TIMEOUT"
         for op in $(_port_listener_pids "$BACKEND_PORT"); do
-            _port_listener_is_ours backend "$op" || continue
+            _port_listener_is_owned backend "$op" || continue
             kill -0 "$op" 2>/dev/null && kill -KILL "$op" 2>/dev/null || true
         done
         for op in $(_port_listener_pids "$FRONTEND_PORT"); do
-            _port_listener_is_ours frontend "$op" || continue
+            _port_listener_is_owned frontend "$op" || continue
             kill -0 "$op" 2>/dev/null && kill -KILL "$op" 2>/dev/null || true
         done
 
-        # Re-check
-        ss -tlnp 2>/dev/null | grep -qE ":${BACKEND_PORT} " && backend_free=false
-        ss -tlnp 2>/dev/null | grep -qE ":${FRONTEND_PORT} " && frontend_free=false
+        # M11: re-check with a bounded grace period. A SIGTERM'd listener needs a
+        # moment to release its socket; the previous immediate re-check reported
+        # "WARNING: Ports may still be in use" for a port that was, in fact,
+        # already free (measured: 8000 was released and the warning still fired).
+        local waited=0
+        while [ "$waited" -lt 10 ]; do
+            ss -tlnp 2>/dev/null | grep -qE ":${BACKEND_PORT} " || backend_free=true
+            ss -tlnp 2>/dev/null | grep -qE ":${FRONTEND_PORT} " || frontend_free=true
+            if [ "$backend_free" = true ] && [ "$frontend_free" = true ]; then
+                break
+            fi
+            sleep 0.5
+            waited=$((waited + 1))
+        done
     fi
 
     if [ "$backend_free" = true ] && [ "$frontend_free" = true ]; then
@@ -989,6 +1121,51 @@ cmd_status() {
     fi
     echo ""
 
+    # M11: report the Platform API verdict here too. `status` answers "what is
+    # running"; without this it could not answer the question an operator
+    # actually has during a cold start, which is "can the console show data
+    # yet?" — and the console's own strip was the only place that knew.
+    local platform_verdict platform_state p_a1 p_a2
+    platform_verdict=$(_platform_readiness)
+    read -r platform_state p_a1 p_a2 <<<"$platform_verdict"
+    case "$platform_state" in
+        ready)
+            echo "Platform API (:$BACKEND_PORT/platform/v1)"
+            echo "  State:      READY (HTTP 200 in ${p_a1} ms)"
+            ;;
+        starting)
+            echo "Platform API (:$BACKEND_PORT/platform/v1)"
+            echo "  State:      STARTING (no response within ${p_a1} ms — building first snapshot; not an error)"
+            ;;
+        endpoint-failed)
+            echo "Platform API (:$BACKEND_PORT/platform/v1)"
+            echo "  State:      ENDPOINT FAILED (HTTP ${p_a1} in ${p_a2} ms — backend serving, endpoint at fault)"
+            ;;
+        *)
+            echo "Platform API (:$BACKEND_PORT/platform/v1)"
+            echo "  State:      BACKEND UNAVAILABLE (connection refused)"
+            ;;
+    esac
+    echo ""
+
+    # M11: the console is an independently-started component with its own pid
+    # record. `status` used to look only at `backend` and `frontend`, so an
+    # operator running the console alone was told "Overall: STOPPED" while the
+    # console was live and serving. That is the same class of defect as the
+    # console's own missing states: the tool reports a state it did not check.
+    local console_state console_pid
+    console_state=$(_get_component_state console)
+    console_pid=$(_read_pid console)
+    if [ "$console_state" = "RUNNING" ] || [ -n "$console_pid" ]; then
+        echo "Platform Console (:$FRONTEND_PORT, standalone)"
+        echo "  State:      $console_state"
+        echo "  PID:        ${console_pid:-n/a}"
+        echo "  Console:    ${PLATFORM_CONSOLE_URL}"
+        echo "  Note:       console-only runs have no backend; data panels will report"
+        echo "              BACKEND UNAVAILABLE until ./start.sh is used."
+        echo ""
+    fi
+
     # Summary
     echo "───────────────────────────────────────────────────────────"
     local all_running=true
@@ -997,6 +1174,8 @@ cmd_status() {
 
     if [ "$all_running" = true ]; then
         echo "  Overall:    Application RUNNING"
+    elif [ "$console_state" = "RUNNING" ]; then
+        echo "  Overall:    CONSOLE ONLY RUNNING (backend=$backend_state, frontend=$frontend_state)"
     elif [ "$backend_state" = "RUNNING" ] || [ "$frontend_state" = "RUNNING" ]; then
         echo "  Overall:    PARTIAL (backend=$backend_state, frontend=$frontend_state)"
     else
@@ -1046,20 +1225,20 @@ cmd_restart() {
 
     if [ "$still_running" = true ] || [ "$ports_free" = false ]; then
         echo "  Attempting orphan cleanup..."
-        # Force-kill any remaining uvicorn or next-server processes
+        # M11: same ownership rule as `stop` — a pid record AND a matching
+        # process group AND a matching command signature. This site previously
+        # matched the command line alone and SIGKILLed whatever held the port.
         local bp_remaining
-        # Port-scoped and re-validated per PID (see _port_listener_pids): a
-        # machine-wide command-line match could kill another project's server.
         bp_remaining=$(_port_listener_pids "$BACKEND_PORT")
         for op in $bp_remaining; do
-            _port_listener_is_ours backend "$op" || continue
+            _port_listener_is_owned backend "$op" || continue
             echo "  Force-killing backend orphan on port $BACKEND_PORT: $op"
             kill -KILL "$op" 2>/dev/null || true
         done
         local fp_remaining
         fp_remaining=$(_port_listener_pids "$FRONTEND_PORT")
         for op in $fp_remaining; do
-            _port_listener_is_ours frontend "$op" || continue
+            _port_listener_is_owned frontend "$op" || continue
             echo "  Force-killing frontend orphan on port $FRONTEND_PORT: $op"
             kill -KILL "$op" 2>/dev/null || true
         done
@@ -1230,6 +1409,74 @@ _health_check_frontend_http() {
     fi
 }
 
+# M11 — a bounded, four-state report of the console's data path.
+#
+# This exists because the startup banner and `health` both answered "is the
+# backend up?" and an operator has no way from the shell to ask the question the
+# console actually asks: "can the Platform API return data yet?". Exits 0 only
+# for `ready`, so it is usable as a CI/operator gate.
+cmd_platform_status() {
+    echo "═══════════════════════════════════════════════════════════"
+    echo "  ClariFin OS — Platform API Status"
+    echo "═══════════════════════════════════════════════════════════"
+    echo ""
+
+    local verdict state a1 a2
+    verdict=$(_platform_readiness "${1:-$PLATFORM_PROBE_TIMEOUT}")
+    # `read` with three fields rather than ${var%% *} slicing: a greedy longest-
+    # suffix strip on a string that itself begins with a space removes the whole
+    # field, which silently rendered "HTTP <empty>" for the endpoint-failed case.
+    read -r state a1 a2 <<<"$verdict"
+
+    case "$state" in
+        ready)
+            echo "  State       PLATFORM READY"
+            echo "  Probe       GET ${PLATFORM_API_URL} -> 200 in ${a1} ms"
+            echo "  Console     ${PLATFORM_CONSOLE_URL}"
+            echo ""
+            echo "  The Platform API returned data. The console will render live state."
+            echo "═══════════════════════════════════════════════════════════"
+            return 0
+            ;;
+        starting)
+            echo "  State       PLATFORM STARTING"
+            echo "  Probe       GET ${PLATFORM_API_URL} -> no response within ${a1} ms"
+            echo "  Console     ${PLATFORM_CONSOLE_URL}"
+            echo ""
+            echo "  The connection was accepted and the backend has not answered yet."
+            echo "  It is building the first snapshot for this read. Do NOT restart:"
+            echo "  measured cold-start cost of this endpoint is 13.8-37.8 s, and it"
+            echo "  rises with host load (53.8-118.6 s measured for a cold"
+            echo "  /platform/v1/evidence). The console renders BACKEND STARTING and"
+            echo "  a 'Check again' control for exactly this window."
+            echo "═══════════════════════════════════════════════════════════"
+            return 1
+            ;;
+        endpoint-failed)
+            echo "  State       PLATFORM ENDPOINT FAILED"
+            echo "  Probe       GET ${PLATFORM_API_URL} -> HTTP ${a1} in ${a2} ms"
+            echo "  Console     ${PLATFORM_CONSOLE_URL}"
+            echo ""
+            echo "  The backend answered, so the process is healthy and the platform"
+            echo "  endpoint is at fault. This is a defect, not a cold start."
+            echo "═══════════════════════════════════════════════════════════"
+            return 1
+            ;;
+        *)
+            echo "  State       BACKEND UNAVAILABLE"
+            echo "  Probe       GET ${PLATFORM_API_URL} -> connection refused"
+            echo "  Console     ${PLATFORM_CONSOLE_URL}  (console itself still loads)"
+            echo ""
+            echo "  Nothing is listening on the backend port. The backend is not"
+            echo "  running, or is still importing its module graph and has not bound"
+            echo "  the port. Start it with ./start.sh, or run the console alone with"
+            echo "  ./scripts/launch.sh console."
+            echo "═══════════════════════════════════════════════════════════"
+            return 1
+            ;;
+    esac
+}
+
 cmd_health() {
     _ensure_state_dir
 
@@ -1258,6 +1505,35 @@ cmd_health() {
     br_result=$(_health_check_backend_ready) || true
     echo "  /ready         $br_result"
     if echo "$br_result" | grep -q "^FAIL"; then overall_pass=false; fi
+
+    echo ""
+
+    # M11: Platform API readiness is reported separately and is NOT folded into
+    # the overall verdict. The financial app being ready does not mean the
+    # console's data reads are warm, and the console being cold does not mean the
+    # financial app is broken. Folding them together is what made M10 read as
+    # "the console is slow" instead of "the console's first read is expensive".
+    # Only a hard platform failure (the app answered with a non-2xx) counts.
+    echo "Platform API (console data path):"
+    local platform_verdict platform_state p_a1 p_a2
+    platform_verdict=$(_platform_readiness)
+    read -r platform_state p_a1 p_a2 <<<"$platform_verdict"
+    case "$platform_state" in
+        ready)
+            echo "  /platform/v1/health  READY (HTTP 200 in ${p_a1} ms)"
+            ;;
+        starting)
+            echo "  /platform/v1/health  STARTING (no response within ${p_a1} ms — building first snapshot; not an error)"
+            ;;
+        endpoint-failed)
+            echo "  /platform/v1/health  FAIL (HTTP ${p_a1} in ${p_a2} ms — backend is up, endpoint is at fault)"
+            overall_pass=false
+            ;;
+        *)
+            echo "  /platform/v1/health  SKIP (connection refused — backend not listening)"
+            ;;
+    esac
+    echo "  detail          ./scripts/launch.sh platform-status"
 
     echo ""
 
@@ -1338,6 +1614,60 @@ cmd_logs() {
     return 0
 }
 
+# --- M11: Platform API readiness, reported separately from the financial app ---
+#
+# The Platform Console and the financial application have genuinely different
+# readiness, and conflating them is what made M10 report a "slow console".
+#
+#   Financial readiness  — GET /ready. Measured 5.2–24.3 ms once the socket is
+#                          serving. Cheap, and it does NOT mean the console's
+#                          data reads are warm.
+#   Platform API readiness — GET /platform/v1/health. Measured 13.8 s / 18.5 s /
+#                          28.5 s / 37.8 s on four cold starts (it builds the
+#                          C62 framework-integrity snapshot, including the K1–K9
+#                          self-tests, synchronously inside the request), and
+#                          1.0–6.7 ms warm.
+#
+# So the launcher reports both, and the platform probe is bounded so it can never
+# become the new indefinite wait. `PLATFORM_READY_TIMEOUT` is deliberately NOT a
+# startup gate: a slow platform build is reported, never waited out, because
+# waiting it out would delay the URL printout that tells the operator the console
+# is already usable.
+PLATFORM_PROBE_TIMEOUT="${CLARIFIN_PLATFORM_PROBE_TIMEOUT:-25}"
+
+# Classify the platform API into the same four states the console renders
+# (frontend/lib/platform/backend-status.ts). Prints:
+#   "ready <code> <ms>" | "starting <ms>" | "unavailable" | "endpoint-failed <code> <ms>"
+_platform_readiness() {
+    local timeout="${1:-$PLATFORM_PROBE_TIMEOUT}"
+    local started state code elapsed_ms
+    started=$(date +%s%N)
+    state=$(_http_state "$PLATFORM_API_URL" "$timeout")
+    elapsed_ms=$(( ($(date +%s%N) - started) / 1000000 ))
+
+    case "$state" in
+        timeout)
+            # Connection accepted, no response inside the bound. The backend is
+            # up and building its snapshot, not down.
+            printf 'starting %s' "$elapsed_ms"
+            ;;
+        refused)
+            printf 'unavailable'
+            ;;
+        200)
+            printf 'ready %s' "$elapsed_ms"
+            ;;
+        000)
+            printf 'unavailable'
+            ;;
+        *)
+            # The application answered, so this is an endpoint-level failure and
+            # not a cold start.
+            printf 'endpoint-failed %s %s' "$state" "$elapsed_ms"
+            ;;
+    esac
+}
+
 # --- Readiness gating ---
 #
 # Print the HTTP status code for a URL, or "000" when the connection fails.
@@ -1348,7 +1678,37 @@ cmd_logs() {
 # authoritative value and always exits 0 so callers can use it in `$( )`.
 _http_code() {
     local code
-    code=$(curl -s -o /dev/null -w "%{http_code}" "$1" 2>/dev/null) || true
+    code=$(curl -s -o /dev/null -w "%{http_code}" --max-time "$HTTP_PROBE_MAX_TIME" "$1" 2>/dev/null) || true
+    [ -n "$code" ] || code="000"
+    printf '%s' "$code"
+}
+
+# M11 — the launcher must tell "not listening" apart from "listening but not
+# answering yet", because those demand opposite operator actions.
+#
+# `curl --max-time N` distinguishes them for free: exit 7 is "connection refused"
+# (nothing is listening — the process is down or has not bound the port yet),
+# exit 28 is "operation timed out" (the connection was accepted and no response
+# came within N seconds). A single `_http_code` call cannot, because both report
+# 000. The financial application's import graph is ~3–16 s (measured; camelot
+# 8.35 s + OpenCV 3.69 s + pandas 2.95 s of it), so this distinction is not
+# theoretical: during that window the console shows a different state and the
+# operator must not be told to restart.
+#
+# Prints one of: refused | timeout | <http code>
+_http_state() {
+    local url="$1"
+    local max_time="${2:-3}"
+    local code rc
+    code=$(curl -s -o /dev/null -w "%{http_code}" --max-time "$max_time" "$url" 2>/dev/null) && rc=0 || rc=$?
+    if [ "$rc" = "7" ]; then
+        printf 'refused'
+        return 0
+    fi
+    if [ "$rc" = "28" ]; then
+        printf 'timeout'
+        return 0
+    fi
     [ -n "$code" ] || code="000"
     printf '%s' "$code"
 }
@@ -1715,6 +2075,10 @@ case "$COMMAND" in
         ;;
     health)
         cmd_health
+        ;;
+    platform-status)
+        shift
+        cmd_platform_status "$@"
         ;;
     console)
         cmd_console

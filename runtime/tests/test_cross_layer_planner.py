@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 
 from runtime.foundation.verification.models import (
     VerificationScope,
@@ -453,7 +454,7 @@ class TestPlannerDeterminismBL009:
             "print('|'.join(s.id for s in plan.steps))\n"
         )
         result = subprocess.run(
-            ["python3", "-c", code],
+            [sys.executable, "-c", code],
             capture_output=True,
             text=True,
             env={**os.environ, "PYTHONHASHSEED": str(seed)},

@@ -49,6 +49,26 @@ on:
       - "scripts/**"
       - ".github/workflows/quality.yml"
       - ".github/actions/**"
+      # M11 (Task 4 — path-filter audit). A path filter must cover every input
+      # the job actually reads. This workflow now reads three directories that
+      # the filter omitted, so a change to any of them could not trigger the
+      # gate that validates or executes it:
+      #   .github/scripts/**       the job EXECUTES
+      #                             run_frontend_verification.sh and
+      #                             validate_actions.py.
+      #   .github/workflows/**     the job READS every workflow file, because
+      #                             validate_actions.py validates all of them.
+      #                             Widening from the single-file
+      #                             `.github/workflows/quality.yml` entry is
+      #                             required by the validation step, not
+      #                             optional.
+      #   (`.github/actions/**` was already present and stays.)
+      # NOTE the contrast with the four REQUIRED checks, which deliberately have
+      # no `paths:` filter at all: a required context that a filter skips never
+      # reports, and GitHub treats that as unsatisfied. This filter is safe
+      # precisely because "Quality Gate" is not a required context.
+      - ".github/scripts/**"
+      - ".github/workflows/**"
       - "pyproject.toml"
   pull_request:
     branches:
@@ -60,8 +80,9 @@ on:
       - "frontend/**"
       - "tools/**"
       - "scripts/**"
-      - ".github/workflows/quality.yml"
+      - ".github/workflows/**"
       - ".github/actions/**"
+      - ".github/scripts/**"
       - "pyproject.toml"
   workflow_dispatch:
 
@@ -88,6 +109,30 @@ jobs:
         uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
+
+      # M11 (Task 7). `.github/scripts/validate_actions.py` has existed since
+      # M9-C72 and enforces eight rules over `.github/workflows/**` and
+      # `.github/actions/**` — Rule 8 (a verification workflow must delegate to
+      # its `runtime.verify` profile), pinning-free action usage, undefined-`uses:`
+      # detection, and more. Nothing in CI ever executed it. That is why
+      # `frontend-verify.yml` sat for a full milestone invoking
+      # `.github/scripts/run_frontend_verification.sh` directly while the
+      # validator that would have rejected it sat unused in the tree: the
+      # validator was correct, and unreachable.
+      #
+      # It runs here, in the Quality Gate, for two reasons. Quality Gate is NOT
+      # one of the four required contexts, so a newly-introduced workflow
+      # violation cannot make a pull request permanently unmergeable by
+      # suppressing a required check. And Quality Gate's own `paths` filter now
+      # includes `.github/workflows/**` — see the filter comment above — so a
+      # change to any workflow file does reach this step.
+      #
+      # No `continue-on-error`: a violation is a failure, not a warning. The
+      # script is stdlib-only (`ast`, `pathlib`, `re`, `sys`) and needs no
+      # interpreter of its own.
+      - name: Workflow constitution (validate_actions.py)
+        shell: bash
+        run: .venv/bin/python .github/scripts/validate_actions.py
 
       # ruff, black, mypy-strict, backend unit tests. Each check reports through
       # the runtime so a failure names the task and its output, not a bare
@@ -122,6 +167,24 @@ jobs:
             frontend/coverage/**
           retention-days: 7
           if-no-files-found: ignore
+
+      # M11 (Agent 4 handoff). `scripts/test-platform-readiness.sh` was written
+      # and passes 12/12 locally, but nothing ran it, so the launcher's
+      # readiness classifier had no CI protection at all.
+      #
+      # Why Quality Gate and not a required workflow: this asserts on the
+      # OPERATOR surface (the launcher's four-state verdict), not on product
+      # verification. Putting it behind a required context would let a launcher
+      # defect block every pull request. Quality Gate is not required, and its
+      # `paths:` filter already lists `scripts/**`, so a change to the launcher
+      # or to this test does reach it.
+      #
+      # Self-contained: bash, curl and `.venv/bin/python` (used only to spawn
+      # throwaway TCP fixtures on an ephemeral port). It needs no backend, no
+      # built frontend, and no free port in advance.
+      - name: Launcher platform-readiness classification
+        shell: bash
+        run: bash scripts/test-platform-readiness.sh
 
       - name: Runtime status
         shell: bash

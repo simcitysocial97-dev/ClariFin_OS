@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface DomainHealth {
   name: string;
@@ -67,7 +67,7 @@ export function usePlatformHealth() {
     queryKey: ['platform', 'health'],
     queryFn: () => apiFetchJson('/platform/v1/health') as Promise<PlatformHealthResponse>,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

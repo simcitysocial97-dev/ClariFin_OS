@@ -13,7 +13,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -120,6 +120,7 @@ export default function FrameworkIntegrityPage() {
     queryKey: ['platform', 'framework', 'integrity'],
     queryFn: () => apiFetchJson('/platform/v1/framework/integrity') as Promise<FrameworkIntegrityResponse>,
     staleTime: 60_000,
+    retry: platformReadRetry,
   });
 
   const { data: selfTestsData, isLoading: selfTestsLoading } = useQuery<SelfTestsResponse, Error>({

@@ -1,9 +1,20 @@
 # .github/workflows/frontend-verify.yml
 #
-# PURPOSE: Frontend verification via the autonomous runtime.
-# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
+# PURPOSE: Frontend verification via the Engineering Runtime.
+# RESPONSIBILITY: Run `python -m runtime.verify frontend` — the canonical
+#   frontend verification profile. Rule 8 (delegate to the runtime profile) is
+#   what makes this workflow the single authoritative frontend verification:
+#   the profile's command list IS the definition, so a workflow and the runtime
+#   cannot disagree about what "Frontend Verification" means.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
-# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+#   delegate to runtime.verify. Rule 9: append `verify.py status` summary.
+#
+# M11 (Task 11): this workflow previously ran
+# `.github/scripts/run_frontend_verification.sh` directly, bypassing the
+# profile. The two were measured equivalent (see the step comment below), so
+# the workflow was routed through the profile rather than the profile weakened.
+# `.github/scripts/validate_actions.py` Rule 8 now passes for this file, and it
+# exits 0 on the tree.
 
 name: Frontend Verification
 
@@ -37,7 +48,6 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   verify:
@@ -61,8 +71,62 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      - name: Run frontend verification (canonical local equivalent)
-        run: bash .github/scripts/run_frontend_verification.sh
+      # M11 (Task 11 — frontend verification profile parity).
+      #
+      # This step used to invoke `bash .github/scripts/run_frontend_verification.sh`
+      # directly. Measured equivalence, not assumed:
+      #
+      #   profiles.py:163-173  the `frontend` profile is exactly ONE task whose
+      #                         only command is `bash .github/scripts/
+      #                         run_frontend_verification.sh`.
+      #   control_plane_facade.py:1460-1477 + 1298-1348
+      #                         `runtime.verify frontend` is a profile alias that
+      #                         runs `profile.tasks[*].commands` in order via
+      #                         `subprocess.run(cmd, shell=True, cwd=REPO_ROOT)`.
+      #   control_plane_facade.py:152-161  the executor cwd is the repository
+      #                         root, so the relative script path resolves
+      #                         identically to the previous direct invocation.
+      #   phase selection      `FRONTEND_VERIFICATION_PHASES` is unset here, so
+      #                         both paths run the script's default phase set
+      #                         `lint typecheck build test`
+      #                         (run_frontend_verification.sh:112-113).
+      #   test selection       the script owns it in both paths — no
+      #                         duplication, no subtraction.
+      #   exit semantics       script `exit $fail` -> facade returns that code
+      #                         unchanged (0 pass / 1 any-phase fail).
+      #   environment          identical; the facade adds `child_process_env()`,
+      #                         which resolves `.venv/bin` first and the script
+      #                         resolves the same interpreter itself.
+      #   generated state      the script writes
+      #                         runtime/generated/evidence/frontend/* in both
+      #                         paths. It does NOT write
+      #                         runtime/generated/verification-report.md,
+      #                         runtime/generated/verification/ or
+      #                         runtime/generated/execution/ — the `frontend-report`
+      #                         and `frontend-evidence` uploads below were
+      #                         therefore already uploading nothing on this job.
+      #                         Routing through the profile does not remove any
+      #                         artifact that was ever produced here.
+      #   what it does add     task-id reporting, a canonical per-task timeout
+      #                         (`VERIFICATION_TASK_TIMEOUT_SECONDS`),
+      #                         observable execution-event recording, and
+      #                         Rule 8 compliance.
+      #
+      # Why route it at all: `runtime.verify frontend` is the profile the
+      # Engineering Runtime already exposes as the frontend verification meaning.
+      # Bypassing it meant the workflow and the runtime could drift with nothing
+      # detecting it — `.github/scripts/validate_actions.py` had exactly that
+      # blind spot (Rule 8), and nothing in CI ever ran the validator, so the
+      # divergence went unreported until M11.
+      #
+      # `pull-requests: write` is removed. This job executes untrusted
+      # repository code (npm scripts, vitest, tsc, eslint) and calls no
+      # pull-request API, so the scope was unearned privilege on the one job
+      # that runs the most attacker-controllable code in the tree. Same
+      # reasoning as api-contracts.yml, which removed the identical scope for
+      # the identical reason.
+      - name: Run frontend verification (canonical profile)
+        run: .venv/bin/python -m runtime.verify frontend
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -92,11 +156,34 @@ jobs:
           path: runtime/generated/engineering-history.json
           retention-days: 14
 
+      # M11 (Task 11) — artifact semantics.
+      #
+      # These two uploads were DEAD on this workflow before M11, and the parity
+      # analysis is what exposed it. `run_frontend_verification.sh` writes
+      # exactly three things: per-phase logs and `frontend-verification.json`
+      # under `runtime/generated/evidence/frontend/`, plus
+      # `runtime/generated/frontend-contract-backend.log`. It does not write
+      # `runtime/generated/verification-report.md`,
+      # `runtime/generated/verification/`, or `runtime/generated/execution/`
+      # — those are produced by the `cp.check()`/`cp.run()` executor path, and
+      # the profile-alias path (`_run_profile_alias`) does not go through it.
+      # So both paths below matched nothing and uploaded an empty artifact,
+      # while the evidence the verification actually produces was never
+      # uploaded at all.
+      #
+      # The paths are repointed at what this job genuinely produces. The
+      # artifact NAMES are unchanged, so the constitution's artifact-ownership
+      # table (`docs/GITHUB_ACTIONS_CONSTITUTION.md` §2: `frontend-report` and
+      # `frontend-evidence`, owners frontend-verify, retention 14d/30d) still
+      # holds; only the source path was wrong. `upload-runtime` defaults to
+      # `if-no-files-found: warn`, so a path that is legitimately absent still
+      # cannot fail this job.
       - name: Upload frontend report
         uses: ./.github/actions/upload-runtime
         with:
           name: frontend-report
           path: |
+            runtime/generated/evidence/frontend/frontend-verification.json
             runtime/generated/verification-report.md
             runtime/generated/verification/
           retention-days: 14
@@ -105,7 +192,10 @@ jobs:
         uses: ./.github/actions/upload-runtime
         with:
           name: frontend-evidence
-          path: runtime/generated/execution/
+          path: |
+            runtime/generated/evidence/frontend/
+            runtime/generated/execution/
+            runtime/generated/frontend-contract-backend.log
           retention-days: 30
 
       - name: Job Summary

@@ -16,7 +16,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 import {
   FileText,
   Clock,
@@ -68,6 +68,7 @@ export default function EvidenceExplorerPage() {
     queryKey: ['platform', 'evidence'],
     queryFn: () => apiFetchJson('/platform/v1/evidence') as Promise<EvidenceListResponse>,
     staleTime: 60_000,
+    retry: platformReadRetry,
   });
 
   const [filterStatus, setFilterStatus] = useState<string>('all');

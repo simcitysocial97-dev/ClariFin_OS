@@ -121,15 +121,31 @@ def sample_snapshot() -> dict[str, Any]:
 
 @pytest.fixture
 def sample_patterns() -> list[dict[str, Any]]:
-    """Sample financial patterns for testing."""
+    """Sample financial patterns for testing.
+
+    Key names follow what `PatternRepository` actually returns, which is
+    `PatternRepository._map_pattern_row`'s output — NOT the raw database row.
+    These were previously `strength_bps` / `total_amount_paise`, a third shape
+    matching neither. Because the service was written against that phantom shape,
+    the mocked service test passed while `GET /api/v1/behaviour/patterns` raised
+    `KeyError` against the real repository and returned HTTP 500. The mapper's
+    shape is authoritative, so the fixture now states it:
+
+      * `strength`      — 0-100 (basis points converted by the mapper)
+      * `total_amount`  — rupees as a Decimal
+
+    `BehaviourService._to_financial_pattern` converts both into the
+    `FinancialPattern` contract: strength 0-1, total_amount_paise integer paise.
+    """
     return [
         {
             "id": 1,
             "pattern_type": "IMPULSE",
             "pattern_key": "Amazon",
-            "strength_bps": 8000,
+            "household_id": "primary",
+            "strength": Decimal("80.00"),
             "transaction_count": 5,
-            "total_amount_paise": 250000,
+            "total_amount": Decimal("2500.00"),
             "first_observed": "2023-01-01",
             "last_observed": "2023-01-15",
         }

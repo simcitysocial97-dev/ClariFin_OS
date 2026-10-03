@@ -28,7 +28,17 @@ import type { ReactNode } from 'react';
 import { PlatformConsoleProviders } from './platform-providers';
 import { PlatformSidebar } from '@/components/platform/sidebar';
 import { PlatformFooterBar } from '@/components/platform/footer-bar';
+import { PlatformBackendStatus } from '@/components/platform/backend-status-bar';
 
+/**
+ * M11 — the backend status strip is part of the *shell*, not of any page.
+ *
+ * A cold-start operator lands on whichever route they last used. Per-page states
+ * make the console's answer depend on the route, which is exactly the property
+ * an operator cannot afford: "is the backend up?" must be answerable from any
+ * console screen. It is driven by the fast liveness probe only, so it appears
+ * even while a page's data reads are still outstanding.
+ */
 export const metadata = {
   title: 'Platform Console — ClariFin OS',
   description: 'ClariFin Platform Operations Console',
@@ -40,6 +50,7 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <PlatformSidebar />
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <PlatformBackendStatus />
           <main
             data-testid="platform-content"
             className="flex-1 overflow-auto p-5"

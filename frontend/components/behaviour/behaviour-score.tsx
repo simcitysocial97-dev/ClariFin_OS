@@ -79,15 +79,17 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
   // fill, the "Excellent" band beside it, and always the negative colour
   // because 800 is unreachable.
   //
-  // Neither belief is adopted here. The authority is observed emitting 7561.45
-  // against real data (see the schema for the backend double-scaling that
-  // causes it), and `classify_wellness_band` thresholds at 90/75/50/25, so the
-  // band the response supplies is only meaningful while the score is inside the
-  // documented 0-100 range. The console does not rescale a value it has been
-  // given, so:
-  //   - in range  -> the score and the authority's own band colours apply
-  //   - out of range -> the score is shown, the ring is not filled from it, the
-  //     colour is not derived from it, and the discrepancy is stated
+  // M11 fixed the authority: `behaviour_service.py` was storing
+  // `int(wellness_score * 10000)` on a value that is already 0-100, and the
+  // repository read model multiplied by 100 again, so a real 87.5449 was served
+  // as 8754.4900. The live value for the same seed data is now 87.54 with band
+  // "Healthy". The validator enforces the documented range again.
+  //
+  // The out-of-range branch is retained deliberately even though the backend no
+  // longer produces such a value: it is a tripwire. If the double-scaling ever
+  // recurs, this component shows the number, refuses to colour or fill a ring
+  // from a value the authority's own band thresholds cannot interpret, and says
+  // so — rather than silently rendering a plausible-looking 88.0.
   const inDocumentedRange = score.score <= WELLNESS_SCORE_DOCUMENTED_MAX;
   const percentage = inDocumentedRange ? score.score.toFixed(1) : String(score.score);
 

@@ -32,6 +32,11 @@ import {
   ConsoleLoadingState,
   ConsoleUnavailableState,
 } from '@/components/platform/console-state';
+import {
+  classifyPlatformRead,
+  useBackendStatus,
+  type BackendStatusDetail,
+} from '@/lib/platform/backend-status';
 
 // ============================================================
 // Sub-components
@@ -240,27 +245,49 @@ export default function PlatformDashboardPage() {
     refetch: refetchCaps,
   } = useCapabilityList();
 
-  // M9-C71: the primary operations screen must never look busy while it is in
-  // fact unable to report anything. Previously this page gated only on
-  // isLoading, so an unreachable platform API left the dashboard saying
-  // "Loading platform state…" indefinitely.
-  const unavailable = healthError ?? capsError;
+  // M11 — the dashboard must name WHICH of the four backend states it is in, not
+  // collapse them into one "unavailable". On a cold start this page's two
+  // governing reads were measured at 13.8 s (`/platform/v1/health`, uncached) and
+  // 53.8–118.6 s (`/platform/v1/evidence`, uncached), with no request deadline,
+  // so every operator saw "Loading platform state…" for minutes. `backend`
+  // supplies the transport-level evidence (accepted-but-silent vs. not-listening
+  // vs. serving) that turns a deadline breach into an actionable state.
+  const backend = useBackendStatus();
+
+  const failure: BackendStatusDetail | null = healthError
+    ? classifyPlatformRead({ error: healthError, path: '/platform/v1/health' }, backend.status === 'ready')
+    : capsError
+      ? classifyPlatformRead({ error: capsError, path: '/platform/v1/capabilities' }, backend.status === 'ready')
+      : null;
+
+  const unavailable = failure ?? (backend.status === 'unavailable' || backend.status === 'starting' ? backend : null);
+
   if (unavailable) {
     return (
       <ConsoleUnavailableState
         heading="Platform"
-        subject="No platform signals to show — the platform API is unreachable, so nothing on this screen can be reported."
-        message={unavailable.message}
+        subject="No platform signals to show — the platform API has not returned data for this screen."
+        detail={unavailable}
         onRetry={() => {
+          void backend.refresh();
           void refetchHealth();
           void refetchCaps();
         }}
+        retrying={healthLoading || capsLoading}
       />
     );
   }
 
   if (healthLoading || capsLoading) {
-    return <ConsoleLoadingState label="Loading platform state…" />;
+    return (
+      <ConsoleLoadingState
+        label={
+          backend.status === 'ready'
+            ? 'Loading platform state…'
+            : 'Waiting for the backend to start serving…'
+        }
+      />
+    );
   }
 
   const capabilityCount = capsData?.data?.count ?? 0;

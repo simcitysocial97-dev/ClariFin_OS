@@ -228,9 +228,7 @@ class TestGate4ProgrammaticAnswers:
         monkeypatch.setattr(
             tasks_service,
             "_collect_changed_files",
-            lambda *args, **kwargs: [
-                "backend/src/engines/loan_engine/amortization.py"
-            ],
+            lambda *args, **kwargs: ["backend/src/engines/loan_engine/amortization.py"],
         )
         r = client.get("/platform/v1/tasks?nocache=1")
         body = r.json()
