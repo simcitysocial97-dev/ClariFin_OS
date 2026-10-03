@@ -227,6 +227,15 @@ jobs:
           SHARD_TOTAL="${{ matrix.shard_count }}"
           OUT_DIR="runtime/generated/execution/shards"
           mkdir -p "$OUT_DIR"
+          # The downloaded plan lives at runtime/generated/execution/plan.json, which is
+          # NOT $OUT_DIR -- that is the subdirectory the shard REPORT goes to. A shard
+          # must never re-derive its plan, so a missing artifact is a hard stop rather
+          # than a silent fallback.
+          PLAN_IN=runtime/generated/execution/plan.json
+          if [ ! -s "$PLAN_IN" ]; then
+            echo "::error::No plan artifact at $PLAN_IN; a shard must not re-derive one."
+            exit 2
+          fi
 
           # The plan is NOT regenerated here. The plan job published it once; every
           # shard rebuilding it produced seven identical copies that the aggregate then
@@ -240,7 +249,7 @@ jobs:
           set +e
           timeout "${SHARD_TIMEOUT_MINUTES:-85}" \
             .venv/bin/python -m runtime.verify run \
-              --plan "$OUT_DIR/plan.json" \
+              --plan "$PLAN_IN" \
               --shard "$SHARD_INDEX" \
               --shard-count "$SHARD_TOTAL" \
               --json > "$OUT_DIR/shard-${SHARD_INDEX}.json"
