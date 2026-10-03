@@ -1,13 +1,13 @@
 {
-  "run_id": "cache_reuse_1-83dcf599",
-  "timestamp": "2026-09-29T09:12:35.701566+00:00",
-  "repository_sha": "f600b7a246e935bbf0f19d0f16d796088dbad3e9",
+  "run_id": "cache_reuse_1-4b266f0a",
+  "timestamp": "2026-10-03T01:57:20.685710+00:00",
+  "repository_sha": "fe439f4a31d4fbc333f75552579a102c53572e3a",
   "scenario": "cache_reuse_1",
   "changed_files": [
     "backend/src/engines/test_cache_r4.py"
   ],
-  "plan_identity": "plan::cache_reuse_1-86371ef4",
-  "execution_identity": "exec::cache_reuse_1-d7d0a153",
+  "plan_identity": "plan::cache_reuse_1-1666b093",
+  "execution_identity": "exec::cache_reuse_1-5d9f02d7",
   "task_ids": [
     "exec-0001",
     "exec-0002",

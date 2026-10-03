@@ -99,20 +99,44 @@ export const LIVENESS_DEADLINE_MS = 3_000;
 /**
  * Deadline for a `/platform/v1/*` read that the console renders inline.
  *
- * Chosen from measurement, not taste:
- *   - warm (cache hit) platform reads measured 1.0–122 ms;
- *   - the single slowest *cached* read measured 5.4 s, which is the blocking
- *     build every other concurrent request queued behind;
- *   - the slowest *uncached* read measured 118.6 s.
+ * Re-derived from GitHub-hosted runner measurements after M11 CI contradicted
+ * the original local derivation.
  *
- * A deadline has to be long enough that a legitimate cold-but-finishing read
- * is not cut off, and short enough that an operator is told something. 20 s
- * clears every cached read with a 3.7x margin, and reports the slow ones
- * instead of waiting them out. It is NOT long enough to hide the 53.8–118.6 s
- * cold builds — that is the point: those get reported as a degraded state with
- * a retry, instead of an indefinite spinner.
+ * Local (contended development host):
+ *   - warm (cache hit) platform reads 1.0–122 ms;
+ *   - slowest cached read 5.4 s;
+ *   - slowest uncached read 118.6 s.
+ *
+ * GitHub-hosted runner, M11 PR #17 (`ubuntu-latest`, cold application):
+ *   - GET /platform/v1/health      200 in 43.8 s
+ *   - GET /platform/v1/architecture/*  200 in 35.7 s (a batch, queued behind
+ *     one blocking snapshot build on the event loop)
+ *
+ * The original 20 s value was derived from the local numbers and assumed the
+ * uncached builds were pathological outliers worth reporting instead of waiting
+ * out. CI shows they are not outliers — 43.8 s is what a healthy backend
+ * actually takes on a cold runner. A deadline BELOW the endpoint's real service
+ * time does not "report slowness", it manufactures a false failure: the console
+ * declares a healthy backend's platform endpoint failed, and
+ * `m10-agent3-console.spec.ts` can never observe the authority's real statuses,
+ * which is the entire thing that test exists to verify.
+ *
+ * 60 s covers the measured CI ceiling (43.8 s) with ~1.4x margin for runner
+ * contention. It is still a bounded, honest ceiling, not an indefinite wait:
+ *
+ *   - LIVENESS_DEADLINE_MS (3 s) keeps the transport verdict separate and fast,
+ *     so "nothing is listening" and "the backend is booting" are distinguished
+ *     within 3 s regardless of this value;
+ *   - `starting` renders a labelled, retryable state rather than a bare
+ *     spinner, and the shell-level status bar carries the verdict throughout;
+ *   - a genuinely wedged endpoint is still reported — at 60 s, not never.
+ *
+ * Re-derive from measurement, not taste. If the platform handlers are ever made
+ * to build off the event loop and the cold service time drops, this should fall
+ * with it; the console spec's own 120 s budget is the upper bound that would
+ * then need revisiting too.
  */
-export const PLATFORM_API_DEADLINE_MS = 20_000;
+export const PLATFORM_API_DEADLINE_MS = 60_000;
 
 // ---------------------------------------------------------------------------
 // Error taxonomy

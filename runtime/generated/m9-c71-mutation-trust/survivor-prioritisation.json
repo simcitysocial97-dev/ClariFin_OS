@@ -1,6 +1,6 @@
 {
   "schema": "m9-c71-survivor-prioritisation/v1",
-  "recorded_at": "2026-09-29T09:53:54.473032+00:00",
+  "recorded_at": "2026-10-03T02:18:28.785559+00:00",
   "ranking_basis": "survivor count x mutation-operator leverage x business criticality, restricted to proven REAL_TEST_GAP survivors. NOT survivors-per-mutant: the objective is assurance gained per test added, not mutation-score increase per line of test code.",
   "genuine_gap_locations": 2,
   "ranked": [

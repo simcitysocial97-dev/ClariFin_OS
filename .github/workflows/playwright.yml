@@ -132,7 +132,21 @@ jobs:
           path: runtime/generated/engineering-history.json
           retention-days: 14
 
+      # M11. These two are the DIAGNOSTIC artifacts: the HTML report and the
+      # per-test screenshots, including the `-actual` and `-diff` renders
+      # Playwright writes for every failed visual comparison.
+      #
+      # `if: always()` is load-bearing, not decoration. Without it a failed
+      # `Run Playwright test suite` step makes every later step skip by default,
+      # so a red run uploaded NOTHING — the report and the diff images are
+      # exactly what is needed to diagnose a red run, and they were being
+      # discarded on the one occasion they mattered. `gh run download` on a
+      # failed run returned "no valid artifacts found".
+      #
+      # This does not weaken the gate: the job still fails on the test step's
+      # own exit code, and the uploads cannot mask or replace it.
       - name: Upload playwright report
+        if: ${{ always() }}
         uses: ./.github/actions/upload-runtime
         with:
           name: playwright-report-${{ matrix.project }}
@@ -140,6 +154,7 @@ jobs:
           retention-days: 30
 
       - name: Upload playwright evidence
+        if: ${{ always() }}
         uses: ./.github/actions/upload-runtime
         with:
           name: playwright-evidence-${{ matrix.project }}

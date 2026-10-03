@@ -1,9 +1,9 @@
 {
   "runs": [
     {
-      "run_id": "9e074a951c068a5d",
-      "timestamp": "2026-09-29T09:39:05.895968+00:00",
-      "repository_sha": "f600b7a246e935bbf0f19d0f16d796088dbad3e9",
+      "run_id": "838b9d3137e033f9",
+      "timestamp": "2026-10-03T02:09:01.264320+00:00",
+      "repository_sha": "fe439f4a31d4fbc333f75552579a102c53572e3a",
       "scenario": "self_verification",
       "changed_files": [
         "runtime/foundation/verification/control_plane_facade.py"

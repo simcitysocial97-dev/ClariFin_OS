@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-09-29T09:22:27.477385+00:00",
+  "indexed_at": "2026-10-03T02:03:03.901478+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -16070,6 +16070,196 @@
         ]
       },
       {
+        "title": "m10-agent1-cleanup-ledger",
+        "path": "docs/audits/m10-agent1-cleanup-ledger.md",
+        "references": {
+          "path": "docs/audits/m10-agent1-cleanup-ledger.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent1-naming-policy",
+        "path": "docs/audits/m10-agent1-naming-policy.md",
+        "references": {
+          "path": "docs/audits/m10-agent1-naming-policy.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent1-repository-inventory",
+        "path": "docs/audits/m10-agent1-repository-inventory.md",
+        "references": {
+          "path": "docs/audits/m10-agent1-repository-inventory.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent1-slow-test-report",
+        "path": "docs/audits/m10-agent1-slow-test-report.md",
+        "references": {
+          "path": "docs/audits/m10-agent1-slow-test-report.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent1-test-taxonomy",
+        "path": "docs/audits/m10-agent1-test-taxonomy.md",
+        "references": {
+          "path": "docs/audits/m10-agent1-test-taxonomy.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent2-codeql-ownership",
+        "path": "docs/audits/m10-agent2-codeql-ownership.md",
+        "references": {
+          "path": "docs/audits/m10-agent2-codeql-ownership.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent2-workflow-matrix",
+        "path": "docs/audits/m10-agent2-workflow-matrix.md",
+        "references": {
+          "path": "docs/audits/m10-agent2-workflow-matrix.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent3-01-platform-console-matrix",
+        "path": "docs/audits/m10-agent3-01-platform-console-matrix.md",
+        "references": {
+          "path": "docs/audits/m10-agent3-01-platform-console-matrix.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent3-02-consumption-findings",
+        "path": "docs/audits/m10-agent3-02-consumption-findings.md",
+        "references": {
+          "path": "docs/audits/m10-agent3-02-consumption-findings.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent3-03-ui-and-charts",
+        "path": "docs/audits/m10-agent3-03-ui-and-charts.md",
+        "references": {
+          "path": "docs/audits/m10-agent3-03-ui-and-charts.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent3-04-remaining-issues",
+        "path": "docs/audits/m10-agent3-04-remaining-issues.md",
+        "references": {
+          "path": "docs/audits/m10-agent3-04-remaining-issues.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent4-canonical-startup",
+        "path": "docs/audits/m10-agent4-canonical-startup.md",
+        "references": {
+          "path": "docs/audits/m10-agent4-canonical-startup.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent4-cleanup-ledger",
+        "path": "docs/audits/m10-agent4-cleanup-ledger.md",
+        "references": {
+          "path": "docs/audits/m10-agent4-cleanup-ledger.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-agent4-startup-inventory",
+        "path": "docs/audits/m10-agent4-startup-inventory.md",
+        "references": {
+          "path": "docs/audits/m10-agent4-startup-inventory.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-ci-constitution-reconciliation",
+        "path": "docs/audits/m10-ci-constitution-reconciliation.md",
+        "references": {
+          "path": "docs/audits/m10-ci-constitution-reconciliation.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m10-final-report",
+        "path": "docs/audits/m10-final-report.md",
+        "references": {
+          "path": "docs/audits/m10-final-report.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m11-agent1-ci-topology",
+        "path": "docs/audits/m11-agent1-ci-topology.md",
+        "references": {
+          "path": "docs/audits/m11-agent1-ci-topology.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m11-agent3-capability-audit",
+        "path": "docs/audits/m11-agent3-capability-audit.md",
+        "references": {
+          "path": "docs/audits/m11-agent3-capability-audit.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "m11-agent4-cold-start-readiness",
+        "path": "docs/audits/m11-agent4-cold-start-readiness.md",
+        "references": {
+          "path": "docs/audits/m11-agent4-cold-start-readiness.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT",
         "path": "docs/audits/m9-c57-runtime-framework/RUNTIME_FRAMEWORK_DEEP_DIVE_AUDIT.md",
         "references": {
@@ -16852,6 +17042,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 190
+    "documentation": 209
   }
 }

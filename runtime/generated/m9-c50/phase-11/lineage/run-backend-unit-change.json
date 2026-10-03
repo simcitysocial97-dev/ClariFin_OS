@@ -1,13 +1,13 @@
 {
-  "run_id": "backend_unit_change-95f89806",
-  "timestamp": "2026-09-29T09:12:35.701566+00:00",
-  "repository_sha": "4bc4957218bd5c770025e833cca983b480a81617",
+  "run_id": "backend_unit_change-50a22c1f",
+  "timestamp": "2026-10-03T01:57:20.685710+00:00",
+  "repository_sha": "fe439f4a31d4fbc333f75552579a102c53572e3a",
   "scenario": "backend_unit_change",
   "changed_files": [
     "backend/src/engines/test_r4_probe.py"
   ],
-  "plan_identity": "plan::backend_unit_change-9852c161",
-  "execution_identity": "exec::backend_unit_change-69ec43c0",
+  "plan_identity": "plan::backend_unit_change-1be26da8",
+  "execution_identity": "exec::backend_unit_change-631abfec",
   "task_ids": [
     "exec-0001",
     "exec-0002",

@@ -1,7 +1,7 @@
 {
   "schema": "m9-c48/api-schema-governance@1",
-  "generated_at": "2026-09-29T10:43:08+00:00",
-  "repository_sha": "6d3d64d2dc862159607da857dcb36d6b9c1cdf13",
+  "generated_at": "2026-10-03T02:03:31+00:00",
+  "repository_sha": "fe439f4a31d4fbc333f75552579a102c53572e3a",
   "historical_defects": [
     {
       "id": "loan-api-response-shape-c30-c32",
