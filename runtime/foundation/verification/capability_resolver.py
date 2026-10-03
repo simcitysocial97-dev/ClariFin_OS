@@ -616,38 +616,36 @@ class CapabilityResolver:
                             route_path in cap_id
                             or cap_id.endswith(f":{route_path}")
                             or (feature and feature in cap_id)
-                        ):
-                            if cap_id not in direct_caps:
-                                direct_caps.append(cap_id)
-                            for be_cap in cap.backend_capabilities:
-                                if be_cap not in direct_caps:
-                                    direct_caps.append(be_cap)
-                            # Find corresponding hook
-                            if "frontend:route:frontend-" in cap_id:
-                                feature_route = cap_id.replace(
-                                    "frontend:route:frontend-", ""
-                                )
-                                hook_cap_id = f"frontend:hook:frontend-{feature_route}"
-                                if hook_cap_id in clg.frontend_capabilities:
-                                    hook_cap = clg.frontend_capabilities[hook_cap_id]
-                                    if hook_cap_id not in direct_caps:
-                                        direct_caps.append(hook_cap_id)
-                                    for be_cap in hook_cap.backend_capabilities:
-                                        if be_cap not in direct_caps:
-                                            direct_caps.append(be_cap)
-                                    try:
-                                        hook_deps = clg.get_backend_dependencies_of_frontend_capability(
-                                            hook_cap_id
-                                        )
-                                        for edge in hook_deps:
-                                            if (
-                                                edge.relationship == "depends_on"
-                                                and edge.target_type == "capability"
-                                            ):
-                                                if edge.target_id not in direct_caps:
-                                                    direct_caps.append(edge.target_id)
-                                    except Exception:
-                                        pass
+                        ) and cap_id not in direct_caps:
+                            direct_caps.append(cap_id)
+                        for be_cap in cap.backend_capabilities:
+                            if be_cap not in direct_caps:
+                                direct_caps.append(be_cap)
+                        # Find corresponding hook
+                        if "frontend:route:frontend-" in cap_id:
+                            feature_route = cap_id.replace(
+                                "frontend:route:frontend-", ""
+                            )
+                            hook_cap_id = f"frontend:hook:frontend-{feature_route}"
+                            if hook_cap_id in clg.frontend_capabilities:
+                                hook_cap = clg.frontend_capabilities[hook_cap_id]
+                                if hook_cap_id not in direct_caps:
+                                    direct_caps.append(hook_cap_id)
+                                for be_cap in hook_cap.backend_capabilities:
+                                    if be_cap not in direct_caps:
+                                        direct_caps.append(be_cap)
+                                try:
+                                    hook_deps = clg.get_backend_dependencies_of_frontend_capability(
+                                        hook_cap_id
+                                    )
+                                    for edge in hook_deps:
+                                        if (
+                                            edge.relationship == "depends_on"
+                                            and edge.target_type == "capability"
+                                        ) and edge.target_id not in direct_caps:
+                                            direct_caps.append(edge.target_id)
+                                except Exception:
+                                    pass
 
             # Check frontend hooks
             elif (
@@ -715,16 +713,16 @@ class CapabilityResolver:
                                             )
                                             for edge in hook_deps:
                                                 if (
-                                                    edge.relationship == "depends_on"
-                                                    and edge.target_type == "capability"
+                                                    (
+                                                        edge.relationship
+                                                        == "depends_on"
+                                                        and edge.target_type
+                                                        == "capability"
+                                                    )
+                                                    and edge.target_id
+                                                    not in direct_caps
                                                 ):
-                                                    if (
-                                                        edge.target_id
-                                                        not in direct_caps
-                                                    ):
-                                                        direct_caps.append(
-                                                            edge.target_id
-                                                        )
+                                                    direct_caps.append(edge.target_id)
                                         except Exception:
                                             pass
 

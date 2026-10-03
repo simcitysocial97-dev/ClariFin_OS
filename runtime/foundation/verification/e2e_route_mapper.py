@@ -173,9 +173,10 @@ class E2ERouteMapper:
             for route in tested_routes:
                 # Match exact route or parent route
                 for route_key in route_map:
-                    if route == route_key or route.startswith(route_key + "/"):
-                        if test_file not in route_map[route_key]:
-                            route_map[route_key].append(test_file)
+                    if (
+                        route == route_key or route.startswith(route_key + "/")
+                    ) and test_file not in route_map[route_key]:
+                        route_map[route_key].append(test_file)
 
         # Cache the result
         self._save_cache(route_map)

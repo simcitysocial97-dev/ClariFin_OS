@@ -46,9 +46,12 @@ class TestImportIntegrity:
             except SyntaxError:
                 continue
             for node in ast.walk(tree):
-                if isinstance(node, ast.ImportFrom) and node.module:
-                    if node.module.startswith("runtime"):
-                        G.add_edge(rel, node.module)
+                if (
+                    isinstance(node, ast.ImportFrom)
+                    and node.module
+                    and node.module.startswith("runtime")
+                ):
+                    G.add_edge(rel, node.module)
 
         cycles = list(nx.simple_cycles(G))
         assert not cycles, f"Found {len(cycles)} circular import chains"

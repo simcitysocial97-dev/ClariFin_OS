@@ -308,19 +308,20 @@ class PlannerDriftDetector:
                 },
             )
             for imp, _, line in imports:
-                if "CrossLayerImpactPlanner" in imp or "VerificationPlanner" in imp:
-                    if "control_plane" not in imp:
-                        findings.append(
-                            DriftFinding(
-                                detected_component=str(cli_file),
-                                expected_authority=f"Accessed via {CANONICAL_PLANNER}",
-                                actual_authority=imp,
-                                classification=DriftClassification.AUTHORITY_DRIFT,
-                                source_evidence=f"CLI file {cli_file.name}:{line} directly imports {imp}",
-                                severity=Severity.LOW,
-                                check_name="cli_direct_planner_access",
-                            )
+                if (
+                    "CrossLayerImpactPlanner" in imp or "VerificationPlanner" in imp
+                ) and "control_plane" not in imp:
+                    findings.append(
+                        DriftFinding(
+                            detected_component=str(cli_file),
+                            expected_authority=f"Accessed via {CANONICAL_PLANNER}",
+                            actual_authority=imp,
+                            classification=DriftClassification.AUTHORITY_DRIFT,
+                            source_evidence=f"CLI file {cli_file.name}:{line} directly imports {imp}",
+                            severity=Severity.LOW,
+                            check_name="cli_direct_planner_access",
                         )
+                    )
 
         return findings
 
@@ -491,19 +492,20 @@ class EvidencePathDriftDetector:
                     {"runtime.system.observability"},
                 )
                 for imp, attr, line in imports:
-                    if "EventStore" in attr or "RunRecord" in attr:
-                        if "record_execution" not in imp and "record" not in attr:
-                            findings.append(
-                                DriftFinding(
-                                    detected_component=rel,
-                                    expected_authority=CANONICAL_EVIDENCE_WRITER,
-                                    actual_authority=f"{imp}.{attr}",
-                                    classification=DriftClassification.EVIDENCE_INTEGRITY_DEFECT,
-                                    source_evidence=f"{rel}:{line} imports event store directly — should go through record_execution_report",
-                                    severity=Severity.MEDIUM,
-                                    check_name="second_evidence_path",
-                                )
+                    if ("EventStore" in attr or "RunRecord" in attr) and (
+                        "record_execution" not in imp and "record" not in attr
+                    ):
+                        findings.append(
+                            DriftFinding(
+                                detected_component=rel,
+                                expected_authority=CANONICAL_EVIDENCE_WRITER,
+                                actual_authority=f"{imp}.{attr}",
+                                classification=DriftClassification.EVIDENCE_INTEGRITY_DEFECT,
+                                source_evidence=f"{rel}:{line} imports event store directly — should go through record_execution_report",
+                                severity=Severity.MEDIUM,
+                                check_name="second_evidence_path",
                             )
+                        )
 
         return findings
 
