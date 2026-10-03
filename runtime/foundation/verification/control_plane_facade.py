@@ -310,6 +310,14 @@ class ControlPlane:
             print(f"[check] MATRIX_JSON={matrix}", file=sys.stderr)
 
             kept = {t.task_id for t in assignment.shards[shard_index]}
+            # Escalation tasks are EXCLUDED from shard execution, not merely
+            # replicated. They are gated on the GLOBAL mandatory outcome
+            # (`stop-on-sufficiency` runs them only when no mandatory task passed), and a
+            # shard holding a subset of the mandatory tasks cannot decide that.
+            # Replicating them would let each shard escalate on partial information.
+            # The aggregate owns escalation, which is also why the shard's remaining
+            # `depends_on` references no longer dangle once they are removed.
+            kept -= {t.task_id for t in execution_plan.tasks if t.is_escalation}
             execution_plan = ExecutionPlan(
                 plan_id=execution_plan.plan_id,
                 source_plan_id=execution_plan.source_plan_id,
@@ -685,6 +693,14 @@ class ControlPlane:
                     )
                     return 2
                 kept = {t.task_id for t in assignment.shards[index]}
+                # Escalation tasks are EXCLUDED from shard execution, not merely
+                # replicated. They are gated on the GLOBAL mandatory outcome
+                # (`stop-on-sufficiency` runs them only when no mandatory task passed), and a
+                # shard holding a subset of the mandatory tasks cannot decide that.
+                # Replicating them would let each shard escalate on partial information.
+                # The aggregate owns escalation, which is also why the shard's remaining
+                # `depends_on` references no longer dangle once they are removed.
+                kept -= {t.task_id for t in execution_plan.tasks if t.is_escalation}
                 print(
                     f"[run] shard {index + 1}/{count} executing "
                     f"{len(kept)}/{len(execution_plan.tasks)} task(s); "

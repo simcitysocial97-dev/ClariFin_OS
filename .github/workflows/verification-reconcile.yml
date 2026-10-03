@@ -239,7 +239,8 @@ jobs:
           # the real failure. The shard's exit status is re-asserted below.
           set +e
           timeout "${SHARD_TIMEOUT_MINUTES:-85}" \
-            .venv/bin/python -m runtime.verify check \
+            .venv/bin/python -m runtime.verify run \
+              --plan "$OUT_DIR/plan.json" \
               --shard "$SHARD_INDEX" \
               --shard-count "$SHARD_TOTAL" \
               --json > "$OUT_DIR/shard-${SHARD_INDEX}.json"
