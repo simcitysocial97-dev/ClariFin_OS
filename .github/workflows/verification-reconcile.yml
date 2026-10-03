@@ -101,14 +101,21 @@ jobs:
               --shard-matrix \
               --shard-count "${SHARD_COUNT:-7}"
           )"
-          echo "matrix<<EOF_MATRIX" >> "$GITHUB_OUTPUT"
-          echo "$MATRIX" >> "$GITHUB_OUTPUT"
-          echo "EOF_MATRIX"
-          for key in shard_count plan_id plan_fingerprint partition_fingerprint \
-                     critical_path_estimate suggested_max_parallel; do
-            value="$(jq -r ".${key}" <<< "$MATRIX")"
-            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
-          done
+          # See verification-runtime.yml: the heredoc terminator must be inside the
+          # redirected block, or the matrix is never published and every shard leg is
+          # skipped with "Matching delimiter not found". Shape copied from mutation.yml.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, shard_count, task_ids, task_count, estimated_seconds, includes_escalation}]}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            echo "shard_count=$(jq -r '.shard_count' <<< "$MATRIX")"
+            echo "plan_id=$(jq -r '.plan_id' <<< "$MATRIX")"
+            echo "plan_fingerprint=$(jq -r '.plan_fingerprint' <<< "$MATRIX")"
+            echo "partition_fingerprint=$(jq -r '.partition_fingerprint' <<< "$MATRIX")"
+            echo "critical_path_estimate=$(jq -r '.critical_path_estimate_seconds' <<< "$MATRIX")"
+            echo "suggested_max_parallel=$(jq -r '.suggested_max_parallel' <<< "$MATRIX")"
+          } >> "$GITHUB_OUTPUT"
 
           {
             echo "## Reconciliation plan"
@@ -300,6 +307,13 @@ jobs:
           set -uo pipefail
           AGG="runtime/generated/aggregation"
           mkdir -p "$AGG"
+          # Fail closed, with a cause. The shard count is never inferred from the
+          # reports received: inferring it would make a missing shard undetectable.
+          COUNT="${{ needs.reconcile-plan.outputs.shard_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The reconcile plan job published no shard count, so the fan-out cannot be verified. Refusing to certify an unverified plan — see the 'Reconcile Plan' job for the cause."
+            exit 2
+          fi
 
           # The aggregate needs every task log to reconstruct what each shard
           # actually executed. These are the streams the worker writes incrementally,

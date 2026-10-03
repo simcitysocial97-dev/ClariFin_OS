@@ -104,12 +104,23 @@ jobs:
               --shard-count "${SHARD_COUNT:-4}" \
               --with-counts
           )"
-          echo "matrix<<EOF_MATRIX" >> "$GITHUB_OUTPUT"
-          echo "$MATRIX" >> "$GITHUB_OUTPUT"
-          echo "EOF_MATRIX"
-          for key in shard_count file_count estimated_speedup; do
-            echo "${key}=$(jq -r ".${key}" <<< "$MATRIX")" >> "$GITHUB_OUTPUT"
-          done
+          # The whole block is redirected, terminator included. Writing
+          # `echo "EOF_MATRIX"` outside the redirect sends the delimiter to stdout,
+          # and GITHUB_OUTPUT then never receives a closing delimiter — which fails
+          # as "Matching delimiter not found", with the matrix silently unpublished
+          # and every downstream leg skipped. The proven shape is mutation.yml's.
+          # The matrix is also projected down to the scalar fields the leg reads,
+          # because the job's `matrix` expression is evaluated by Actions and a
+          # bloated document is a size risk for no benefit.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, shard_id, shard_count, file_count, estimated_seconds}]}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            echo "shard_count=$(jq -r '.shard_count' <<< "$MATRIX")"
+            echo "file_count=$(jq -r '.file_count' <<< "$MATRIX")"
+            echo "estimated_speedup=$(jq -r '.estimated_speedup' <<< "$MATRIX")"
+          } >> "$GITHUB_OUTPUT"
           {
             echo "## Runtime test shards"
             echo ""
@@ -230,6 +241,17 @@ jobs:
           set -uo pipefail
           AGG=runtime/generated/shards
           mkdir -p "$AGG"
+          # Fail closed, with a cause. If the plan job failed it publishes no shard
+          # count, and passing that empty through to the aggregate surfaces as the
+          # unhelpfully-worded "count expects an integer". The count is deliberately
+          # NOT inferred from the results received: inferring it would make a missing
+          # shard undetectable, which is precisely the split-brain case the gate
+          # exists to catch.
+          COUNT="${{ needs.runtime-plan.outputs.shard_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The runtime plan job published no shard count, so the fan-out cannot be verified. Refusing to certify an unverified plan — see the 'Runtime Plan' job for the cause."
+            exit 2
+          fi
           # Flatten every shard result next to the plan so the gate sees one set.
           find runtime/generated/shards -name 'shard-*.json' \
             -exec cp {} "$AGG"/ \; 2>/dev/null || true

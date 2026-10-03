@@ -105,12 +105,18 @@ jobs:
         run: |
           set -euo pipefail
           MATRIX="$(.venv/bin/python -m runtime.verify backend-plan)"
-          echo "matrix<<EOF_MATRIX" >> "$GITHUB_OUTPUT"
-          echo "$MATRIX" >> "$GITHUB_OUTPUT"
-          echo "EOF_MATRIX"
-          for key in leg_count estimated_speedup; do
-            echo "${key}=$(jq -r ".${key}" <<< "$MATRIX")" >> "$GITHUB_OUTPUT"
-          done
+          # See verification-runtime.yml: the heredoc terminator must be inside the
+          # redirected block, or the matrix is never published and every leg is
+          # skipped with "Matching delimiter not found". Shape copied from the proven
+          # mutation.yml emission.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {index, task_id, task_name, estimated_seconds}]}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            echo "leg_count=$(jq -r '.leg_count' <<< "$MATRIX")"
+            echo "estimated_speedup=$(jq -r '.estimated_speedup' <<< "$MATRIX")"
+          } >> "$GITHUB_OUTPUT"
           {
             echo "## Backend obligations"
             echo ""
@@ -214,6 +220,14 @@ jobs:
           set -uo pipefail
           AGG=runtime/generated/legs
           mkdir -p "$AGG"
+          # Fail closed, with a cause. See verification-runtime.yml: the obligation
+          # count is never inferred from the results received, because that would make
+          # a missing obligation undetectable.
+          COUNT="${{ needs.backend-plan.outputs.leg_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The backend plan job published no obligation count, so the fan-out cannot be verified. Refusing to certify an unverified plan — see the 'Backend Plan' job for the cause."
+            exit 2
+          fi
           find runtime/generated/legs -name 'leg-*.json' \
             -exec cp {} "$AGG"/ \; 2>/dev/null || true
           set +e
