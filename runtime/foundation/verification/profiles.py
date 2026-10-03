@@ -431,15 +431,26 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         # (CI matrix shard) run only that project so each job is a bounded,
         # full-coverage slice of the matrix rather than the entire 1,392-test
         # serialised run.
+        #
+        # M11 — THIS IS THE AUTHORITATIVE E2E ENTRYPOINT, AND IT IS NOT
+        # SUPPOSED TO INLINE THE RUNNER.
+        #
+        # The command used to be a second, hand-maintained copy of what
+        # `.github/scripts/run_playwright_tests.sh` does: build, then
+        # `npx playwright test`. That duplication is exactly how the visual
+        # regression architecture was silently lost — the two-pass split added
+        # in M11 (functional suite, then a re-seed, then a serial read-only
+        # visual pass against an immutable database) was implemented correctly
+        # in the script and then never executed, because CI goes through the
+        # profile. It failed green on the regeneration dispatch, which uses the
+        # script, and red on every pull request, which does not.
+        #
+        # Delegating removes the second authority. PLAYWRIGHT_PROJECT and
+        # PLAYWRIGHT_UPDATE_SNAPSHOTS keep their meaning; the script honours both,
+        # and it now also requires FINANCE_DB_PATH so visual regression can
+        # never silently run against order-dependent shared state.
         commands=[
-            "cd frontend && npm run build && npx playwright test "
-            '${PLAYWRIGHT_PROJECT:+--project="$PLAYWRIGHT_PROJECT"} '
-            # Visual baselines are rasterisation-specific and must be produced by
-            # the same environment that asserts on them. This is only ever set by
-            # the playwright workflow's workflow_dispatch input, never on a
-            # pull_request run. .github/scripts/run_playwright_tests.sh honours
-            # the same variable for the equivalent direct path.
-            "${PLAYWRIGHT_UPDATE_SNAPSHOTS:+--update-snapshots}"
+            "bash .github/scripts/run_playwright_tests.sh"
         ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,
