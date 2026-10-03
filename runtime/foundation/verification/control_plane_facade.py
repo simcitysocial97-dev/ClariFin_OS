@@ -444,6 +444,9 @@ class ControlPlane:
         shard_matrix: bool = False,
         shard_count: int | None = None,
         shard_plan_out: str | None = None,
+        test_shards: bool = False,
+        test_shard_with_counts: bool = False,
+        profile_matrix_for: str | None = None,
     ) -> int:
         """
         Plan-only mode.
@@ -477,6 +480,40 @@ class ControlPlane:
                 file=sys.stderr,
             )
             return 1
+
+        if test_shards or profile_matrix_for is not None:
+            if profile_matrix_for is not None:
+                from runtime.foundation.verification.profile_tasks import (
+                    profile_matrix as build_profile_matrix,
+                )
+
+                try:
+                    print(build_profile_matrix(profile_matrix_for))
+                except ValueError as exc:
+                    print(str(exc), file=sys.stderr)
+                    return 2
+                return 0
+
+            from runtime.foundation.verification.runtime_shards import (
+                DEFAULT_SHARD_COUNT,
+                build_test_shards,
+                runtime_test_files,
+            )
+            from runtime.foundation.verification.runtime_shards import (
+                shard_matrix as build_shard_matrix,
+            )
+
+            files = runtime_test_files()
+            if not files:
+                print("no runtime test files found", file=sys.stderr)
+                return 1
+            plan = build_test_shards(
+                files,
+                shard_count or DEFAULT_SHARD_COUNT,
+                _runtime_test_counts() if test_shard_with_counts else None,
+            )
+            print(build_shard_matrix(plan))
+            return 0
 
         if shard_matrix or shard_plan_out is not None:
             from runtime.foundation.verification.execution_shards import (
@@ -721,6 +758,281 @@ class ControlPlane:
             print(_format_task_summary(report))
 
         return 0 if report.final_decision == "certified" else 1
+
+    def run_test_shards(
+        self,
+        *,
+        shard_index: int | None = None,
+        shard_count: int | None = None,
+        result_out: str | None = None,
+        verify_dir: str | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Run one runtime test shard, or aggregate every shard (M10-R2).
+
+        The gate is the authority. It refuses to certify unless every expected shard
+        reported exactly once, every shard passed, and the independent integrity
+        obligation passed. "The aggregate job succeeded" is never read as "every shard
+        succeeded" — that is the whole reason this gate exists rather than letting the
+        matrix job statuses speak for it.
+        """
+        import time
+
+        from runtime.foundation.verification.runtime_shards import (
+            DEFAULT_SHARD_COUNT,
+            expected_shard_ids,
+            read_shard_results,
+            run_test_shard,
+            summarise_shards,
+            verify_shards,
+        )
+
+        if shard_index is not None:
+            if not result_out:
+                print(
+                    "--shard requires --result-out <path> so the gate can read the "
+                    "shard's outcome",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                shard = run_test_shard(
+                    shard_index,
+                    shard_count or DEFAULT_SHARD_COUNT,
+                    result_out=Path(result_out),
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(
+                f"[runtime-shard] {shard.shard_id} {shard.status} "
+                f"files={shard.file_count} passed={shard.passed} "
+                f"failed={shard.failed} ({shard.duration_seconds:.1f}s)",
+                file=sys.stderr,
+            )
+            return 0 if shard.ok else 1
+
+        if not verify_dir:
+            print(
+                "run --profile runtime needs --shard N (a leg) or "
+                "--verify-shards <dir> (the gate)",
+                file=sys.stderr,
+            )
+            return 2
+
+        started = time.monotonic()
+        results, unreadable = read_shard_results(Path(verify_dir))
+        # The integrity obligation runs here, after the shards: it is a distinct
+        # canonical operation (`runtime.verify integrity`) that the monolithic
+        # self-test used to run sequentially. Running it in the gate keeps it a real
+        # obligation rather than folding it into the last shard.
+        print(f"[runtime-gate] {len(results)} shard result(s) read")
+        summary = summarise_shards(results)
+        if summary:
+            print(summary)
+
+        # The integrity obligation is a distinct canonical operation
+        # (`runtime.verify integrity`) that the monolithic self-test used to run
+        # sequentially after the suite. It runs here, in the gate, as a real
+        # obligation rather than being folded into whichever shard happened to be
+        # last — otherwise a green suite could mask a red integrity scan.
+        integrity_ok: bool | None = None
+        if not unreadable and all(r.ok for r in results):
+            integrity_ok = _run_runtime_integrity(Path(verify_dir))
+
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "shard result(s) unreadable, their tests are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(
+            verify_shards(
+                shard_count or len(results),
+                results,
+                integrity_ok=integrity_ok,
+            )
+        )
+
+        certified = not problems
+        reason = (
+            f"all {len(results)} shard(s) passed across "
+            f"{sum(r.file_count for r in results)} file(s); "
+            f"{sum(r.passed for r in results)} test(s) passed"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "shards_expected": expected_shard_ids(
+                            shard_count or len(results)
+                        ),
+                        "shards_reported": len(results),
+                        "shard_results": [r.to_dict() for r in results],
+                        "tests_passed": sum(r.passed for r in results),
+                        "files_covered": sum(r.file_count for r in results),
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[runtime-gate] {'CERTIFIED' if certified else 'NOT CERTIFIED'}: "
+                f"{reason}"
+            )
+
+        return 0 if certified else 1
+
+    def run_profile_fanout(
+        self,
+        profile_op: str,
+        *,
+        task: str | None = None,
+        result_out: str | None = None,
+        verify_legs: str | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Run one obligation of a profile, or aggregate a profile's legs (M10-R2).
+
+        Three modes on one surface:
+
+        * ``task=<id>`` — execute exactly that canonical obligation on this runner and
+          write a result document. This is the matrix leg. The command comes from the
+          profile's own task list and runs through the shared worker, so a leg *is* the
+          obligation rather than a re-implementation of it.
+        * ``verify_legs=<dir>`` — the gate. Reads every leg result and refuses to
+          certify unless every canonical obligation reported and passed, then runs the
+          profile's evidence-rollup task(s) and exits with the profile's verdict.
+
+        The gate is the authority. A missing obligation, a duplicate report, an unknown
+        task id, or any non-passing leg all block certification — the same split-brain
+        discipline the reconcile shard merge uses. There is no path by which a red or
+        absent leg yields a green required check.
+        """
+        import time
+
+        from runtime.foundation.verification.profile_tasks import (
+            aggregate_tasks,
+            expected_obligation_ids,
+            read_leg_results,
+            run_obligation_leg,
+            summarise_legs,
+        )
+        from runtime.foundation.verification.profile_tasks import (
+            verify_legs as verify_leg_results,
+        )
+
+        if task:
+            if not result_out:
+                print(
+                    "--task requires --result-out <path> so the gate can read the "
+                    "leg's outcome",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                result = run_obligation_leg(
+                    profile_op,
+                    task,
+                    result_out=Path(result_out),
+                    timeout_seconds=_profile_task_timeout_seconds(),
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(
+                f"[profile-leg:{profile_op}] {result.task_id} {result.status} "
+                f"({result.duration_seconds:.1f}s)",
+                file=sys.stderr,
+            )
+            return 0 if result.ok else 1
+
+        if not verify_legs:
+            print(
+                "run --profile needs either --task <id> (a leg) or "
+                "--verify-legs <dir> (the gate)",
+                file=sys.stderr,
+            )
+            return 2
+
+        started = time.monotonic()
+        results, unreadable = read_leg_results(Path(verify_legs))
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "leg result(s) unreadable, their obligations are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(verify_leg_results(profile_op, results))
+
+        print(f"[profile-gate:{profile_op}] {len(results)} leg result(s) read")
+        summary = summarise_legs(results)
+        if summary:
+            print(summary)
+
+        # The evidence rollup runs only once every obligation has reported, because it
+        # reads what they produced. That is a genuine data dependency and therefore a
+        # real barrier, not an ordering preference.
+        rollups = aggregate_tasks(profile_op)
+        if not problems:
+            for rollup in rollups:
+                outcome = run_obligation_leg(
+                    profile_op,
+                    rollup.id,
+                    result_out=Path(verify_legs) / f"aggregate-{rollup.id}.json",
+                    timeout_seconds=_profile_task_timeout_seconds(),
+                )
+                if not outcome.ok:
+                    problems.append(
+                        f"{rollup.id} {outcome.status} exit={outcome.exit_code}"
+                    )
+
+        elapsed = time.monotonic() - started
+        passed = sum(1 for r in results if r.ok)
+        expected = expected_obligation_ids(profile_op)
+        certified = not problems
+        reason = (
+            f"all {len(expected)} obligation(s) passed; "
+            f"evidence rollup {len(rollups)} task(s) passed"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "profile": profile_op,
+                        "obligations_expected": expected,
+                        "legs_reported": len(results),
+                        "legs_passed": passed,
+                        "rollups": len(rollups),
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(elapsed, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[profile-gate:{profile_op}] "
+                f"{'CERTIFIED' if certified else 'NOT CERTIFIED'}: {reason}"
+            )
+
+        return 0 if certified else 1
 
     def _aggregate_shard_reports(
         self, shard_dir: str, *, json_out: bool = False
@@ -1626,6 +1938,33 @@ def _find_arg(flag: str, args: list[str], *, default: str | None = None) -> str 
         i += 1
     return default
 
+    #: Canonical, profile-scoped subcommands for CI scheduling (M10-R2).
+
+
+#:
+#: The verification model keeps saying *what* must be certified; these say only *how*
+#: it is scheduled. They are intentionally thin wrappers over the canonical primitives
+#: (``plan --test-shards``, ``run --profile <p> --shard``,
+#: ``run --profile <p> --verify-shards``), so no obligation definition lives here and
+#: the CI topology can change without touching the verification model.
+#:
+#: The ``<profile>-`` prefix is load-bearing: it is what keeps these inside Rule 8's
+#: existing ``prof.startswith(expected + "-")`` allowance (the precedent Rule 8 itself
+#: cites is mutation.yml's ``mutation-plan`` / ``mutation-aggregate``), so widening the
+#: CI topology required no validator change and no weakening of any rule.
+PROFILE_SUBCOMMANDS: frozenset[str] = frozenset(
+    {
+        # runtime
+        "runtime-plan",
+        "runtime-shard",
+        "runtime-aggregate",
+        # backend
+        "backend-plan",
+        "backend-task",
+        "backend-aggregate",
+    }
+)
+
 
 def main() -> int:
     """
@@ -1683,6 +2022,22 @@ def main() -> int:
 
         return run_trust_cli(args)
 
+    # M10-R2: profile-scoped canonical subcommands.
+    #
+    # These exist so a *required* profile workflow can express
+    # `plan -> matrix -> aggregate` without the validator's Rule 8 being relaxed. Rule
+    # 8 already permits a profile workflow to use its own profile's subcommands — the
+    # precedent it cites is mutation.yml's `mutation-plan`, `mutation --shard`,
+    # `mutation-aggregate`, `mutation-trust`. These are the same idea for the profiles
+    # whose longest obligation was a single serial command.
+    #
+    # They are deliberately named `<profile>-<verb>`: that is what keeps them inside
+    # Rule 8's existing `prof.startswith(expected + "-")` allowance, so widening the CI
+    # topology required **no** validator change and no weakening of any rule.
+    if command in PROFILE_SUBCOMMANDS:
+        profile, verb = command.split("-", 1)
+        return _dispatch_profile_subcommand(profile, verb, args)
+
     # Handle legacy commands via the migration map
     classification = classification_for(command)
     if classification in ("DEPRECATED", "LEGACY", "COMPATIBILITY"):
@@ -1709,6 +2064,129 @@ def main() -> int:
         file=sys.stderr,
     )
     return 1
+
+
+def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> int:
+    """Route a ``<profile>-<verb>`` canonical subcommand.
+
+    Each verb maps onto a primitive that already exists; this function adds no
+    verification logic of its own. ``profile`` is validated against the canonical
+    profile registry so a typo fails loudly rather than emitting an empty matrix.
+    """
+    from runtime.foundation.verification.profiles import _PROFILES
+
+    if profile not in _PROFILES:
+        print(
+            f"unknown profile {profile!r}; known profiles: "
+            + ", ".join(sorted(_PROFILES)),
+            file=sys.stderr,
+        )
+        return 2
+
+    args = list(args)
+    shard_count = None
+    if "--shard-count" in args:
+        idx = args.index("--shard-count")
+        try:
+            shard_count = int(args[idx + 1])
+        except (IndexError, ValueError):
+            print("--shard-count expects an integer", file=sys.stderr)
+            return 2
+        args = args[:idx] + args[idx + 2 :]
+    if "--count" in args:
+        idx = args.index("--count")
+        try:
+            shard_count = int(args[idx + 1])
+        except (IndexError, ValueError):
+            print("--count expects an integer", file=sys.stderr)
+            return 2
+        args = args[:idx] + args[idx + 2 :]
+    with_counts = "--with-counts" in args
+    args = [a for a in args if a != "--with-counts"]
+    json_out = "--json" in args
+    args = [a for a in args if a != "--json"]
+
+    cp = ControlPlane()
+
+    if verb == "plan":
+        if profile == "runtime":
+            return cp.plan(
+                shard_matrix=False,
+                shard_count=shard_count,
+                test_shards=True,
+                test_shard_with_counts=with_counts,
+            )
+        return cp.plan(profile_matrix_for=profile)
+
+    if verb == "shard":
+        if profile != "runtime":
+            print(
+                f"{profile}-shard is not a defined subcommand; runtime-test sharding "
+                "is the only shard primitive",
+                file=sys.stderr,
+            )
+            return 2
+        shard_index = None
+        if "--shard" in args:
+            idx = args.index("--shard")
+            try:
+                shard_index = int(args[idx + 1])
+            except (IndexError, ValueError):
+                print("--shard expects an integer", file=sys.stderr)
+                return 2
+            args = args[:idx] + args[idx + 2 :]
+        result_out = None
+        if "--result-out" in args:
+            idx = args.index("--result-out")
+            result_out = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        return cp.run_test_shards(
+            shard_index=shard_index,
+            shard_count=shard_count,
+            result_out=result_out,
+            json_out=json_out,
+        )
+
+    if verb == "aggregate":
+        target = None
+        for flag in ("--shards", "--verify-shards", "--legs", "--verify-legs"):
+            if flag in args:
+                idx = args.index(flag)
+                target = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+                break
+        if not target:
+            print(
+                f"{profile}-aggregate requires the directory holding the leg results",
+                file=sys.stderr,
+            )
+            return 2
+        if profile == "runtime":
+            return cp.run_test_shards(
+                verify_dir=target, shard_count=shard_count, json_out=json_out
+            )
+        return cp.run_profile_fanout(profile, verify_legs=target, json_out=json_out)
+
+    if verb == "task":
+        task = None
+        if "--task" in args:
+            idx = args.index("--task")
+            task = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        result_out = None
+        if "--result-out" in args:
+            idx = args.index("--result-out")
+            result_out = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        return cp.run_profile_fanout(
+            profile, task=task, result_out=result_out, json_out=json_out
+        )
+
+    print(
+        f"unknown subcommand {verb!r} for profile {profile!r}",
+        file=sys.stderr,
+    )
+    return 2
 
 
 # ---------------------------------------------------------------------------
@@ -2015,6 +2493,26 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
+        # M10-R2: --profile-matrix <op> emits a profile's canonical obligations as
+        # a dynamic-matrix document, so GitHub can schedule real verification
+        # obligations instead of one serial command per required gate.
+        profile_op = None
+        if "--profile-matrix" in args:
+            idx = args.index("--profile-matrix")
+            if idx + 1 >= len(args):
+                print("--profile-matrix requires a profile name", file=sys.stderr)
+                return 2
+            profile_op = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        if profile_op is not None:
+            from runtime.foundation.verification.profile_tasks import profile_matrix
+
+            try:
+                print(profile_matrix(profile_op))
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            return 0
         # M10-R2: machine-readable plan modes for the reconcile topology.
         shard_matrix = "--shard-matrix" in args
         shard_count = None
@@ -2027,6 +2525,36 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
                     print(f"{flag} expects an integer", file=sys.stderr)
                     return 2
                 args = args[:idx] + args[idx + 2 :]
+
+        # M10-R2: --test-shards partitions the runtime suite. Its ~26 minutes of
+        # serial pytest is the single longest obligation in the repository, so it is
+        # the highest-value target in this milestone. Shards are whole files on
+        # dedicated runners, which avoids the contention that disqualified xdist.
+        if "--test-shards" in args:
+            args = [a for a in args if a != "--test-shards"]
+            with_counts = "--with-counts" in args
+            args = [a for a in args if a != "--with-counts"]
+            from runtime.foundation.verification.runtime_shards import (
+                DEFAULT_SHARD_COUNT,
+                build_test_shards,
+                runtime_test_files,
+            )
+            from runtime.foundation.verification.runtime_shards import (
+                shard_matrix as build_shard_matrix,
+            )
+
+            files = runtime_test_files()
+            if not files:
+                print("no runtime test files found", file=sys.stderr)
+                return 1
+            plan = build_test_shards(
+                files,
+                shard_count or DEFAULT_SHARD_COUNT,
+                _runtime_test_counts() if with_counts else None,
+            )
+            print(build_shard_matrix(plan))
+            return 0
+
         shard_plan_out = None
         if "--shard-plan" in args:
             idx = args.index("--shard-plan")
@@ -2064,6 +2592,77 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             idx = args.index("--aggregate")
             aggregate = args[idx + 1]
             args = args[:idx] + args[idx + 2 :]
+
+        # --profile <op> is the required-gate fan-out surface (M10-R2):
+        #   --task <id> --result-out <path>  run ONE canonical obligation
+        #   --verify-legs <dir>              aggregate the legs into one verdict
+        profile_op = None
+        if "--profile" in args:
+            idx = args.index("--profile")
+            if idx + 1 >= len(args):
+                print("--profile requires a profile name", file=sys.stderr)
+                return 2
+            profile_op = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        if profile_op is not None:
+            # --result-out is shared by both leg kinds (a profile obligation leg and a
+            # runtime test shard leg), so it is parsed once, up front.
+            result_out = None
+            if "--result-out" in args:
+                i2 = args.index("--result-out")
+                result_out = args[i2 + 1]
+                args = args[:i2] + args[i2 + 2 :]
+            # --shard N --count M   run one runtime test shard (matrix leg)
+            # --verify-shards <dir> aggregate every shard into one verdict
+            shard_index = None
+            if "--shard" in args:
+                idx = args.index("--shard")
+                try:
+                    shard_index = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print("--shard expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+            shard_total = None
+            if "--count" in args:
+                idx = args.index("--count")
+                try:
+                    shard_total = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print("--count expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+            verify_shards_dir = None
+            if "--verify-shards" in args:
+                idx = args.index("--verify-shards")
+                verify_shards_dir = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            if shard_index is not None or verify_shards_dir is not None:
+                return cp.run_test_shards(
+                    shard_index=shard_index,
+                    shard_count=shard_total,
+                    result_out=result_out,
+                    verify_dir=verify_shards_dir,
+                    json_out=json_out,
+                )
+            profile_task = None
+            if "--task" in args:
+                idx = args.index("--task")
+                profile_task = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            verify_legs = None
+            if "--verify-legs" in args:
+                idx = args.index("--verify-legs")
+                verify_legs = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            return cp.run_profile_fanout(
+                profile_op,
+                task=profile_task,
+                result_out=result_out,
+                verify_legs=verify_legs,
+                json_out=json_out,
+            )
+
         try:
             shard, shard_count = _parse_shard_arg(args)
         except ValueError as exc:
@@ -2094,6 +2693,42 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return cp.doctor()
     print(f"Unknown canonical operation: {operation}", file=sys.stderr)
     return 1
+
+
+def _runtime_test_counts() -> dict[str, int] | None:
+    """Per-file test counts for the runtime suite, or None if unavailable.
+
+    Used only to *balance* shards. Coverage correctness never depends on it: the shard
+    partition asserts union(shards) == all files independently, so a failure to collect
+    counts degrades balance and nothing else.
+    """
+    import collections
+    import subprocess
+
+    try:
+        completed = subprocess.run(
+            [
+                ".venv/bin/python",
+                "-m",
+                "pytest",
+                "runtime/tests/",
+                "-q",
+                "--no-header",
+                "-p",
+                "no:cacheprovider",
+                "--collect-only",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=300,
+            cwd=str(REPO_ROOT),
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    counter: collections.Counter[str] = collections.Counter(
+        line.split("::", 1)[0] for line in completed.stdout.splitlines() if "::" in line
+    )
+    return dict(counter) or None
 
 
 def _as_state(value: Any) -> Any:
@@ -2193,3 +2828,44 @@ def _find_changed_files_arg(args: list[str]) -> list[str] | None:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def _run_runtime_integrity(result_dir: Path) -> bool:
+    """Run the canonical integrity scan as its own obligation, and record the result.
+
+    ``run_runtime_verification.sh`` runs this sequentially after the test suite and
+    tracks it in its own ``FAILED_CHECKS`` list, so it has always been a *separate*
+    obligation that merely happened to share a shell script. Sharding the suite makes
+    that separation structural: integrity is the gate's own step, so it cannot be
+    skipped by a shard, and a red scan cannot be hidden by a green suite.
+    """
+    from runtime.foundation.verification.env import child_process_env
+    from runtime.foundation.verification.parallel_executor import run_streaming_command
+
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result = run_streaming_command(
+        ".venv/bin/python -m runtime.verify integrity",
+        stdout_path=result_dir / "integrity-stdout.log",
+        stderr_path=result_dir / "integrity-stderr.log",
+        timeout_seconds=_profile_task_timeout_seconds(),
+        env=child_process_env(),
+    )
+    ok = result.exit_code == 0 and not result.timed_out and not result.infra_error
+    (result_dir / "integrity.json").write_text(
+        json.dumps(
+            {
+                "obligation": "runtime-integrity",
+                "status": "passed" if ok else "failed",
+                "exit_code": result.exit_code,
+                "duration_seconds": round(result.duration_seconds, 2),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(
+        f"[runtime-gate] runtime-integrity {'passed' if ok else 'FAILED'} "
+        f"({result.duration_seconds:.1f}s)",
+        file=sys.stderr,
+    )
+    return ok
