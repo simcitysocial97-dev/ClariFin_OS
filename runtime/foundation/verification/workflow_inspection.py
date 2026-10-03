@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -100,6 +101,47 @@ class WorkflowRecord:
         }
 
 
+def _strip_shell_comments(text: str) -> str:
+    """Remove shell comments from a ``run:`` block.
+
+    The boundary classifier matches tool names as substrings, and it must match them in
+    *commands*, not in prose. Without this, a comment that merely names another workflow
+    changes the classification: M10-R2's shard steps carry comments like "the proven
+    shape is mutation.yml's", which made ``verification-runtime`` classify as
+    ``EXTERNAL_TOOLING`` because of the substring "mutation" — a comment about mutation
+    tooling is not a dependency on it.
+
+    Quote-aware so a ``#`` inside a string literal is not treated as a comment start.
+    Naive stripping would corrupt quoted text, and corrupting a command is a worse
+    failure than misclassifying a workflow.
+    """
+    out: list[str] = []
+    quote: str | None = None
+    for line in text.splitlines():
+        result: list[str] = []
+        i = 0
+        while i < len(line):
+            char = line[i]
+            if quote is not None:
+                result.append(char)
+                if char == "\\" and i + 1 < len(line):
+                    result.append(line[i + 1])
+                    i += 2
+                    continue
+                if char == quote:
+                    quote = None
+            elif char in ("'", '"'):
+                quote = char
+                result.append(char)
+            elif char == "#":
+                break
+            else:
+                result.append(char)
+            i += 1
+        out.append("".join(result))
+    return "\n".join(out)
+
+
 def _classify_boundary(filename: str, doc: dict) -> BoundaryClassification:
     """Classify workflow boundary based on filename heuristics and content."""
     if filename in _WORKFLOW_BOUNDARY_RULES:
@@ -116,22 +158,35 @@ def _classify_boundary(filename: str, doc: dict) -> BoundaryClassification:
                     run = step.get("run", "")
                     uses = step.get("uses", "")
                     if run:
-                        all_steps.append(run)
+                        all_steps.append(_strip_shell_comments(run))
                     if uses:
                         all_steps.append(uses)
 
     combined = " ".join(all_steps).lower()
-    if any(k in combined for k in ["playwright", "browser", "cypress"]):
+
+    def _mentions(*keywords: str) -> bool:
+        """Whole-word keyword match.
+
+        Plain substring matching misclassified two required workflows during M10-R2:
+        ``publish`` matched inside the English word "published" in a gate's error
+        message, so ``verification-runtime`` and ``backend-verify`` came out
+        ``GITHUB_ONLY`` instead of ``LOCAL``. A workflow that *says* "published" is not
+        one that *publishes*. Boundaries are what make this a tool-dependency check
+        rather than a vocabulary check.
+        """
+        return any(re.search(rf"\b{re.escape(k)}\b", combined) for k in keywords)
+
+    if _mentions("playwright", "browser", "cypress"):
         return BoundaryClassification.BROWSER
-    if any(k in combined for k in ["mutmut", "mutation"]):
+    if _mentions("mutmut", "mutation"):
         return BoundaryClassification.EXTERNAL_TOOLING
-    if any(k in combined for k in ["docker push", "release", "publish"]):
+    if _mentions("docker push", "release", "publish"):
         return BoundaryClassification.GITHUB_ONLY
-    if any(k in combined for k in ["codeql", "security scan"]):
+    if _mentions("codeql", "security scan"):
         return BoundaryClassification.GITHUB_ONLY
-    if "frontend" in combined or "next build" in combined:
+    if _mentions("frontend", "next build"):
         return BoundaryClassification.ENVIRONMENT_BOUNDARY
-    if any(k in combined for k in ["schema", "contract", "api test"]):
+    if _mentions("schema", "contract", "api test"):
         return BoundaryClassification.EXTERNAL_SERVICE
 
     return BoundaryClassification.LOCAL

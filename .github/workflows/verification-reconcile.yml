@@ -340,16 +340,28 @@ jobs:
 
           # Flatten shard reports next to the plan. A plan that no shard could be
           # checked against is itself a hard error below, not a silent pass.
-          PLAN="$(ls runtime/generated/execution/shards/plan.json 2>/dev/null | head -1)"
-          if [ -z "$PLAN" ]; then
-            PLAN="$(find runtime/generated/shards -name plan.json 2>/dev/null | head -1)"
-          fi
+          # Report what actually landed, before deciding anything. The previous
+          # version failed with "No execution plan was recovered" and no evidence of
+          # what *was* there, which made the cause unguessable from the run page.
+          echo "Collected shard artifacts:" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo '```'
+            ls -1 runtime/generated/shards 2>&1 || echo "(no shards directory)"
+            find runtime/generated/shards -name '*.json' 2>&1 | head -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          PLAN="$(find runtime/generated/shards -name plan.json 2>/dev/null | sort | head -1)"
           if [ -z "$PLAN" ] || [ ! -f "$PLAN" ]; then
-            echo "::error::No execution plan was recovered from any shard. The gate cannot form a verdict."
+            echo "::error::No execution plan was recovered from any shard (searched runtime/generated/shards). The gate cannot form a verdict."
             exit 2
           fi
           cp "$PLAN" "$AGG/plan.json"
+          # Every shard report, flattened. `-r` is not used: two shards legitimately
+          # produce same-named files and the later copy must win deterministically
+          # rather than nesting directories.
           find runtime/generated/shards -name 'shard-*.json' -exec cp {} "$AGG"/ \; 2>/dev/null || true
+          echo "Aggregated $(find "$AGG" -name 'shard-*.json' | wc -l) shard report(s) with plan $PLAN" >> "$GITHUB_STEP_SUMMARY"
 
           set +e
           .venv/bin/python -m runtime.verify run --aggregate "$AGG" | tee "$AGG/aggregate-output.txt"

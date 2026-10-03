@@ -1,0 +1,21 @@
+{
+  "run_id": "3c092004509ee0c2",
+  "timestamp": "2026-10-03T18:09:34.079094+00:00",
+  "repository_sha": "fde43e8de722ccb8f31d09c0f7a3c66b4c21215f",
+  "scenario": "unmapped_change",
+  "changed_files": [
+    "/tmp/tmpdzb_wibe.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [
+    "unmapped-review"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "blocked_unmapped",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}
