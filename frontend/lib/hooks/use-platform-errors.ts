@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface PlatformErrorItem {
   id: string;
@@ -38,7 +38,7 @@ export function usePlatformErrors(window = 'current') {
     queryKey: ['platform', 'errors', window],
     queryFn: () => apiFetchJson(url) as Promise<ErrorsListResponse>,
     staleTime: 60_000,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

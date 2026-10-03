@@ -10,11 +10,8 @@ Verifies that the framework can:
 
 from __future__ import annotations
 
-import json
 import sys
-import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -22,7 +19,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from runtime.foundation.verification.execution_budget import (
     ExecutionBudget,
-    ExecutionBoundaryReport,
     ResultClassification,
     TerminationReason,
     classify_boundary,

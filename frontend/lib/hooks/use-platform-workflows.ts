@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface WorkflowItem {
   workflow_id: string;
@@ -68,7 +68,7 @@ export function usePlatformWorkflows() {
     queryKey: ['platform', 'workflows'],
     queryFn: () => apiFetchJson('/platform/v1/workflows') as Promise<WorkflowsResponse>,
     staleTime: 120_000,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

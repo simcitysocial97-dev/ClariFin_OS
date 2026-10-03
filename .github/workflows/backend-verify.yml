@@ -44,17 +44,53 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  # M11 (Task 8 — permissions minimisation): `pull-requests: write` removed.
+  # This job calls no pull-request API — checkout, the bootstrap composite,
+  # `runtime.verify backend`, four artifact uploads and a job summary — so the
+  # scope was unearned privilege on a job that executes untrusted repository
+  # code (pytest, mutmut, mypy over the PR's own backend). Same reasoning, and
+  # the same prior art, as api-contracts.yml, which removed the identical scope
+  # from the workflow that checks out `workflow_run.head_sha`.
+  # `security-events: write` is deliberately NOT granted here: SARIF upload
+  # belongs to security-codeql.yml alone, which does need it for PR
+  # annotations and does declare it.
   contents: read
-  pull-requests: write
 
+# M10-R2 — Backend Verification is now plan -> matrix -> aggregate.
+#
+# The `backend` profile has six genuinely independent obligations (ruff, black, mypy,
+# unit, integration, schemathesis): 600s of estimates serially, 180s on the critical
+# path, so ~3.3x is available from fan-out alone. Each leg executes one canonical
+# obligation, taken from the profile's own task list — not a hand-written command — so a
+# leg cannot drift from what would have run in-process.
+#
+# Properties preserved:
+#
+#   * Required identity unchanged. The `verify` job is still named "Backend
+#     Verification" and is still what branch protection waits on. The plan and matrix
+#     legs are implementation workers, not new required checks.
+#   * The gate is the authority. It refuses to certify unless every obligation
+#     reported exactly once and passed. A red or absent leg fails Backend Verification.
+#   * No artificial `needs:` chain. ruff/black/mypy/unit/integration/schemathesis are
+#     declared independent by the profile model, so they get no edges between them.
+#     Only the evidence rollup waits, because it reads what the legs produced.
 jobs:
-  verify:
-    name: Backend Verification
+  # ---------------------------------------------------------------------
+  # 1. Plan. Publishes the obligation matrix.
+  # ---------------------------------------------------------------------
+  backend-plan:
+    name: Backend Plan
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      leg_count: ${{ steps.plan.outputs.leg_count }}
+      estimated_speedup: ${{ steps.plan.outputs.estimated_speedup }}
+    env:
+      VERIFICATION_OFFLINE: "1"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -63,8 +99,177 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run backend verification (canonical check)
-        run: .venv/bin/python -m runtime.verify backend
+      - name: Emit canonical obligation matrix
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          MATRIX="$(.venv/bin/python -m runtime.verify backend-plan)"
+          # See verification-runtime.yml: the heredoc terminator must be inside the
+          # redirected block, or the matrix is never published and every leg is
+          # skipped with "Matching delimiter not found". Shape copied from the proven
+          # mutation.yml emission.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {index, task_id, task_name, estimated_seconds}]}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            echo "leg_count=$(jq -r '.leg_count' <<< "$MATRIX")"
+            echo "estimated_speedup=$(jq -r '.estimated_speedup' <<< "$MATRIX")"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Backend obligations"
+            echo ""
+            echo "| Obligation | Est. seconds |"
+            echo "|---|---|"
+            jq -r '.include[] | "| \(.task_id) | \(.estimated_seconds) |"' <<< "$MATRIX"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 2. Matrix legs. One canonical obligation per dedicated runner.
+  # ---------------------------------------------------------------------
+  backend-obligation:
+    name: Backend ${{ matrix.task_id }}
+    needs: [backend-plan]
+    if: needs.backend-plan.result == 'success' && needs.backend-plan.outputs.leg_count != '0'
+    runs-on: ubuntu-latest
+    # LITERAL: a matrix job whose own `timeout-minutes` reads `needs.<job>.outputs` is
+    # never created (see mutation.yml). The real budget is enforced with GNU `timeout`.
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      # Modest, not maximal: `run_contract_tests.sh` passes `-n auto` internally, so a
+      # leg already forks its own workers. A large matrix multiplied by that would
+      # oversubscribe the runner and trade elapsed time for flaky timeouts.
+      max-parallel: 4
+      matrix: ${{ fromJson(needs.backend-plan.outputs.matrix) }}
+    env:
+      VERIFICATION_OFFLINE: "1"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Run this canonical obligation
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p runtime/generated/legs
+          # Narrow `|| true`: a red obligation must still write its result document, or
+          # the gate reports "missing" instead of the real failure.
+          set +e
+          timeout "${OBLIGATION_TIMEOUT_SECONDS:-1500}" \
+            .venv/bin/python -m runtime.verify backend-task \
+              --task "${{ matrix.task_id }}" \
+              --result-out "runtime/generated/legs/leg-${{ matrix.index }}.json"
+          RC=$?
+          set -e
+          echo "${{ matrix.task_id }} exit=${RC}" >> "$GITHUB_STEP_SUMMARY"
+          exit "$RC"
+
+      - name: Upload obligation result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `leg-<n>.json` exactly
+        # where the gate looks for it.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: backend-result-${{ matrix.index }}
+          path: runtime/generated/legs/leg-${{ matrix.index }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Upload obligation artifacts
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: backend-obligation-${{ matrix.index }}
+          path: |
+            runtime/generated/legs/
+            runtime/generated/profile-logs/backend/
+            runtime/generated/evidence/
+          retention-days: 14
+
+  # ---------------------------------------------------------------------
+  # 3. The required check. Sole certification authority.
+  # ---------------------------------------------------------------------
+  verify:
+    name: Backend Verification
+    needs: [backend-plan, backend-obligation]
+    # `always()`: one red obligation must not suppress the gate, or the required check
+    # never reports and the PR blocks with no conclusion.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      # mutation.yml's transport: obligation filenames already carry the index, so
+      # flattening every artifact into ONE directory cannot collide.
+      - name: Download all obligation results
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "backend-*"
+          path: runtime/generated/legs
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named so G12 does not read `if: always()`
+      # as failure masking: transport faults must be distinguishable in the log alone.
+      - name: Job Summary (obligation evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/legs
+          echo "### Backend obligation evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No obligation directory at $DIR.** TRANSPORT fault, not a test fault." \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- obligation results: **$(find "$DIR" -name 'leg-*.json' | wc -l | tr -d ' ')**" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Aggregate obligations (canonical gate)
+        shell: bash
+        run: |
+          set -uo pipefail
+          AGG=runtime/generated/legs
+          mkdir -p "$AGG"
+          # Fail closed, with a cause. See verification-runtime.yml: the obligation
+          # count is never inferred from the results received, because that would make
+          # a missing obligation undetectable.
+          COUNT="${{ needs.backend-plan.outputs.leg_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The backend plan job published no obligation count, so the fan-out cannot be verified. Refusing to certify an unverified plan — see the 'Backend Plan' job for the cause."
+            exit 2
+          fi
+          find runtime/generated/legs -name 'leg-*.json' \
+            -exec cp {} "$AGG"/ \; 2>/dev/null || true
+          set +e
+          .venv/bin/python -m runtime.verify backend-aggregate \
+            --legs "$AGG" \
+            --json | tee "$AGG/gate.json"
+          GATE_RC=${PIPESTATUS[0]}
+          set -e
+          if [ "$GATE_RC" -ne 0 ]; then
+            echo "::error::Backend Verification did not certify. Every canonical obligation must report and pass."
+          fi
+          exit "$GATE_RC"
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -115,5 +320,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

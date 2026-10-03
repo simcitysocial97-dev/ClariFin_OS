@@ -1,9 +1,36 @@
 # .github/workflows/verification-runtime.yml
 #
 # PURPOSE: Engineering Runtime self-validation (runtime/tests + integrity).
-# RESPONSIBILITY: Run `runtime/verify.py check` — the canonical verification command.
+# RESPONSIBILITY: Certify the runtime suite. The suite is ~26 minutes of serial
+#   pytest, so it is the single longest obligation in the repository and therefore the
+#   highest-value target in the CI critical path.
 # Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
 # delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+#
+# M10-R2 — Runtime Verification is now plan -> matrix -> aggregate:
+#
+#   runtime-plan   partitions the suite deterministically and publishes the matrix
+#   runtime-shard  one dedicated runner per shard of the test suite
+#   verify-runtime THE REQUIRED CHECK. Aggregates every shard, runs the canonical
+#                  integrity obligation, and is the sole certification authority.
+#
+# Three properties this structure must preserve, and does:
+#
+#   * The required check identity is unchanged. `verify-runtime` is still named
+#     "Runtime Verification" and is still what branch protection waits on. The matrix
+#     legs are implementation workers, not new required checks.
+#   * A failed or missing shard fails the gate. `verify --shards` refuses to certify
+#     unless every expected shard reported exactly once and passed, and the integrity
+#     obligation passed. "The aggregate job succeeded" is never read as "every shard
+#     succeeded".
+#   * Shards are complete and disjoint. The partition is a pure function of the sorted
+#     test-file list; the gate checks shard count and per-shard file coverage, so no
+#     test can be silently omitted or executed twice.
+#
+# Why shards rather than `pytest -n auto`: M10-R2-C2 measured `-n 4` on this suite at
+# 1.19x with 6 failures, all of them subprocess-budget timeouts caused by four workers
+# sharing one loaded core set. Each shard here owns a dedicated runner, so that
+# contention cannot arise, and a shard runs plain serial pytest.
 
 name: Verification Runtime
 
@@ -39,13 +66,192 @@ permissions:
   contents: read
 
 jobs:
-  verify-runtime:
-    name: Runtime Verification
+  # ---------------------------------------------------------------------
+  # 1. Plan. Partitions the runtime suite deterministically.
+  # ---------------------------------------------------------------------
+  runtime-plan:
+    name: Runtime Plan
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      shard_count: ${{ steps.plan.outputs.shard_count }}
+      file_count: ${{ steps.plan.outputs.file_count }}
+      estimated_speedup: ${{ steps.plan.outputs.estimated_speedup }}
+    env:
+      VERIFICATION_OFFLINE: "1"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Emit deterministic shard matrix
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The runtime owns shard selection. Balance comes from per-file test counts
+          # (`--with-counts`); correctness never depends on them, because the gate
+          # independently checks that the shards cover every test file exactly once.
+          MATRIX="$(
+            .venv/bin/python -m runtime.verify runtime-plan \
+              --shard-count "${SHARD_COUNT:-4}" \
+              --with-counts
+          )"
+          # The whole block is redirected, terminator included. Writing
+          # `echo "EOF_MATRIX"` outside the redirect sends the delimiter to stdout,
+          # and GITHUB_OUTPUT then never receives a closing delimiter — which fails
+          # as "Matching delimiter not found", with the matrix silently unpublished
+          # and every downstream leg skipped. The proven shape is mutation.yml's.
+          # The matrix is also projected down to the scalar fields the leg reads,
+          # because the job's `matrix` expression is evaluated by Actions and a
+          # bloated document is a size risk for no benefit.
+          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, shard_id, shard_count, file_count, estimated_seconds}]}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            echo "shard_count=$(jq -r '.shard_count' <<< "$MATRIX")"
+            echo "file_count=$(jq -r '.file_count' <<< "$MATRIX")"
+            echo "estimated_speedup=$(jq -r '.estimated_speedup' <<< "$MATRIX")"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Runtime test shards"
+            echo ""
+            echo "| Shard | Files | Est. seconds |"
+            echo "|---|---|---|"
+            jq -r '.include[] | "| \(.shard_id) | \(.file_count) | \(.estimated_seconds) |"' <<< "$MATRIX"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the shard plan
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: runtime-plan
+          path: runtime/generated/execution/
+          retention-days: 14
+
+  # ---------------------------------------------------------------------
+  # 2. Shards. One dedicated runner per deterministic slice of the suite.
+  # ---------------------------------------------------------------------
+  runtime-shard:
+    name: Runtime Shard ${{ matrix.shard_id }}
+    needs: [runtime-plan]
+    if: needs.runtime-plan.result == 'success' && needs.runtime-plan.outputs.shard_count != '0'
+    runs-on: ubuntu-latest
+    # LITERAL. A matrix job whose own `timeout-minutes` is an expression reading
+    # `needs.<job>.outputs` is never created (see mutation.yml); the real per-shard
+    # budget is enforced inside the step with GNU `timeout`.
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJson(needs.runtime-plan.outputs.matrix) }}
+    env:
+      VERIFICATION_OFFLINE: "1"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      # Required, and not optional. The pre-fan-out single job installed Node, and
+      # the runtime suite depends on it: the TypeScript symbol resolver shells out to
+      # node, and `test_m9_c55.py::TestC55EnvironmentContract` asserts node/npm match
+      # the engine pin outright. Omitting this produced 12 shard failures on the first
+      # live run — `TypeScript resolver failed: node:internal/modules/cjs/loader` —
+      # which surfaced as frontend capabilities resolving to UNMAPPED.
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "24"
+          working-directory: "frontend"
+
+      - name: Run this shard of the runtime suite
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p runtime/generated/shards
+          # The shard runs exactly the files the plan assigned to it, through the
+          # canonical worker. `|| true` is narrow and deliberate: a red shard must
+          # still write its result document, because the gate needs to know this leg
+          # ran and failed. Omitting it would make the gate report "missing" instead
+          # of the real failure.
+          set +e
+          timeout "${SHARD_TIMEOUT_SECONDS:-2400}" \
+            .venv/bin/python -m runtime.verify runtime-shard \
+              --shard "${{ matrix.shard }}" \
+              --count "${{ matrix.shard_count }}" \
+              --result-out "runtime/generated/shards/shard-${{ matrix.shard }}.json"
+          SHARD_RC=$?
+          set -e
+          echo "shard ${{ matrix.shard_id }} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
+          # pytest streams into evidence files, so without this the job log shows only
+          # an exit code. Echo the failure names inline — a red shard must be
+          # diagnosable from the run page, not only from a downloaded artifact.
+          if [ "$SHARD_RC" -ne 0 ]; then
+            SHARD_LOG="runtime/generated/runtime-shard-logs/${{ matrix.shard_id }}/stdout.log"
+            {
+              echo "### ${{ matrix.shard_id }} failed (exit ${SHARD_RC})"
+              echo '```'
+              grep -E '^FAILED |^ERROR ' "$SHARD_LOG" 2>/dev/null | head -25 \
+                || echo "(no FAILED lines captured; see the uploaded artifact)"
+              tail -5 "$SHARD_LOG" 2>/dev/null
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$SHARD_RC"
+
+      - name: Upload shard result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `shard-<n>.json` exactly
+        # where the gate looks for it.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: runtime-result-${{ matrix.shard }}
+          path: runtime/generated/shards/shard-${{ matrix.shard }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Upload shard artifacts
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: runtime-shard-${{ matrix.shard }}
+          path: |
+            runtime/generated/shards/
+            runtime/generated/runtime-shard-logs/
+            runtime/generated/evidence/
+            runtime/generated/engineering-history.json
+            runtime/generated/verification-cache.json
+          retention-days: 14
+
+  # ---------------------------------------------------------------------
+  # 3. The required check. Aggregates every shard; sole certification authority.
+  # ---------------------------------------------------------------------
+  verify-runtime:
+    name: Runtime Verification
+    needs: [runtime-plan, runtime-shard]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VERIFICATION_OFFLINE: "1"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -60,8 +266,64 @@ jobs:
           node-version: "24"
           working-directory: "frontend"
 
-      - name: Run runtime verification (canonical check)
-        run: .venv/bin/python -m runtime.verify runtime
+      # mutation.yml's transport: shard filenames already carry the shard id, so
+      # flattening every artifact into ONE directory cannot collide.
+      - name: Download all shard results
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "runtime-*"
+          path: runtime/generated/shards
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named so G12 does not read `if: always()`
+      # as failure masking: transport faults must be distinguishable in the log alone.
+      - name: Job Summary (shard evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/shards
+          echo "### Runtime shard evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No shard directory at $DIR.** TRANSPORT fault, not a test fault." \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- shard results: **$(find "$DIR" -name 'shard-*.json' | wc -l | tr -d ' ')**" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Aggregate shards and run the integrity obligation
+        shell: bash
+        run: |
+          set -uo pipefail
+          AGG=runtime/generated/shards
+          mkdir -p "$AGG"
+          # Fail closed, with a cause. If the plan job failed it publishes no shard
+          # count, and passing that empty through to the aggregate surfaces as the
+          # unhelpfully-worded "count expects an integer". The count is deliberately
+          # NOT inferred from the results received: inferring it would make a missing
+          # shard undetectable, which is precisely the split-brain case the gate
+          # exists to catch.
+          COUNT="${{ needs.runtime-plan.outputs.shard_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The runtime plan job published no shard count, so the fan-out cannot be verified. Refusing to certify an unverified plan — see the 'Runtime Plan' job for the cause."
+            exit 2
+          fi
+          # Flatten every shard result next to the plan so the gate sees one set.
+          find runtime/generated/shards -name 'shard-*.json' \
+            -exec cp {} "$AGG"/ \; 2>/dev/null || true
+
+          set +e
+          .venv/bin/python -m runtime.verify runtime-aggregate \
+            --shards "$AGG" \
+            --count "${{ needs.runtime-plan.outputs.shard_count }}" \
+            --json | tee "$AGG/gate.json"
+          GATE_RC=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$GATE_RC" -ne 0 ]; then
+            echo "::error::Runtime Verification did not certify. Every shard must report and pass, and the integrity obligation must pass."
+          fi
+          exit "$GATE_RC"
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
@@ -113,5 +375,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

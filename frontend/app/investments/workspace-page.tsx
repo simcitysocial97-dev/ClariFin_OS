@@ -1,10 +1,19 @@
 /**
  * Investments Workspace Page - Stage 4 Investments Intelligence Workspace
+ *
+ * M11: this workspace was read-only. `useCreateInvestment` existed with no
+ * caller, and the empty state offered only "Clear filters", so the mutation
+ * chain (user action -> API -> DB -> response -> cache invalidation -> visible
+ * UI update) had no user path at all — which is why `POST /api/v1/investments`
+ * returning HTTP 500 could sit undetected behind a workspace that never made a
+ * create request.
  */
 
 'use client';
 
+import { useState } from 'react';
 import { useInvestmentsCapability } from '@/lib/capabilities/use-investments-capability';
+import { useCreateInvestment } from '@/lib/hooks/use-investments';
 import { useWorkspaceRegistration } from '@/lib/runtime';
 import { InvestmentsSummary } from '@/components/investments/investments-summary';
 import { PerformanceChart } from '@/components/investments/performance-chart';
@@ -17,6 +26,9 @@ import { CrossNavigation } from '@/components/investments/cross-navigation';
 import { InvestmentsPageSkeleton } from '@/components/investments/loading-skeleton';
 import { InvestmentsErrorState } from '@/components/investments/error-state';
 import { InvestmentsEmptyState } from '@/components/investments/empty-state';
+import { AddInvestmentForm, type AddInvestmentInput } from '@/components/investments/add-investment-form';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 export default function InvestmentsPage() {
   useWorkspaceRegistration({
@@ -36,9 +48,42 @@ export default function InvestmentsPage() {
     clearFilters, refresh, toggleEvidenceDrawer,
   } = useInvestmentsCapability();
 
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const createInvestment = useCreateInvestment();
+
+  const handleCreate = async (input: AddInvestmentInput) => {
+    setCreateError(null);
+    try {
+      await createInvestment.mutateAsync(input);
+      setIsFormOpen(false);
+    } catch (cause) {
+      // The authority's own message is shown rather than a generic failure,
+      // so a 422 naming the offending field is actionable.
+      setCreateError(cause instanceof Error ? cause.message : String(cause));
+    }
+  };
+
+  const hasActiveFilters =
+    investmentTypes.length > 0 || institutions.length > 0 || statuses.length > 0;
+
   if (loading) return <InvestmentsPageSkeleton />;
   if (error) return <InvestmentsErrorState message={error.message} onRetry={refresh} />;
-  if (!investments || investments.investments.length === 0) return <InvestmentsEmptyState onAction={clearFilters} />;
+
+  if (!investments) return <InvestmentsPageSkeleton />;
+  const isEmpty = investments.investments.length === 0;
+
+  if (isEmpty && !isFormOpen) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <InvestmentsEmptyState
+          onAdd={() => setIsFormOpen(true)}
+          hasActiveFilters={hasActiveFilters}
+          onAction={clearFilters}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,6 +94,28 @@ export default function InvestmentsPage() {
         onClearFilters={clearFilters} onApplyFilters={() => {}}
       />
       <div className="p-4 space-y-4">
+        {isFormOpen && (
+          <AddInvestmentForm
+            onCreate={handleCreate}
+            pending={createInvestment.isPending}
+            error={createError}
+            onCancel={() => {
+              setIsFormOpen(false);
+              setCreateError(null);
+            }}
+          />
+        )}
+        {!isFormOpen && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsFormOpen(true)}
+            data-testid="investments-open-add-form"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Add investment
+          </Button>
+        )}
         <InvestmentsSummary investments={investments} loading={loading} error={error} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <PerformanceChart investments={investments} loading={loading} error={error} />

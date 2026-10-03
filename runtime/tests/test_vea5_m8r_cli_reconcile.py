@@ -48,7 +48,7 @@ def _make_plan(
     import json
     from dataclasses import asdict
 
-    from runtime.foundation.verification.tier import SelectedUnit, ExcludedUnit
+    from runtime.foundation.verification.tier import ExcludedUnit, SelectedUnit
 
     # Mirror the shape the planner produces for a single-engine change.
     selected = [

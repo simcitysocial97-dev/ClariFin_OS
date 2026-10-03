@@ -244,7 +244,6 @@ def test_parallel_executor_planning():
     """ParallelExecutor correctly plans independent vs dependent groups."""
     from runtime.foundation.verification.parallel_executor import (  # noqa: PLC0415
         ParallelExecutor,
-        TaskGroup,
     )
 
     executor = ParallelExecutor(max_workers=2)

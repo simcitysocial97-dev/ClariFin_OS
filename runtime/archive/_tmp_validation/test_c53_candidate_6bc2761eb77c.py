@@ -9,9 +9,11 @@ under test.
 Generation strategy: example_based_unit
 """
 
+# Archived M9-C55 candidate-validation fixture. The import is deliberate: it is the
+# *target* of the discrimination this file records, and the point of the candidate was
+# that importing it is itself discriminating. It is intentionally unreferenced.
+import backend.engines.credit_card_engine.core as target_mod  # noqa: F401
 import pytest
-
-import backend.engines.credit_card_engine.core as target_mod  # backend.engines.credit_card_engine.core
 
 
 def test_6bc2761eb77c_discriminates():

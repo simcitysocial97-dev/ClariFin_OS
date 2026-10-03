@@ -453,6 +453,60 @@ capabilities:
     # surface on the same event. The suite lives under frontend/tests/e2e.
     modules: ["frontend/tests/e2e"]
 
+  frontend-verification:
+    name: "Frontend Verification"
+    description: "Frontend components and hooks verified by the frontend profile"
+    category: "capability"
+    scopes: ["frontend"]
+    workflows: ["frontend"]
+    scripts: ["run_frontend_verification"]
+    # `modules` becomes the capability's `affected_by_paths`
+    # (capability_contract.py).
+    #
+    # M11 (exec-0006). These two surfaces were claimed by NO capability, so a
+    # change to them produced no verification obligation at all and tripped the
+    # fail-closed review obligation instead. Measured on the PR #16 boundary
+    # (131 files): 13 changed frontend files matched no registered path, 10 of
+    # them under `frontend/components/`. The cross-layer graph did attribute
+    # those files — to `frontend:component:<domain>:<dir>` IDs, which are not
+    # registry capability IDs, so the attribution carried no workflow and no
+    # script and resolved to nothing.
+    #
+    # This is the same defect class already closed three times in this file by
+    # registering `modules` (see api-contracts correction 1 above,
+    # runtime-verification above, and e2e-tests immediately above): a surface
+    # that a workflow verifies on the same event must have a registered owner.
+    # Frontend Verification (`frontend` workflow ->
+    # `run_frontend_verification.sh` -> lint, typecheck, build, vitest) is the
+    # owner: it is the single authoritative frontend verification, it runs on
+    # every pull request, and these two directories are exactly what it lints,
+    # typechecks, builds and unit-tests.
+    #
+    # Deliberately NOT claimed here:
+    #   frontend/app/**  — `frontend/app/platform` is owned by
+    #                      `runtime-verification` above, and widening a page
+    #                      route into the frontend profile would contradict that
+    #                      deliberate assignment. Page routes are not proven
+    #                      unmapped on the boundary this fixes, so registering
+    #                      them here would change plans without evidence.
+    #   frontend/lib/**  — already owned by `api-contracts` above. Double
+    #                      registration would duplicate obligations.
+    #
+    # `frontend/__tests__` is registered for a measured reason, not by analogy.
+    # `frontend/vitest.config.ts` sets
+    #     include: ['**/*.{test,spec}.{ts,tsx}']
+    #     exclude: ['node_modules', '.next', 'playwright/**', 'tests/**', ...]
+    # so `frontend/__tests__/*.test.tsx` IS collected by vitest, and the exclude
+    # list names `tests/**` (the Playwright directory, already owned by
+    # `e2e-tests` above) and not `__tests__/**`. `run_frontend_verification.sh`
+    # phase `test` is `npx vitest run`, so the `frontend` workflow verifies this
+    # surface. It was nonetheless unregistered, so a pull request that added a
+    # frontend unit test raised `UNMAPPED:frontend/__tests__/<file>` and failed
+    # the fail-closed review obligation — the identical failure `e2e-tests`
+    # already fixed for Playwright specs. Measured on the live working tree:
+    # 2 unmapped entries, both `frontend/__tests__/*.test.tsx`.
+    modules: ["frontend/components", "frontend/hooks", "frontend/__tests__"]
+
   balance-engine:
     name: "Balance Engine"
     description: "Running balance computation from transaction streams"

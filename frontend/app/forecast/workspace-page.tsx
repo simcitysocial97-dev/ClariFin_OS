@@ -49,7 +49,19 @@ export default function ForecastPage() {
       </div>
       <ForecastSummary summary={forecast.summary} loading={loading} error={error} />
       <NetWorthProjection projections={forecast.net_worth_projections} loading={loading} error={error} />
-      <CashflowProjection projections={forecast.cashflow_projections} loading={loading} error={error} />
+      <CashflowProjection
+        projections={forecast.cashflow_projections}
+        basis={{
+          status: forecast.cashflow_forecast_basis.status,
+          reason: forecast.cashflow_forecast_basis.reason,
+          model: forecast.cashflow_forecast_basis.model,
+          confidenceBps: forecast.cashflow_forecast_basis.confidence_bps,
+          historyMonths: forecast.cashflow_forecast_basis.history_months,
+          projectedMonths: forecast.cashflow_forecast_basis.projected_months,
+        }}
+        loading={loading}
+        error={error}
+      />
       <ScenarioComparison scenarios={forecast.scenarios} loading={loading} error={error} />
       <InsightsPanel forecast={forecast} loading={loading} error={error} />
       <EvidenceDrawer forecast={forecast} isOpen={false} onClose={() => {}} />

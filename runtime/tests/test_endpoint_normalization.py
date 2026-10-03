@@ -6,11 +6,9 @@ endpoint representation convergence.
 
 from __future__ import annotations
 
-import pytest
-
 from runtime.foundation.verification.endpoint_normalize import (
-    NormalizedEndpoint,
     EndpointNormalizer,
+    NormalizedEndpoint,
     endpoints_match,
     get_canonical_key,
     normalize_endpoint,
@@ -384,10 +382,11 @@ class TestDriftClassification:
 
     def test_normalization_mismatch_resolved_to_zero(self):
         """After C61, normalization mismatches should be 0 (resolved as edges)."""
+        from pathlib import Path
+
         from runtime.foundation.verification.cross_layer_graph import (
             CrossLayerGraphBuilder,
         )
-        from pathlib import Path
 
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
@@ -406,10 +405,11 @@ class TestDriftClassification:
 
     def test_missing_endpoint_classified_critical(self):
         """Truly missing endpoints classified as critical."""
+        from pathlib import Path
+
         from runtime.foundation.verification.cross_layer_graph import (
             CrossLayerGraphBuilder,
         )
-        from pathlib import Path
 
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
@@ -423,10 +423,11 @@ class TestDriftClassification:
 
     def test_path_mismatch_classified_high(self):
         """Structural path differences classified as high."""
+        from pathlib import Path
+
         from runtime.foundation.verification.cross_layer_graph import (
             CrossLayerGraphBuilder,
         )
-        from pathlib import Path
 
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()
@@ -444,10 +445,11 @@ class TestDriftClassification:
         Previously these were classified as normalization_mismatch drifts.
         After C61 normalization, they should be successfully matched as edges.
         """
+        from pathlib import Path
+
         from runtime.foundation.verification.cross_layer_graph import (
             CrossLayerGraphBuilder,
         )
-        from pathlib import Path
 
         builder = CrossLayerGraphBuilder(Path.cwd())
         graph = builder.build()

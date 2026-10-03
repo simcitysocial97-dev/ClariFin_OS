@@ -15,33 +15,85 @@ class BehaviourRepository(BaseRepository):
     """Repository for behaviour snapshot operations."""
 
     def create_snapshot(self, snapshot_data: dict[str, Any]) -> dict[str, Any] | None:
-        """Create a new behaviour snapshot."""
+        """Create or update today's behaviour snapshot for a household.
+
+        ``behaviour_snapshots`` carries ``UNIQUE(household_id, snapshot_date)``
+        — one snapshot per household per day is the domain rule — so a plain
+        INSERT raised ``IntegrityError: UNIQUE constraint failed`` on the second
+        call of the same day. ``compute_financial_profile`` is invoked on demand
+        (from ``get_wellness_score`` when no snapshot exists, and from
+        ``GET /api/v1/behaviour/profile``), so a repeat call on the same day is
+        normal traffic, not an error: it must refresh the day's snapshot rather
+        than fail. That is why this writes through an existing row.
+
+        Implemented as UPDATE-then-INSERT rather than
+        ``ON CONFLICT(household_id, snapshot_date) DO UPDATE``: an ON CONFLICT
+        target requires the table to actually carry that unique constraint, and
+        a database created before it did would fail every write with
+        "ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE
+        constraint". UPDATE-then-INSERT behaves identically on every schema.
+        """
+        household_id = snapshot_data.get("household_id", DEFAULT_HOUSEHOLD_ID)
+        snapshot_date = snapshot_data["snapshot_date"]
+        values = (
+            snapshot_data["savings_discipline_score_bps"],
+            snapshot_data["cashflow_stability_score_bps"],
+            snapshot_data["salary_dependence_ratio_bps"],
+            snapshot_data["lifestyle_inflation_rate_bps"],
+            snapshot_data["subscription_burn_rate_bps"],
+            snapshot_data["resilience_index_bps"],
+            snapshot_data["wellness_score_bps"],
+            snapshot_data.get("version", 1),
+            household_id,
+            snapshot_date,
+        )
         with self._get_conn() as conn:
             cursor = conn.execute(
                 """
-                INSERT INTO behaviour_snapshots (
-                    snapshot_date, household_id, savings_discipline_score_bps,
-                    cashflow_stability_score_bps, salary_dependence_ratio_bps,
-                    lifestyle_inflation_rate_bps, subscription_burn_rate_bps,
-                    resilience_index_bps, wellness_score_bps, version
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    snapshot_data["snapshot_date"],
-                    snapshot_data.get("household_id", DEFAULT_HOUSEHOLD_ID),
-                    snapshot_data["savings_discipline_score_bps"],
-                    snapshot_data["cashflow_stability_score_bps"],
-                    snapshot_data["salary_dependence_ratio_bps"],
-                    snapshot_data["lifestyle_inflation_rate_bps"],
-                    snapshot_data["subscription_burn_rate_bps"],
-                    snapshot_data["resilience_index_bps"],
-                    snapshot_data["wellness_score_bps"],
-                    snapshot_data.get("version", 1),
-                ),
+                UPDATE behaviour_snapshots SET
+                    savings_discipline_score_bps = ?,
+                    cashflow_stability_score_bps = ?,
+                    salary_dependence_ratio_bps = ?,
+                    lifestyle_inflation_rate_bps = ?,
+                    subscription_burn_rate_bps = ?,
+                    resilience_index_bps = ?,
+                    wellness_score_bps = ?,
+                    version = ?
+                WHERE household_id = ? AND snapshot_date = ?
+                """,
+                values,
             )
+            if cursor.rowcount == 0:
+                conn.execute(
+                    """
+                    INSERT INTO behaviour_snapshots (
+                        snapshot_date, household_id, savings_discipline_score_bps,
+                        cashflow_stability_score_bps, salary_dependence_ratio_bps,
+                        lifestyle_inflation_rate_bps, subscription_burn_rate_bps,
+                        resilience_index_bps, wellness_score_bps, version
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        snapshot_date,
+                        household_id,
+                        snapshot_data["savings_discipline_score_bps"],
+                        snapshot_data["cashflow_stability_score_bps"],
+                        snapshot_data["salary_dependence_ratio_bps"],
+                        snapshot_data["lifestyle_inflation_rate_bps"],
+                        snapshot_data["subscription_burn_rate_bps"],
+                        snapshot_data["resilience_index_bps"],
+                        snapshot_data["wellness_score_bps"],
+                        snapshot_data.get("version", 1),
+                    ),
+                )
             conn.commit()
+            row = conn.execute(
+                "SELECT id FROM behaviour_snapshots "
+                "WHERE household_id = ? AND snapshot_date = ?",
+                (household_id, snapshot_date),
+            ).fetchone()
 
-        snapshot_id = cursor.lastrowid
+        snapshot_id = row["id"] if row else None
         return self.get_snapshot_by_id(snapshot_id) if snapshot_id else None
 
     def get_snapshot_by_id(self, snapshot_id: int | str) -> dict[str, Any] | None:

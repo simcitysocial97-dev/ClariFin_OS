@@ -1,0 +1,23 @@
+{
+  "run_id": "c23f9753ae3e3033",
+  "timestamp": "2026-10-03T11:38:47.894299+00:00",
+  "repository_sha": "90e8e6dec016dfdbeba2bd683d288e4fd5304c65",
+  "scenario": "mutation_sensitive_change",
+  "changed_files": [
+    "backend/src/engines/credit_card_engine.py"
+  ],
+  "resolved_capabilities": [
+    "credit-card-engine"
+  ],
+  "obligations": [
+    "mutation"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "requires_mutation_campaign",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

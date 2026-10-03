@@ -1,97 +1,494 @@
-"""
-M9-C57 — Parallel execution support for independent verification tasks.
+"""M10-R2 — the single parallel execution core for verification.
 
-Groups independent tasks into parallel bundles and executes them via
-ProcessPoolExecutor while respecting dependency ordering.  Falls back
-to sequential execution when the parallel path is unavailable.
+This module is the one place a verification subprocess is run, and the one place
+concurrent execution is scheduled. Both canonical call paths go through it:
 
-Design contract:
-  * Tasks with no inter-dependencies run in parallel.
-  * Tasks that depend on other tasks form a separate sequential group.
-  * max_workers defaults to min(cpu_count, 4).
-  * Timeout is enforced per-task, not per-group.
-  * Results are collected incrementally as each task completes.
-  * If parallel execution raises, the whole run falls back to sequential.
+* ``ExecutionOrchestrator.execute`` (``verify check``)
+* ``ControlPlane._run_profile_alias`` (``verify backend|frontend|runtime|quick|…``)
+
+Why this module exists (M10-R2 D1)
+----------------------------------
+``ParallelExecutor` already existed and was **unwired** — imported by nothing in the
+executor path. It was not reused as-is because four things were wrong for the
+canonical path:
+
+1. **Buffered output.** It used ``capture_output=True``. The orchestrator's own worker
+   deliberately streams to per-task evidence files instead, because on 2026-09-30 a
+   killed run left all 20 task logs at zero bytes and the failing obligation's output
+   was unrecoverable. Reintroducing buffering would regress that fix.
+2. **No process-group kill.** A wrapper timeout orphaned the
+   shell → pytest → children tree.
+3. **Wrong dependency model.** It read ``dependency_on``/``dependencies``; the plan
+   model uses ``depends_on`` and gates on ``is_escalation``.
+4. **No result vocabulary.** It returned dicts, so nothing downstream could read a
+   termination reason or a completion state.
+
+What was kept is the part that was right: bounded workers, group planning,
+non-fail-fast collection, per-task timeout. ``TaskGroup``/``ExecutionReport``/
+``ParallelExecutor`` remain as the group-oriented façade (their tests are preserved);
+the low-level process execution beneath them is now the promoted streaming worker.
+
+Concurrency primitive: **threads**, not processes.
+--------------------------------------------------------
+The work is "wait for a subprocess", which is I/O-bound. ``ProcessPoolExecutor``
+would additionally require the task spec, plan and orchestrator (``self``) to be
+picklable — they are not (they hold command-override dicts, registries and unpicklable
+evidence objects). Threads also keep ``on_record`` callbacks in-process, so partial
+progress stays observable exactly as it is today. This is a deliberate divergence from
+the original implementation, not an oversight.
 """
 
 from __future__ import annotations
 
-import concurrent.futures
-import multiprocessing
+import contextlib
 import os
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
+import re
+import signal
+import subprocess
+import threading
+import time
+from collections.abc import Callable, Sequence
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+__all__ = [
+    "CommandResult",
+    "DEFAULT_MAX_WORKERS",
+    "ExecutionReport",
+    "ParallelExecutor",
+    "TaskGroup",
+    "TaskResult",
+    "classify_termination",
+    "execute_tasks_in_parallel",
+    "max_workers_for",
+    "plan_parallel_groups",
+    "resolve_max_workers",
+    "run_streaming_command",
+    "summarise_pytest_outcome",
+]
+
+#: Upper bound on concurrent subprocesses. Never ``os.cpu_count()`` unbounded: a
+#: developer laptop must not become a process storm, and every task already forks its
+#: own pytest/xdist workers (``run_contract_tests.sh`` passes ``-n auto``), so
+#: unbounded concurrency would oversubscribe rather than speed anything up.
+DEFAULT_MAX_WORKERS = 4
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
 
 # ---------------------------------------------------------------------------
-# Public data structures
+# Promoted worker primitives (moved from execution_orchestrator)
 # ---------------------------------------------------------------------------
 
 
-@dataclass(frozen=True, slots=True)
-class TaskResult:
-    """Result of a single parallel task execution."""
+@dataclass
+class CommandResult:
+    """Everything observable about one subprocess execution.
 
-    task_id: str
-    component: str
-    capability: str
-    success: bool
-    exit_code: int
+    Both the orchestrator's record builder and the group-oriented façade consume this,
+    which is what makes the streaming worker the *single* execution path rather than
+    two runners with the same name.
+    """
+
+    command: str
+    exit_code: int | None
+    timed_out: bool
+    infra_error: str | None
+    stdout: str
+    stderr: str
+    stdout_path: Path
+    stderr_path: Path
     duration_seconds: float
-    error: str | None = None
-    output_path: str = ""
 
 
-@dataclass(frozen=True, slots=True)
+def _tee(pipe, path: Path) -> None:
+    """Stream a pipe to *path*, flushing per line.
+
+    Moved from ``execution_orchestrator._tee``. The flush-per-line is the whole point:
+    it makes the evidence file exist and grow *while* the child runs, so a kill, a
+    signal or an orchestrator crash still leaves the output produced up to that instant.
+    """
+    try:
+        with open(path, "a", encoding="utf-8", errors="replace") as fh:
+            for line in iter(pipe.readline, ""):
+                fh.write(line)
+                fh.flush()
+    except (OSError, ValueError):
+        pass
+    finally:
+        with contextlib.suppress(Exception):
+            pipe.close()
+
+
+def _kill_process_group(proc) -> None:
+    """Kill the child's whole process group.
+
+    A shell task runs a shell that runs pytest that runs more processes; killing only
+    the direct child orphans them and they keep running against the evidence
+    directory. ``start_new_session=True`` at spawn time is what makes this possible.
+    """
+    try:
+        os.killpg(os.getpgid(proc.pid), 9)
+    except (ProcessLookupError, PermissionError, OSError):
+        with contextlib.suppress(Exception):
+            proc.kill()
+    with contextlib.suppress(Exception):
+        proc.wait(timeout=5)
+
+
+def _read_text(path: Path) -> str:
+    try:
+        return path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+
+
+def run_streaming_command(
+    command: str,
+    *,
+    stdout_path: Path,
+    stderr_path: Path,
+    timeout_seconds: int,
+    cwd: Path | None = None,
+    env: dict[str, str] | None = None,
+) -> CommandResult:
+    """Run *command*, streaming stdout/stderr to the given evidence files.
+
+    Promoted verbatim in behaviour from
+    ``ExecutionOrchestrator._execute_shell_task``, minus the record/classification
+    layer that belongs to the caller. Guarantees:
+
+    * both evidence files are truncated up front, so a file means "this execution"
+      (the tee appends, so leftover content from an earlier run would otherwise
+      masquerade as this run's output);
+    * output is streamed, never buffered;
+    * the child gets its own process group and a timeout kills the whole tree;
+    * both files are touched afterwards so they exist even if the child produced
+      nothing and was killed before its first line.
+    """
+    stdout_path.parent.mkdir(parents=True, exist_ok=True)
+    for stale in (stdout_path, stderr_path):
+        with contextlib.suppress(OSError):
+            stale.unlink()
+
+    t0 = time.monotonic()
+    exit_code: int | None = None
+    timed_out = False
+    infra_error: str | None = None
+
+    try:
+        proc = subprocess.Popen(
+            command,
+            shell=True,
+            cwd=str(cwd or REPO_ROOT),
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            start_new_session=True,
+        )
+        readers = [
+            threading.Thread(target=_tee, args=(proc.stdout, stdout_path), daemon=True),
+            threading.Thread(target=_tee, args=(proc.stderr, stderr_path), daemon=True),
+        ]
+        for reader in readers:
+            reader.start()
+        try:
+            proc.wait(timeout=timeout_seconds)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            exit_code = 124
+            _kill_process_group(proc)
+        for reader in readers:
+            reader.join(timeout=5)
+        # A shell that dies on a signal reports 128+signum, so >128 is a termination
+        # rather than a command's own exit status.
+        if exit_code is None:
+            exit_code = proc.returncode
+    except FileNotFoundError as exc:
+        infra_error = f"command not found: {exc}"
+    except Exception as exc:  # defensive
+        infra_error = f"subprocess raised: {type(exc).__name__}: {exc}"
+
+    stdout_path.touch(exist_ok=True)
+    stderr_path.touch(exist_ok=True)
+
+    return CommandResult(
+        command=command,
+        exit_code=exit_code,
+        timed_out=timed_out,
+        infra_error=infra_error,
+        stdout=_read_text(stdout_path),
+        stderr=_read_text(stderr_path),
+        stdout_path=stdout_path,
+        stderr_path=stderr_path,
+        duration_seconds=time.monotonic() - t0,
+    )
+
+
+_PYTEST_FAILURE_LINE = re.compile(r"^(FAILED|ERROR)\s+(\S+)", re.MULTILINE)
+_PYTEST_TIMEOUT_MARKER = "from pytest-timeout"
+_PYTEST_SUMMARY = re.compile(
+    r"^(?:(\d+) failed)?(?:,?\s*(\d+) passed)?(?:,?\s*(\d+) skipped)?"
+    r"(?:,?\s*(\d+) error)?(?:,?\s*(\d+) xfailed)?"
+    r"(?:,?\s*(\d+) xpassed)?.*?in\s+(\d+\.?\d*)s",
+    re.MULTILINE,
+)
+
+
+def summarise_pytest_outcome(text: str) -> dict | None:
+    """Name the inner pytest failure precisely, from its own output.
+
+    A verification script that runs pytest and then aggregates several checks exits
+    with a single non-zero status, which loses the distinction the investigation
+    actually needs: was this an assertion failure, a per-test timeout, or a
+    collection/internal error? Those have different causes and different fixes, and
+    "the suite failed" is not evidence for any of them.
+
+    Returns None when the text contains no pytest signal at all, so callers can leave
+    non-pytest tasks untouched. The classification is derived only from pytest's own
+    summary and short-summary lines — it never re-runs anything and never guesses.
+
+    Moved here from ``execution_orchestrator`` in M10-R2 so the diagnosis vocabulary
+    lives with the worker that produces the output being diagnosed.
+    """
+    if not text or ("pytest" not in text and "passed" not in text):
+        return None
+
+    failed = _PYTEST_FAILURE_LINE.findall(text)
+    summary = _PYTEST_SUMMARY.search(text)
+    counts = {
+        "failed": int(summary.group(1)) if summary and summary.group(1) else 0,
+        "passed": int(summary.group(2)) if summary and summary.group(2) else 0,
+        "skipped": (int(summary.group(3)) if summary and summary.group(3) else 0),
+        "errors": int(summary.group(4)) if summary and summary.group(4) else 0,
+        "xfailed": (int(summary.group(5)) if summary and summary.group(5) else 0),
+        "xpassed": (int(summary.group(6)) if summary and summary.group(6) else 0),
+    }
+    duration = float(summary.group(7)) if summary and summary.group(7) else None
+
+    if not failed and not summary:
+        return None
+
+    timed_out = _PYTEST_TIMEOUT_MARKER in text
+    errored = any(tag == "ERROR" for tag, _ in failed) or counts["errors"] > 0
+
+    if timed_out:
+        kind = "TEST_TIMEOUT"
+    elif errored:
+        kind = "COLLECTION_OR_INTERNAL_ERROR"
+    elif counts["failed"] or failed:
+        kind = "TEST_ASSERTION_FAILURE"
+    else:
+        kind = "PASSED"
+
+    return {
+        "kind": kind,
+        "failed_nodeids": [nodeid for _, nodeid in failed],
+        "counts": counts,
+        "duration_seconds": duration,
+    }
+
+
+def classify_termination(
+    exit_code: int | None,
+    timed_out: bool,
+    infra_error: str | None,
+) -> dict:
+    """Say *how* a task's process ended, not just that it did not pass.
+
+    "the command exited non-zero" is not a diagnosis. A verification run can end
+    because a test failed, because the wrapper killed it, because the process was
+    killed by a signal, or because the command never started, and each of those points
+    at a different cause. The record keeps them apart so a long run cannot be misread
+    as a flaky one.
+
+    Moved here from ``execution_orchestrator`` (M10-R2) so every caller of the worker
+    shares one termination vocabulary.
+    """
+    if infra_error:
+        return {
+            "kind": "INFRASTRUCTURE",
+            "detail": infra_error,
+            "signal": None,
+        }
+    if timed_out:
+        return {
+            "kind": "WRAPPER_TIMEOUT",
+            "detail": "verification wrapper killed the command before it finished",
+            "signal": None,
+        }
+    if exit_code is not None and exit_code < 0:
+        return {
+            "kind": "SIGNAL_TERMINATION",
+            "detail": f"child terminated by signal {-exit_code}",
+            "signal": -exit_code,
+        }
+    if exit_code is not None and exit_code > 128:
+        signum = exit_code - 128
+        try:
+            signame = signal.Signals(signum).name
+        except ValueError:
+            signame = f"SIG{signum}"
+        return {
+            "kind": "SIGNAL_TERMINATION",
+            "detail": f"shell reported 128+{signum} ({signame})",
+            "signal": signum,
+        }
+    if exit_code == 0:
+        return {
+            "kind": "EXIT_ZERO",
+            "detail": "command exit 0",
+            "signal": None,
+        }
+    return {
+        "kind": "EXIT_NONZERO",
+        "detail": f"command reported exit {exit_code}",
+        "signal": None,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Worker bound
+# ---------------------------------------------------------------------------
+
+
+def resolve_max_workers(requested: int | None = None) -> int:
+    """Bounded concurrency policy.
+
+    ``VERIFY_MAX_WORKERS`` is the explicit override. The default is
+    ``min(cpu_count, 4)`` and is clamped to ``>= 1``; it is never unbounded.
+    """
+    if requested is None:
+        env = os.environ.get("VERIFY_MAX_WORKERS")
+        if env:
+            with contextlib.suppress(ValueError):
+                requested = int(env)
+    if requested is None:
+        requested = DEFAULT_MAX_WORKERS
+    try:
+        requested = int(requested)
+    except (TypeError, ValueError):
+        requested = DEFAULT_MAX_WORKERS
+    cpus = os.cpu_count() or 2
+    return max(1, min(requested, cpus, DEFAULT_MAX_WORKERS * 4))
+
+
+def max_workers_for(item_count: int, requested: int | None = None) -> int:
+    """Concurrency never exceeds the work available."""
+    return max(1, min(resolve_max_workers(requested), max(1, item_count)))
+
+
+# ---------------------------------------------------------------------------
+# Generic concurrent driver
+# ---------------------------------------------------------------------------
+
+
+def execute_tasks_in_parallel(
+    items: Sequence[Any],
+    worker: Callable[[Any], Any],
+    *,
+    max_workers: int | None = None,
+    on_result: Callable[[Any, Any], None] | None = None,
+) -> list[Any]:
+    """Run ``worker(item)`` over *items* concurrently and collect **every** result.
+
+    Non-fail-fast by design (M10-R2 §2.3): one task failing must not erase the results
+    of independent tasks that still diagnose the run. An unexpected worker exception is
+    captured as the item's result rather than propagating, because losing the remaining
+    results would be exactly the failure mode this replaces.
+
+    Results are returned in *input* order regardless of completion order, so
+    reconciliation never depends on scheduling.
+    """
+    if not items:
+        return []
+    workers = max_workers_for(len(items), max_workers)
+    if workers == 1 or len(items) == 1:
+        out: list[Any] = []
+        for item in items:
+            try:
+                result = worker(item)
+            except Exception as exc:  # noqa: BLE001 - collected, not raised
+                result = exc
+            out.append(result)
+            if on_result is not None:
+                on_result(item, result)
+        return out
+
+    results: list[Any] = [None] * len(items)
+
+    def _run(index: int, item: Any) -> None:
+        try:
+            outcome = worker(item)
+        except Exception as exc:  # noqa: BLE001 - collected, not raised
+            outcome = exc
+        results[index] = outcome
+        if on_result is not None:
+            with contextlib.suppress(Exception):
+                on_result(item, outcome)
+
+    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="verify") as pool:
+        futures = [pool.submit(_run, i, item) for i, item in enumerate(items)]
+        for future in futures:
+            # ``result()`` re-raises only if _run itself raised, which it cannot; the
+            # wait is still needed so shutdown is ordered.
+            future.result()
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Group-oriented façade (preserved API; now built on the promoted worker)
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class TaskResult:
+    task_id: str
+    command: str
+    success: bool
+    exit_code: int | None
+    duration_seconds: float
+    stdout_tail: str = ""
+    stderr_tail: str = ""
+    timed_out: bool = False
+    error: str = ""
+    artifacts: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class TaskGroup:
-    """A group of tasks that can be executed together."""
+    """A set of tasks that may run concurrently.
 
-    tasks: tuple[Any, ...]
-    parallel: bool
-    dependency_on: str | None = None
+    ``parallel=False`` marks a group whose tasks must run in order — a real dependency,
+    or a task that mutates state another task in the same group reads.
+    """
+
+    group_id: int
+    task_ids: list[str]
+    tasks: list[Any] = field(default_factory=list)
+    parallel: bool = True
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "task_ids": [
-                t.task_id if hasattr(t, "task_id") else str(i)
-                for i, t in enumerate(self.tasks)
-            ],
+            "group_id": self.group_id,
+            "task_ids": list(self.task_ids),
+            "tasks": [getattr(t, "task_id", str(t)) for t in self.tasks],
             "parallel": self.parallel,
-            "dependency_on": self.dependency_on,
         }
 
 
 @dataclass
 class ExecutionReport:
-    """Aggregate report from a parallel execution run."""
-
-    plan_id: str = ""
-    started_at: str = ""
-    completed_at: str = ""
-    total_duration_seconds: float = 0.0
+    run_id: str
     results: list[TaskResult] = field(default_factory=list)
-    groups_executed: int = 0
-    parallel_groups: int = 0
-    sequential_groups: int = 0
-    fallback_sequential: bool = False
-    errors: list[str] = field(default_factory=list)
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "plan_id": self.plan_id,
-            "started_at": self.started_at,
-            "completed_at": self.completed_at,
-            "total_duration_seconds": self.total_duration_seconds,
-            "results": [r.__dict__ for r in self.results],
-            "groups_executed": self.groups_executed,
-            "parallel_groups": self.parallel_groups,
-            "sequential_groups": self.sequential_groups,
-            "fallback_sequential": self.fallback_sequential,
-            "errors": list(self.errors),
-        }
+    total_duration: float = 0.0
 
     @property
     def all_passed(self) -> bool:
@@ -99,404 +496,175 @@ class ExecutionReport:
 
     @property
     def exit_code(self) -> int:
-        failed = [r for r in self.results if not r.success]
-        return 1 if failed else 0
+        return 0 if self.all_passed else 1
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "run_id": self.run_id,
+            "results": [r.to_dict() for r in self.results],
+            "total_duration": self.total_duration,
+            "all_passed": self.all_passed,
+        }
 
 
-# ---------------------------------------------------------------------------
-# Worker function (must be top-level for ProcessPoolExecutor pickling)
-# ---------------------------------------------------------------------------
+def _command_of(task: Any) -> str:
+    for attr in ("command", "execution_command"):
+        value = getattr(task, attr, None)
+        if value:
+            return str(value)
+    if isinstance(task, dict):
+        for key in ("command", "execution_command"):
+            if task.get(key):
+                return str(task[key])
+    return ""
 
 
-def _run_task(
-    task: Any,
-    worker_id: int,
-    timeout_seconds: int,
-) -> dict[str, Any]:
-    """Execute a single task inside a worker process.
+def _task_id_of(task: Any) -> str:
+    for attr in ("task_id", "id"):
+        value = getattr(task, attr, None)
+        if value:
+            return str(value)
+    if isinstance(task, dict) and task.get("task_id"):
+        return str(task["task_id"])
+    return f"task-{id(task)}"
 
-    Accepts either an ExecutableVerificationTask (with execution_command)
-    or a plain dict with at least a 'command' key.
+
+def _depends_on(task: Any) -> tuple[str, ...]:
+    """Read the real dependency field.
+
+    M10-R2 B4: the original read ``dependency_on``/``dependencies``, which the plan model
+    never sets. ``depends_on`` is the field ``_add_dependency_edges`` populates, and
+    ``depends_on_task`` is accepted for callers that spell it that way.
     """
-    import subprocess  # noqa: PLC0415
+    for attr in ("depends_on", "dependencies", "depends_on_task"):
+        value = getattr(task, attr, None)
+        if value:
+            return tuple(str(v) for v in value)
+    if isinstance(task, dict):
+        for key in ("depends_on", "dependencies", "depends_on_task"):
+            if task.get(key):
+                return tuple(str(v) for v in task[key])
+    return ()
 
-    if hasattr(task, "execution_command"):
-        command = task.execution_command
-        task_id = task.task_id
-        component = task.component
-        capability = task.capability
-    elif isinstance(task, dict):
-        command = task.get("command", "")
-        task_id = task.get("task_id", f"unknown-{worker_id}")
-        component = task.get("component", "")
-        capability = task.get("capability", "")
-    else:
-        return {
-            "task_id": str(worker_id),
-            "success": False,
-            "exit_code": -1,
-            "duration_seconds": 0.0,
-            "error": f"Unsupported task type: {type(task).__name__}",
-        }
 
-    if not command:
-        return {
-            "task_id": task_id,
-            "success": False,
-            "exit_code": -1,
-            "duration_seconds": 0.0,
-            "error": "Empty command",
-        }
+def plan_parallel_groups(
+    tasks: Sequence[Any],
+    max_workers: int = DEFAULT_MAX_WORKERS,
+) -> list[TaskGroup]:
+    """Layer tasks into groups; tasks within a group are independent.
 
-    start = datetime.now(UTC)
-    try:
-        proc = subprocess.run(
-            command,
-            shell=True,
-            cwd=str(REPO_ROOT),
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-            env=os.environ.copy(),
+    Deterministic: input order is preserved, and a task runs only in a later group
+    than everything it depends on.
+    """
+    placed: list[str] = []
+    groups: list[TaskGroup] = []
+    todo = list(tasks)
+    guard = 0
+    while todo and guard <= len(tasks) + 1:
+        guard += 1
+        ready = [t for t in todo if all(dep in placed for dep in _depends_on(t))]
+        if not ready:
+            # A dependency cycle: run what is left in one sequential group rather than
+            # dropping obligations. Ordering inside it stays input order.
+            groups.append(
+                TaskGroup(
+                    group_id=len(groups),
+                    task_ids=[_task_id_of(t) for t in todo],
+                    tasks=list(todo),
+                    parallel=False,
+                )
+            )
+            break
+        parallel = len(ready) > 1 and max_workers > 1
+        groups.append(
+            TaskGroup(
+                group_id=len(groups),
+                task_ids=[_task_id_of(t) for t in ready],
+                tasks=list(ready),
+                parallel=parallel,
+            )
         )
-        duration = (datetime.now(UTC) - start).total_seconds()
-        return {
-            "task_id": task_id,
-            "success": proc.returncode == 0,
-            "exit_code": proc.returncode,
-            "duration_seconds": duration,
-            "error": proc.stderr if proc.returncode != 0 else None,
-            "output_path": "",
-        }
-    except subprocess.TimeoutExpired:
-        duration = (datetime.now(UTC) - start).total_seconds()
-        return {
-            "task_id": task_id,
-            "success": False,
-            "exit_code": -1,
-            "duration_seconds": duration,
-            "error": f"Timed out after {timeout_seconds}s",
-            "output_path": "",
-        }
-    except Exception as exc:
-        duration = (datetime.now(UTC) - start).total_seconds()
-        return {
-            "task_id": task_id,
-            "success": False,
-            "exit_code": -1,
-            "duration_seconds": duration,
-            "error": str(exc),
-            "output_path": "",
-        }
-
-
-# ---------------------------------------------------------------------------
-# ParallelExecutor
-# ---------------------------------------------------------------------------
+        placed.extend(_task_id_of(t) for t in ready)
+        todo = [t for t in todo if _task_id_of(t) not in placed]
+    return groups
 
 
 class ParallelExecutor:
-    """Executes independent verification tasks in parallel groups.
+    """Group-oriented execution façade over the promoted streaming worker.
 
-    Parameters
-    ----------
-    max_workers : int
-        Maximum number of concurrent worker processes.  Capped at 4 and at
-        least 1.  Defaults to the number of CPUs (clamped to [1, 4]).
-    per_task_timeout : int
-        Per-task timeout in seconds.  Defaults to 600.
+    Retained for the existing callers/tests. The canonical verification paths do not
+    use this class — they drive :func:`execute_tasks_in_parallel` directly with their
+    own record builder, because they need ``TaskExecutionRecord`` vocabulary rather
+    than ``TaskResult``. What this class still owns is dependency-aware *group*
+    planning, which the orchestrator replaces with the plan's own ``depends_on``.
     """
 
     def __init__(
         self,
-        max_workers: int | None = None,
-        per_task_timeout: int = 600,
+        max_workers: int | None = DEFAULT_MAX_WORKERS,
+        evidence_root: Path | None = None,
+        timeout_seconds: int = 900,
     ) -> None:
-        cpu_count = max(1, multiprocessing.cpu_count())
-        self.max_workers = max(1, min(cpu_count, 4, max_workers or cpu_count))
-        self.per_task_timeout = per_task_timeout
+        self.max_workers = max_workers
+        self.evidence_root = evidence_root
+        self.timeout_seconds = timeout_seconds
 
-    # -- planning ----------------------------------------------------------
+    def plan_parallel_groups(self, tasks: Sequence[Any]) -> list[TaskGroup]:
+        return plan_parallel_groups(tasks, self.max_workers)
 
-    def plan_parallel_groups(
-        self,
-        tasks: list[Any],
-    ) -> list[TaskGroup]:
-        """Partition *tasks* into parallel and sequential groups.
+    def _execute_one(self, task: Any, plan_id: str) -> TaskResult:
+        from runtime.foundation.verification.env import child_process_env
 
-        Grouping rules:
-          1. Tasks whose ``depends_on`` (or ``dependencies``) are empty form
-             a single parallel group.
-          2. Tasks that declare dependencies on other task IDs form sequential
-             groups ordered by dependency depth.
-          3. A task with ``dependency_on`` set is placed in a group after the
-             referenced task finishes.
-        """
-        if not tasks:
-            return []
-
-        id_set = {getattr(t, "task_id", str(i)) for i, t in enumerate(tasks)}
-
-        # Partition into independent vs dependent
-        independent: list[Any] = []
-        dependent: list[Any] = []
-
-        for t in tasks:
-            deps = getattr(t, "depends_on", ()) or getattr(t, "dependencies", [])
-            if not deps:
-                independent.append(t)
-            else:
-                dependent.append(t)
-
-        groups: list[TaskGroup] = []
-
-        if independent:
-            groups.append(
-                TaskGroup(
-                    tasks=tuple(independent),
-                    parallel=True,
-                    dependency_on=None,
-                )
-            )
-
-        # Sort dependent tasks by dependency depth for sequential ordering
-        sorted_dependent = self._topological_sort(dependent, id_set)
-        if sorted_dependent:
-            groups.append(
-                TaskGroup(
-                    tasks=tuple(sorted_dependent),
-                    parallel=False,
-                    dependency_on=None,
-                )
-            )
-
-        # If any task references another via dependency_on, split it out
-        final_groups: list[TaskGroup] = []
-        for group in groups:
-            has_ext_dep = any(getattr(t, "dependency_on", None) for t in group.tasks)
-            if not has_ext_dep:
-                final_groups.append(group)
-            else:
-                standalone = [
-                    t for t in group.tasks if not getattr(t, "dependency_on", None)
-                ]
-                dependent_tasks = [
-                    t for t in group.tasks if getattr(t, "dependency_on", None)
-                ]
-                if standalone:
-                    final_groups.append(
-                        TaskGroup(
-                            tasks=tuple(standalone),
-                            parallel=len(standalone) > 1,
-                            dependency_on=None,
-                        )
-                    )
-                for dt in dependent_tasks:
-                    final_groups.append(
-                        TaskGroup(
-                            tasks=(dt,),
-                            parallel=False,
-                            dependency_on=dt.dependency_on,
-                        )
-                    )
-
-        return (
-            final_groups
-            if final_groups
-            else [
-                TaskGroup(
-                    tasks=tuple(tasks),
-                    parallel=len(tasks) > 1,
-                    dependency_on=None,
-                )
-            ]
+        command = _command_of(task)
+        task_id = _task_id_of(task)
+        root = (
+            Path(self.evidence_root)
+            if self.evidence_root
+            else REPO_ROOT / "runtime" / "generated"
         )
-
-    def _topological_sort(
-        self,
-        tasks: list[Any],
-        known_ids: set[str],
-    ) -> list[Any]:
-        """Order dependent tasks by depth so prerequisites execute first."""
-        visited: set[str] = set()
-        order: list[Any] = []
-
-        def _visit(task: Any, depth: int = 0) -> None:
-            tid = getattr(task, "task_id", str(depth))
-            if tid in visited:
-                return
-            visited.add(tid)
-            deps = getattr(task, "depends_on", ()) or getattr(task, "dependencies", [])
-            for dep_id in deps:
-                if dep_id in known_ids and dep_id != tid:
-                    dep_task = next(
-                        (t for t in tasks if getattr(t, "task_id", "") == dep_id),
-                        None,
-                    )
-                    if dep_task and dep_task not in order:
-                        _visit(dep_task, depth + 1)
-            order.append(task)
-
-        for t in tasks:
-            _visit(t)
-        return order
-
-    # -- execution ---------------------------------------------------------
+        base = root / "parallel-logs" / plan_id
+        result = run_streaming_command(
+            command,
+            stdout_path=base / f"{task_id}-stdout.log",
+            stderr_path=base / f"{task_id}-stderr.log",
+            timeout_seconds=self.timeout_seconds,
+            env=child_process_env(),
+        )
+        return TaskResult(
+            task_id=task_id,
+            command=command,
+            success=result.exit_code == 0
+            and not result.timed_out
+            and not result.infra_error,
+            exit_code=result.exit_code,
+            duration_seconds=result.duration_seconds,
+            stdout_tail=result.stdout.splitlines()[-20:],
+            stderr_tail=result.stderr.splitlines()[-20:],
+            timed_out=result.timed_out,
+            error=result.infra_error or "",
+            artifacts=[str(result.stdout_path), str(result.stderr_path)],
+        )
 
     def execute_parallel(
         self,
-        groups: list[TaskGroup],
-        *,
-        plan_id: str = "",
+        groups: Sequence[TaskGroup],
+        plan_id: str = "parallel",
     ) -> ExecutionReport:
-        """Execute task groups and return an ExecutionReport.
-
-        Parallel groups are dispatched via ProcessPoolExecutor; sequential
-        groups run one task at a time.  Results stream in as each task
-        completes.
-
-        If ProcessPoolExecutor cannot be initialised (e.g. frozen-stdio
-        environment), execution falls back to the sequential path.
-        """
-        report = ExecutionReport(
-            plan_id=plan_id,
-            started_at=datetime.now(UTC).isoformat(),
-        )
-        all_results: list[TaskResult] = []
-
-        try:
-            use_parallel = self._can_use_pool()
-        except Exception:
-            use_parallel = False
-
-        for group_idx, group in enumerate(groups):
-            group_started = datetime.now(UTC)
-
-            if group.parallel and use_parallel:
-                group_results = self._execute_parallel_group(group)
-                report.parallel_groups += 1
-            else:
-                group_results = self._execute_sequential_group(group)
-                report.sequential_groups += 1
-
-            all_results.extend(group_results)
-            report.groups_executed += 1
-
-            group_duration = (datetime.now(UTC) - group_started).total_seconds()
-
-        report.results = all_results
-        report.completed_at = datetime.now(UTC).isoformat()
-        report.total_duration_seconds = (
-            datetime.fromisoformat(report.completed_at)
-            - datetime.fromisoformat(report.started_at)
-        ).total_seconds()
-
-        if not use_parallel and len(groups) > 1:
-            report.fallback_sequential = True
-
-        return report
-
-    def _execute_parallel_group(
-        self,
-        group: TaskGroup,
-    ) -> list[TaskResult]:
-        """Run all tasks in a parallel group concurrently."""
+        t0 = time.monotonic()
         results: list[TaskResult] = []
-        futures: dict[concurrent.futures.Future, Any] = {}
-
-        with concurrent.futures.ProcessPoolExecutor(
-            max_workers=self.max_workers,
-        ) as pool:
-            for idx, task in enumerate(group.tasks):
-                future = pool.submit(
-                    _run_task,
-                    task,
-                    idx,
-                    self.per_task_timeout,
-                )
-                futures[future] = task
-
-            for future in concurrent.futures.as_completed(futures):
-                task = futures[future]
-                try:
-                    data = future.result(timeout=self.per_task_timeout + 10)
-                except Exception as exc:
-                    data = {
-                        "task_id": getattr(task, "task_id", "unknown"),
-                        "success": False,
-                        "exit_code": -1,
-                        "duration_seconds": 0.0,
-                        "error": str(exc),
-                    }
-
-                results.append(
-                    TaskResult(
-                        task_id=data.get("task_id", "unknown"),
-                        component=getattr(task, "component", ""),
-                        capability=getattr(task, "capability", ""),
-                        success=data.get("success", False),
-                        exit_code=data.get("exit_code", -1),
-                        duration_seconds=data.get("duration_seconds", 0.0),
-                        error=data.get("error"),
-                        output_path=data.get("output_path", ""),
+        for group in groups:
+            if group.parallel:
+                results.extend(
+                    execute_tasks_in_parallel(
+                        list(group.tasks),
+                        lambda t: self._execute_one(t, plan_id),
+                        max_workers=self.max_workers,
                     )
                 )
-
-        return results
-
-    def _execute_sequential_group(
-        self,
-        group: TaskGroup,
-    ) -> list[TaskResult]:
-        """Run tasks in a group one after another."""
-        results: list[TaskResult] = []
-        for idx, task in enumerate(group.tasks):
-            data = _run_task(task, idx, self.per_task_timeout)
-            results.append(
-                TaskResult(
-                    task_id=data.get("task_id", "unknown"),
-                    component=getattr(task, "component", ""),
-                    capability=getattr(task, "capability", ""),
-                    success=data.get("success", False),
-                    exit_code=data.get("exit_code", -1),
-                    duration_seconds=data.get("duration_seconds", 0.0),
-                    error=data.get("error"),
-                    output_path=data.get("output_path", ""),
-                )
-            )
-        return results
-
-    @staticmethod
-    def _can_use_pool() -> bool:
-        """Return True if a ProcessPoolExecutor can be safely created."""
-        try:
-            with concurrent.futures.ProcessPoolExecutor(max_workers=1) as pool:
-                return pool._shutdown is False  # type: ignore[attr-defined]
-        except Exception:
-            return False
-
-
-# ---------------------------------------------------------------------------
-# Convenience
-# ---------------------------------------------------------------------------
-
-
-def execute_tasks_in_parallel(
-    tasks: list[Any],
-    *,
-    max_workers: int | None = None,
-    plan_id: str = "",
-) -> ExecutionReport:
-    """One-shot helper: plan groups then execute."""
-    executor = ParallelExecutor(max_workers=max_workers)
-    groups = executor.plan_parallel_groups(tasks)
-    return executor.execute_parallel(groups, plan_id=plan_id)
-
-
-__all__ = [
-    "ExecutionReport",
-    "ParallelExecutor",
-    "TaskGroup",
-    "TaskResult",
-    "execute_tasks_in_parallel",
-]
+            else:
+                results.extend(self._execute_one(t, plan_id) for t in group.tasks)
+        return ExecutionReport(
+            run_id=plan_id,
+            results=results,
+            total_duration=time.monotonic() - t0,
+        )

@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface CapabilityListItem {
   id: string;
@@ -79,7 +79,7 @@ export function useCapabilityList() {
     queryFn: () =>
       apiFetchJson('/platform/v1/capabilities') as Promise<CapabilityListResponse>,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 
@@ -92,7 +92,7 @@ export function useCapabilityDetail(capabilityId: string | undefined) {
       ) as Promise<CapabilityDetailResponse>,
     enabled: !!capabilityId,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 
@@ -105,6 +105,6 @@ export function useCapabilityGraph(capabilityId: string | undefined) {
       ) as Promise<CapabilityGraphResponse>,
     enabled: !!capabilityId,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }

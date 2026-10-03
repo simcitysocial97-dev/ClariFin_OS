@@ -479,6 +479,7 @@ CREATE TABLE IF NOT EXISTS financial_goals (
     current_amount_paise INTEGER DEFAULT 0,
     target_date TEXT,
     status TEXT DEFAULT 'active',
+    priority TEXT DEFAULT 'medium',
     category TEXT,
     notes TEXT,
     created_at TEXT DEFAULT (datetime('now')),
@@ -644,6 +645,15 @@ _MIGRATION_COLUMNS: list[tuple[str, str, str]] = [
     ("behaviour_snapshots", "subscription_burn_rate_bps", "INTEGER"),
     ("behaviour_snapshots", "resilience_index_bps", "INTEGER"),
     ("behaviour_snapshots", "wellness_score_bps", "INTEGER"),
+    # M11: `FinancialGoalRepository.create_goal` INSERTs `priority` and
+    # `list_goals` ORDERs by it, but the `financial_goals` DDL never declared
+    # it, so every goal write and every goal read raised
+    # `OperationalError: no such column: priority` — which surfaced as HTTP 500
+    # on `GET /api/v1/financial-intelligence/priorities` and `/report`. The
+    # domain carries a priority (the repository, `update_goal` and the
+    # intelligence engine all model one), so the column is added rather than
+    # the domain model stripped of it.
+    ("financial_goals", "priority", "TEXT DEFAULT 'medium'"),
 ]
 
 # ============================================================
@@ -871,6 +881,40 @@ def run_migrations(db_path: str | None = None) -> None:
             )
         except sqlite3.OperationalError as e:
             logger.warning("Migration: household columns skipped: %s", e)
+
+        # M11: rescale behaviour_snapshots.wellness_score_bps.
+        #
+        # Rows written before the fix were produced by
+        # `wellness_score_bps = int(wellness_score * 10000)` on a value that is
+        # already 0-100, so the column held 0-1,000,000 instead of the 0-10,000
+        # a basis-point column holds. `BehaviourRepository._map_snapshot_row`
+        # then multiplied by 100 again on read, so a real 87.5449 was served as
+        # 8754.4900.
+        #
+        # Only values above 10,000 are touched. That is the exact set of values
+        # the double-scaled writer could produce and a correct writer cannot
+        # (the engine clamps the score to [0, 100], so a correct row is at most
+        # 10,000). The statement is therefore idempotent and cannot re-scale a
+        # row that is already correct, including a legitimate 10,000 / score-100
+        # row and a 0 / score-0 row.
+        try:
+            cur = conn.execute(
+                "SELECT COUNT(*) FROM behaviour_snapshots "
+                "WHERE wellness_score_bps > 10000"
+            )
+            stale = cur.fetchone()[0] if cur else 0
+            if stale:
+                conn.execute(
+                    "UPDATE behaviour_snapshots "
+                    "SET wellness_score_bps = wellness_score_bps / 100 "
+                    "WHERE wellness_score_bps > 10000"
+                )
+                logger.info(
+                    "Migration: rescaled %d double-scaled wellness_score_bps rows",
+                    stale,
+                )
+        except sqlite3.OperationalError as e:
+            logger.warning("Migration: wellness_score_bps rescale skipped: %s", e)
 
 
 def verify_schema(db_path: str | None = None) -> None:

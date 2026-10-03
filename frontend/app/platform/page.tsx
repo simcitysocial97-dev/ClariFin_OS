@@ -32,6 +32,12 @@ import {
   ConsoleLoadingState,
   ConsoleUnavailableState,
 } from '@/components/platform/console-state';
+import {
+  classifyPlatformRead,
+  resolveConsoleTerminalState,
+  useBackendStatus,
+  type BackendStatusDetail,
+} from '@/lib/platform/backend-status';
 
 // ============================================================
 // Sub-components
@@ -65,40 +71,37 @@ function SystemStatusCard({ platform, frameworkIntegrity }: { platform: string; 
 }
 
 function DimensionsGrid({
+  dimensions,
   domains,
-  platformStatus: _platformStatus,
-  frameworkIntegrityStatus,
 }: {
+  dimensions: { label: string; status: string }[];
   domains: { name: string; status: string; last_check: string; source: string; detail?: string }[];
-  platformStatus: string;
-  frameworkIntegrityStatus: string;
 }) {
-  // Show top-level statuses from actual health domains
-  const topLevelNames = ['Backend', 'Frontend', 'Database', 'Architecture', 'Verification', 'Evidence', 'AI Runtime', 'Framework Integrity'];
-
   return (
     <div className="flex flex-col gap-3">
-      {/* Top-level summary row */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-        {topLevelNames.map((label) => {
-          let status: string;
-          if (label === 'Framework Integrity') {
-            status = frameworkIntegrityStatus;
-          } else {
-            status = domains.find((d) => d.name === label)?.status ?? 'UNKNOWN';
-          }
-          return (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <HealthBadge status={status} size="sm" showLabel={false} />
-              <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center">
-                {label}
-              </span>
-            </div>
-          );
-        })}
+      {/* Top-level summary row.
+          M10-A3: `dimensions` comes from the top-level fields of the health
+          snapshot. It used to be derived by looking each of these labels up in
+          `data.domains`, which only carries the sub-authority breakdown, so the
+          primary operations screen reported UNKNOWN for Backend, Frontend,
+          Database, Architecture, Evidence and AI Runtime while the API was
+          reporting HEALTHY / SAFE / VALID / READY for them. */}
+      <div data-testid="health-dimensions-grid" className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+        {dimensions.map(({ label, status }) => (
+          <div key={label} className="flex flex-col items-center gap-1">
+            <HealthBadge status={status} size="sm" showLabel={false} />
+            <span
+              data-testid="health-dimension-label"
+              className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide text-center"
+            >
+              {label}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Domain detail table */}
+      {/* Domain detail table — the sub-authority breakdown, which was passed in
+          as a hardcoded `[]` and therefore never rendered at all. */}
       {domains.length > 0 && (
         <div className="border-t border-[var(--border-subtle)] pt-2 mt-1">
           <div className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2">
@@ -203,11 +206,16 @@ function VerificationStatusCard() {
 }
 
 function CapabilitiesSummary({ count, stages }: { count: number; stages: number }) {
+  // M10-A3: the subtitle used to read a hardcoded "0 issues". The
+  // `/platform/v1/capabilities` payload carries no issue count at all, so that
+  // number was a claim the console could not support. It now reports only what
+  // the API returned: the capability count and the number of stages in the
+  // catalog.
   return (
     <MetricTile
       label="Capabilities"
       value={count}
-      subtitle={`${stages} stages · 0 issues`}
+      subtitle={`${stages} ${stages === 1 ? 'stage' : 'stages'} in C50 catalog`}
       accent="positive"
     />
   );
@@ -225,6 +233,8 @@ export default function PlatformDashboardPage() {
     platformStatus,
     frameworkIntegrityStatus,
     unhealthyDomains,
+    dimensions,
+    domains,
   } = usePlatformHealthSummary();
   const { data: eventsData, isLoading: eventsLoading } = usePlatformEvents(8);
   const errorCount = useCurrentErrorCount();
@@ -236,27 +246,61 @@ export default function PlatformDashboardPage() {
     refetch: refetchCaps,
   } = useCapabilityList();
 
-  // M9-C71: the primary operations screen must never look busy while it is in
-  // fact unable to report anything. Previously this page gated only on
-  // isLoading, so an unreachable platform API left the dashboard saying
-  // "Loading platform state…" indefinitely.
-  const unavailable = healthError ?? capsError;
+  // M11 — the dashboard must name WHICH of the four backend states it is in, not
+  // collapse them into one "unavailable". On a cold start this page's two
+  // governing reads were measured at 13.8 s (`/platform/v1/health`, uncached) and
+  // 53.8–118.6 s (`/platform/v1/evidence`, uncached), with no request deadline,
+  // so every operator saw "Loading platform state…" for minutes. `backend`
+  // supplies the transport-level evidence (accepted-but-silent vs. not-listening
+  // vs. serving) that turns a deadline breach into an actionable state.
+  const backend = useBackendStatus();
+
+  const failure: BackendStatusDetail | null = healthError
+    ? classifyPlatformRead({ error: healthError, path: '/platform/v1/health' }, backend.status === 'ready')
+    : capsError
+      ? classifyPlatformRead({ error: capsError, path: '/platform/v1/capabilities' }, backend.status === 'ready')
+      : null;
+
+  // M11 (integration fix). `starting` is NOT a terminal state, and treating it
+  // as one was a real defect rather than a test artefact — see
+  // `resolveConsoleTerminalState` for the full argument. In short: the backend
+  // spends ~16 s importing its module graph before it can answer `GET /health`,
+  // so `starting` is the NORMAL cold-start condition, and a terminal panel
+  // there told the operator to act during the window where acting is most
+  // expensive. It also made the "Waiting for the backend to start serving…"
+  // loading copy below unreachable, because this gate ran first.
+  const unavailable = resolveConsoleTerminalState({
+    readFailure: failure,
+    backendStatus: backend.status,
+    hasData: Boolean(dimensions ?? capsData),
+  });
+
   if (unavailable) {
     return (
       <ConsoleUnavailableState
         heading="Platform"
-        subject="No platform signals to show — the platform API is unreachable, so nothing on this screen can be reported."
-        message={unavailable.message}
+        subject="No platform signals to show — the platform API has not returned data for this screen."
+        detail={unavailable}
         onRetry={() => {
+          void backend.refresh();
           void refetchHealth();
           void refetchCaps();
         }}
+        retrying={healthLoading || capsLoading}
       />
     );
   }
 
   if (healthLoading || capsLoading) {
-    return <ConsoleLoadingState label="Loading platform state…" />;
+    return (
+      <ConsoleLoadingState
+        label={
+          backend.status === 'ready'
+            ? 'Loading platform state…'
+            : 'Waiting for the backend to start serving…'
+        }
+      />
+    );
   }
 
   const capabilityCount = capsData?.data?.count ?? 0;
@@ -299,9 +343,8 @@ export default function PlatformDashboardPage() {
               <SystemStatusCard platform={platformStatus} frameworkIntegrity={frameworkIntegrityStatus} />
             </div>
             <DimensionsGrid
-              domains={[]} // Will be populated from health data
-              platformStatus={platformStatus}
-              frameworkIntegrityStatus={frameworkIntegrityStatus}
+              dimensions={dimensions}
+              domains={domains}
             />
           </div>
 

@@ -16,31 +16,80 @@ class PatternRepository(BaseRepository):
     """Repository for behaviour pattern operations."""
 
     def create_pattern(self, pattern_data: dict[str, Any]) -> dict[str, Any] | None:
-        """Create a new behaviour pattern."""
+        """Create or update a behaviour pattern.
+
+        ``behaviour_patterns`` carries ``UNIQUE(pattern_type, pattern_key,
+        household_id)`` — one row per pattern per household is the domain rule.
+        Detection runs on demand from ``BehaviourService.get_patterns``, so the
+        same pattern is re-detected on every read; a plain INSERT raised
+        ``IntegrityError`` on the second detection of the same pattern. This
+        refreshes the existing row instead, and lets a pattern's strength and
+        observed window track the household's current data rather than freezing
+        at first detection.
+
+        UPDATE-then-INSERT rather than ``ON CONFLICT(...) DO UPDATE``, because an
+        ON CONFLICT target requires the table to carry that unique constraint and
+        a database created before it would reject every write.
+        """
+        household_id = pattern_data.get("household_id", DEFAULT_HOUSEHOLD_ID)
+        metadata_json = json.dumps(pattern_data.get("config", {}))
         with self._get_conn() as conn:
             cursor = conn.execute(
                 """
-                INSERT INTO behaviour_patterns (
-                    pattern_type, pattern_key, household_id, strength_bps,
-                    first_observed, last_observed, transaction_count,
-                    total_amount_paise, metadata_json
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
+                UPDATE behaviour_patterns SET
+                    strength_bps = ?,
+                    first_observed = ?,
+                    last_observed = ?,
+                    transaction_count = ?,
+                    total_amount_paise = ?,
+                    metadata_json = ?
+                WHERE pattern_type = ? AND pattern_key = ? AND household_id = ?
+                """,
                 (
-                    pattern_data["pattern_type"],
-                    pattern_data["pattern_key"],
-                    pattern_data.get("household_id", DEFAULT_HOUSEHOLD_ID),
                     pattern_data["strength_bps"],
                     pattern_data["first_observed"],
                     pattern_data["last_observed"],
                     pattern_data["transaction_count"],
                     pattern_data.get("total_amount_paise", 0),
-                    json.dumps(pattern_data.get("config", {})),
+                    metadata_json,
+                    pattern_data["pattern_type"],
+                    pattern_data["pattern_key"],
+                    household_id,
                 ),
             )
+            if cursor.rowcount == 0:
+                conn.execute(
+                    """
+                    INSERT INTO behaviour_patterns (
+                        pattern_type, pattern_key, household_id, strength_bps,
+                        first_observed, last_observed, transaction_count,
+                        total_amount_paise, metadata_json
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        pattern_data["pattern_type"],
+                        pattern_data["pattern_key"],
+                        household_id,
+                        pattern_data["strength_bps"],
+                        pattern_data["first_observed"],
+                        pattern_data["last_observed"],
+                        pattern_data["transaction_count"],
+                        pattern_data.get("total_amount_paise", 0),
+                        metadata_json,
+                    ),
+                )
             conn.commit()
+            row = conn.execute(
+                "SELECT id FROM behaviour_patterns "
+                "WHERE pattern_type = ? AND pattern_key = ? AND household_id = ?",
+                (
+                    pattern_data["pattern_type"],
+                    pattern_data["pattern_key"],
+                    household_id,
+                ),
+            ).fetchone()
 
-        pattern_id = cursor.lastrowid
+        pattern_id = row["id"] if row else None
         return self.get_pattern_by_id(pattern_id) if pattern_id else None
 
     def get_pattern_by_id(self, pattern_id: int | str) -> dict[str, Any] | None:

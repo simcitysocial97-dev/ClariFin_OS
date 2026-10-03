@@ -111,12 +111,18 @@ def _collect_changed_files_result(*, fetch_remote: bool = True) -> Any:
     from types import SimpleNamespace
 
     return SimpleNamespace(
-        files=[], source="no-git", base=None, head=None, error="git unavailable"
+        files=[],
+        source="no-git",
+        base=None,
+        head=None,
+        error="git unavailable",
     )
 
 
 def _get_current_commit() -> str:
-    from runtime.foundation.verification.orchestrator import _get_current_commit
+    from runtime.foundation.verification.orchestrator import (
+        _get_current_commit,
+    )
 
     return _get_current_commit()
 
@@ -170,16 +176,35 @@ class ControlPlane:
 
     # ── CANONICAL PUBLIC OPERATIONS ────────────────────────────────────────
 
-    def check(self, changed_files: list[str] | None = None) -> int:
+    def check(
+        self,
+        changed_files: list[str] | None = None,
+        *,
+        shard: tuple[int | None, int | None] = (None, None),
+        json_out: bool = False,
+    ) -> int:
         """
         Primary verification entrypoint.
 
         Given the current repository state, determine what is affected,
         plan the required verification, execute it, and produce evidence.
 
+        M10-R2: *shard* is ``(shard, shard_count)``. ``(None, None)`` means not
+        sharded, which is byte-identical to the pre-M10-R2 behaviour. When sharded,
+        the full plan is still built and still validated — only the *execution* is
+        narrowed to this shard's tasks, so the plan job and every shard agree on the
+        plan fingerprint by construction.
+
         Returns 0 on certified, 1 on failed/blocked/interrupted.
         """
         import time
+
+        from runtime.foundation.verification.execution_shards import (
+            assign_shards,
+            evidence_path_conflicts,
+            plan_matrix,
+            validate_shard_request,
+        )
 
         cf_result = _collect_changed_files_result()
         changed_files = (
@@ -190,14 +215,23 @@ class ControlPlane:
 
         # O-2 / G4 boundary transparency: print the resolved boundary BEFORE
         # planning so the operator knows what surface is being verified.
-        print(f"[check] boundary={source}", end="")
+        print(f"[check] boundary={source}", end="", file=sys.stderr)
         if base_ref:
-            print(f" base={base_ref[:8]}", end="")
-        print(f" files={len(changed_files)}")
+            print(f" base={base_ref[:8]}", end="", file=sys.stderr)
+        print(f" files={len(changed_files)}", file=sys.stderr)
 
         if not changed_files and not _is_git_available():
-            print("No changed files detected and git unavailable.", file=sys.stderr)
+            print(
+                "No changed files detected and git unavailable.",
+                file=sys.stderr,
+            )
             return 1
+
+        try:
+            shard_index, shard_count = validate_shard_request(*shard)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
 
         # 1. Repository state → Change detection
         # 2. Change detection → Capability graph → Affected capabilities
@@ -243,8 +277,78 @@ class ControlPlane:
         if not execution_plan.tasks and not getattr(
             execution_plan, "mandatory_task_requirements", ()
         ):
-            print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op")
+            print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op", file=sys.stderr)
             return 0
+
+        # 4c. Shard narrowing (M10-R2). The plan above is always built whole, so the
+        #     plan job and every shard derive an identical ``plan_fingerprint``.
+        #     Only the task subset executed here differs. With ``shard_count == 1``
+        #     this branch is inert and the run is byte-identical to pre-M10-R2.
+        if shard_count > 1:
+            from runtime.foundation.verification.execution_orchestrator import (
+                ExecutionPlan,
+            )
+
+            assignment = assign_shards(execution_plan, shard_count)
+
+            conflicts = evidence_path_conflicts(assignment)
+            if conflicts:
+                print(
+                    "Refusing to fan out: concurrent tasks would share an evidence "
+                    "destination: " + "; ".join(conflicts),
+                    file=sys.stderr,
+                )
+                return 2
+
+            matrix = plan_matrix(assignment, execution_plan)
+            print(
+                f"[check] plan={execution_plan.plan_id} "
+                f"tasks={len(execution_plan.tasks)} "
+                f"partition={assignment.partition_fingerprint()[:12]}",
+                file=sys.stderr,
+            )
+            print(f"[check] MATRIX_JSON={matrix}", file=sys.stderr)
+
+            kept = {t.task_id for t in assignment.shards[shard_index]}
+            # Escalation tasks are EXCLUDED from shard execution, not merely
+            # replicated. They are gated on the GLOBAL mandatory outcome
+            # (`stop-on-sufficiency` runs them only when no mandatory task passed), and a
+            # shard holding a subset of the mandatory tasks cannot decide that.
+            # Replicating them would let each shard escalate on partial information.
+            # The aggregate owns escalation, which is also why the shard's remaining
+            # `depends_on` references no longer dangle once they are removed.
+            kept -= {t.task_id for t in execution_plan.tasks if t.is_escalation}
+            execution_plan = ExecutionPlan(
+                plan_id=execution_plan.plan_id,
+                source_plan_id=execution_plan.source_plan_id,
+                repository_fingerprint=execution_plan.repository_fingerprint,
+                changed_files=list(execution_plan.changed_files),
+                affected_capabilities=list(execution_plan.affected_capabilities),
+                affected_components=list(execution_plan.affected_components),
+                invalidated_evidence=list(execution_plan.invalidated_evidence),
+                reusable_evidence=list(execution_plan.reusable_evidence),
+                tasks=[t for t in execution_plan.tasks if t.task_id in kept],
+                escalation_conditions=list(execution_plan.escalation_conditions),
+                measurement_requirements=list(execution_plan.measurement_requirements),
+                certification_requirements=list(
+                    execution_plan.certification_requirements
+                ),
+                rationale=execution_plan.rationale,
+                plan_fingerprint=execution_plan.plan_fingerprint,
+                generated_at=execution_plan.generated_at,
+                revalidation_sources=list(execution_plan.revalidation_sources),
+                reusable_measurements=list(execution_plan.reusable_measurements),
+                boundary_evidence=execution_plan.boundary_evidence,
+            )
+            total_tasks = len(assignment.task_ids(0)) + sum(
+                len(set(assignment.task_ids(i)) - set(assignment.task_ids(0)))
+                for i in range(1, shard_count)
+            )
+            print(
+                f"[check] shard {shard_index + 1}/{shard_count}: executing "
+                f"{len(kept)}/{total_tasks} assigned task(s)",
+                file=sys.stderr,
+            )
 
         run_start = time.monotonic()
         executed_task_ids: list[str] = []
@@ -308,6 +412,25 @@ class ControlPlane:
         record_execution_report("check", report, time.monotonic() - run_start)
 
         # 7. Print the compact per-task summary (truthful evidence of what ran).
+        if json_out:
+            # M10-R2. A reconcile shard runner pipes stdout to `shard-N.json`, and the
+            # aggregate job parses it back into an ExecutionReport. That only works if
+            # stdout is *machine-readable* on request; the human summary and the
+            # verdict banner go to stderr instead so they still reach the log without
+            # corrupting the JSON document.
+            print(report.to_json())
+            print(_format_task_summary(report), file=sys.stderr)
+            decision = getattr(report, "final_decision", "unknown")
+            print(
+                (
+                    "✓ Verification CERTIFIED"
+                    if decision == "certified"
+                    else f"✗ Verification FAILED: {getattr(report, 'decision_reason', 'unknown')}"
+                ),
+                file=sys.stderr,
+            )
+            return 0 if decision == "certified" else 1
+
         print(_format_task_summary(report))
 
         # 8. Evidence → Verdict (exit-code contract unchanged).
@@ -322,7 +445,16 @@ class ControlPlane:
             return 1
 
     def plan(
-        self, changed_files: list[str] | None = None, *, json_out: bool = False
+        self,
+        changed_files: list[str] | None = None,
+        *,
+        json_out: bool = False,
+        shard_matrix: bool = False,
+        shard_count: int | None = None,
+        shard_plan_out: str | None = None,
+        test_shards: bool = False,
+        test_shard_with_counts: bool = False,
+        profile_matrix_for: str | None = None,
     ) -> int:
         """
         Plan-only mode.
@@ -336,12 +468,92 @@ class ControlPlane:
           - skipped/deferred tasks
           - reasons
           - evidence reuse decisions.
+
+        M10-R2 adds two machine-readable modes for the reconcile
+        ``plan -> matrix -> aggregate`` topology. They exist so the partition is
+        produced by the same code that assigns shards, rather than by YAML or a
+        second implementation:
+
+        * ``shard_matrix`` prints the GitHub Actions dynamic-matrix document for
+          ``shard_count`` shards and nothing else, so the plan job can publish it via
+          ``$GITHUB_OUTPUT`` without parsing prose.
+        * ``shard_plan_out`` writes the serialized ``ExecutionPlan`` to a file, so a
+          shard runner is handed the plan it was assigned instead of re-deriving one.
         """
         if changed_files is None:
             changed_files = _collect_changed_files()
         if not changed_files and not _is_git_available():
-            print("No changed files detected and git unavailable.", file=sys.stderr)
+            print(
+                "No changed files detected and git unavailable.",
+                file=sys.stderr,
+            )
             return 1
+
+        if test_shards or profile_matrix_for is not None:
+            if profile_matrix_for is not None:
+                from runtime.foundation.verification.profile_tasks import (
+                    profile_matrix as build_profile_matrix,
+                )
+
+                try:
+                    print(build_profile_matrix(profile_matrix_for))
+                except ValueError as exc:
+                    print(str(exc), file=sys.stderr)
+                    return 2
+                return 0
+
+            from runtime.foundation.verification.runtime_shards import (
+                DEFAULT_SHARD_COUNT,
+                build_test_shards,
+                runtime_test_files,
+            )
+            from runtime.foundation.verification.runtime_shards import (
+                shard_matrix as build_shard_matrix,
+            )
+
+            files = runtime_test_files()
+            if not files:
+                print("no runtime test files found", file=sys.stderr)
+                return 1
+            plan = build_test_shards(
+                files,
+                shard_count or DEFAULT_SHARD_COUNT,
+                _runtime_test_counts() if test_shard_with_counts else None,
+            )
+            print(build_shard_matrix(plan))
+            return 0
+
+        if shard_matrix or shard_plan_out is not None:
+            from runtime.foundation.verification.execution_shards import (
+                assign_shards,
+                plan_matrix,
+            )
+
+            execution_plan = self.orchestrator.build_execution_plan(changed_files)
+            if not execution_plan.tasks:
+                print(
+                    "No tasks for this boundary; nothing to shard.",
+                    file=sys.stderr,
+                )
+                return 1
+
+            if shard_plan_out is not None:
+                out = Path(shard_plan_out)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(
+                    json.dumps(execution_plan.to_dict(), indent=2, default=str),
+                    encoding="utf-8",
+                )
+                print(
+                    f"[plan] wrote {execution_plan.plan_id} "
+                    f"({len(execution_plan.tasks)} task(s)) to {out}",
+                    file=sys.stderr,
+                )
+
+            if shard_matrix:
+                assignment = assign_shards(execution_plan, shard_count or 1)
+                print(plan_matrix(assignment, execution_plan))
+            return 0
 
         plan: ControlPlanePlan = self.planner.plan(changed_files)
         obligations: ObligationSet = self._plan_to_obligations(plan, changed_files)
@@ -353,36 +565,172 @@ class ControlPlane:
 
         return 0
 
-    def run(self, *, plan_path: str | None = None, json_out: bool = False) -> int:
+    def run(
+        self,
+        *,
+        plan_path: str | None = None,
+        json_out: bool = False,
+        shard: tuple[int, int] | None = None,
+        aggregate: str | None = None,
+    ) -> int:
         """
         Execute an explicit or generated verification plan.
 
-        The plan must be machine-readable (ControlPlanePlan JSON).
+        M10-R2: a supplied plan is now **authoritative**.
+
+        Previously this method loaded ``plan_path``, looked for
+        ``ControlPlanePlan.from_dict`` via ``hasattr``, found nothing, discarded the
+        payload it had just parsed, and then rebuilt the full plan from the changed
+        files. Every "explicit plan" therefore executed the entire boundary again,
+        and a corrupt plan file exited 0. Both are now hard errors.
+
+        The plan format is ``m9-c49-execution-plan/v1`` — the
+        :class:`~runtime.foundation.verification.execution_orchestrator.ExecutionPlan`
+        that the executor actually consumes, not the C48 ``ControlPlanePlan``. That
+        is deliberate: the C48 plan is derived from the changed files and holds
+        capability-level tasks, so it cannot express a shard, and
+        ``CapabilityResolution`` has no faithful reverse mapping. Sharding operates
+        on the C49 plan, so that is what a plan file carries.
+
+        ``aggregate`` merges the reports of every shard run over one plan and is the
+        single place a verdict is formed for a fanned-out run. This is deliberately a
+        flag on ``run`` rather than a new canonical operation: the operation
+        vocabulary is a governed surface, and aggregation is a mode of executing a
+        supplied plan rather than a different kind of request.
         """
         import time
 
-        if plan_path:
-            # Load plan from file
-            plan_data = json.loads(Path(plan_path).read_text())
-            # Reconstruct ControlPlanePlan from dict
-            from runtime.foundation.verification.control_plane import (
-                ControlPlanePlan as CPPlan,
-            )
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionPlan,
+        )
+        from runtime.foundation.verification.execution_shards import (
+            assign_shards,
+            validate_shard_request,
+        )
 
-            plan = CPPlan.from_dict(plan_data) if hasattr(CPPlan, "from_dict") else None
-            if plan is None:
-                # Fallback: generate fresh plan
-                changed_files = _collect_changed_files()
-                plan = self.planner.plan(changed_files)
+        if aggregate is not None:
+            return self._aggregate_shard_reports(aggregate, json_out=json_out)
+
+        supplied: ExecutionPlan | None = None
+
+        if plan_path:
+            path = Path(plan_path)
+            try:
+                raw = path.read_text()
+            except OSError as exc:
+                print(
+                    f"Cannot read plan file {plan_path}: {exc}",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError as exc:
+                print(
+                    f"Plan file {plan_path} is not valid JSON: {exc}. "
+                    "Refusing to regenerate a plan from the changed files: a "
+                    "verification run must execute the plan it was given.",
+                    file=sys.stderr,
+                )
+                return 2
+            if not isinstance(payload, dict):
+                print(
+                    f"Plan file {plan_path} must contain a JSON object, got "
+                    f"{type(payload).__name__}.",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                supplied = ExecutionPlan.from_dict(payload)
+            except ValueError as exc:
+                print(
+                    f"Plan file {plan_path} is unusable: {exc}",
+                    file=sys.stderr,
+                )
+                return 2
+
+            validation_errors = supplied.validate()
+            if validation_errors:
+                print(
+                    f"Plan file {plan_path} failed validation: "
+                    + "; ".join(validation_errors),
+                    file=sys.stderr,
+                )
+                return 2
+
+        if supplied is not None:
+            execution_plan = supplied
+            changed_files = list(supplied.changed_files)
         else:
             changed_files = _collect_changed_files()
             if not changed_files and not _is_git_available():
-                print("No changed files detected and git unavailable.", file=sys.stderr)
+                print(
+                    "No changed files detected and git unavailable.",
+                    file=sys.stderr,
+                )
                 return 1
-            plan = self.planner.plan(changed_files)
+            # M10-R2: `run` previously also built a C48 `ControlPlanePlan` here and
+            # passed it to `_plan_to_obligations`, whose result was assigned to
+            # `_obligations` and then never read. That was dead computation on a
+            # plan format that cannot express a shard, so it is gone rather than
+            # reintroduced. The obligation rollup that *is* used lives in `plan`.
+            execution_plan = self.orchestrator.build_execution_plan(changed_files)
 
-        _obligations: ObligationSet = self._plan_to_obligations(plan, changed_files)
-        execution_plan = self.orchestrator.build_execution_plan(changed_files)
+        if shard is not None:
+            index, count = validate_shard_request(*shard)
+            assignment = assign_shards(execution_plan, count)
+            if count > 1:
+                from runtime.foundation.verification.execution_shards import (
+                    evidence_path_conflicts,
+                )
+
+                conflicts = evidence_path_conflicts(assignment)
+                if conflicts:
+                    print(
+                        "Refusing to fan out: concurrent tasks would share an "
+                        "evidence destination: " + "; ".join(conflicts),
+                        file=sys.stderr,
+                    )
+                    return 2
+                kept = {t.task_id for t in assignment.shards[index]}
+                # Escalation tasks are EXCLUDED from shard execution, not merely
+                # replicated. They are gated on the GLOBAL mandatory outcome
+                # (`stop-on-sufficiency` runs them only when no mandatory task passed), and a
+                # shard holding a subset of the mandatory tasks cannot decide that.
+                # Replicating them would let each shard escalate on partial information.
+                # The aggregate owns escalation, which is also why the shard's remaining
+                # `depends_on` references no longer dangle once they are removed.
+                kept -= {t.task_id for t in execution_plan.tasks if t.is_escalation}
+                print(
+                    f"[run] shard {index + 1}/{count} executing "
+                    f"{len(kept)}/{len(execution_plan.tasks)} task(s); "
+                    f"partition={assignment.partition_fingerprint()[:12]}",
+                    file=sys.stderr,
+                )
+                execution_plan = ExecutionPlan(
+                    plan_id=execution_plan.plan_id,
+                    source_plan_id=execution_plan.source_plan_id,
+                    repository_fingerprint=execution_plan.repository_fingerprint,
+                    changed_files=list(execution_plan.changed_files),
+                    affected_capabilities=list(execution_plan.affected_capabilities),
+                    affected_components=list(execution_plan.affected_components),
+                    invalidated_evidence=list(execution_plan.invalidated_evidence),
+                    reusable_evidence=list(execution_plan.reusable_evidence),
+                    tasks=[t for t in execution_plan.tasks if t.task_id in kept],
+                    escalation_conditions=list(execution_plan.escalation_conditions),
+                    measurement_requirements=list(
+                        execution_plan.measurement_requirements
+                    ),
+                    certification_requirements=list(
+                        execution_plan.certification_requirements
+                    ),
+                    rationale=execution_plan.rationale,
+                    plan_fingerprint=execution_plan.plan_fingerprint,
+                    generated_at=execution_plan.generated_at,
+                    revalidation_sources=list(execution_plan.revalidation_sources),
+                    reusable_measurements=list(execution_plan.reusable_measurements),
+                    boundary_evidence=execution_plan.boundary_evidence,
+                )
 
         # O-2 signal truth: record the run through the canonical event/RunRecord
         # chain even when the caller provided an explicit plan path.
@@ -413,7 +761,6 @@ class ControlPlane:
                 final_decision="interrupted",
                 extra_metadata={"tasks_executed": executed_task_ids},
             )
-            print("[run] INTERRUPTED (SIGINT/SIGTERM)", file=sys.stderr)
             return 130
 
         from runtime.verify import record_execution_report
@@ -421,11 +768,489 @@ class ControlPlane:
         record_execution_report("run", report, time.monotonic() - run_start)
 
         if json_out:
-            print(json.dumps(report.to_json(), indent=2, default=str))
+            print(report.to_json())
         else:
             self._print_execution_report(report)
             print(_format_task_summary(report))
 
+        return 0 if report.final_decision == "certified" else 1
+
+    def aggregate_playwright_legs(
+        self,
+        results_dir: str,
+        *,
+        shard_count: int | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Aggregate the Playwright fan-out into one verdict (M10-R2).
+
+        The gate is the authority. It refuses to certify unless every leg the plan
+        declared reported exactly once and passed — functional shards *and* one visual
+        leg per project. A missing leg means its tests never ran, which must never
+        certify, and the visual legs are checked exactly like the functional ones so a
+        dropped screenshot pass cannot pass unnoticed.
+        """
+        import time
+
+        from runtime.foundation.verification.playwright_shards import (
+            expected_leg_ids,
+            read_leg_results,
+            verify_legs,
+        )
+
+        started = time.monotonic()
+        results, unreadable = read_leg_results(Path(results_dir))
+        expected = expected_leg_ids(shard_count or 4)
+
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "leg result(s) unreadable, their tests are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(verify_legs(expected, results))
+
+        passed = sum(1 for r in results if r.ok)
+        visual = [r for r in results if r.shard_id.endswith("-visual")]
+        certified = not problems
+        reason = (
+            f"all {len(expected)} leg(s) passed ({len(visual)} visual, "
+            f"{len(results) - len(visual)} functional)"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "legs_expected": expected,
+                        "legs_reported": len(results),
+                        "legs_passed": passed,
+                        "visual_legs": len(visual),
+                        "leg_results": [r.to_dict() for r in results],
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[playwright-gate] "
+                f"{'CERTIFIED' if certified else 'NOT CERTIFIED'}: {reason}"
+            )
+
+        return 0 if certified else 1
+
+    def run_test_shards(
+        self,
+        *,
+        shard_index: int | None = None,
+        shard_count: int | None = None,
+        result_out: str | None = None,
+        verify_dir: str | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Run one runtime test shard, or aggregate every shard (M10-R2).
+
+        The gate is the authority. It refuses to certify unless every expected shard
+        reported exactly once, every shard passed, and the independent integrity
+        obligation passed. "The aggregate job succeeded" is never read as "every shard
+        succeeded" — that is the whole reason this gate exists rather than letting the
+        matrix job statuses speak for it.
+        """
+        import time
+
+        from runtime.foundation.verification.runtime_shards import (
+            DEFAULT_SHARD_COUNT,
+            expected_shard_ids,
+            read_shard_results,
+            run_test_shard,
+            summarise_shards,
+            verify_shards,
+        )
+
+        if shard_index is not None:
+            if not result_out:
+                print(
+                    "--shard requires --result-out <path> so the gate can read the "
+                    "shard's outcome",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                shard = run_test_shard(
+                    shard_index,
+                    shard_count or DEFAULT_SHARD_COUNT,
+                    result_out=Path(result_out),
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(
+                f"[runtime-shard] {shard.shard_id} {shard.status} "
+                f"files={shard.file_count} passed={shard.passed} "
+                f"failed={shard.failed} ({shard.duration_seconds:.1f}s)",
+                file=sys.stderr,
+            )
+            return 0 if shard.ok else 1
+
+        if not verify_dir:
+            print(
+                "run --profile runtime needs --shard N (a leg) or "
+                "--verify-shards <dir> (the gate)",
+                file=sys.stderr,
+            )
+            return 2
+
+        started = time.monotonic()
+        results, unreadable = read_shard_results(Path(verify_dir))
+        # The integrity obligation runs here, after the shards: it is a distinct
+        # canonical operation (`runtime.verify integrity`) that the monolithic
+        # self-test used to run sequentially. Running it in the gate keeps it a real
+        # obligation rather than folding it into the last shard.
+        print(f"[runtime-gate] {len(results)} shard result(s) read")
+        summary = summarise_shards(results)
+        if summary:
+            print(summary)
+
+        # The integrity obligation is a distinct canonical operation
+        # (`runtime.verify integrity`) that the monolithic self-test used to run
+        # sequentially after the suite. It runs here, in the gate, as a real
+        # obligation rather than being folded into whichever shard happened to be
+        # last — otherwise a green suite could mask a red integrity scan.
+        integrity_ok: bool | None = None
+        if not unreadable and all(r.ok for r in results):
+            integrity_ok = _run_runtime_integrity(Path(verify_dir))
+
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "shard result(s) unreadable, their tests are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(
+            verify_shards(
+                shard_count or len(results),
+                results,
+                integrity_ok=integrity_ok,
+            )
+        )
+
+        certified = not problems
+        reason = (
+            f"all {len(results)} shard(s) passed across "
+            f"{sum(r.file_count for r in results)} file(s); "
+            f"{sum(r.passed for r in results)} test(s) passed"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "shards_expected": expected_shard_ids(
+                            shard_count or len(results)
+                        ),
+                        "shards_reported": len(results),
+                        "shard_results": [r.to_dict() for r in results],
+                        "tests_passed": sum(r.passed for r in results),
+                        "files_covered": sum(r.file_count for r in results),
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[runtime-gate] {'CERTIFIED' if certified else 'NOT CERTIFIED'}: "
+                f"{reason}"
+            )
+
+        return 0 if certified else 1
+
+    def run_profile_fanout(
+        self,
+        profile_op: str,
+        *,
+        task: str | None = None,
+        result_out: str | None = None,
+        verify_legs: str | None = None,
+        json_out: bool = False,
+    ) -> int:
+        """Run one obligation of a profile, or aggregate a profile's legs (M10-R2).
+
+        Three modes on one surface:
+
+        * ``task=<id>`` — execute exactly that canonical obligation on this runner and
+          write a result document. This is the matrix leg. The command comes from the
+          profile's own task list and runs through the shared worker, so a leg *is* the
+          obligation rather than a re-implementation of it.
+        * ``verify_legs=<dir>`` — the gate. Reads every leg result and refuses to
+          certify unless every canonical obligation reported and passed, then runs the
+          profile's evidence-rollup task(s) and exits with the profile's verdict.
+
+        The gate is the authority. A missing obligation, a duplicate report, an unknown
+        task id, or any non-passing leg all block certification — the same split-brain
+        discipline the reconcile shard merge uses. There is no path by which a red or
+        absent leg yields a green required check.
+        """
+        import time
+
+        from runtime.foundation.verification.profile_tasks import (
+            aggregate_tasks,
+            expected_obligation_ids,
+            read_leg_results,
+            run_obligation_leg,
+            summarise_legs,
+        )
+        from runtime.foundation.verification.profile_tasks import (
+            verify_legs as verify_leg_results,
+        )
+
+        if task:
+            if not result_out:
+                print(
+                    "--task requires --result-out <path> so the gate can read the "
+                    "leg's outcome",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                result = run_obligation_leg(
+                    profile_op,
+                    task,
+                    result_out=Path(result_out),
+                    timeout_seconds=_profile_task_timeout_seconds(),
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            print(
+                f"[profile-leg:{profile_op}] {result.task_id} {result.status} "
+                f"({result.duration_seconds:.1f}s)",
+                file=sys.stderr,
+            )
+            return 0 if result.ok else 1
+
+        if not verify_legs:
+            print(
+                "run --profile needs either --task <id> (a leg) or "
+                "--verify-legs <dir> (the gate)",
+                file=sys.stderr,
+            )
+            return 2
+
+        started = time.monotonic()
+        results, unreadable = read_leg_results(Path(verify_legs))
+        problems: list[str] = []
+        if unreadable:
+            problems.append(
+                "leg result(s) unreadable, their obligations are unreported: "
+                + ", ".join(unreadable)
+            )
+        problems.extend(verify_leg_results(profile_op, results))
+
+        print(f"[profile-gate:{profile_op}] {len(results)} leg result(s) read")
+        summary = summarise_legs(results)
+        if summary:
+            print(summary)
+
+        # The evidence rollup runs only once every obligation has reported, because it
+        # reads what they produced. That is a genuine data dependency and therefore a
+        # real barrier, not an ordering preference.
+        rollups = aggregate_tasks(profile_op)
+        if not problems:
+            for rollup in rollups:
+                outcome = run_obligation_leg(
+                    profile_op,
+                    rollup.id,
+                    result_out=Path(verify_legs) / f"aggregate-{rollup.id}.json",
+                    timeout_seconds=_profile_task_timeout_seconds(),
+                )
+                if not outcome.ok:
+                    problems.append(
+                        f"{rollup.id} {outcome.status} exit={outcome.exit_code}"
+                    )
+
+        elapsed = time.monotonic() - started
+        passed = sum(1 for r in results if r.ok)
+        expected = expected_obligation_ids(profile_op)
+        certified = not problems
+        reason = (
+            f"all {len(expected)} obligation(s) passed; "
+            f"evidence rollup {len(rollups)} task(s) passed"
+            if certified
+            else "; ".join(problems)
+        )
+
+        if json_out:
+            print(
+                json.dumps(
+                    {
+                        "profile": profile_op,
+                        "obligations_expected": expected,
+                        "legs_reported": len(results),
+                        "legs_passed": passed,
+                        "rollups": len(rollups),
+                        "final_decision": (
+                            "certified" if certified else "not_certified"
+                        ),
+                        "decision_reason": reason,
+                        "elapsed_seconds": round(elapsed, 2),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+        else:
+            print(
+                f"[profile-gate:{profile_op}] "
+                f"{'CERTIFIED' if certified else 'NOT CERTIFIED'}: {reason}"
+            )
+
+        return 0 if certified else 1
+
+    def _aggregate_shard_reports(
+        self, shard_dir: str, *, json_out: bool = False
+    ) -> int:
+        """Merge every shard's report over one plan and form the single verdict.
+
+        This is the M10-R2 reconcile aggregate step. The property that makes it safe
+        is asserted in ``execution_shards.merge_shard_reports`` and re-stated here
+        because it is the whole reason this step exists: a set of records that does
+        not cover every task in the plan can only produce ``NOT_CERTIFIABLE``, with
+        the missing ids named. There is no configuration in which a shard that
+        silently failed to report leaves the run certifiable.
+        """
+
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionPlan,
+            ExecutionReport,
+            TaskExecutionRecord,
+        )
+        from runtime.foundation.verification.execution_shards import (
+            merge_shard_reports,
+        )
+
+        root = Path(shard_dir)
+        plan_file = root / "plan.json"
+        if not plan_file.exists():
+            print(
+                f"[aggregate] no plan.json in {shard_dir}; the aggregate job must "
+                "receive the plan artifact alongside the shard reports",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            plan = ExecutionPlan.from_dict(json.loads(plan_file.read_text()))
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"[aggregate] unreadable plan {plan_file}: {exc}", file=sys.stderr)
+            return 2
+
+        shard_files = sorted(root.glob("shard-*.json"))
+        if not shard_files:
+            print(
+                f"[aggregate] no shard-*.json reports in {shard_dir}; a gate that "
+                "aggregates zero shards would certify nothing and must not report "
+                "success",
+                file=sys.stderr,
+            )
+            return 2
+
+        reports: list[ExecutionReport] = []
+        unreadable: list[str] = []
+        for path in shard_files:
+            try:
+                payload = json.loads(path.read_text())
+            except (OSError, json.JSONDecodeError) as exc:
+                # A shard that died mid-flight — wrapper timeout, OOM, cancellation —
+                # leaves no readable report. That is not a reason for the gate to
+                # produce no verdict at all: it is exactly the "shard coverage
+                # incomplete" case, and it must be decided NOT_CERTIFIABLE with the
+                # offending file named, never as an opaque exit 2 with nothing to act
+                # on. Its tasks then simply never appear in the record set, which is
+                # what the missing-task guard is for.
+                print(
+                    f"[aggregate] shard report {path.name} is unreadable "
+                    f"({type(exc).__name__}); its tasks count as unreported: {exc}",
+                    file=sys.stderr,
+                )
+                unreadable.append(path.name)
+                continue
+            if payload.get("plan_id") not in (None, plan.plan_id):
+                print(
+                    f"[aggregate] {path.name} reports plan_id={payload['plan_id']} but "
+                    f"the aggregate plan is {plan.plan_id}; the shards did not agree "
+                    "on the plan",
+                    file=sys.stderr,
+                )
+                return 2
+            records = []
+            for record in payload.get("records") or []:
+                record["completion_state"] = _as_state(record.get("completion_state"))
+                records.append(TaskExecutionRecord(**record))
+            reports.append(
+                ExecutionReport(
+                    report_id=payload.get("report_id", path.stem),
+                    plan_id=payload.get("plan_id", plan.plan_id),
+                    plan_fingerprint=payload.get(
+                        "plan_fingerprint", plan.plan_fingerprint
+                    ),
+                    started_at=payload.get("started_at", ""),
+                    completed_at=payload.get("completed_at", ""),
+                    total_duration_seconds=payload.get("total_duration_seconds", 0.0),
+                    records=records,
+                    efficiency=payload.get("efficiency") or {},
+                    final_decision=payload.get("final_decision", "unknown"),
+                    decision_reason=payload.get("decision_reason", ""),
+                    evidence_reused=payload.get("evidence_reused") or [],
+                    escalations_triggered=payload.get("escalations_triggered") or [],
+                    decisions=payload.get("decisions") or [],
+                )
+            )
+
+        print(
+            f"[aggregate] plan={plan.plan_id} tasks={len(plan.tasks)} "
+            f"shards={len(reports)} unreadable={len(unreadable)}",
+            file=sys.stderr,
+        )
+        report = merge_shard_reports(plan, reports, live_fp=plan.repository_fingerprint)
+
+        if unreadable:
+            report.final_decision = "not_certifiable"
+            report.decision_reason = (
+                f"{report.decision_reason} | shard report(s) unreadable, so their "
+                f"tasks are unreported: {', '.join(unreadable)}"
+            )
+            report.efficiency["unreadable_shard_reports"] = len(unreadable)
+
+        from runtime.verify import record_execution_report
+
+        record_execution_report("run", report, 0.0)
+
+        if json_out:
+            print(report.to_json())
+        else:
+            self._print_execution_report(report)
+            print(_format_task_summary(report))
+
+        if report.final_decision != "certified":
+            print(
+                f"[aggregate] {report.final_decision}: {report.decision_reason}",
+                file=sys.stderr,
+            )
         return 0 if report.final_decision == "certified" else 1
 
     def diagnose(self, changed_files: list[str] | None = None) -> int:
@@ -444,7 +1269,10 @@ class ControlPlane:
         bundle = analyze(changed_files=changed_files)
         print(
             format_diagnostic(
-                bundle["change"], bundle["blast"], bundle["risk"], bundle["repair"]
+                bundle["change"],
+                bundle["blast"],
+                bundle["risk"],
+                bundle["repair"],
             )
         )
         return 0
@@ -497,7 +1325,9 @@ class ControlPlane:
             return 0
         else:
             # No capability specified: run mutation smoke test as default behavior
-            from runtime.foundation.verification.mutation_runner import run_mutation_cli
+            from runtime.foundation.verification.mutation_runner import (
+                run_mutation_cli,
+            )
 
             old_argv = sys.argv
             sys.argv = ["verify.py", "mutation"] + remaining_args
@@ -931,7 +1761,9 @@ class ControlPlane:
         Includes authority drift detection from the authority_drift_detector module.
         Returns FrameworkIntegrityResult via diagnose(); int for CLI compatibility.
         """
-        from runtime.system.observability.health_report import EngineeringHealthReport
+        from runtime.system.observability.health_report import (
+            EngineeringHealthReport,
+        )
 
         report = EngineeringHealthReport()
         output = report.generate()
@@ -1070,7 +1902,10 @@ class ControlPlane:
         # Build provenance labels from capability_sources for obligations that need them
         cap_to_provenance_labels: dict[str, list[str]] = {}
         if plan.capability_resolution:
-            for cap_id, labels in plan.capability_resolution.capability_sources.items():
+            for (
+                cap_id,
+                labels,
+            ) in plan.capability_resolution.capability_sources.items():
                 cap_to_provenance_labels[cap_id] = labels
 
         obligations: list[VerificationObligation] = []
@@ -1126,7 +1961,7 @@ class ControlPlane:
                 disposition=Disposition.OPEN,
                 task_id=task.task_id,
                 evidence=(),
-                reasons=tuple(reason_parts) if reason_parts else (task.reason,),
+                reasons=(tuple(reason_parts) if reason_parts else (task.reason,)),
             )
             obligations.append(obligation)
 
@@ -1191,6 +2026,36 @@ def _find_arg(flag: str, args: list[str], *, default: str | None = None) -> str 
         i += 1
     return default
 
+    #: Canonical, profile-scoped subcommands for CI scheduling (M10-R2).
+
+
+#:
+#: The verification model keeps saying *what* must be certified; these say only *how*
+#: it is scheduled. They are intentionally thin wrappers over the canonical primitives
+#: (``plan --test-shards``, ``run --profile <p> --shard``,
+#: ``run --profile <p> --verify-shards``), so no obligation definition lives here and
+#: the CI topology can change without touching the verification model.
+#:
+#: The ``<profile>-`` prefix is load-bearing: it is what keeps these inside Rule 8's
+#: existing ``prof.startswith(expected + "-")`` allowance (the precedent Rule 8 itself
+#: cites is mutation.yml's ``mutation-plan`` / ``mutation-aggregate``), so widening the
+#: CI topology required no validator change and no weakening of any rule.
+PROFILE_SUBCOMMANDS: frozenset[str] = frozenset(
+    {
+        # runtime
+        "runtime-plan",
+        "runtime-shard",
+        "runtime-aggregate",
+        # backend
+        "backend-plan",
+        "backend-task",
+        "backend-aggregate",
+        # playwright
+        "playwright-plan",
+        "playwright-aggregate",
+    }
+)
+
 
 def main() -> int:
     """
@@ -1224,12 +2089,16 @@ def main() -> int:
     # the generic `strengthen` route because the aggregate is a reconciliation
     # over shard evidence, not a test-strengthening execution.
     if command == "mutation-aggregate":
-        from runtime.foundation.verification.mutation_shards import run_aggregate_cli
+        from runtime.foundation.verification.mutation_shards import (
+            run_aggregate_cli,
+        )
 
         return run_aggregate_cli(args)
 
     if command == "mutation-plan":
-        from runtime.foundation.verification.mutation_shards import run_plan_cli
+        from runtime.foundation.verification.mutation_shards import (
+            run_plan_cli,
+        )
 
         return run_plan_cli(args)
 
@@ -1238,9 +2107,27 @@ def main() -> int:
     # evidence, not a test-strengthening execution. It must be able to say
     # "the mutation score is invalid" — not merely report a number.
     if command == "mutation-trust":
-        from runtime.foundation.verification.mutation_trust import run_trust_cli
+        from runtime.foundation.verification.mutation_trust import (
+            run_trust_cli,
+        )
 
         return run_trust_cli(args)
+
+    # M10-R2: profile-scoped canonical subcommands.
+    #
+    # These exist so a *required* profile workflow can express
+    # `plan -> matrix -> aggregate` without the validator's Rule 8 being relaxed. Rule
+    # 8 already permits a profile workflow to use its own profile's subcommands — the
+    # precedent it cites is mutation.yml's `mutation-plan`, `mutation --shard`,
+    # `mutation-aggregate`, `mutation-trust`. These are the same idea for the profiles
+    # whose longest obligation was a single serial command.
+    #
+    # They are deliberately named `<profile>-<verb>`: that is what keeps them inside
+    # Rule 8's existing `prof.startswith(expected + "-")` allowance, so widening the CI
+    # topology required **no** validator change and no weakening of any rule.
+    if command in PROFILE_SUBCOMMANDS:
+        profile, verb = command.split("-", 1)
+        return _dispatch_profile_subcommand(profile, verb, args)
 
     # Handle legacy commands via the migration map
     classification = classification_for(command)
@@ -1263,8 +2150,154 @@ def main() -> int:
         return _dispatch_canonical(command, args)
 
     # Everything else is unreachable / test-only / internal
-    print(f"Command not available in canonical surface: {command}", file=sys.stderr)
+    print(
+        f"Command not available in canonical surface: {command}",
+        file=sys.stderr,
+    )
     return 1
+
+
+def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> int:
+    """Route a ``<profile>-<verb>`` canonical subcommand.
+
+    Each verb maps onto a primitive that already exists; this function adds no
+    verification logic of its own. ``profile`` is validated against the canonical
+    profile registry so a typo fails loudly rather than emitting an empty matrix.
+    """
+    from runtime.foundation.verification.profiles import _PROFILES
+
+    if profile not in _PROFILES:
+        print(
+            f"unknown profile {profile!r}; known profiles: "
+            + ", ".join(sorted(_PROFILES)),
+            file=sys.stderr,
+        )
+        return 2
+
+    args = list(args)
+    shard_count = None
+    if "--shard-count" in args:
+        idx = args.index("--shard-count")
+        try:
+            shard_count = int(args[idx + 1])
+        except (IndexError, ValueError):
+            print("--shard-count expects an integer", file=sys.stderr)
+            return 2
+        args = args[:idx] + args[idx + 2 :]
+    if "--count" in args:
+        idx = args.index("--count")
+        try:
+            shard_count = int(args[idx + 1])
+        except (IndexError, ValueError):
+            print("--count expects an integer", file=sys.stderr)
+            return 2
+        args = args[:idx] + args[idx + 2 :]
+    with_counts = "--with-counts" in args
+    args = [a for a in args if a != "--with-counts"]
+    json_out = "--json" in args
+    args = [a for a in args if a != "--json"]
+
+    cp = ControlPlane()
+
+    if verb == "plan":
+        if profile == "playwright":
+            from runtime.foundation.verification.playwright_shards import (
+                playwright_matrix,
+            )
+
+            try:
+                print(
+                    playwright_matrix(
+                        shard_count=shard_count or 4,
+                        with_counts=with_counts,
+                    )
+                )
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            return 0
+        if profile == "runtime":
+            return cp.plan(
+                shard_matrix=False,
+                shard_count=shard_count,
+                test_shards=True,
+                test_shard_with_counts=with_counts,
+            )
+        return cp.plan(profile_matrix_for=profile)
+
+    if verb == "shard":
+        if profile != "runtime":
+            print(
+                f"{profile}-shard is not a defined subcommand; runtime-test sharding "
+                "is the only shard primitive",
+                file=sys.stderr,
+            )
+            return 2
+        shard_index = None
+        if "--shard" in args:
+            idx = args.index("--shard")
+            try:
+                shard_index = int(args[idx + 1])
+            except (IndexError, ValueError):
+                print("--shard expects an integer", file=sys.stderr)
+                return 2
+            args = args[:idx] + args[idx + 2 :]
+        result_out = None
+        if "--result-out" in args:
+            idx = args.index("--result-out")
+            result_out = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        return cp.run_test_shards(
+            shard_index=shard_index,
+            shard_count=shard_count,
+            result_out=result_out,
+            json_out=json_out,
+        )
+
+    if verb == "aggregate":
+        target = None
+        for flag in ("--shards", "--verify-shards", "--legs", "--verify-legs"):
+            if flag in args:
+                idx = args.index(flag)
+                target = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+                break
+        if not target:
+            print(
+                f"{profile}-aggregate requires the directory holding the leg results",
+                file=sys.stderr,
+            )
+            return 2
+        if profile == "playwright":
+            return cp.aggregate_playwright_legs(
+                target, shard_count=shard_count, json_out=json_out
+            )
+        if profile == "runtime":
+            return cp.run_test_shards(
+                verify_dir=target, shard_count=shard_count, json_out=json_out
+            )
+        return cp.run_profile_fanout(profile, verify_legs=target, json_out=json_out)
+
+    if verb == "task":
+        task = None
+        if "--task" in args:
+            idx = args.index("--task")
+            task = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        result_out = None
+        if "--result-out" in args:
+            idx = args.index("--result-out")
+            result_out = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        return cp.run_profile_fanout(
+            profile, task=task, result_out=result_out, json_out=json_out
+        )
+
+    print(
+        f"unknown subcommand {verb!r} for profile {profile!r}",
+        file=sys.stderr,
+    )
+    return 2
 
 
 # ---------------------------------------------------------------------------
@@ -1300,15 +2333,31 @@ def _run_profile_alias(operation: str) -> int:
     observable outcome recording (blocking / timed-out / interrupted states
     are recorded rather than silently lost).
 
+    M10-R2 (C3b/C3g): independent tasks run concurrently through the shared worker
+    (``parallel_executor.run_streaming_command``), and the run is **collect-all**
+    rather than fail-fast. The previous loop returned on the first non-zero exit, which
+    meant a failure in task C erased the results of tasks D, E and F — the evidence
+    that would have told an operator which else was broken. The verdict is unchanged:
+    the profile still fails if any required task fails. Only the completeness of the
+    diagnosis changed.
+
+    Per-task stdout/stderr are streamed to ``runtime/generated/profile-logs/<op>/``
+    using the same worker the orchestrator uses, so a killed or interrupted run leaves
+    the output produced up to that instant rather than nothing at all.
+
     Returns the subprocess exit code (0 = success; non-zero mapped according
     to the canonical outcome vocabulary). On SIGINT/SIGTERM the process exits
     130/143 and an ``interrupted`` event is recorded. On per-task timeout a
     ``timeout_blocked`` event is recorded and the process exits 124.
     """
-    import subprocess
     import time
 
     from runtime.foundation.verification.env import child_process_env
+    from runtime.foundation.verification.parallel_executor import (
+        execute_tasks_in_parallel,
+        max_workers_for,
+        run_streaming_command,
+    )
     from runtime.foundation.verification.profiles import get_profile
     from runtime.verify import _record_verification_event
 
@@ -1320,89 +2369,128 @@ def _run_profile_alias(operation: str) -> int:
 
     env = child_process_env()
     run_start = time.monotonic()
-    passed = 0
-    failed = 0
     task_ids_executed: list[str] = []
     interrupted_flag = False
 
-    # Override is applied uniformly if the env-var is set (useful for tests /
-    # bounded CI jobs); otherwise each task uses its declared estimate.
     timeout_override = _profile_task_timeout_seconds()
 
-    for task in profile.tasks:
-        if task.name == "Aggregate evidence":
-            continue
-        task_timeout = timeout_override
-        if task_timeout <= 0:
-            task_timeout = max(600, 2 * task.estimated_duration_seconds)
-        for cmd in task.commands:
-            task_ids_executed.append(task.id)
-            try:
-                result = subprocess.run(
-                    cmd,
-                    shell=True,
-                    cwd=str(REPO_ROOT),
-                    env=env,
-                    timeout=task_timeout,
-                )
-            except subprocess.TimeoutExpired:
-                failed += 1
-                elapsed = time.monotonic() - run_start
-                _record_verification_event(
-                    None,
-                    profile_name=operation,
-                    elapsed=elapsed,
-                    status="blocked",
-                    passed=passed,
-                    failed=failed,
-                    final_decision="timeout_blocked",
-                    extra_metadata={"tasks_executed": task_ids_executed},
-                )
+    # "Aggregate evidence" is a post-run rollup, not a verification step; running it
+    # inside the loop was already skipped and stays skipped.
+    tasks = [t for t in profile.tasks if t.name != "Aggregate evidence"]
+
+    # M10-R2 — an evidence rollup is a BARRIER, never a peer.
+    #
+    # `VerificationTask.dependencies` is empty for every task in every profile, so the
+    # profile model does not express the one ordering that matters here: a rollup reads
+    # the evidence its sibling tasks produce. Run concurrently — which the fan-out
+    # introduced — `aggregate_evidence.py` reads a half-written evidence tree.
+    #
+    # This is the profile-level analogue of the escalation barrier in
+    # `ExecutionOrchestrator.execute`, and it is the same defect class as the runtime
+    # shard-boundary hazard: a consumer must never race its producer.
+    from runtime.foundation.verification.profile_tasks import is_aggregate_task
+
+    rollup_tasks = [t for t in tasks if is_aggregate_task(t)]
+    obligation_tasks = [t for t in tasks if not is_aggregate_task(t)]
+
+    log_root = REPO_ROOT / "runtime" / "generated" / "profile-logs" / operation
+    log_root.mkdir(parents=True, exist_ok=True)
+
+    def _run_task(task) -> dict:
+        """Run one profile task's commands in order; return its outcome."""
+        outcome = {
+            "id": task.id,
+            "returncode": 0,
+            "timed_out": False,
+            "signal": None,
+        }
+        for index, cmd in enumerate(task.commands):
+            suffix = f"-{index}" if len(task.commands) > 1 else ""
+            result = run_streaming_command(
+                cmd,
+                stdout_path=log_root / f"{task.id}{suffix}-stdout.log",
+                stderr_path=log_root / f"{task.id}{suffix}-stderr.log",
+                timeout_seconds=timeout_override,
+                cwd=REPO_ROOT,
+                env=env,
+            )
+            if result.infra_error:
+                # The command never started. Reported distinctly from a failure so the
+                # operator is not sent looking for an assertion that cannot exist.
                 print(
-                    f"[profile:{operation}] task {task.id!r} timed out after {task_timeout}s",
+                    f"[profile:{operation}] task {task.id!r} could not run: "
+                    f"{result.infra_error}",
                     file=sys.stderr,
                 )
-                return 124
-            except KeyboardInterrupt:
-                interrupted_flag = True
-                break
-            if result.returncode != 0:
-                failed += 1
-                elapsed = time.monotonic() - run_start
-                # SIGINT (130) and SIGTERM (143) are interruption signals,
-                # not task failures — record them as interrupted so the
-                # operator knows the run was terminated rather than that a
-                # verification asserted failed.
-                if result.returncode in (130, 143):
-                    _record_verification_event(
-                        None,
-                        profile_name=operation,
-                        elapsed=elapsed,
-                        status="interrupted",
-                        passed=passed,
-                        failed=failed,
-                        final_decision="interrupted",
-                        extra_metadata={"tasks_executed": task_ids_executed},
-                    )
-                    return result.returncode
-                _record_verification_event(
-                    None,
-                    profile_name=operation,
-                    elapsed=elapsed,
-                    status="failed",
-                    passed=passed,
-                    failed=failed,
-                    final_decision="failed",
-                    extra_metadata={"tasks_executed": task_ids_executed},
-                )
+                outcome["returncode"] = 127
+                return outcome
+            if result.timed_out:
+                outcome["timed_out"] = True
+                outcome["returncode"] = 124
                 print(
-                    f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
+                    f"[profile:{operation}] task {task.id!r} timed out after "
+                    f"{timeout_override}s",
                     file=sys.stderr,
                 )
-                return result.returncode
-            passed += 1
-        if interrupted_flag:
-            break
+                return outcome
+            if result.exit_code != 0:
+                outcome["returncode"] = result.exit_code
+                print(
+                    f"[profile:{operation}] task {task.id!r} failed "
+                    f"(exit {result.exit_code})",
+                    file=sys.stderr,
+                )
+                return outcome
+        return outcome
+
+    # Concurrency is bounded and never exceeds the work available. On a 2-core CI
+    # runner this yields ~2x rather than 7x; the large win for CI is the
+    # plan -> matrix -> aggregate topology, not this pool.
+    workers = max_workers_for(len(obligation_tasks))
+    if workers > 1 and len(obligation_tasks) > 1:
+        print(
+            f"[profile:{operation}] running {len(obligation_tasks)} obligation(s) "
+            f"with {workers} worker(s)"
+            + (
+                f", then {len(rollup_tasks)} evidence rollup(s)" if rollup_tasks else ""
+            ),
+            file=sys.stderr,
+        )
+
+    try:
+        outcomes = execute_tasks_in_parallel(
+            obligation_tasks, _run_task, max_workers=workers
+        )
+        # The rollup runs last, on the calling thread, so it observes a complete set of
+        # evidence rather than a partial one.
+        outcomes.extend(_run_task(t) for t in rollup_tasks)
+    except KeyboardInterrupt:
+        interrupted_flag = True
+        outcomes = []
+
+    task_ids_executed = [o["id"] for o in outcomes if isinstance(o, dict)]
+    passed = sum(1 for o in outcomes if isinstance(o, dict) and o["returncode"] == 0)
+    failed = len(outcomes) - passed
+
+    # Collect-all verdict: fail if any required task failed, but only after every
+    # independent task has reported.
+    timed_out_any = any(isinstance(o, dict) and o["timed_out"] for o in outcomes)
+    signal_exit = next(
+        (
+            o["returncode"]
+            for o in outcomes
+            if isinstance(o, dict) and o["returncode"] in (130, 143)
+        ),
+        None,
+    )
+    first_failure = next(
+        (
+            o["returncode"]
+            for o in outcomes
+            if isinstance(o, dict) and o["returncode"] != 0
+        ),
+        0,
+    )
 
     elapsed = time.monotonic() - run_start
     if interrupted_flag:
@@ -1417,6 +2505,52 @@ def _run_profile_alias(operation: str) -> int:
             extra_metadata={"tasks_executed": task_ids_executed},
         )
         return 130
+
+    # SIGINT (130) / SIGTERM (143) are interruption signals, not task failures.
+    # Recorded as interrupted so an operator knows the run was terminated rather
+    # than that a verification asserted failed — unchanged from before, just
+    # evaluated after every task has reported.
+    if signal_exit is not None:
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="interrupted",
+            passed=passed,
+            failed=failed,
+            final_decision="interrupted",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return signal_exit
+
+    if timed_out_any:
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="blocked",
+            passed=passed,
+            failed=failed,
+            final_decision="timeout_blocked",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return 124
+
+    if first_failure != 0:
+        # Every independent task has now run and reported; only now is the verdict
+        # formed. The exit code is the first non-zero in plan order, matching the
+        # pre-M10-R2 contract exactly.
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="failed",
+            passed=passed,
+            failed=failed,
+            final_decision="failed",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return first_failure
 
     _record_verification_event(
         None,
@@ -1477,18 +2611,108 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return _run_profile_alias(operation)
     cp = ControlPlane()
     if operation == CanonicalOperation.CHECK.value:
-        return cp.check()
+        try:
+            shard, shard_count = _parse_shard_arg(args)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        # M10-R2: `--json` makes stdout a machine-readable ExecutionReport so a
+        # reconcile shard runner can pipe it to disk for the aggregate job.
+        check_json = "--json" in args
+        if check_json:
+            args = [a for a in args if a != "--json"]
+        return cp.check(shard=(shard, shard_count), json_out=check_json)
     if operation == CanonicalOperation.PLAN.value:
-        # Handle --json flag
+        # Handle --json
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
+        # M10-R2: --profile-matrix <op> emits a profile's canonical obligations as
+        # a dynamic-matrix document, so GitHub can schedule real verification
+        # obligations instead of one serial command per required gate.
+        profile_op = None
+        if "--profile-matrix" in args:
+            idx = args.index("--profile-matrix")
+            if idx + 1 >= len(args):
+                print("--profile-matrix requires a profile name", file=sys.stderr)
+                return 2
+            profile_op = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        if profile_op is not None:
+            from runtime.foundation.verification.profile_tasks import profile_matrix
+
+            try:
+                print(profile_matrix(profile_op))
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return 2
+            return 0
+        # M10-R2: machine-readable plan modes for the reconcile topology.
+        shard_matrix = "--shard-matrix" in args
+        shard_count = None
+        for flag in ("--shard-count", "--shards"):
+            if flag in args:
+                idx = args.index(flag)
+                try:
+                    shard_count = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print(f"{flag} expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+
+        # M10-R2: --test-shards partitions the runtime suite. Its ~26 minutes of
+        # serial pytest is the single longest obligation in the repository, so it is
+        # the highest-value target in this milestone. Shards are whole files on
+        # dedicated runners, which avoids the contention that disqualified xdist.
+        if "--test-shards" in args:
+            args = [a for a in args if a != "--test-shards"]
+            with_counts = "--with-counts" in args
+            args = [a for a in args if a != "--with-counts"]
+            from runtime.foundation.verification.runtime_shards import (
+                DEFAULT_SHARD_COUNT,
+                build_test_shards,
+                runtime_test_files,
+            )
+            from runtime.foundation.verification.runtime_shards import (
+                shard_matrix as build_shard_matrix,
+            )
+
+            files = runtime_test_files()
+            if not files:
+                print("no runtime test files found", file=sys.stderr)
+                return 1
+            plan = build_test_shards(
+                files,
+                shard_count or DEFAULT_SHARD_COUNT,
+                _runtime_test_counts() if with_counts else None,
+            )
+            print(build_shard_matrix(plan))
+            return 0
+
+        shard_plan_out = None
+        if "--shard-plan" in args:
+            idx = args.index("--shard-plan")
+            if "--out" in args:
+                out_idx = args.index("--out")
+                shard_plan_out = args[out_idx + 1]
+                args = args[:out_idx] + args[out_idx + 2 :]
+            else:
+                print("--shard-plan requires --out <path>", file=sys.stderr)
+                return 2
+            args = args[:idx] + args[idx + 1 :]
         # Handle --changed-files flag
         changed_files = _find_changed_files_arg(args)
-        return cp.plan(changed_files=changed_files, json_out=json_out)
+        return cp.plan(
+            changed_files=changed_files,
+            json_out=json_out,
+            shard_matrix=shard_matrix,
+            shard_count=shard_count,
+            shard_plan_out=shard_plan_out,
+        )
     if operation == CanonicalOperation.RUN.value:
-        # Handle --plan and --json
+        # Handle --plan, --aggregate and --json
         plan_path = None
+        aggregate = None
         json_out = "--json" in args
         if json_out:
             args = [a for a in args if a != "--json"]
@@ -1497,7 +2721,93 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             idx = args.index("--plan")
             plan_path = args[idx + 1]
             args = args[:idx] + args[idx + 2 :]
-        return cp.run(plan_path=plan_path, json_out=json_out)
+        # Simple --aggregate <dir> parsing (M10-R2 reconcile aggregate step)
+        if "--aggregate" in args:
+            idx = args.index("--aggregate")
+            aggregate = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+
+        # --profile <op> is the required-gate fan-out surface (M10-R2):
+        #   --task <id> --result-out <path>  run ONE canonical obligation
+        #   --verify-legs <dir>              aggregate the legs into one verdict
+        profile_op = None
+        if "--profile" in args:
+            idx = args.index("--profile")
+            if idx + 1 >= len(args):
+                print("--profile requires a profile name", file=sys.stderr)
+                return 2
+            profile_op = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
+        if profile_op is not None:
+            # --result-out is shared by both leg kinds (a profile obligation leg and a
+            # runtime test shard leg), so it is parsed once, up front.
+            result_out = None
+            if "--result-out" in args:
+                i2 = args.index("--result-out")
+                result_out = args[i2 + 1]
+                args = args[:i2] + args[i2 + 2 :]
+            # --shard N --count M   run one runtime test shard (matrix leg)
+            # --verify-shards <dir> aggregate every shard into one verdict
+            shard_index = None
+            if "--shard" in args:
+                idx = args.index("--shard")
+                try:
+                    shard_index = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print("--shard expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+            shard_total = None
+            if "--count" in args:
+                idx = args.index("--count")
+                try:
+                    shard_total = int(args[idx + 1])
+                except (IndexError, ValueError):
+                    print("--count expects an integer", file=sys.stderr)
+                    return 2
+                args = args[:idx] + args[idx + 2 :]
+            verify_shards_dir = None
+            if "--verify-shards" in args:
+                idx = args.index("--verify-shards")
+                verify_shards_dir = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            if shard_index is not None or verify_shards_dir is not None:
+                return cp.run_test_shards(
+                    shard_index=shard_index,
+                    shard_count=shard_total,
+                    result_out=result_out,
+                    verify_dir=verify_shards_dir,
+                    json_out=json_out,
+                )
+            profile_task = None
+            if "--task" in args:
+                idx = args.index("--task")
+                profile_task = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            verify_legs = None
+            if "--verify-legs" in args:
+                idx = args.index("--verify-legs")
+                verify_legs = args[idx + 1]
+                args = args[:idx] + args[idx + 2 :]
+            return cp.run_profile_fanout(
+                profile_op,
+                task=profile_task,
+                result_out=result_out,
+                verify_legs=verify_legs,
+                json_out=json_out,
+            )
+
+        try:
+            shard, shard_count = _parse_shard_arg(args)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        return cp.run(
+            plan_path=plan_path,
+            json_out=json_out,
+            shard=(shard, shard_count),
+            aggregate=aggregate,
+        )
     if operation == CanonicalOperation.DIAGNOSE.value:
         return cp.diagnose()
     if operation == CanonicalOperation.STRENGTHEN.value:
@@ -1517,6 +2827,110 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return cp.doctor()
     print(f"Unknown canonical operation: {operation}", file=sys.stderr)
     return 1
+
+
+def _runtime_test_counts() -> dict[str, int] | None:
+    """Per-file test counts for the runtime suite, or None if unavailable.
+
+    Used only to *balance* shards. Coverage correctness never depends on it: the shard
+    partition asserts union(shards) == all files independently, so a failure to collect
+    counts degrades balance and nothing else.
+    """
+    import collections
+    import subprocess
+
+    try:
+        completed = subprocess.run(
+            [
+                ".venv/bin/python",
+                "-m",
+                "pytest",
+                "runtime/tests/",
+                "-q",
+                "--no-header",
+                "-p",
+                "no:cacheprovider",
+                "--collect-only",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=300,
+            cwd=str(REPO_ROOT),
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    counter: collections.Counter[str] = collections.Counter(
+        line.split("::", 1)[0] for line in completed.stdout.splitlines() if "::" in line
+    )
+    return dict(counter) or None
+
+
+def _as_state(value: Any) -> Any:
+    """Coerce a serialised completion state back into the enum member.
+
+    Shard reports cross a process boundary, so ``CompletionState.PASS`` arrives as a
+    string. Two shapes reach us and both must work:
+
+    * ``"pass"`` — the enum's value, which is what a report stores when the value was
+      serialised explicitly.
+    * ``"CompletionState.PASS"`` — ``str()`` of the member. ``CompletionState`` is a
+      ``str``-mixin enum, so ``str(member)`` is the qualified name rather than the
+      value, and ``json.dumps(..., default=str)`` writes exactly that.
+
+    Rejecting the second form would silently downgrade every task to INFRASTRUCTURE
+    and fail the whole reconciliation, so both are accepted. An unrecognised value is
+    never coerced to a passing state.
+    """
+    from runtime.foundation.verification.execution_orchestrator import CompletionState
+
+    if isinstance(value, CompletionState):
+        return value
+    text = str(value)
+    if "." in text and text.rsplit(".", 1)[0].endswith("CompletionState"):
+        text = text.rsplit(".", 1)[1]
+    try:
+        return CompletionState(text)
+    except ValueError:
+        return CompletionState.INFRASTRUCTURE
+
+
+def _parse_shard_arg(args: list[str]) -> tuple[int | None, int | None]:
+    """Parse ``--shard N`` / ``--shard-count M`` out of *args*.
+
+    Returns ``(None, None)`` when neither flag is present, which the callers
+    normalise to "not sharded" — so an unflagged ``verify check`` takes exactly the
+    code path it took before M10-R2.
+    """
+    shard: int | None = None
+    shard_count: int | None = None
+
+    def _int(raw: str, flag: str) -> int:
+        try:
+            return int(raw)
+        except ValueError:
+            raise ValueError(f"{flag} expects an integer, got {raw!r}") from None
+
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--shard" and i + 1 < len(args):
+            shard = _int(args[i + 1], "--shard")
+            i += 2
+            continue
+        if a.startswith("--shard="):
+            shard = _int(a.split("=", 1)[1], "--shard")
+            i += 1
+            continue
+        if a == "--shard-count" and i + 1 < len(args):
+            shard_count = _int(args[i + 1], "--shard-count")
+            i += 2
+            continue
+        if a.startswith("--shard-count="):
+            shard_count = _int(a.split("=", 1)[1], "--shard-count")
+            i += 1
+            continue
+        i += 1
+    return shard, shard_count
 
 
 def _find_changed_files_arg(args: list[str]) -> list[str] | None:
@@ -1548,3 +2962,44 @@ def _find_changed_files_arg(args: list[str]) -> list[str] | None:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def _run_runtime_integrity(result_dir: Path) -> bool:
+    """Run the canonical integrity scan as its own obligation, and record the result.
+
+    ``run_runtime_verification.sh`` runs this sequentially after the test suite and
+    tracks it in its own ``FAILED_CHECKS`` list, so it has always been a *separate*
+    obligation that merely happened to share a shell script. Sharding the suite makes
+    that separation structural: integrity is the gate's own step, so it cannot be
+    skipped by a shard, and a red scan cannot be hidden by a green suite.
+    """
+    from runtime.foundation.verification.env import child_process_env
+    from runtime.foundation.verification.parallel_executor import run_streaming_command
+
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result = run_streaming_command(
+        ".venv/bin/python -m runtime.verify integrity",
+        stdout_path=result_dir / "integrity-stdout.log",
+        stderr_path=result_dir / "integrity-stderr.log",
+        timeout_seconds=_profile_task_timeout_seconds(),
+        env=child_process_env(),
+    )
+    ok = result.exit_code == 0 and not result.timed_out and not result.infra_error
+    (result_dir / "integrity.json").write_text(
+        json.dumps(
+            {
+                "obligation": "runtime-integrity",
+                "status": "passed" if ok else "failed",
+                "exit_code": result.exit_code,
+                "duration_seconds": round(result.duration_seconds, 2),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(
+        f"[runtime-gate] runtime-integrity {'passed' if ok else 'FAILED'} "
+        f"({result.duration_seconds:.1f}s)",
+        file=sys.stderr,
+    )
+    return ok

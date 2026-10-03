@@ -772,15 +772,45 @@ class TestProfileCacheWiring:
         _run_profile_alias executes the profile; it does not replay a cached
         verdict. Asserting that here keeps the two responsibilities distinct and
         stops a future cache wiring from being mistaken for existing behaviour.
+
+        M10-R2: the seam moved. Profile tasks execute through
+        ``parallel_executor.run_streaming_command`` — the single worker shared with the
+        orchestrator — so the worker is patched rather than ``subprocess.run``.
+        Patching ``subprocess.run`` silently patched nothing: the real ``quick`` profile
+        actually ran and the test died on a 30 s pytest-timeout in CI, where the box is
+        slower than a developer's. The assertion is unchanged — it still asserts that a
+        passing profile yields exit code 0.
         """
-        from unittest.mock import MagicMock, patch
+        from unittest.mock import patch
 
         from runtime.foundation.verification.control_plane_facade import (
             _run_profile_alias,
         )
+        from runtime.foundation.verification.parallel_executor import CommandResult
 
-        with patch("subprocess.run") as run:
-            run.return_value = MagicMock(returncode=0)
+        def _fake_worker(
+            command, *, stdout_path, stderr_path, timeout_seconds, cwd=None, env=None
+        ):
+            stdout_path.parent.mkdir(parents=True, exist_ok=True)
+            stdout_path.write_text("", encoding="utf-8")
+            stderr_path.write_text("", encoding="utf-8")
+            return CommandResult(
+                command=command,
+                exit_code=0,
+                timed_out=False,
+                infra_error=None,
+                stdout="",
+                stderr="",
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
+                duration_seconds=0.0,
+            )
+
+        with patch(
+            "runtime.foundation.verification.parallel_executor."
+            "run_streaming_command",
+            side_effect=_fake_worker,
+        ):
             result = _run_profile_alias("quick")
         assert result == 0
 

@@ -1119,7 +1119,7 @@ class BlastRadiusEngine:
         from .e2e_route_mapper import E2ERouteMapper
 
         mapper = E2ERouteMapper()
-        all_routes = mapper.scan_frontend_routes()
+        mapper.scan_frontend_routes()
 
         # Filter to frontend route files that actually changed
         affected_routes: set[str] = set()

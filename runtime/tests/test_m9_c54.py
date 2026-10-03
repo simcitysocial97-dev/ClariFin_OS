@@ -1005,7 +1005,7 @@ class TestC54RealScenarioExecution(unittest.TestCase):
             self.assertNotIn(
                 "paths",
                 backend.triggers.get(event, {}),
-                f"backend-verify is a required status check and must always report",
+                "backend-verify is a required status check and must always report",
             )
 
     def test_scenario_B_test_only_change_triggers_test_path(self):

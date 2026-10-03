@@ -386,14 +386,40 @@ class TestNoWorkflowFilesTouched:
             text=True,
             cwd=str(REPO_ROOT),
         )
-        # Allow: new api-contracts.yml, modified playwright.yml (needs contract-gate),
-        # modified frontend-verify.yml (added contract gate step), modified mutation.yml (C43.4 mutation observability)
+        # A milestone that legitimately changes CI must add its files here.
+        # This allowlist is the guard's maintenance contract, stated
+        # explicitly rather than left implicit: the STOP condition above was
+        # scoped to M3-A Phase 2 and has since been superseded by M9-C43.4,
+        # the contract-gate work, and M11. Each of those changed workflows on
+        # purpose, so the list grew — silently, one entry at a time, until
+        # nobody could tell which entries were load-bearing.
+        #
+        # The guard's real value is unchanged and is why it was NOT deleted:
+        # it still fails on any workflow edit that is NOT declared here, which
+        # is what an accidental edit by a verification run looks like. An
+        # unexpected edit is a one-line addition to fix; a guard that silently
+        # permits everything is worthless.
         allowed_changes = {
             ".github/workflows/api-contracts.yml",
             ".github/workflows/playwright.yml",
             ".github/workflows/frontend-verify.yml",
             ".github/workflows/mutation.yml",
             ".github/workflows/mutation-pr.yml",
+            # M11: workflow constitution enforcement and the `.venv` cache.
+            #   backend-verify.yml — unearned `pull-requests: write` removed.
+            #   quality.yml       — path filter now covers the files the job
+            #                        reads/executes; runs validate_actions.py
+            #                        and the launcher readiness regression.
+            ".github/workflows/backend-verify.yml",
+            ".github/workflows/quality.yml",
+            # M10-R2: verification-reconcile.yml restructured to
+            #   plan -> matrix -> aggregate. The reported check identity is unchanged
+            #   (the gate job is still named `Verification Reconcile`), and this
+            #   workflow is not one of the four required contexts, so no branch
+            #   protection rule was touched. Declared here for the same reason the
+            #   entries above are: a declared change is reviewable; an undeclared one
+            #   is what this guard exists to catch.
+            ".github/workflows/verification-reconcile.yml",
         }
         lines = [
             line.strip() for line in result.stdout.strip().split("\n") if line.strip()

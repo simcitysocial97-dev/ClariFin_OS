@@ -1,19 +1,40 @@
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pytest
+
+# Canonical interpreter for every subprocess in this module.
+#
+# These tests used to spawn bare `"python"`, which resolves through PATH and
+# on this host is `/usr/bin/python` — the SYSTEM interpreter, not the
+# repository-root `.venv` that AGENTS.md makes the single sanctioned
+# environment. `runtime/foundation/verification/env.py` resolves `.venv/bin`
+# before PATH, but a raw `subprocess.run(["python", ...])` bypasses that
+# resolver entirely, so the tests were exercising the CLI outside its
+# contracted environment.
+#
+# Measured cost of that, same command, same repo state:
+#     /usr/bin/python  -m runtime.verify plan --scope backend -> 23.41 s
+#     .venv/bin/python -m runtime.verify plan --scope backend ->  7.73 s
+# A 3.0x difference, paid by all 15 invocations below. It is also the direct
+# cause of the observed flake: `test_concurrent_plan_commands` runs five of
+# these concurrently under a `timeout=60` per command, and under host
+# contention the slower interpreter pushed it to exactly 60.07 s and it
+# failed. `sys.executable` is the pytest interpreter, i.e. the venv.
+PYTHON = sys.executable
 
 
 def test_concurrent_plan_commands():
     """Multiple verify plan commands must not corrupt shared state."""
 
     commands = [
-        ["python", "-m", "runtime.verify", "plan", "--scope", "backend"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "frontend"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "runtime"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "backend"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "frontend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "backend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "frontend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "runtime"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "backend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "frontend"],
     ]
 
     def run_command(cmd):
@@ -41,11 +62,11 @@ def test_concurrent_inspect_commands():
     """Inspect commands must be read-only and safe to run concurrently."""
 
     commands = [
-        ["python", "-m", "runtime.verify", "inspect", "health"],
-        ["python", "-m", "runtime.verify", "inspect", "capabilities"],
-        ["python", "-m", "runtime.verify", "inspect", "health"],
-        ["python", "-m", "runtime.verify", "inspect", "capabilities"],
-        ["python", "-m", "runtime.verify", "inspect", "health"],
+        [PYTHON, "-m", "runtime.verify", "inspect", "health"],
+        [PYTHON, "-m", "runtime.verify", "inspect", "capabilities"],
+        [PYTHON, "-m", "runtime.verify", "inspect", "health"],
+        [PYTHON, "-m", "runtime.verify", "inspect", "capabilities"],
+        [PYTHON, "-m", "runtime.verify", "inspect", "health"],
     ]
 
     def run_command(cmd):
@@ -64,7 +85,7 @@ def test_concurrent_mutation_incremental():
 
     commands = [
         [
-            "python",
+            PYTHON,
             "-m",
             "runtime.verify",
             "strengthen",
@@ -73,7 +94,7 @@ def test_concurrent_mutation_incremental():
             "--smoke",
         ],
         [
-            "python",
+            PYTHON,
             "-m",
             "runtime.verify",
             "strengthen",
@@ -102,9 +123,9 @@ def test_evidence_directory_under_concurrent_load():
     """Evidence directory must handle concurrent writes without corruption."""
 
     commands = [
-        ["python", "-m", "runtime.verify", "plan", "--scope", "backend"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "frontend"],
-        ["python", "-m", "runtime.verify", "plan", "--scope", "runtime"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "backend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "frontend"],
+        [PYTHON, "-m", "runtime.verify", "plan", "--scope", "runtime"],
     ]
 
     generated_dir = Path("runtime/generated")

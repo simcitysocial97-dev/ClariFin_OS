@@ -6,7 +6,6 @@ and document boundary conditions.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
@@ -103,13 +102,13 @@ class TestCIWorkflowParity:
 
     def test_ci_parity_artifact_generated(self) -> None:
         """CI parity JSON should exist in generated artifacts."""
-        parity_path = GENERATED / "m9-c66-certification-forensics" / "ci-parity.json"
+        GENERATED / "m9-c66-certification-forensics" / "ci-parity.json"
         # It's OK if this doesn't exist yet - we're testing the classification logic
         # The actual artifact will be generated during milestone execution
 
     def test_no_undefended_local_claim(self) -> None:
         """No workflow should claim LOCAL without justification."""
-        for wf, boundary in WORKFLOW_BOUNDARIES.items():
+        for _wf, boundary in WORKFLOW_BOUNDARIES.items():
             if boundary == "LOCAL":
                 # Should have a canonical command mapping
                 pass  # Documented in workflow_inspection.py

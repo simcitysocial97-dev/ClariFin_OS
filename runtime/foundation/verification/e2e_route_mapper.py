@@ -173,9 +173,10 @@ class E2ERouteMapper:
             for route in tested_routes:
                 # Match exact route or parent route
                 for route_key in route_map:
-                    if route == route_key or route.startswith(route_key + "/"):
-                        if test_file not in route_map[route_key]:
-                            route_map[route_key].append(test_file)
+                    if (
+                        route == route_key or route.startswith(route_key + "/")
+                    ) and test_file not in route_map[route_key]:
+                        route_map[route_key].append(test_file)
 
         # Cache the result
         self._save_cache(route_map)
@@ -201,7 +202,7 @@ class E2ERouteMapper:
             payload = {
                 "schema": "e2e-route-map/v1",
                 "routes": list(route_map.keys()),
-                "mapping": {k: v for k, v in sorted(route_map.items())},
+                "mapping": dict(sorted(route_map.items())),
                 "generated_at": __import__("datetime")
                 .datetime.now(__import__("datetime").timezone.utc)
                 .isoformat(),

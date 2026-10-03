@@ -271,3 +271,36 @@ When adding a new workflow, you MUST:
 | 8 | Every workflow executes `python runtime/verify.py` | ✅ Enforced |
 | 9 | Job summaries via `verify.py status` | ✅ Enforced |
 | 10 | Local = CI parity | ✅ Enforced |
+
+---
+
+## M10 amendment — Rule 8 scope, and the enforcement gap
+
+Two corrections made during M10 consolidation. Both bring the *enforcement*
+into line with this document; neither relaxes a guarantee.
+
+### 1. Rule 8 does not mean "exactly one command per workflow"
+
+Rule 8 as written above requires that a workflow execute
+`python runtime/verify.py`, and Rule 2 requires one responsibility per
+workflow. Neither forbids a single workflow from using several subcommands of
+its own profile. `mutation.yml` depends on that: the M9-C71 sharded
+authoritative campaign is one responsibility — mutation — expressed as
+`mutation-plan` → `mutation --shard` → `mutation-aggregate` →
+`mutation-trust`.
+
+`validate_actions.py` enforced a stricter rule than this document ever stated:
+it required the *only* verify command in a workflow to equal the profile name,
+so it flagged `mutation-plan` and `mutation-aggregate` as violations. It now
+accepts a documented subcommand of the workflow's own profile
+(`<profile>-*`) and still rejects a **different profile's** command. That
+distinction is regression-tested: substituting `runtime.verify backend` into
+`quality.yml` still raises Rule 8 errors.
+
+### 2. The enforcer had been running, but nothing ran the enforcer
+
+`validate_actions.py` is mandated here ("must pass with zero errors") yet was
+never invoked by any workflow, so the architecture it governs could drift
+unnoticed. It now reports **1 error**, down from 24. See
+`docs/audits/m10-agent2-workflow-matrix.md` for the matrix and
+`docs/audits/m10-ci-constitution-reconciliation.md` for the full ledger.

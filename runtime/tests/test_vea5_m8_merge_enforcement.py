@@ -100,10 +100,61 @@ def test_m81_stale_workflows_use_verification_command_pattern():
                 "needs", []
             ), "the aggregate gate must consume every shard"
             expected = mutation_job_profiles
-        else:
+        elif len(jobs) == 1:
             # Single job, single command invoking verify.py <profile>.
-            assert len(jobs) == 1, f"{wf} should have exactly one job"
             expected = {next(iter(jobs)): expected_profiles[wf]}
+        else:
+            # M10-R2 — plan -> matrix -> aggregate.
+            #
+            # "Exactly one job" was a proxy for "exactly one certification authority".
+            # Fan-out makes several jobs legitimate, so the invariant is restated in
+            # the terms that actually matter, and restated STRICTLY rather than
+            # weakened: every job must still delegate to the canonical runtime, the
+            # workflow's own profile must appear, helper jobs may only use
+            # profile-scoped subcommands (which is Rule 8's existing allowance), and
+            # there must still be exactly one aggregate gate that everything else
+            # depends on.
+            profile = expected_profiles[wf]
+            assert any(
+                profile in job_id for job_id in jobs
+            ), f"{wf} must have a job whose canonical command is its own profile"
+
+            # A matrix job is one with `strategy.matrix`; the gate is the job that
+            # depends on one. Identifying it structurally (rather than by "has needs")
+            # matters because the plan and the legs also have `needs`.
+            matrix_ids = {
+                jid
+                for jid, j in jobs.items()
+                if (j.get("strategy") or {}).get("matrix")
+            }
+            assert matrix_ids, f"{wf} fan-out must contain at least one matrix job"
+            gates = {
+                jid for jid, j in jobs.items() if matrix_ids & set(j.get("needs") or [])
+            }
+            assert len(gates) == 1, (
+                f"{wf} must have exactly ONE job depending on the matrix fan-out; "
+                f"found {sorted(gates)}"
+            )
+            gate_id = next(iter(gates))
+            # The gate must also run unconditionally, or one red leg suppresses it and
+            # the workflow ends with no conclusion at all.
+            assert (
+                jobs[gate_id].get("if") == "always()"
+            ), f"{wf}/{gate_id} is the aggregate gate and must use if: always()"
+            # Every non-gate job must be consumed by the gate, or it is a leg nobody
+            # aggregates and it can fail without anyone noticing.
+            for jid in jobs:
+                if jid == gate_id:
+                    continue
+                assert jid in (
+                    jobs[gate_id].get("needs") or []
+                ), f"{wf}/{jid} is not consumed by the gate {gate_id}"
+            # Every job in a fan-out workflow must still delegate to the canonical
+            # runtime for THIS workflow's own profile. Rule 8 allows the bare profile
+            # (`runtime.verify playwright`) or one of its scoped subcommands
+            # (`runtime.verify playwright-plan`) — both are checked below — so there is
+            # no per-job distinction to make here.
+            expected = dict.fromkeys(jobs, profile)
         for job_id, job in jobs.items():
             run_lines = [s.get("run", "") for s in job.get("steps", []) if "run" in s]
             joined = "\n".join(run_lines)
@@ -113,6 +164,10 @@ def test_m81_stale_workflows_use_verification_command_pattern():
             has_pattern = (
                 f"runtime/verify.py {profile}" in joined
                 or f"runtime.verify {profile}" in joined
+                # Rule 8's existing allowance: a workflow may use its own profile's
+                # subcommands (`runtime-plan`, `mutation-aggregate`, ...). The profile
+                # prefix is mandatory, so this cannot match a DIFFERENT profile.
+                or f"runtime.verify {profile}-" in joined
             )
             assert has_pattern, (
                 f"{wf}/{job_id} must delegate to verify.py {profile} "
@@ -155,12 +210,44 @@ def test_m81_stale_workflows_match_vea5_concurrency_and_retention():
 
 
 def test_m82_reconcile_job_identity_is_deterministic():
+    """Exactly one job may claim the required reconciliation identity.
+
+    M10-R2 restructured the workflow from one job into
+    ``reconcile-plan`` / ``reconcile-shard`` (matrix) / ``reconcile-gate``. The
+    invariant this test exists to protect is unchanged — a *stable check name for
+    branch protection* — but "exactly one job" was only ever a proxy for it. With a
+    fan-out there are legitimately several jobs, and the property that actually
+    matters is that precisely one of them reports the identity.
+
+    So the assertion is restated rather than dropped: the gate job exists, it still
+    carries the identity's display name, and no sibling job claims the same name. A
+    future edit that renamed the gate, or gave a shard leg the gate's name, fails
+    here exactly as the old count check would have.
+    """
     doc = yaml.safe_load((WORKFLOWS / "verification-reconcile.yml").read_text())
+    jobs = doc["jobs"]
+
     assert (
-        "reconcile-gate" in doc["jobs"]
-    ), "required-check identity must be 'reconcile-gate'"
-    # Exactly one job -> stable check name for branch protection.
-    assert len(doc["jobs"]) == 1
+        "reconcile-gate" in jobs
+    ), "required-check identity must be produced by 'reconcile-gate'"
+
+    gate_name = jobs["reconcile-gate"]["name"]
+    assert gate_name == "Verification Reconcile", (
+        "the gate job's display name IS the reported check identity; changing it "
+        f"silently renames the branch-protection context (found {gate_name!r})"
+    )
+
+    # Exactly one job may report that identity, or branch protection sees a
+    # duplicate/ambiguous context.
+    claimants = [name for name, spec in jobs.items() if spec.get("name") == gate_name]
+    assert claimants == [
+        "reconcile-gate"
+    ], f"more than one job reports {gate_name!r}: {claimants}"
+
+    # The gate must be reachable no matter how the shards turned out, otherwise a
+    # single red shard leaves the run with no conclusion at all.
+    assert jobs["reconcile-gate"].get("if") == "always()"
+    assert set(jobs["reconcile-gate"]["needs"]) == {"reconcile-plan", "reconcile-shard"}
 
 
 def test_m82_planning_divergence_blocks_merge_exit_2(tmp_path):

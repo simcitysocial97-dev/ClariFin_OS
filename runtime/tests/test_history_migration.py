@@ -11,8 +11,6 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 from runtime.foundation.verification.history_migration import (
     _normalize_status,
     _run_id_to_event_id,

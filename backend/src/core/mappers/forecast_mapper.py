@@ -7,6 +7,9 @@ This is the ONLY location where forecast API responses are constructed.
 from typing import Any
 
 from src.core.dtos.forecast_dto import (
+    CASHFLOW_FORECAST_AVAILABLE,
+    CASHFLOW_FORECAST_UNAVAILABLE,
+    CashflowForecastBasisDTO,
     CashflowProjectionDTO,
     ConfidenceIntervalDTO,
     ForecastDTO,
@@ -23,13 +26,18 @@ class ForecastMapper:
     @staticmethod
     def to_dto(forecast_data: dict[str, Any]) -> ForecastDTO:
         """Convert forecast data to ForecastDTO."""
+        cashflow_projections = ForecastMapper._to_cashflow_projections(
+            forecast_data.get("cashflow_projections", [])
+        )
         return ForecastDTO(
             summary=ForecastMapper._to_summary_dto(forecast_data.get("summary", {})),
             net_worth_projections=ForecastMapper._to_net_worth_projections(
                 forecast_data.get("net_worth_projections", [])
             ),
-            cashflow_projections=ForecastMapper._to_cashflow_projections(
-                forecast_data.get("cashflow_projections", [])
+            cashflow_projections=cashflow_projections,
+            cashflow_forecast_basis=ForecastMapper._to_cashflow_forecast_basis(
+                forecast_data.get("cashflow_forecast_basis"),
+                projection_count=len(cashflow_projections),
             ),
             scenarios=ForecastMapper._to_scenarios(forecast_data.get("scenarios", [])),
             confidence_intervals=ForecastMapper._to_confidence_intervals(
@@ -37,6 +45,44 @@ class ForecastMapper:
             ),
             insights=ForecastMapper._to_insights(forecast_data.get("insights", [])),
             evidence_chain=forecast_data.get("evidence_chain"),
+        )
+
+    @staticmethod
+    def _to_cashflow_forecast_basis(
+        basis_data: dict[str, Any] | None, projection_count: int
+    ) -> CashflowForecastBasisDTO:
+        """Convert cashflow forecast provenance to its DTO.
+
+        A basis that claims ``"available"`` while carrying no projections is
+        rejected here rather than served: the two statements contradict each
+        other and a consumer picking either one renders a chart or a warning
+        that the payload does not support.
+        """
+        if not basis_data:
+            return CashflowForecastBasisDTO(
+                status=CASHFLOW_FORECAST_UNAVAILABLE,
+                reason=(
+                    "The response carried no cashflow forecast provenance, so the "
+                    "absence of a projection is reported instead of a value."
+                ),
+            )
+        status = basis_data.get("status", CASHFLOW_FORECAST_UNAVAILABLE)
+        if status == CASHFLOW_FORECAST_AVAILABLE and projection_count == 0:
+            return CashflowForecastBasisDTO(
+                status=CASHFLOW_FORECAST_UNAVAILABLE,
+                reason=(
+                    "The response declared a cashflow forecast available but "
+                    "carried no projection months; the absence is reported."
+                ),
+            )
+        return CashflowForecastBasisDTO(
+            status=status,
+            reason=basis_data.get("reason"),
+            model=basis_data.get("model"),
+            confidence_bps=basis_data.get("confidence_bps"),
+            history_months=basis_data.get("history_months", 0) or 0,
+            projected_months=basis_data.get("projected_months", 0) or 0,
+            requested_horizon_months=basis_data.get("requested_horizon_months", 0) or 0,
         )
 
     @staticmethod

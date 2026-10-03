@@ -226,7 +226,7 @@ class EngineeringHealthReport:
                 cache = VerificationCache(cache_file, root=REPO_ROOT)
                 data = cache._load()
                 profiles = data.get("profiles", {})
-                for profile_name, profile_data in profiles.items():
+                for _profile_name, profile_data in profiles.items():
                     tree_digest = profile_data.get("tree_digest")
                     changed_files = profile_data.get("changed_files", [])
                     if tree_digest is None or not changed_files:

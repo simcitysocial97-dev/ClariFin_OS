@@ -1,0 +1,26 @@
+{
+  "run_id": "ad4f04fc1dcd5219",
+  "timestamp": "2026-10-03T09:04:15.040779+00:00",
+  "repository_sha": "0d29e22e53648401b94efbee276883650eca9285",
+  "scenario": "ci_equivalent_execution",
+  "changed_files": [],
+  "resolved_capabilities": [
+    "money"
+  ],
+  "obligations": [
+    "exec::ci::scenario15::invariant::money"
+  ],
+  "plan_identity": "ci::scenario15::exec::ci::scenario15::invariant::money",
+  "execution_identity": "runtime.verification::exec::9222a67f6bdb6a52",
+  "evidence_identities": [
+    "evidence_id=runtime.verification::ev::f5bfa8236bb315df"
+  ],
+  "reconciliation": {
+    "exit_code": 0,
+    "failure_kind": null
+  },
+  "final_decision": "ci_verified",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

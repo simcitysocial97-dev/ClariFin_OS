@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -74,5 +74,5 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash

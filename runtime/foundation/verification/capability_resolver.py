@@ -94,6 +94,15 @@ def _file_stem(path: str) -> str:
     return name.rsplit(".", 1)[0] if "." in name else name
 
 
+# Repository root, resolved exactly the way `CrossLayerGraphBuilder` resolves
+# its own root (parents[3] of this module). The frontend capability `files` are
+# absolute paths under that root, so the relative form compared against
+# `CapabilityResolver._resolved_paths` must be derived from the same anchor. If
+# the anchor is ever wrong the conversion raises and the caller falls back to
+# reporting the change as unmapped — fail-closed, never fail-open.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
 # ---------------------------------------------------------------------------
 # Change Classification
 # ---------------------------------------------------------------------------
@@ -242,7 +251,7 @@ class CapabilityResolver:
         router_caps: dict[str, set[str]] = {}
 
         # Map from backend_capabilities which are dicts with router and capability
-        for cap_id, cap_data in clg.backend_capabilities.items():
+        for _cap_id, cap_data in clg.backend_capabilities.items():
             if isinstance(cap_data, dict):
                 router_name = cap_data.get("router")
                 capability = cap_data.get("capability")
@@ -265,15 +274,74 @@ class CapabilityResolver:
 
         A file is only counted as resolved when its basename is unique across
         the change set, so a different, genuinely unmapped file that happens to
-        share a name is never suppressed. The frontend vocabulary form carries
-        the file's stem rather than its name (``platform-dashboard.spec`` for
-        ``platform-dashboard.spec.ts``), so the comparison is on stems.
+        share a name is never suppressed. The fallback comparison is on stems
+        (``platform-dashboard.spec`` for ``platform-dashboard.spec.ts``).
+
+        The stem fallback cannot serve the cross-layer frontend vocabulary at
+        all — that vocabulary never names a file by stem — so a ``frontend:``
+        entry is resolved through
+        :meth:`_frontend_capability_is_resolved` first. M11 measured the
+        consequence: on the PR #16 boundary all six reported frontend
+        capabilities were false positives of this comparison, three of them
+        already claimed by ``api-contracts`` because their files live under
+        ``frontend/lib``.
         """
 
         if entry.startswith("UNMAPPED:"):
             return entry[len("UNMAPPED:") :] in self._resolved_paths
+        if entry.startswith("frontend:") and self._frontend_capability_is_resolved(
+            entry
+        ):
+            return True
         stem = entry.rsplit(":", 1)[-1]
         return stem in self._resolved_stems and self._stem_counts.get(stem, 0) == 1
+
+    def _frontend_capability_is_resolved(self, capability_id: str) -> bool:
+        """True when a cross-layer frontend capability owns a resolved file.
+
+        The stem comparison in :meth:`_names_resolved_file` cannot serve the
+        cross-layer frontend vocabulary, because that vocabulary does not name
+        files by stem. ``frontend_capability_discovery.discover_capabilities``
+        mints one of
+
+            frontend:route:{domain}:{route path}
+            frontend:hook:{domain}:{stem with a leading "use-" removed}
+            frontend:component:{domain}:{first directory under components/}
+            frontend:store:{domain}
+            frontend:api-client:{domain}
+
+        so the final segment is a domain, a de-prefixed hook name or a
+        component directory — none of which is a file stem. Every one of those
+        forms therefore failed the stem test and was reported unmapped even when
+        the file behind it had already been claimed by path in step 2, which is
+        exactly the false positive this guard exists to prevent.
+
+        The authority that minted the capability is asked instead: the
+        cross-layer graph records the exact source files each frontend
+        capability was discovered from. If any of those files is in the current
+        resolve()'s resolved set, the capability is reporting a change that is
+        already mapped.
+
+        A capability with no recorded files, an unbuildable graph, or files that
+        are all outside the resolved set returns False, so a genuinely unmapped
+        change still reaches the fail-closed review obligation.
+        """
+
+        try:
+            graph = self._get_cross_layer_graph()
+            capability = graph.frontend_capabilities.get(capability_id)
+        except Exception:
+            return False
+        if capability is None:
+            return False
+        for source_file in capability.files:
+            try:
+                relative = Path(source_file).resolve().relative_to(_REPO_ROOT)
+            except (OSError, ValueError):
+                continue
+            if relative.as_posix() in self._resolved_paths:
+                return True
+        return False
 
     def _get_router_capabilities(self, file_path: str) -> list[str]:
         """Get backend capabilities for a router file."""
@@ -548,38 +616,36 @@ class CapabilityResolver:
                             route_path in cap_id
                             or cap_id.endswith(f":{route_path}")
                             or (feature and feature in cap_id)
-                        ):
-                            if cap_id not in direct_caps:
-                                direct_caps.append(cap_id)
-                            for be_cap in cap.backend_capabilities:
-                                if be_cap not in direct_caps:
-                                    direct_caps.append(be_cap)
-                            # Find corresponding hook
-                            if "frontend:route:frontend-" in cap_id:
-                                feature_route = cap_id.replace(
-                                    "frontend:route:frontend-", ""
-                                )
-                                hook_cap_id = f"frontend:hook:frontend-{feature_route}"
-                                if hook_cap_id in clg.frontend_capabilities:
-                                    hook_cap = clg.frontend_capabilities[hook_cap_id]
-                                    if hook_cap_id not in direct_caps:
-                                        direct_caps.append(hook_cap_id)
-                                    for be_cap in hook_cap.backend_capabilities:
-                                        if be_cap not in direct_caps:
-                                            direct_caps.append(be_cap)
-                                    try:
-                                        hook_deps = clg.get_backend_dependencies_of_frontend_capability(
-                                            hook_cap_id
-                                        )
-                                        for edge in hook_deps:
-                                            if (
-                                                edge.relationship == "depends_on"
-                                                and edge.target_type == "capability"
-                                            ):
-                                                if edge.target_id not in direct_caps:
-                                                    direct_caps.append(edge.target_id)
-                                    except Exception:
-                                        pass
+                        ) and cap_id not in direct_caps:
+                            direct_caps.append(cap_id)
+                        for be_cap in cap.backend_capabilities:
+                            if be_cap not in direct_caps:
+                                direct_caps.append(be_cap)
+                        # Find corresponding hook
+                        if "frontend:route:frontend-" in cap_id:
+                            feature_route = cap_id.replace(
+                                "frontend:route:frontend-", ""
+                            )
+                            hook_cap_id = f"frontend:hook:frontend-{feature_route}"
+                            if hook_cap_id in clg.frontend_capabilities:
+                                hook_cap = clg.frontend_capabilities[hook_cap_id]
+                                if hook_cap_id not in direct_caps:
+                                    direct_caps.append(hook_cap_id)
+                                for be_cap in hook_cap.backend_capabilities:
+                                    if be_cap not in direct_caps:
+                                        direct_caps.append(be_cap)
+                                try:
+                                    hook_deps = clg.get_backend_dependencies_of_frontend_capability(
+                                        hook_cap_id
+                                    )
+                                    for edge in hook_deps:
+                                        if (
+                                            edge.relationship == "depends_on"
+                                            and edge.target_type == "capability"
+                                        ) and edge.target_id not in direct_caps:
+                                            direct_caps.append(edge.target_id)
+                                except Exception:
+                                    pass
 
             # Check frontend hooks
             elif (
@@ -606,9 +672,8 @@ class CapabilityResolver:
                                         if (
                                             edge.relationship == "depends_on"
                                             and edge.target_type == "capability"
-                                        ):
-                                            if edge.target_id not in direct_caps:
-                                                direct_caps.append(edge.target_id)
+                                        ) and edge.target_id not in direct_caps:
+                                            direct_caps.append(edge.target_id)
                                 except Exception:
                                     pass
 
@@ -648,16 +713,16 @@ class CapabilityResolver:
                                             )
                                             for edge in hook_deps:
                                                 if (
-                                                    edge.relationship == "depends_on"
-                                                    and edge.target_type == "capability"
+                                                    (
+                                                        edge.relationship
+                                                        == "depends_on"
+                                                        and edge.target_type
+                                                        == "capability"
+                                                    )
+                                                    and edge.target_id
+                                                    not in direct_caps
                                                 ):
-                                                    if (
-                                                        edge.target_id
-                                                        not in direct_caps
-                                                    ):
-                                                        direct_caps.append(
-                                                            edge.target_id
-                                                        )
+                                                    direct_caps.append(edge.target_id)
                                         except Exception:
                                             pass
 

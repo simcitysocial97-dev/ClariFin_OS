@@ -262,7 +262,7 @@ def get_patterns(
     service = BehaviourService()
 
     try:
-        patterns = service.get_patterns(household_id=household_id, limit=days)
+        patterns = service.get_patterns(household_id=household_id, days=days)
 
         # Apply pattern_type filter if provided
         if pattern_type:

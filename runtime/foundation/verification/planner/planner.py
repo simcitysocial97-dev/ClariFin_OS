@@ -1154,9 +1154,16 @@ class CrossLayerImpactPlanner:
 
             # Add UI impact for components/hooks/routes
             kind = result.get("kind", "")
-            if kind in ("frontend_component", "frontend_hook", "frontend_route"):
-                if cap_id not in report.affected_ui:
-                    report.affected_ui.append(cap_id)
+            if (
+                kind
+                in (
+                    "frontend_component",
+                    "frontend_hook",
+                    "frontend_route",
+                )
+                and cap_id not in report.affected_ui
+            ):
+                report.affected_ui.append(cap_id)
 
         # Record unmapped files as explicit UNMAPPED status
         if unmapped_files:

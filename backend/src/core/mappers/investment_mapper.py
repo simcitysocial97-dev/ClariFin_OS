@@ -43,7 +43,7 @@ class InvestmentMapper:
         """Convert investment data to InvestmentSummaryDTO list."""
         return [
             InvestmentSummaryDTO(
-                id=inv.get("id", ""),
+                id=str(inv.get("id", "")),
                 name=inv.get("name", "Unknown"),
                 type=inv.get("type", "other"),
                 institution=inv.get("institution", ""),

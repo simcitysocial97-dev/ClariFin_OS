@@ -13,7 +13,9 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
+import os
 import subprocess
 import time
 import uuid
@@ -110,8 +112,38 @@ def _coverage_run(
     coverage_bin = (
         VENV_BIN / "coverage" if (VENV_BIN / "coverage").is_file() else "coverage"
     )
-    # .coverage data file is isolated per-run under the C47 coverage dir.
-    data_file = str(COVERAGE_DIR / ".coverage")
+    # M11 (Task 2 — critical path). The data file used to be a FIXED name inside
+    # the C47 coverage directory, and the comment above this line claimed it was
+    # "isolated per-run". It was not: it was isolated per-DIRECTORY. Two
+    # concurrent `_coverage_run` calls — which the runtime suite creates,
+    # because several tests measure coverage independently — both ran
+    #     coverage run --data-file runtime/generated/m9-c47/coverage/.coverage
+    # against the SAME SQLite file, and both then ran
+    #     coverage json -o runtime/generated/m9-c47/coverage/raw-coverage.json
+    # into the SAME JSON path. Two real failure modes follow, and both are
+    # silent:
+    #   * `coverage run` appends to the data file. Interleaved writers corrupt
+    #     the SQLite database, and `coverage json` then reports a database
+    #     error or totals belonging to the other process.
+    #   * `raw-coverage.json` is written non-atomically, so a reader can observe
+    #     a truncated file, and whichever process finishes last silently
+    #     overwrites the other's report.
+    # Measured cost of the contention it caused: 73.08 s of the serial group.
+    #
+    # The data file and the intermediate JSON are now scoped by PID, so each
+    # process owns its files for the whole measurement. `raw-coverage.json` is
+    # still published at the fixed, documented path via `os.replace`, which is
+    # atomic on the same filesystem — so `tools/development/check_coverage.py`
+    # and `docs/ENGINEERING_ARTIFACTS.md` keep working, a partially written
+    # report is never observable, and last-writer-wins applies to a
+    # convenience copy instead of to the measurement itself.
+    #
+    # `measurement-truth-coverage.json` (written further down) is a separate,
+    # fixed, single-writer artifact and is deliberately left alone.
+    COVERAGE_DIR.mkdir(parents=True, exist_ok=True)
+    data_file = str(COVERAGE_DIR / f".coverage.{os.getpid()}")
+    published_json = COVERAGE_DIR / "raw-coverage.json"
+    json_out = COVERAGE_DIR / f"raw-coverage.{os.getpid()}.json"
     pytest_scope = _resolve_scope(scope)
     cmd = [
         str(coverage_bin),
@@ -202,6 +234,17 @@ def _coverage_run(
     except Exception as exc:  # pragma: no cover - defensive
         rc = 2 if rc == 0 else rc
         tail = tail or f"coverage report failed: {exc}"
+    finally:
+        # Publish the convenience copy atomically, then remove this process's
+        # private files. Leaving `raw-coverage.<pid>.json` and
+        # `.coverage.<pid>` behind is what put a growing pile of stray coverage
+        # databases into the real m9-c47 evidence directory (M10 inventory).
+        with contextlib.suppress(OSError):
+            if json_out.exists():
+                os.replace(str(json_out), str(published_json))
+        for leftover in (json_out, Path(data_file)):
+            with contextlib.suppress(OSError):
+                leftover.unlink()
     return cov_result, rc, False, tail
 
 
