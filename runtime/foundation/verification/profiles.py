@@ -449,9 +449,7 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         # PLAYWRIGHT_UPDATE_SNAPSHOTS keep their meaning; the script honours both,
         # and it now also requires FINANCE_DB_PATH so visual regression can
         # never silently run against order-dependent shared state.
-        commands=[
-            "bash .github/scripts/run_playwright_tests.sh"
-        ],
+        commands=["bash .github/scripts/run_playwright_tests.sh"],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,
         estimated_duration_seconds=1800,

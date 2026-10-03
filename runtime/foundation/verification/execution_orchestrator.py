@@ -42,12 +42,9 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import json
-import os
 import re
-import signal
 import subprocess
 import sys
-import threading
 import time
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field, fields
@@ -170,152 +167,25 @@ _PYTEST_SUMMARY = re.compile(
 )
 
 
-def _summarise_pytest_outcome(text: str) -> dict | None:
-    """Name the inner pytest failure precisely, from its own output.
+# M10-R2: the process-execution worker and its diagnosis vocabulary now live in
+# `parallel_executor`, which is the single execution core both call paths use. These
+# names remain bound here because they are referenced throughout this module and by
+# external readers; the implementations are the ones in parallel_executor, so there is
+# exactly one streaming tee, one process-group kill, one termination classifier and one
+# pytest-outcome summariser in the repository. Defining a second copy here is precisely
+# the divergence this milestone exists to remove.
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    classify_termination as _classify_termination,
+)
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    execute_tasks_in_parallel,
+    run_streaming_command,
+)
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    summarise_pytest_outcome as _summarise_pytest_outcome,
+)
 
-    A verification script that runs pytest and then aggregates several checks
-    exits with a single non-zero status, which loses the distinction the
-    investigation actually needs: was this an assertion failure, a per-test
-    timeout, or a collection/internal error? Those have different causes and
-    different fixes, and "the suite failed" is not evidence for any of them.
-
-    Returns None when the text contains no pytest signal at all, so callers can
-    leave non-pytest tasks untouched. The classification is derived only from
-    pytest's own summary and short-summary lines — it never re-runs anything and
-    never guesses.
-    """
-    if not text or "pytest" not in text and "passed" not in text:
-        return None
-
-    failed = _PYTEST_FAILURE_LINE.findall(text)
-    summary = _PYTEST_SUMMARY.search(text)
-    counts = {
-        "failed": int(summary.group(1)) if summary and summary.group(1) else 0,
-        "passed": int(summary.group(2)) if summary and summary.group(2) else 0,
-        "skipped": int(summary.group(3)) if summary and summary.group(3) else 0,
-        "errors": int(summary.group(4)) if summary and summary.group(4) else 0,
-        "xfailed": int(summary.group(5)) if summary and summary.group(5) else 0,
-        "xpassed": int(summary.group(6)) if summary and summary.group(6) else 0,
-    }
-    duration = float(summary.group(7)) if summary and summary.group(7) else None
-
-    if not failed and not summary:
-        return None
-
-    # A per-test timeout is reported by pytest-timeout in the failure body; a
-    # timeout and an assertion failure are different defects even when both
-    # surface as a non-zero pytest exit.
-    timed_out = _PYTEST_TIMEOUT_MARKER in text
-    errored = any(tag == "ERROR" for tag, _ in failed) or counts["errors"] > 0
-
-    if timed_out:
-        kind = "TEST_TIMEOUT"
-    elif errored:
-        kind = "COLLECTION_OR_INTERNAL_ERROR"
-    elif counts["failed"] or failed:
-        kind = "TEST_ASSERTION_FAILURE"
-    else:
-        kind = "PASSED"
-
-    return {
-        "kind": kind,
-        "failed_nodeids": [nodeid for _, nodeid in failed],
-        "counts": counts,
-        "duration_seconds": duration,
-    }
-
-
-def _read_text(path: Path) -> str:
-    """Read an evidence file, tolerating a missing or undecodable one."""
-    try:
-        return path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return ""
-
-
-def _tee(pipe, path: Path) -> None:
-    """Copy a child pipe into an evidence file line by line, flushing each line.
-
-    Flushing per line is the whole point: the file is valid, and contains
-    everything produced so far, even if the child is killed, the orchestrator is
-    interrupted, or the machine loses the process. It mirrors ``_tee`` in
-    executor.py, which streams the same way for the same reason.
-    """
-    try:
-        with path.open("a", encoding="utf-8") as handle:
-            for raw in pipe:
-                line = (
-                    raw
-                    if isinstance(raw, str)
-                    else raw.decode("utf-8", errors="replace")
-                )
-                handle.write(line)
-                handle.flush()
-    except (OSError, ValueError):
-        # A closed pipe during teardown is expected, not an error worth raising
-        # into the verification run.
-        pass
-    finally:
-        with contextlib.suppress(Exception):
-            pipe.close()
-
-
-def _kill_process_group(proc) -> None:
-    """Kill the child's whole process group (F19, as in executor.py).
-
-    The child is a shell that runs pytest, which runs further processes. Killing
-    only the shell would leave the real work running after a wrapper timeout.
-    """
-    with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
-        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-        time.sleep(0.5)
-        with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
-            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-
-
-def _classify_termination(
-    exit_code: int | None, timed_out: bool, infra_error: str | None
-) -> dict:
-    """Say *how* a task's process ended, not just that it did not pass.
-
-    "the command exited non-zero" is not a diagnosis. A verification run can
-    end because a test failed, because the wrapper killed it, because the
-    process was killed by a signal, or because the command never started, and
-    each of those points at a different cause. The record keeps them apart so a
-    long run cannot be misread as a flaky one.
-    """
-    if infra_error:
-        return {"kind": "INFRASTRUCTURE", "detail": infra_error, "signal": None}
-    if timed_out:
-        return {
-            "kind": "WRAPPER_TIMEOUT",
-            "detail": "verification wrapper killed the command before it finished",
-            "signal": None,
-        }
-    if exit_code is not None and exit_code < 0:
-        return {
-            "kind": "SIGNAL_TERMINATION",
-            "detail": f"child terminated by signal {-exit_code}",
-            "signal": -exit_code,
-        }
-    if exit_code is not None and exit_code > 128:
-        signum = exit_code - 128
-        try:
-            signame = signal.Signals(signum).name
-        except ValueError:
-            signame = f"SIG{signum}"
-        return {
-            "kind": "SIGNAL_TERMINATION",
-            "detail": f"shell reported 128+{signum} ({signame})",
-            "signal": signum,
-        }
-    if exit_code == 0:
-        return {"kind": "EXIT_ZERO", "detail": "command exit 0", "signal": None}
-    return {
-        "kind": "EXIT_NONZERO",
-        "detail": f"command reported exit {exit_code}",
-        "signal": None,
-    }
+_PYTEST_RE = re.compile(_PYTEST_SUMMARY.pattern, re.MULTILINE)
 
 
 def _hash_file(path: Path) -> str:
@@ -671,9 +541,7 @@ class ExecutionPlan:
             tasks=[ExecutionTaskSpec.from_dict(t) for t in (d.get("tasks") or [])],
             escalation_conditions=list(d.get("escalation_conditions") or []),
             measurement_requirements=list(d.get("measurement_requirements") or []),
-            certification_requirements=list(
-                d.get("certification_requirements") or []
-            ),
+            certification_requirements=list(d.get("certification_requirements") or []),
             rationale=d.get("rationale", ""),
             plan_fingerprint=d.get("plan_fingerprint", ""),
             generated_at=d.get("generated_at", ""),
@@ -872,7 +740,9 @@ class ExecutionOrchestrator:
 
         Returns the paths written.
         """
-        from runtime.foundation.verification.measurement_truth import load_measurement_truth
+        from runtime.foundation.verification.measurement_truth import (
+            load_measurement_truth,
+        )
 
         if not self._last_coverage_groups:
             return []
@@ -892,7 +762,9 @@ class ExecutionOrchestrator:
                     record = load_measurement_truth(source_path)
                 except Exception:
                     continue
-                payload = record.to_dict() if hasattr(record, "to_dict") else dict(record)
+                payload = (
+                    record.to_dict() if hasattr(record, "to_dict") else dict(record)
+                )
                 for cap in capabilities:
                     if cap == lead:
                         continue
@@ -1032,7 +904,10 @@ class ExecutionOrchestrator:
                     evidence_invalidated=tuple(cp_task.evidence_invalidated),
                     estimated_duration_seconds=cp_task.estimated_duration_seconds,
                 )
-                bucket = {"spec": spec, "capabilities": {cp_task.capability_id}}
+                bucket = {
+                    "spec": spec,
+                    "capabilities": {cp_task.capability_id},
+                }
                 dedup[dedup_key] = bucket
                 order.append(dedup_key)
             else:
@@ -1072,9 +947,7 @@ class ExecutionOrchestrator:
         )
         # Reassign stable task IDs after sort.
         tasks = [
-            ExecutionTaskSpec.from_dict(
-                {**t.to_dict(), "task_id": f"exec-{i + 1:04d}"}
-            )
+            ExecutionTaskSpec.from_dict({**t.to_dict(), "task_id": f"exec-{i + 1:04d}"})
             for i, t in enumerate(tasks)
         ]
         return tasks, order
@@ -1197,8 +1070,15 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(".venv", "mutmut==3.7.0", "git"),
-                                expected_evidence=("mutation_score", "survivor_intel"),
+                                prerequisites=(
+                                    ".venv",
+                                    "mutmut==3.7.0",
+                                    "git",
+                                ),
+                                expected_evidence=(
+                                    "mutation_score",
+                                    "survivor_intel",
+                                ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
                                 timeout_seconds=1200,
@@ -1228,8 +1108,15 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(".venv", "mutmut==3.7.0", "git"),
-                                expected_evidence=("mutation_score", "survivor_intel"),
+                                prerequisites=(
+                                    ".venv",
+                                    "mutmut==3.7.0",
+                                    "git",
+                                ),
+                                expected_evidence=(
+                                    "mutation_score",
+                                    "survivor_intel",
+                                ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
                                 timeout_seconds=1200,
@@ -1260,9 +1147,7 @@ class ExecutionOrchestrator:
                         }
                         coverage_groups[scope] = group
                     group["capabilities"].append(cap)
-                    group["reasons"].append(
-                        f"{cap} {'stale' if record else 'missing'}"
-                    )
+                    group["reasons"].append(f"{cap} {'stale' if record else 'missing'}")
                     # A measurement required for certification makes the whole
                     # scope's single execution mandatory.
                     if mm.required_for_certification:
@@ -1586,7 +1471,13 @@ class ExecutionOrchestrator:
                 if p in seen:
                     continue
                 seen.add(p)
-                if p in (".venv", "git", "mutmut==3.7.0", "pytest", "coverage"):
+                if p in (
+                    ".venv",
+                    "git",
+                    "mutmut==3.7.0",
+                    "pytest",
+                    "coverage",
+                ):
                     continue
                 # explicit script path
                 pth = REPO_ROOT / p.lstrip("/")
@@ -1650,33 +1541,137 @@ class ExecutionOrchestrator:
         # Section 6 stop-on-sufficiency state
         any_mandatory_fail = False
 
-        for spec in plan.tasks:
-            # Re-evaluation: live fingerprint may have changed mid-run
-            current_fp = RepositoryFingerprint.capture()
-            if current_fp.fingerprint != live_fp.fingerprint:
-                _push_record(
+        # M10-R2 (C3d): the anti-tamper invariant is now checked once around the
+        # fan-out instead of once per task. See `_fingerprint_integrity_record` for
+        # why this is strictly stronger, not weaker.
+        #
+        # M10-R2 (C3b): independent tasks run concurrently. Escalation tasks are a
+        # barrier, not a fan-out unit — `_add_dependency_edges` gives every one of
+        # them `depends_on = <all mandatory task ids>`, and stop-on-sufficiency is
+        # only decidable once the mandatory set has a complete result. They run
+        # after, in plan order, exactly as before.
+        independent = [s for s in plan.tasks if not s.is_escalation]
+        barrier = [s for s in plan.tasks if s.is_escalation]
+
+        def _execute_independent(
+            spec: ExecutionTaskSpec,
+        ) -> TaskExecutionRecord:
+            """Reuse/re-authorization gates, then execute. Pure per-task work."""
+            # Evidence reuse: for measurement tasks, check the persistent record
+            # before executing (Section 6).
+            if _measurement_kind_for_task(spec):
+                reusable = self._check_reusable_measurement(spec, live_fp)
+                if reusable is not None:
+                    return (
+                        self._make_record(
+                            spec,
+                            plan,
+                            exit_code=0,
+                            state=CompletionState.REUSED,
+                            reason_text=(
+                                f"authoritative {spec.verification_kind} record reused "
+                                f"from {reusable.get('path', '?')}"
+                            ),
+                            stderr_tail=[],
+                            measurement_truth={
+                                "kind": spec.verification_kind,
+                                "path": reusable.get("path", ""),
+                                "score": reusable.get("score"),
+                                "repository_sha": reusable.get("repository_sha", ""),
+                                "completion_status": "AUTHORITATIVE_COMPLETE",
+                            },
+                        ),
+                        reusable,
+                    )
+
+            if spec.authorization_required and spec.task_id not in authorize:
+                return (
                     self._make_record(
                         spec,
                         plan,
                         exit_code=-1,
-                        state=CompletionState.SCOPE,
-                        reason_text=f"repository state changed mid-run: live_fp={current_fp.fingerprint[:12]}",
+                        state=CompletionState.AUTHORIZATION_REQUIRED,
+                        reason_text=(
+                            "task requires human authorization; not authorized at "
+                            "execution time — no production changes attempted"
+                        ),
                         stderr_tail=[],
-                    )
+                        diagnostic={
+                            "stage": FailureStage.AUTHORIZATION_REQUIRED.value,
+                            "message": "operator must pass --authorize to run",
+                        },
+                        next_action=(
+                            "review capability / component / required evidence and "
+                            "rerun with --authorize <task_id> or --authorize all"
+                        ),
+                    ),
+                    None,
                 )
+
+            return self._execute_task(spec, plan, live_fp), None
+
+        def _run_one(
+            spec: ExecutionTaskSpec,
+        ) -> tuple[TaskExecutionRecord, Any]:
+            try:
+                return _execute_independent(spec)
+            except Exception as exc:  # noqa: BLE001 - one task must not erase the rest
+                return (
+                    self._make_record(
+                        spec,
+                        plan,
+                        exit_code=None,
+                        state=CompletionState.INFRASTRUCTURE,
+                        reason_text=f"orchestrator raised {type(exc).__name__}: {exc}",
+                        stderr_tail=[],
+                    ),
+                    None,
+                )
+
+        # Collect into plan order regardless of completion order, so evidence output
+        # can never depend on scheduling.
+        independent_outcomes = execute_tasks_in_parallel(independent, _run_one)
+
+        for spec, outcome in zip(independent, independent_outcomes, strict=True):
+            if isinstance(outcome, Exception):
+                record, reusable = (
+                    self._make_record(
+                        spec,
+                        plan,
+                        exit_code=None,
+                        state=CompletionState.INFRASTRUCTURE,
+                        reason_text=f"worker raised {type(outcome).__name__}: {outcome}",
+                        stderr_tail=[],
+                    ),
+                    None,
+                )
+            else:
+                record, reusable = outcome
+            _push_record(record)
+            if reusable is not None:
+                evidence_reused.append(spec.task_id)
+            if spec.authorization_required and (
+                record.completion_state == CompletionState.AUTHORIZATION_REQUIRED
+            ):
+                escalations_triggered.append(spec.task_id)
+            if spec.is_mandatory and record.completion_state in NON_PASS_STATES:
                 any_mandatory_fail = True
+            if record.completion_state is CompletionState.FAILED:
                 decisions.append(
                     {
-                        "stage": "in_flight",
-                        "decision": "aborted",
-                        "reason": "live fingerprint changed mid-run",
+                        "stage": "diagnostic",
+                        "task_id": spec.task_id,
+                        "decision": record.next_action,
+                        "failure_stage": (record.diagnostic or {}).get(
+                            "stage", FailureStage.NONE.value
+                        ),
                     }
                 )
-                break
 
-            # Stop on sufficiency (Section 6): skip escalation if all
-            # mandatory tasks so far are PASS/REUSED.
-            if spec.is_escalation and not any_mandatory_fail:
+        # Escalation barrier: stop-on-sufficiency is now decidable because the
+        # mandatory set has a complete result.
+        for spec in barrier:
+            if not any_mandatory_fail:
                 _push_record(
                     self._make_record(
                         spec,
@@ -1692,65 +1687,10 @@ class ExecutionOrchestrator:
                 )
                 continue
 
-            # Evidence reuse: for measurement tasks, check the persistent
-            # record before executing (Section 6 — reuse authoritative current
-            # evidence; reject stale evidence).
-            if _measurement_kind_for_task(spec):
-                reusable = self._check_reusable_measurement(spec, live_fp)
-                if reusable is not None:
-                    record = self._make_record(
-                        spec,
-                        plan,
-                        exit_code=0,
-                        state=CompletionState.REUSED,
-                        reason_text=(
-                            f"authoritative {spec.verification_kind} record reused "
-                            f"from {reusable.get('path', '?')}"
-                        ),
-                        stderr_tail=[],
-                        measurement_truth={
-                            "kind": spec.verification_kind,
-                            "path": reusable.get("path", ""),
-                            "score": reusable.get("score"),
-                            "repository_sha": reusable.get("repository_sha", ""),
-                            "completion_status": "AUTHORITATIVE_COMPLETE",
-                        },
-                    )
-                    _push_record(record)
-                    evidence_reused.append(spec.task_id)
-                    continue
-
-            # Authorization boundary.
-            if spec.authorization_required and spec.task_id not in authorize:
-                record = self._make_record(
-                    spec,
-                    plan,
-                    exit_code=-1,
-                    state=CompletionState.AUTHORIZATION_REQUIRED,
-                    reason_text=(
-                        "task requires human authorization; not authorized at "
-                        "execution time — no production changes attempted"
-                    ),
-                    stderr_tail=[],
-                    diagnostic={
-                        "stage": FailureStage.AUTHORIZATION_REQUIRED.value,
-                        "message": "operator must pass --authorize to run",
-                    },
-                    next_action=(
-                        "review capability / component / required evidence and rerun "
-                        "with --authorize <task_id> or --authorize all"
-                    ),
-                )
-                _push_record(record)
-                escalations_triggered.append(spec.task_id)
-                continue
-
-            # Execute.
-            record = self._execute_task(spec, plan, live_fp)
+            outcome = _run_one(spec)
+            record = outcome[0]
             _push_record(record)
-            if spec.is_mandatory and record.completion_state in NON_PASS_STATES:
-                any_mandatory_fail = True
-            if record.completion_state in (CompletionState.FAILED,):
+            if record.completion_state is CompletionState.FAILED:
                 decisions.append(
                     {
                         "stage": "diagnostic",
@@ -1761,6 +1701,35 @@ class ExecutionOrchestrator:
                         ),
                     }
                 )
+
+        # M10-R2 (C3d): capture the fingerprint once more, after every task has finished,
+        # and enforce the same invariant the per-task check used to.
+        #
+        # This is strictly stronger than the pre-M10-R2 behaviour, which only
+        # observed the tree *between* tasks: a change made during the final task — or
+        # after the last task but before the decision — was missed. Here it cannot be.
+        #
+        # The verdict is also identical: `_finalize` maps any SCOPE record to
+        # VALIDATION_BLOCKED, so no new decision value and no threshold change is
+        # introduced. What is lost is the early `break`, which is recorded explicitly
+        # in `decisions` so the evidence does not claim work was abandoned when it was
+        # in fact completed and then rejected for provenance.
+        fp_integrity = self._check_fingerprint_integrity(plan, live_fp)
+        if fp_integrity is not None:
+            _push_record(fp_integrity)
+            decisions.append(
+                {
+                    "stage": "in_flight",
+                    "decision": "repository-integrity-check-failed",
+                    "reason": (
+                        "the repository changed during execution; results are rejected "
+                        "for provenance. Pre-M10-R2 this was only observable between "
+                        "tasks, so a change during the final task went undetected."
+                    ),
+                    "fingerprint_before": live_fp.fingerprint[:12],
+                    "fingerprint_after": fp_integrity.fingerprint_after[:12],
+                }
+            )
 
         # M10-R2 (C1b). If coverage was measured once for a scope shared by several
         # capabilities, materialise the per-capability records now — before the
@@ -1806,6 +1775,68 @@ class ExecutionOrchestrator:
             decisions=decisions,
         )
 
+    def _check_fingerprint_integrity(
+        self,
+        plan: ExecutionPlan,
+        live_fp: RepositoryFingerprint,
+    ) -> TaskExecutionRecord | None:
+        """M10-R2 (C3d). Enforce the anti-tamper invariant around the fan-out.
+
+        Returns a SCOPE record when the repository changed while tasks were running,
+        or ``None`` when the state is intact.
+
+        The invariant is unchanged in *meaning*: the evidence in this report must
+        describe the repository state the plan was built against. Only the *when*
+        moved. Previously the comparison happened per task, which had two defects
+        under fan-out — it could not work (no single "between tasks" instant), and it
+        re-walked all of ``backend/src`` on every iteration for a check that only has
+        two interesting moments.
+        """
+        after = RepositoryFingerprint.capture()
+        if after.fingerprint == live_fp.fingerprint:
+            return None
+        spec = ExecutionTaskSpec(
+            task_id="fingerprint-integrity",
+            source_task_id="orchestrator::fingerprint-integrity",
+            primary_capability="orchestration",
+            capabilities=("orchestration",),
+            verification_kind="integrity",
+            command="",
+            profile="orchestration",
+            scope="integrity",
+            is_mandatory=True,
+            is_escalation=False,
+            reason="repository state changed during execution",
+            origin=TaskOrigin.CONTROL_PLANE.value,
+        )
+        record = self._make_record(
+            spec,
+            plan,
+            exit_code=-1,
+            state=CompletionState.SCOPE,
+            reason_text=(
+                "repository state changed during execution: "
+                f"before={live_fp.fingerprint[:12]} after={after.fingerprint[:12]} "
+                "— evidence rejected for provenance; re-run"
+            ),
+            stderr_tail=[],
+            diagnostic={
+                "stage": FailureStage.INVALID_SCOPE.value,
+                "message": "repository fingerprint changed during verification",
+                "fingerprint_before": live_fp.fingerprint,
+                "fingerprint_after": after.fingerprint,
+            },
+            next_action=(
+                "re-run verification; if the tree is expected to change during a "
+                "task, that task is not safe to run inside a fan-out"
+            ),
+            duration_seconds=0.0,
+        )
+        # `fingerprint_after` is surfaced on the record so the two values are
+        # available without re-capturing a state that has already moved on.
+        object.__setattr__(record, "fingerprint_after", after.fingerprint)
+        return record
+
     def _execute_task(
         self,
         spec: ExecutionTaskSpec,
@@ -1832,110 +1863,39 @@ class ExecutionOrchestrator:
     def _execute_shell_task(
         self, spec: ExecutionTaskSpec, plan: ExecutionPlan
     ) -> TaskExecutionRecord:
+        """Execute a shell task via the promoted streaming worker (M10-R2).
+
+        The process execution itself lives in
+        ``parallel_executor.run_streaming_command`` so this module and the profile
+        path share one worker. What stays here is the record/classification layer,
+        because only the orchestrator owns ``TaskExecutionRecord`` and
+        ``CompletionState``.
+        """
         command = self._resolve_command(spec)
         log_dir = self._evidence_root / "logs" / plan.plan_id
         log_dir.mkdir(parents=True, exist_ok=True)
         stdout_path = log_dir / f"{spec.task_id}-stdout.log"
         stderr_path = log_dir / f"{spec.task_id}-stderr.log"
-        # Start each execution with a clean file. The tee appends (so it is safe
-        # for the reader threads to interleave), so anything left from an earlier
-        # execution of the same task would otherwise appear to be this run's
-        # output. Truncating up front keeps the file meaning "this execution",
-        # and an empty file is still a valid record of "produced no output".
-        for stale in (stdout_path, stderr_path):
-            with contextlib.suppress(OSError):
-                stale.unlink()
-        t0 = time.monotonic()
-        exit_code: int | None = None
-        timed_out = False
-        infra_error: str | None = None
-        stdout_data = ""
-        stderr_data = ""
-        # 2026-09-30 — M9 stabilization: stream to the evidence files instead of
-        # buffering the whole run in memory and writing it at the end.
-        #
-        # With `capture_output=True` the log files stayed 0 bytes for the entire
-        # execution and only received their contents after the child exited. Two
-        # consequences, both observed during this stabilization:
-        #
-        #   1. If the orchestrator itself is interrupted, or the child is killed
-        #      and the write step is never reached, the evidence for a failing
-        #      run is *nothing at all* — which is exactly what happened to
-        #      reconcile run execplan-d210b2f3ea52, where all 20 task logs were
-        #      zero bytes and the failing obligation's output was unrecoverable.
-        #   2. Nothing recorded which test was executing, so a failing 29-minute
-        #      pytest run could not be narrowed down without re-running the
-        #      whole suite to catch it again.
-        #
-        # Streaming with an immediate flush makes the evidence exist and grow
-        # while the task runs, so a kill, a signal or an orchestrator crash
-        # still leaves the output produced up to that instant. This reuses the
-        # tee-then-flush pattern executor.py already uses for the same purpose
-        # (see `_tee` there); it is not a new mechanism.
-        #
-        # The contents read back afterwards are identical to what
-        # `capture_output=True` would have produced, so the state classification
-        # below is unchanged.
-        try:
-            # Canonical child environment (M9-C57): venv-first PATH + ED7
-            # locale/TZ, shared with executor.py via env.child_process_env.
-            from runtime.foundation.verification.env import child_process_env
 
-            proc = subprocess.Popen(
-                command,
-                shell=True,
-                cwd=str(REPO_ROOT),
-                env=child_process_env(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                # Own process group, so a wrapper timeout can kill the whole
-                # tree (the child is a shell that runs pytest, which runs more
-                # processes again). Mirrors executor.py's F19 handling.
-                start_new_session=True,
-            )
-            readers = [
-                threading.Thread(
-                    target=_tee,
-                    args=(proc.stdout, stdout_path),
-                    daemon=True,
-                ),
-                threading.Thread(
-                    target=_tee,
-                    args=(proc.stderr, stderr_path),
-                    daemon=True,
-                ),
-            ]
-            for reader in readers:
-                reader.start()
-            try:
-                proc.wait(timeout=spec.timeout_seconds)
-            except subprocess.TimeoutExpired:
-                timed_out = True
-                exit_code = 124
-                _kill_process_group(proc)
-            for reader in readers:
-                reader.join(timeout=5)
-            # A shell that dies on a signal reports 128+signum, so a return code
-            # above 128 is a termination, not a command's own exit status. It is
-            # recorded explicitly because "the process was killed" and "the
-            # command reported failure" are different diagnoses.
-            if exit_code is None:
-                exit_code = proc.returncode
-            stdout_data = _read_text(stdout_path)
-            stderr_data = _read_text(stderr_path)
-        except FileNotFoundError as exc:
-            infra_error = f"command not found: {exc}"
-        except Exception as exc:  # defensive
-            infra_error = f"subprocess raised: {type(exc).__name__}: {exc}"
+        # Canonical child environment (M9-C57): venv-first PATH + ED7 locale/TZ,
+        # shared with executor.py via env.child_process_env.
+        from runtime.foundation.verification.env import child_process_env
 
-        # The evidence files were written by the tee while the child ran. Touch
-        # them so they exist even when the child produced no output at all and
-        # the process was killed before the first line.
-        stdout_path.touch(exist_ok=True)
-        stderr_path.touch(exist_ok=True)
-        duration = time.monotonic() - t0
+        result = run_streaming_command(
+            command,
+            stdout_path=stdout_path,
+            stderr_path=stderr_path,
+            timeout_seconds=spec.timeout_seconds,
+            cwd=REPO_ROOT,
+            env=child_process_env(),
+        )
+
+        exit_code = result.exit_code
+        timed_out = result.timed_out
+        infra_error = result.infra_error
+        stdout_data = result.stdout
+        stderr_data = result.stderr
+        duration = result.duration_seconds
         artifacts: list[str] = [str(stdout_path), str(stderr_path)]
 
         if infra_error:
@@ -1948,10 +1908,10 @@ class ExecutionOrchestrator:
             state = CompletionState.PASS
             reason_text = "command exit 0"
         else:
-            # Reclassify infrastructure signals from stderr before
-            # defaulting to FAILED — an actual runtime FileNotFoundError
-            # or ModuleNotFoundError means the verification surface
-            # itself is broken (not a test assertion failure).
+            # Reclassify infrastructure signals from stderr before defaulting to
+            # FAILED — an actual runtime FileNotFoundError or ModuleNotFoundError
+            # means the verification surface itself is broken (not a test assertion
+            # failure).
             infra_signals = (
                 "FileNotFoundError",
                 "No such file or directory",
@@ -1974,13 +1934,6 @@ class ExecutionOrchestrator:
         diag = self._diagnose(spec, state, stderr_data, stdout_data)
         next_action = self._next_action(spec, state, diag)
         termination = _classify_termination(exit_code, timed_out, infra_error)
-        # Fold the *in-command* cause into the record. A wrapper script that
-        # aggregates checks (`run_runtime_verification.sh` prints
-        # `Failed checks: runtime-tests`) hides which check actually failed, and
-        # the script's own non-zero exit says nothing about the kind of failure:
-        # an assertion failure, a per-test timeout and an integrity failure are
-        # three different defects. The record names them so a long run cannot be
-        # summarised as "command exit 1" and then guessed at.
         pytest_detail = _summarise_pytest_outcome(stdout_data + "\n" + stderr_data)
         if pytest_detail and state is not CompletionState.PASS:
             diag = dict(diag or {})
@@ -1991,9 +1944,6 @@ class ExecutionOrchestrator:
                 # Keep the wrapper's EXIT_NONZERO but say what the inner run
                 # actually was, so the two are never confused.
                 termination["kind"] = "EXIT_NONZERO_WITH_INNER_" + pytest_detail["kind"]
-        if state != CompletionState.PASS and spec.is_mandatory:
-            # attach a forensic diagnostic record
-            pass
         return self._make_record(
             spec,
             plan,
@@ -2032,7 +1982,9 @@ class ExecutionOrchestrator:
         started = datetime.now(UTC)
         t0 = time.monotonic()
         try:
-            from runtime.foundation.verification.mutation_runner import execute_mutation
+            from runtime.foundation.verification.mutation_runner import (
+                execute_mutation,
+            )
 
             result = execute_mutation(
                 mode="target", target=spec.mutation_target, allow_dirty=True
@@ -2711,7 +2663,11 @@ def format_report(report: ExecutionReport) -> str:
             f"    [{r.completion_state:>22s}] {r.task_id} ({r.primary_capability}) "
             f"exit={r.exit_code} dur={r.duration_seconds:.1f}s"
         )
-        if r.next_action and r.completion_state not in ("pass", "reused", "skipped"):
+        if r.next_action and r.completion_state not in (
+            "pass",
+            "reused",
+            "skipped",
+        ):
             lines.append(f"             next: {r.next_action[:120]}")
     lines.append("=" * 80)
     return "\n".join(lines)

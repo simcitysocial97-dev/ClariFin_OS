@@ -111,12 +111,18 @@ def _collect_changed_files_result(*, fetch_remote: bool = True) -> Any:
     from types import SimpleNamespace
 
     return SimpleNamespace(
-        files=[], source="no-git", base=None, head=None, error="git unavailable"
+        files=[],
+        source="no-git",
+        base=None,
+        head=None,
+        error="git unavailable",
     )
 
 
 def _get_current_commit() -> str:
-    from runtime.foundation.verification.orchestrator import _get_current_commit
+    from runtime.foundation.verification.orchestrator import (
+        _get_current_commit,
+    )
 
     return _get_current_commit()
 
@@ -214,7 +220,10 @@ class ControlPlane:
         print(f" files={len(changed_files)}")
 
         if not changed_files and not _is_git_available():
-            print("No changed files detected and git unavailable.", file=sys.stderr)
+            print(
+                "No changed files detected and git unavailable.",
+                file=sys.stderr,
+            )
             return 1
 
         try:
@@ -426,7 +435,10 @@ class ControlPlane:
         if changed_files is None:
             changed_files = _collect_changed_files()
         if not changed_files and not _is_git_available():
-            print("No changed files detected and git unavailable.", file=sys.stderr)
+            print(
+                "No changed files detected and git unavailable.",
+                file=sys.stderr,
+            )
             return 1
 
         plan: ControlPlanePlan = self.planner.plan(changed_files)
@@ -482,7 +494,10 @@ class ControlPlane:
             try:
                 raw = path.read_text()
             except OSError as exc:
-                print(f"Cannot read plan file {plan_path}: {exc}", file=sys.stderr)
+                print(
+                    f"Cannot read plan file {plan_path}: {exc}",
+                    file=sys.stderr,
+                )
                 return 2
             try:
                 payload = json.loads(raw)
@@ -504,7 +519,10 @@ class ControlPlane:
             try:
                 supplied = ExecutionPlan.from_dict(payload)
             except ValueError as exc:
-                print(f"Plan file {plan_path} is unusable: {exc}", file=sys.stderr)
+                print(
+                    f"Plan file {plan_path} is unusable: {exc}",
+                    file=sys.stderr,
+                )
                 return 2
 
             validation_errors = supplied.validate()
@@ -519,13 +537,19 @@ class ControlPlane:
         if supplied is not None:
             execution_plan = supplied
             changed_files = list(supplied.changed_files)
-            plan = None
         else:
             changed_files = _collect_changed_files()
             if not changed_files and not _is_git_available():
-                print("No changed files detected and git unavailable.", file=sys.stderr)
+                print(
+                    "No changed files detected and git unavailable.",
+                    file=sys.stderr,
+                )
                 return 1
-            plan = self.planner.plan(changed_files)
+            # M10-R2: `run` previously also built a C48 `ControlPlanePlan` here and
+            # passed it to `_plan_to_obligations`, whose result was assigned to
+            # `_obligations` and then never read. That was dead computation on a
+            # plan format that cannot express a shard, so it is gone rather than
+            # reintroduced. The obligation rollup that *is* used lives in `plan`.
             execution_plan = self.orchestrator.build_execution_plan(changed_files)
 
         if shard is not None:
@@ -561,9 +585,7 @@ class ControlPlane:
                     invalidated_evidence=list(execution_plan.invalidated_evidence),
                     reusable_evidence=list(execution_plan.reusable_evidence),
                     tasks=[t for t in execution_plan.tasks if t.task_id in kept],
-                    escalation_conditions=list(
-                        execution_plan.escalation_conditions
-                    ),
+                    escalation_conditions=list(execution_plan.escalation_conditions),
                     measurement_requirements=list(
                         execution_plan.measurement_requirements
                     ),
@@ -637,7 +659,10 @@ class ControlPlane:
         bundle = analyze(changed_files=changed_files)
         print(
             format_diagnostic(
-                bundle["change"], bundle["blast"], bundle["risk"], bundle["repair"]
+                bundle["change"],
+                bundle["blast"],
+                bundle["risk"],
+                bundle["repair"],
             )
         )
         return 0
@@ -690,7 +715,9 @@ class ControlPlane:
             return 0
         else:
             # No capability specified: run mutation smoke test as default behavior
-            from runtime.foundation.verification.mutation_runner import run_mutation_cli
+            from runtime.foundation.verification.mutation_runner import (
+                run_mutation_cli,
+            )
 
             old_argv = sys.argv
             sys.argv = ["verify.py", "mutation"] + remaining_args
@@ -1124,7 +1151,9 @@ class ControlPlane:
         Includes authority drift detection from the authority_drift_detector module.
         Returns FrameworkIntegrityResult via diagnose(); int for CLI compatibility.
         """
-        from runtime.system.observability.health_report import EngineeringHealthReport
+        from runtime.system.observability.health_report import (
+            EngineeringHealthReport,
+        )
 
         report = EngineeringHealthReport()
         output = report.generate()
@@ -1263,7 +1292,10 @@ class ControlPlane:
         # Build provenance labels from capability_sources for obligations that need them
         cap_to_provenance_labels: dict[str, list[str]] = {}
         if plan.capability_resolution:
-            for cap_id, labels in plan.capability_resolution.capability_sources.items():
+            for (
+                cap_id,
+                labels,
+            ) in plan.capability_resolution.capability_sources.items():
                 cap_to_provenance_labels[cap_id] = labels
 
         obligations: list[VerificationObligation] = []
@@ -1319,7 +1351,7 @@ class ControlPlane:
                 disposition=Disposition.OPEN,
                 task_id=task.task_id,
                 evidence=(),
-                reasons=tuple(reason_parts) if reason_parts else (task.reason,),
+                reasons=(tuple(reason_parts) if reason_parts else (task.reason,)),
             )
             obligations.append(obligation)
 
@@ -1417,12 +1449,16 @@ def main() -> int:
     # the generic `strengthen` route because the aggregate is a reconciliation
     # over shard evidence, not a test-strengthening execution.
     if command == "mutation-aggregate":
-        from runtime.foundation.verification.mutation_shards import run_aggregate_cli
+        from runtime.foundation.verification.mutation_shards import (
+            run_aggregate_cli,
+        )
 
         return run_aggregate_cli(args)
 
     if command == "mutation-plan":
-        from runtime.foundation.verification.mutation_shards import run_plan_cli
+        from runtime.foundation.verification.mutation_shards import (
+            run_plan_cli,
+        )
 
         return run_plan_cli(args)
 
@@ -1431,7 +1467,9 @@ def main() -> int:
     # evidence, not a test-strengthening execution. It must be able to say
     # "the mutation score is invalid" — not merely report a number.
     if command == "mutation-trust":
-        from runtime.foundation.verification.mutation_trust import run_trust_cli
+        from runtime.foundation.verification.mutation_trust import (
+            run_trust_cli,
+        )
 
         return run_trust_cli(args)
 
@@ -1456,7 +1494,10 @@ def main() -> int:
         return _dispatch_canonical(command, args)
 
     # Everything else is unreachable / test-only / internal
-    print(f"Command not available in canonical surface: {command}", file=sys.stderr)
+    print(
+        f"Command not available in canonical surface: {command}",
+        file=sys.stderr,
+    )
     return 1
 
 
@@ -1493,15 +1534,31 @@ def _run_profile_alias(operation: str) -> int:
     observable outcome recording (blocking / timed-out / interrupted states
     are recorded rather than silently lost).
 
+    M10-R2 (C3b/C3g): independent tasks run concurrently through the shared worker
+    (``parallel_executor.run_streaming_command``), and the run is **collect-all**
+    rather than fail-fast. The previous loop returned on the first non-zero exit, which
+    meant a failure in task C erased the results of tasks D, E and F — the evidence
+    that would have told an operator which else was broken. The verdict is unchanged:
+    the profile still fails if any required task fails. Only the completeness of the
+    diagnosis changed.
+
+    Per-task stdout/stderr are streamed to ``runtime/generated/profile-logs/<op>/``
+    using the same worker the orchestrator uses, so a killed or interrupted run leaves
+    the output produced up to that instant rather than nothing at all.
+
     Returns the subprocess exit code (0 = success; non-zero mapped according
     to the canonical outcome vocabulary). On SIGINT/SIGTERM the process exits
     130/143 and an ``interrupted`` event is recorded. On per-task timeout a
     ``timeout_blocked`` event is recorded and the process exits 124.
     """
-    import subprocess
     import time
 
     from runtime.foundation.verification.env import child_process_env
+    from runtime.foundation.verification.parallel_executor import (
+        execute_tasks_in_parallel,
+        max_workers_for,
+        run_streaming_command,
+    )
     from runtime.foundation.verification.profiles import get_profile
     from runtime.verify import _record_verification_event
 
@@ -1513,89 +1570,105 @@ def _run_profile_alias(operation: str) -> int:
 
     env = child_process_env()
     run_start = time.monotonic()
-    passed = 0
-    failed = 0
     task_ids_executed: list[str] = []
     interrupted_flag = False
 
-    # Override is applied uniformly if the env-var is set (useful for tests /
-    # bounded CI jobs); otherwise each task uses its declared estimate.
     timeout_override = _profile_task_timeout_seconds()
 
-    for task in profile.tasks:
-        if task.name == "Aggregate evidence":
-            continue
-        task_timeout = timeout_override
-        if task_timeout <= 0:
-            task_timeout = max(600, 2 * task.estimated_duration_seconds)
-        for cmd in task.commands:
-            task_ids_executed.append(task.id)
-            try:
-                result = subprocess.run(
-                    cmd,
-                    shell=True,
-                    cwd=str(REPO_ROOT),
-                    env=env,
-                    timeout=task_timeout,
-                )
-            except subprocess.TimeoutExpired:
-                failed += 1
-                elapsed = time.monotonic() - run_start
-                _record_verification_event(
-                    None,
-                    profile_name=operation,
-                    elapsed=elapsed,
-                    status="blocked",
-                    passed=passed,
-                    failed=failed,
-                    final_decision="timeout_blocked",
-                    extra_metadata={"tasks_executed": task_ids_executed},
-                )
+    # "Aggregate evidence" is a post-run rollup, not a verification step; running it
+    # inside the loop was already skipped and stays skipped.
+    tasks = [t for t in profile.tasks if t.name != "Aggregate evidence"]
+
+    log_root = REPO_ROOT / "runtime" / "generated" / "profile-logs" / operation
+    log_root.mkdir(parents=True, exist_ok=True)
+
+    def _run_task(task) -> dict:
+        """Run one profile task's commands in order; return its outcome."""
+        outcome = {
+            "id": task.id,
+            "returncode": 0,
+            "timed_out": False,
+            "signal": None,
+        }
+        for index, cmd in enumerate(task.commands):
+            suffix = f"-{index}" if len(task.commands) > 1 else ""
+            result = run_streaming_command(
+                cmd,
+                stdout_path=log_root / f"{task.id}{suffix}-stdout.log",
+                stderr_path=log_root / f"{task.id}{suffix}-stderr.log",
+                timeout_seconds=timeout_override,
+                cwd=REPO_ROOT,
+                env=env,
+            )
+            if result.infra_error:
+                # The command never started. Reported distinctly from a failure so the
+                # operator is not sent looking for an assertion that cannot exist.
                 print(
-                    f"[profile:{operation}] task {task.id!r} timed out after {task_timeout}s",
+                    f"[profile:{operation}] task {task.id!r} could not run: "
+                    f"{result.infra_error}",
                     file=sys.stderr,
                 )
-                return 124
-            except KeyboardInterrupt:
-                interrupted_flag = True
-                break
-            if result.returncode != 0:
-                failed += 1
-                elapsed = time.monotonic() - run_start
-                # SIGINT (130) and SIGTERM (143) are interruption signals,
-                # not task failures — record them as interrupted so the
-                # operator knows the run was terminated rather than that a
-                # verification asserted failed.
-                if result.returncode in (130, 143):
-                    _record_verification_event(
-                        None,
-                        profile_name=operation,
-                        elapsed=elapsed,
-                        status="interrupted",
-                        passed=passed,
-                        failed=failed,
-                        final_decision="interrupted",
-                        extra_metadata={"tasks_executed": task_ids_executed},
-                    )
-                    return result.returncode
-                _record_verification_event(
-                    None,
-                    profile_name=operation,
-                    elapsed=elapsed,
-                    status="failed",
-                    passed=passed,
-                    failed=failed,
-                    final_decision="failed",
-                    extra_metadata={"tasks_executed": task_ids_executed},
-                )
+                outcome["returncode"] = 127
+                return outcome
+            if result.timed_out:
+                outcome["timed_out"] = True
+                outcome["returncode"] = 124
                 print(
-                    f"[profile:{operation}] task {task.id!r} failed (exit {result.returncode})",
+                    f"[profile:{operation}] task {task.id!r} timed out after "
+                    f"{timeout_override}s",
                     file=sys.stderr,
                 )
-                return result.returncode
-            passed += 1
-        if interrupted_flag:
-            break
+                return outcome
+            if result.exit_code != 0:
+                outcome["returncode"] = result.exit_code
+                print(
+                    f"[profile:{operation}] task {task.id!r} failed "
+                    f"(exit {result.exit_code})",
+                    file=sys.stderr,
+                )
+                return outcome
+        return outcome
+
+    # Concurrency is bounded and never exceeds the work available. On a 2-core CI
+    # runner this yields ~2x rather than 7x; the large win for CI is the
+    # plan -> matrix -> aggregate topology, not this pool.
+    workers = max_workers_for(len(tasks))
+    if workers > 1 and len(tasks) > 1:
+        print(
+            f"[profile:{operation}] running {len(tasks)} task(s) with "
+            f"{workers} worker(s)",
+            file=sys.stderr,
+        )
+
+    try:
+        outcomes = execute_tasks_in_parallel(tasks, _run_task, max_workers=workers)
+    except KeyboardInterrupt:
+        interrupted_flag = True
+        outcomes = []
+
+    task_ids_executed = [o["id"] for o in outcomes if isinstance(o, dict)]
+    passed = sum(1 for o in outcomes if isinstance(o, dict) and o["returncode"] == 0)
+    failed = len(outcomes) - passed
+
+    # Collect-all verdict: fail if any required task failed, but only after every
+    # independent task has reported.
+    timed_out_any = any(isinstance(o, dict) and o["timed_out"] for o in outcomes)
+    signal_exit = next(
+        (
+            o["returncode"]
+            for o in outcomes
+            if isinstance(o, dict) and o["returncode"] in (130, 143)
+        ),
+        None,
+    )
+    first_failure = next(
+        (
+            o["returncode"]
+            for o in outcomes
+            if isinstance(o, dict) and o["returncode"] != 0
+        ),
+        0,
+    )
 
     elapsed = time.monotonic() - run_start
     if interrupted_flag:
@@ -1610,6 +1683,52 @@ def _run_profile_alias(operation: str) -> int:
             extra_metadata={"tasks_executed": task_ids_executed},
         )
         return 130
+
+    # SIGINT (130) / SIGTERM (143) are interruption signals, not task failures.
+    # Recorded as interrupted so an operator knows the run was terminated rather
+    # than that a verification asserted failed — unchanged from before, just
+    # evaluated after every task has reported.
+    if signal_exit is not None:
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="interrupted",
+            passed=passed,
+            failed=failed,
+            final_decision="interrupted",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return signal_exit
+
+    if timed_out_any:
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="blocked",
+            passed=passed,
+            failed=failed,
+            final_decision="timeout_blocked",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return 124
+
+    if first_failure != 0:
+        # Every independent task has now run and reported; only now is the verdict
+        # formed. The exit code is the first non-zero in plan order, matching the
+        # pre-M10-R2 contract exactly.
+        _record_verification_event(
+            None,
+            profile_name=operation,
+            elapsed=elapsed,
+            status="failed",
+            passed=passed,
+            failed=failed,
+            final_decision="failed",
+            extra_metadata={"tasks_executed": task_ids_executed},
+        )
+        return first_failure
 
     _record_verification_event(
         None,

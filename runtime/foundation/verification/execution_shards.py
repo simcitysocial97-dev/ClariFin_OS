@@ -46,13 +46,13 @@ from dataclasses import dataclass
 from typing import Any
 
 from runtime.foundation.verification.execution_orchestrator import (
+    NON_PASS_STATES,
+    PASSING_STATES,
     ExecutionPlan,
     ExecutionReport,
     ExecutionTaskSpec,
     FinalDecision,
     TaskExecutionRecord,
-    NON_PASS_STATES,
-    PASSING_STATES,
 )
 
 __all__ = [
@@ -99,12 +99,14 @@ class ShardAssignment:
         h.update(str(self.shard_count).encode("utf-8"))
         for shard in self.shards:
             for task in shard:
-                h.update(f"{task.task_id}|{task.command}".encode("utf-8"))
+                h.update(f"{task.task_id}|{task.command}".encode())
             h.update(b"||")
         return h.hexdigest()
 
 
-def validate_shard_request(shard: int | None, shard_count: int | None) -> tuple[int, int]:
+def validate_shard_request(
+    shard: int | None, shard_count: int | None
+) -> tuple[int, int]:
     """Normalise and validate a ``--shard``/``--shard-count`` pair.
 
     ``(None, None)`` means "not sharded" and yields ``(0, 1)`` — a single shard
@@ -168,7 +170,9 @@ def assign_shards(plan: ExecutionPlan, shard_count: int) -> ShardAssignment:
     return ShardAssignment(
         shard_count=shard_count,
         shards=shards,
-        critical_path_estimate=max((sum(_weight(t) for t in s) for s in shards), default=0),
+        critical_path_estimate=max(
+            (sum(_weight(t) for t in s) for s in shards), default=0
+        ),
     )
 
 
@@ -196,7 +200,10 @@ def evidence_path_conflicts(assignment: ShardAssignment) -> list[str]:
                 f"log-stdout:{task.task_id}",
                 f"log-stderr:{task.task_id}",
             }
-            if task.verification_kind in ("coverage", "mutation") or task.profile in (
+            if task.verification_kind in (
+                "coverage",
+                "mutation",
+            ) or task.profile in (
                 "coverage",
                 "mutation",
             ):
@@ -228,9 +235,7 @@ def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
             "estimated_seconds": sum(
                 _weight(t) for t in assignment.shards[i] if not t.is_escalation
             ),
-            "includes_escalation": any(
-                t.is_escalation for t in assignment.shards[i]
-            ),
+            "includes_escalation": any(t.is_escalation for t in assignment.shards[i]),
         }
         for i in range(assignment.shard_count)
         if assignment.task_ids(i)
@@ -288,7 +293,9 @@ def merge_shard_reports(
     missing = [t.task_id for t in plan.tasks if t.task_id not in records]
     extra = sorted(k for k in records if k not in order)
 
-    ordered = [records[k] for k in sorted(records, key=lambda k: (order.get(k, 1 << 30), k))]
+    ordered = [
+        records[k] for k in sorted(records, key=lambda k: (order.get(k, 1 << 30), k))
+    ]
 
     completeness_problems: list[str] = []
     if missing:
@@ -326,7 +333,11 @@ def merge_shard_reports(
     failed = sum(1 for r in ordered if r.completion_state in NON_PASS_STATES)
 
     started = min(
-        (getattr(r, "started_at", "") for r in shard_reports if getattr(r, "started_at", "")),
+        (
+            getattr(r, "started_at", "")
+            for r in shard_reports
+            if getattr(r, "started_at", "")
+        ),
         default="",
     )
     completed = max(
@@ -356,7 +367,9 @@ def merge_shard_reports(
             "tasks_failed": failed,
             "tasks_missing": len(missing),
             "shards_merged": len(shard_reports),
-            "shard_partition": "complete" if not completeness_problems else "incomplete",
+            "shard_partition": (
+                "complete" if not completeness_problems else "incomplete"
+            ),
         },
         final_decision=final_decision.value,
         decision_reason=reason,

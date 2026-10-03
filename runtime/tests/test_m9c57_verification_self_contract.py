@@ -31,11 +31,7 @@ import os
 import re
 import subprocess
 import sys
-import time
-from collections.abc import Iterator
-from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -124,8 +120,9 @@ class TestExecutionToEventChain:
     semantics."""
 
     def test_success_recorded_as_passed(self, tmp_events: Path):
-        from runtime.system.observability.event_store import EngineeringEventStore
-        from runtime.system.observability.repository import LocalMetricsRepository
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -155,7 +152,9 @@ class TestExecutionToEventChain:
         assert history[0]["branch"] != ""
 
     def test_failed_recorded_as_failed(self, tmp_events: Path):
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -179,7 +178,9 @@ class TestExecutionToEventChain:
     def test_blocked_is_never_passthrough(self, tmp_events: Path):
         """A blocked run (timeout/infra/validation/authorization) MUST NOT
         become a passed outcome in any layer."""
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         for decision in (
@@ -204,20 +205,19 @@ class TestExecutionToEventChain:
         statuses = {e.payload["status"] for e in vc}
         assert statuses == {"blocked"}
         decisions = {e.payload["final_decision"] for e in vc}
-        assert decisions == set(
-            decision
-            for decision in (
-                "timeout_blocked",
-                "infrastructure_blocked",
-                "validation_blocked",
-                "awaiting_authorization",
-            )
-        )
+        assert decisions == {
+            "timeout_blocked",
+            "infrastructure_blocked",
+            "validation_blocked",
+            "awaiting_authorization",
+        }
         # No blocked event may masquerade as passed
         assert "passed" not in statuses
 
     def test_interrupted_is_never_passthrough(self, tmp_events: Path):
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -239,7 +239,9 @@ class TestExecutionToEventChain:
     def test_identity_stamps_real_repository_state(self, tmp_events: Path):
         """O2-G9 identity truth: commit_sha and branch come from git, not
         hardcoded blanks."""
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -262,7 +264,9 @@ class TestExecutionToEventChain:
         )  # context carries it
 
     def test_plan_id_and_report_id_are_traceable(self, tmp_events: Path):
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -300,7 +304,9 @@ class TestAnalyticsTruth:
 
     def test_blocked_runs_appear_in_blocked_bucket(self, tmp_events: Path):
         from runtime.system.observability import analytics as analytics_mod
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -327,7 +333,9 @@ class TestAnalyticsTruth:
 
     def test_interrupted_excluded_from_success_denominator(self, tmp_events: Path):
         from runtime.system.observability import analytics as analytics_mod
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
 
         _record_verification_event(
@@ -361,52 +369,19 @@ class TestIdentityTraceability:
         """A real ExecutionReport gets recorded with its plan_id and
         report_id exposed in the event metadata, linking the two paths."""
         from runtime.foundation.verification.execution_orchestrator import (
-            ExecutionPlan,
-            ExecutionTaskSpec,
             ExecutionReport,
-            RepositoryFingerprint,
+        )
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
         )
         from runtime.verify import record_execution_report
-        from runtime.system.observability.event_store import EngineeringEventStore
 
-        spec = ExecutionTaskSpec(
-            task_id="exec-0001",
-            source_task_id="task-0001",
-            primary_capability="loan-engine",
-            capabilities=("loan-engine",),
-            verification_kind="unit",
-            command="true",
-            profile="quick",
-            scope="quick",
-            is_mandatory=True,
-            is_escalation=False,
-            reason="test",
-            origin="control_plane",
-        )
-        fp = RepositoryFingerprint(
-            repository_sha="abc123",
-            working_tree_hash="wth",
-            config_hash="ch",
-            toolchain_hash="th",
-            fingerprint="fp",
-        )
-        plan = ExecutionPlan(
-            plan_id="plan-test",
-            source_plan_id="cp-1",
-            repository_fingerprint=fp,
-            changed_files=[],
-            affected_capabilities=["loan-engine"],
-            affected_components=[],
-            invalidated_evidence=[],
-            reusable_evidence=[],
-            tasks=[spec],
-            escalation_conditions=[],
-            measurement_requirements=[],
-            certification_requirements=[],
-            rationale="o2-selftest",
-            plan_fingerprint="pfp",
-            generated_at="2026-09-08T00:00:00+00:00",
-        )
+        # M10-R2: the ExecutionPlan / ExecutionTaskSpec / RepositoryFingerprint
+        # fixtures this test used to build were never consumed — the report below is
+        # constructed directly with literal ids, so the plan objects were dead setup
+        # that ruff flagged. Removed rather than silenced: an unused fixture in a test
+        # about report->event traceability asserts nothing and misleads a reader into
+        # thinking the plan participates in the code path.
         report = ExecutionReport(
             report_id="rpt-test",
             plan_id="plan-test",
@@ -450,12 +425,12 @@ class TestControlledFailureDetection:
           RunRecord(failed) → analytics recognizes failure."""
         from runtime.foundation.verification.execution_orchestrator import (
             ExecutionOrchestrator,
-            RepositoryFingerprint,
+        )
+        from runtime.system.observability import analytics as analytics_mod
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
         )
         from runtime.verify import record_execution_report
-        from runtime.system.observability.event_store import EngineeringEventStore
-        from runtime.system.observability import analytics as analytics_mod
-        from runtime.foundation.verification.orchestrator import _collect_changed_files
 
         orch = ExecutionOrchestrator(
             evidence_root=tmp_events.parent / "evidence",
@@ -510,8 +485,6 @@ class TestControlledFailureDetection:
         assert vc[0].payload["final_decision"] == report.final_decision
         assert vc[0].payload["failed"] >= 1
 
-        from runtime.system.observability.repository import LocalMetricsRepository
-
         data = json.loads((tmp_events.parent / "history.json").read_text())
         bucket = "ci" if os.environ.get("CI") else "local"
         history = data.get(bucket, [])
@@ -534,17 +507,54 @@ class TestInterruptionTruth:
     the operator knows what was covered before the kill."""
 
     def test_interrupted_profile_alias_does_not_become_pass(self, tmp_events: Path):
-        """Simulate a SIGINT-like exit (130) via subprocess.run returning
-        130 during a profile-alias run. The facade must emit an
-        ``interrupted`` event and still propagate the exit code."""
+        """Simulate a SIGINT-like exit (130) from the execution worker. The facade
+        must emit an ``interrupted`` event and still propagate the exit code.
+
+        M10-R2: the seam moved. Profile tasks execute through
+        ``parallel_executor.run_streaming_command`` — the single worker shared with
+        the orchestrator — so the worker is patched rather than ``subprocess.run``.
+        The assertions below are unchanged: this still asserts that an interrupted run
+        never reports PASS.
+        """
         from runtime.foundation.verification.control_plane_facade import (
             _run_profile_alias,
         )
-        from runtime.system.observability.event_store import EngineeringEventStore
-        from runtime.foundation.verification.profiles import get_profile
+        from runtime.foundation.verification.parallel_executor import (
+            CommandResult,
+        )
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
 
-        fake_result = type("R", (), {"returncode": 130})()
-        with patch("subprocess.run", return_value=fake_result):
+        def _fake_worker(
+            command,
+            *,
+            stdout_path,
+            stderr_path,
+            timeout_seconds,
+            cwd=None,
+            env=None,
+        ):
+            stdout_path.parent.mkdir(parents=True, exist_ok=True)
+            stdout_path.write_text("", encoding="utf-8")
+            stderr_path.write_text("", encoding="utf-8")
+            return CommandResult(
+                command=command,
+                exit_code=130,
+                timed_out=False,
+                infra_error=None,
+                stdout="",
+                stderr="",
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
+                duration_seconds=0.01,
+            )
+
+        with patch(
+            "runtime.foundation.verification.parallel_executor."
+            "run_streaming_command",
+            side_effect=_fake_worker,
+        ):
             exit_code = _run_profile_alias("quick")
 
         assert exit_code == 130
@@ -558,25 +568,54 @@ class TestInterruptionTruth:
         assert "tasks_executed" in meta
 
     def test_timeout_profiles_as_blocked_not_passthrough(self, tmp_events: Path):
-        """A per-task timeout MUST surface as ``blocked``, never as PASS."""
-        import time
+        """A per-task timeout MUST surface as ``blocked``, never as PASS.
 
-        import pytest
-
+        M10-R2: patched at the worker seam rather than ``subprocess.run``; the
+        assertions are unchanged.
+        """
         from runtime.foundation.verification.control_plane_facade import (
             _run_profile_alias,
         )
-        from runtime.system.observability.event_store import EngineeringEventStore
+        from runtime.foundation.verification.parallel_executor import (
+            CommandResult,
+        )
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
 
-        # Monkeypatch the env var so the quick profile's tasks use a tiny
-        # timeout; the quick profile's first command (`python3 -m ruff ...`)
-        # will exceed 0.01s and trigger a TimeoutExpired.
-        with patch.dict(os.environ, {"VERIFY_TASK_TIMEOUT_SECONDS": "0.01"}):
-            with patch("subprocess.run") as mock_run:
-                from subprocess import TimeoutExpired
+        def _fake_worker(
+            command,
+            *,
+            stdout_path,
+            stderr_path,
+            timeout_seconds,
+            cwd=None,
+            env=None,
+        ):
+            stdout_path.parent.mkdir(parents=True, exist_ok=True)
+            stdout_path.write_text("", encoding="utf-8")
+            stderr_path.write_text("", encoding="utf-8")
+            return CommandResult(
+                command=command,
+                exit_code=124,
+                timed_out=True,
+                infra_error=None,
+                stdout="",
+                stderr="",
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
+                duration_seconds=float(timeout_seconds),
+            )
 
-                mock_run.side_effect = TimeoutExpired("python3", 0.01)
-                exit_code = _run_profile_alias("quick")
+        with (
+            patch.dict(os.environ, {"VERIFY_TASK_TIMEOUT_SECONDS": "1"}),
+            patch(
+                "runtime.foundation.verification.parallel_executor."
+                "run_streaming_command",
+                side_effect=_fake_worker,
+            ),
+        ):
+            exit_code = _run_profile_alias("quick")
 
         # The alias path returns 124 on timeout (GNU convention)
         assert exit_code == 124
@@ -760,7 +799,7 @@ class TestApplicationBoundary:
                         )
         assert not hits, (
             "Verification infrastructure must not start a competing "
-            f"application lifecycle:\n" + "\n".join(hits)
+            "application lifecycle:\n" + "\n".join(hits)
         )
 
 
@@ -782,12 +821,11 @@ class TestDiagnosticTruth:
         from datetime import UTC, datetime
 
         from runtime.foundation.intelligence.platform.attribution import (
-            attribute_failures,
-            AttributionReport,
             ATTRIBUTION_UNKNOWN,
+            AttributionReport,
+            attribute_failures,
         )
         from runtime.foundation.intelligence.platform.blast import BlastRadius
-        from runtime.foundation.intelligence.platform.resolver import EntityRef
 
         # Construct a minimal, valid BlastRadius (no actual impacted nodes)
         # so attribute_failures does not crash on attribute lookup.
@@ -862,7 +900,9 @@ class TestRepeatability:
         from runtime.foundation.verification.execution_orchestrator import (
             ExecutionOrchestrator,
         )
-        from runtime.foundation.verification.orchestrator import _collect_changed_files
+        from runtime.foundation.verification.orchestrator import (
+            _collect_changed_files,
+        )
 
         orch = ExecutionOrchestrator()
         files = _collect_changed_files().files
@@ -896,8 +936,9 @@ class TestConfigurationReconciliation:
 
     def test_alias_set_is_subset_of_yaml_workflows_plus_allowlisted(self):
         from runtime.foundation.verification.profiles import profile_names
-        from runtime.foundation.verification.registry import VerificationRegistry
-        from runtime.system.observability.execution_context import create_context
+        from runtime.foundation.verification.registry import (
+            VerificationRegistry,
+        )
 
         registry = VerificationRegistry()
         registry.load()
@@ -920,7 +961,9 @@ class TestConfigurationReconciliation:
         """Every workflow.command that resolves to a shell script path must
         point to an existing file on disk. Dead script references cause
         silent INFRASTRUCTURE failures at execution time — caught here."""
-        from runtime.foundation.verification.registry import VerificationRegistry
+        from runtime.foundation.verification.registry import (
+            VerificationRegistry,
+        )
 
         registry = VerificationRegistry()
         registry.load()
@@ -929,7 +972,6 @@ class TestConfigurationReconciliation:
             cmd = wf.command or ""
             # Scan for bash-script invocations (``bash path/to/script.sh`` or
             # just the script path as a token). Skip placeholder/no-op commands.
-            import re
 
             parts = cmd.split()
             for part in parts:
@@ -993,8 +1035,10 @@ class TestRegressionSafety:
         """Post-O-2, the verifier itself must not emit legacy ``completed``
         events under the canonical paths. This is a regression guard against
         an accidental fallback to an older writer."""
+        from runtime.system.observability.event_store import (
+            EngineeringEventStore,
+        )
         from runtime.verify import _record_verification_event
-        from runtime.system.observability.event_store import EngineeringEventStore
 
         _record_verification_event(
             None,

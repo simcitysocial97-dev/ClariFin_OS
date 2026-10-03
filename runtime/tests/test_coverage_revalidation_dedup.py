@@ -18,9 +18,9 @@ import collections
 import glob
 import json
 
-import pytest
-
-from runtime.foundation.verification.execution_orchestrator import ExecutionOrchestrator
+from runtime.foundation.verification.execution_orchestrator import (
+    ExecutionOrchestrator,
+)
 
 NARROW = ["backend/src/engines/loan_engine/amortization.py"]
 
@@ -69,9 +69,7 @@ def test_redundant_executions_are_eliminated():
     distinct_scopes = {_scope_of(t) for t in coverage}
     assert len(coverage) == len(distinct_scopes)
     # The whole point: one task per distinct scope.
-    engine_scope = [
-        t for t in coverage if _scope_of(t) == "tests/unit/engines"
-    ]
+    engine_scope = [t for t in coverage if _scope_of(t) == "tests/unit/engines"]
     if engine_scope:
         assert len(engine_scope) == 1
         assert len(engine_scope[0].capabilities) >= 1
@@ -98,7 +96,9 @@ def test_revalidation_sources_keep_one_entry_per_capability():
     task list shrinks; the evidence gap report does not."""
     orch = _orch()
     plan = orch.build_execution_plan(_broad())
-    coverage_sources = [r for r in plan.revalidation_sources if r.get("kind") == "coverage"]
+    coverage_sources = [
+        r for r in plan.revalidation_sources if r.get("kind") == "coverage"
+    ]
     assert len(coverage_sources) == len({r["capability"] for r in coverage_sources})
 
     # Every capability named by a coverage task must also appear in the sources.
@@ -115,7 +115,7 @@ def test_group_membership_matches_reported_scope():
     orch.build_execution_plan(_broad())
     groups = orch._last_coverage_groups
     assert groups, "expected at least one coverage group"
-    for scope, caps in groups.items():
+    for caps in groups.values():
         assert caps == sorted(caps)
         assert len(caps) == len(set(caps))
 
@@ -125,10 +125,10 @@ def test_mutation_revalidation_is_not_deduped():
     delete real obligations. ``test_m9_c49.py`` asserts exactly one mutation task for
     loan-engine; that must keep holding."""
     orch = _orch()
-    plan = orch.build_execution_plan(["backend/src/engines/loan_engine/amortization.py"])
-    mutation = [
-        t for t in plan.tasks if t.verification_kind == "mutation"
-    ]
+    plan = orch.build_execution_plan(
+        ["backend/src/engines/loan_engine/amortization.py"]
+    )
+    mutation = [t for t in plan.tasks if t.verification_kind == "mutation"]
     commands = {t.command for t in mutation}
     # Two mutation tasks for the same capability would be a defect; two for different
     # capabilities are distinct obligations.
@@ -147,7 +147,9 @@ def test_distinct_scopes_are_never_collapsed():
     plan = orch.build_execution_plan(_broad())
     scopes = {_scope_of(t) for t in plan.tasks if t.verification_kind == "coverage"}
     if "api-contracts" in {
-        c for t in plan.tasks if t.verification_kind == "coverage"
+        c
+        for t in plan.tasks
+        if t.verification_kind == "coverage"
         for c in t.capabilities
     }:
         assert "." in scopes
@@ -232,7 +234,8 @@ def test_fan_out_materialises_a_record_per_requesting_capability(tmp_path):
 
 def test_fan_out_never_overwrites_an_existing_record(tmp_path):
     """A real per-capability record is authoritative. If one already exists it must
-    be left alone — overwriting it would destroy evidence to save a file write."""
+    be left alone — overwriting it would destroy evidence to save a file write.
+    """
     lead = "zzz-lead"
     existing = "aaa-consumer"
     caps = sorted([lead, existing])
@@ -257,9 +260,12 @@ def test_fan_out_never_overwrites_an_existing_record(tmp_path):
     written = orch.fan_out_shared_measurement_records(tmp_path)
 
     assert written == []
-    assert json.loads(
-        (tmp_path / f"measurement-truth-{existing}-coverage.json").read_text()
-    ) == original
+    assert (
+        json.loads(
+            (tmp_path / f"measurement-truth-{existing}-coverage.json").read_text()
+        )
+        == original
+    )
 
 
 def test_fan_out_is_a_noop_without_groups(tmp_path):

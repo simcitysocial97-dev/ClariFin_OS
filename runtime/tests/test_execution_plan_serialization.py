@@ -19,7 +19,6 @@ from runtime.foundation.verification.execution_orchestrator import (
     ExecutionOrchestrator,
     ExecutionPlan,
     ExecutionTaskSpec,
-    RepositoryFingerprint,
 )
 
 CHANGED = ["backend/src/engines/loan_engine/amortization.py"]
@@ -272,7 +271,7 @@ def _ok_record(spec, plan, state):
         completed_at=now,
         duration_seconds=0.0,
         exit_code=0,
-        completion_state=state.value if hasattr(state, "value") else str(state),
+        completion_state=(state.value if hasattr(state, "value") else str(state)),
         stdout_path="",
         stderr_path="",
         artifacts=[],
