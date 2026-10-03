@@ -170,16 +170,34 @@ class ControlPlane:
 
     # ── CANONICAL PUBLIC OPERATIONS ────────────────────────────────────────
 
-    def check(self, changed_files: list[str] | None = None) -> int:
+    def check(
+        self,
+        changed_files: list[str] | None = None,
+        *,
+        shard: tuple[int | None, int | None] = (None, None),
+    ) -> int:
         """
         Primary verification entrypoint.
 
         Given the current repository state, determine what is affected,
         plan the required verification, execute it, and produce evidence.
 
+        M10-R2: *shard* is ``(shard, shard_count)``. ``(None, None)`` means not
+        sharded, which is byte-identical to the pre-M10-R2 behaviour. When sharded,
+        the full plan is still built and still validated — only the *execution* is
+        narrowed to this shard's tasks, so the plan job and every shard agree on the
+        plan fingerprint by construction.
+
         Returns 0 on certified, 1 on failed/blocked/interrupted.
         """
         import time
+
+        from runtime.foundation.verification.execution_shards import (
+            assign_shards,
+            evidence_path_conflicts,
+            plan_matrix,
+            validate_shard_request,
+        )
 
         cf_result = _collect_changed_files_result()
         changed_files = (
@@ -198,6 +216,12 @@ class ControlPlane:
         if not changed_files and not _is_git_available():
             print("No changed files detected and git unavailable.", file=sys.stderr)
             return 1
+
+        try:
+            shard_index, shard_count = validate_shard_request(*shard)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
 
         # 1. Repository state → Change detection
         # 2. Change detection → Capability graph → Affected capabilities
@@ -245,6 +269,68 @@ class ControlPlane:
         ):
             print("[check] NO_TASKS_FOR_CHANGE_SCOPE: certified no-op")
             return 0
+
+        # 4c. Shard narrowing (M10-R2). The plan above is always built whole, so the
+        #     plan job and every shard derive an identical ``plan_fingerprint``.
+        #     Only the task subset executed here differs. With ``shard_count == 1``
+        #     this branch is inert and the run is byte-identical to pre-M10-R2.
+        if shard_count > 1:
+            from runtime.foundation.verification.execution_orchestrator import (
+                ExecutionPlan,
+            )
+
+            assignment = assign_shards(execution_plan, shard_count)
+
+            conflicts = evidence_path_conflicts(assignment)
+            if conflicts:
+                print(
+                    "Refusing to fan out: concurrent tasks would share an evidence "
+                    "destination: " + "; ".join(conflicts),
+                    file=sys.stderr,
+                )
+                return 2
+
+            matrix = plan_matrix(assignment, execution_plan)
+            print(
+                f"[check] plan={execution_plan.plan_id} "
+                f"tasks={len(execution_plan.tasks)} "
+                f"partition={assignment.partition_fingerprint()[:12]}",
+                file=sys.stderr,
+            )
+            print(f"[check] MATRIX_JSON={matrix}", file=sys.stderr)
+
+            kept = {t.task_id for t in assignment.shards[shard_index]}
+            execution_plan = ExecutionPlan(
+                plan_id=execution_plan.plan_id,
+                source_plan_id=execution_plan.source_plan_id,
+                repository_fingerprint=execution_plan.repository_fingerprint,
+                changed_files=list(execution_plan.changed_files),
+                affected_capabilities=list(execution_plan.affected_capabilities),
+                affected_components=list(execution_plan.affected_components),
+                invalidated_evidence=list(execution_plan.invalidated_evidence),
+                reusable_evidence=list(execution_plan.reusable_evidence),
+                tasks=[t for t in execution_plan.tasks if t.task_id in kept],
+                escalation_conditions=list(execution_plan.escalation_conditions),
+                measurement_requirements=list(execution_plan.measurement_requirements),
+                certification_requirements=list(
+                    execution_plan.certification_requirements
+                ),
+                rationale=execution_plan.rationale,
+                plan_fingerprint=execution_plan.plan_fingerprint,
+                generated_at=execution_plan.generated_at,
+                revalidation_sources=list(execution_plan.revalidation_sources),
+                reusable_measurements=list(execution_plan.reusable_measurements),
+                boundary_evidence=execution_plan.boundary_evidence,
+            )
+            total_tasks = len(assignment.task_ids(0)) + sum(
+                len(set(assignment.task_ids(i)) - set(assignment.task_ids(0)))
+                for i in range(1, shard_count)
+            )
+            print(
+                f"[check] shard {shard_index + 1}/{shard_count}: executing "
+                f"{len(kept)}/{total_tasks} assigned task(s)",
+                file=sys.stderr,
+            )
 
         run_start = time.monotonic()
         executed_task_ids: list[str] = []
@@ -353,36 +439,144 @@ class ControlPlane:
 
         return 0
 
-    def run(self, *, plan_path: str | None = None, json_out: bool = False) -> int:
+    def run(
+        self,
+        *,
+        plan_path: str | None = None,
+        json_out: bool = False,
+        shard: tuple[int, int] | None = None,
+    ) -> int:
         """
         Execute an explicit or generated verification plan.
 
-        The plan must be machine-readable (ControlPlanePlan JSON).
+        M10-R2: a supplied plan is now **authoritative**.
+
+        Previously this method loaded ``plan_path``, looked for
+        ``ControlPlanePlan.from_dict`` via ``hasattr``, found nothing, discarded the
+        payload it had just parsed, and then rebuilt the full plan from the changed
+        files. Every "explicit plan" therefore executed the entire boundary again,
+        and a corrupt plan file exited 0. Both are now hard errors.
+
+        The plan format is ``m9-c49-execution-plan/v1`` — the
+        :class:`~runtime.foundation.verification.execution_orchestrator.ExecutionPlan`
+        that the executor actually consumes, not the C48 ``ControlPlanePlan``. That
+        is deliberate: the C48 plan is derived from the changed files and holds
+        capability-level tasks, so it cannot express a shard, and
+        ``CapabilityResolution`` has no faithful reverse mapping. Sharding operates
+        on the C49 plan, so that is what a plan file carries.
         """
         import time
 
-        if plan_path:
-            # Load plan from file
-            plan_data = json.loads(Path(plan_path).read_text())
-            # Reconstruct ControlPlanePlan from dict
-            from runtime.foundation.verification.control_plane import (
-                ControlPlanePlan as CPPlan,
-            )
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionPlan,
+        )
+        from runtime.foundation.verification.execution_shards import (
+            assign_shards,
+            validate_shard_request,
+        )
 
-            plan = CPPlan.from_dict(plan_data) if hasattr(CPPlan, "from_dict") else None
-            if plan is None:
-                # Fallback: generate fresh plan
-                changed_files = _collect_changed_files()
-                plan = self.planner.plan(changed_files)
+        supplied: ExecutionPlan | None = None
+
+        if plan_path:
+            path = Path(plan_path)
+            try:
+                raw = path.read_text()
+            except OSError as exc:
+                print(f"Cannot read plan file {plan_path}: {exc}", file=sys.stderr)
+                return 2
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError as exc:
+                print(
+                    f"Plan file {plan_path} is not valid JSON: {exc}. "
+                    "Refusing to regenerate a plan from the changed files: a "
+                    "verification run must execute the plan it was given.",
+                    file=sys.stderr,
+                )
+                return 2
+            if not isinstance(payload, dict):
+                print(
+                    f"Plan file {plan_path} must contain a JSON object, got "
+                    f"{type(payload).__name__}.",
+                    file=sys.stderr,
+                )
+                return 2
+            try:
+                supplied = ExecutionPlan.from_dict(payload)
+            except ValueError as exc:
+                print(f"Plan file {plan_path} is unusable: {exc}", file=sys.stderr)
+                return 2
+
+            validation_errors = supplied.validate()
+            if validation_errors:
+                print(
+                    f"Plan file {plan_path} failed validation: "
+                    + "; ".join(validation_errors),
+                    file=sys.stderr,
+                )
+                return 2
+
+        if supplied is not None:
+            execution_plan = supplied
+            changed_files = list(supplied.changed_files)
+            plan = None
         else:
             changed_files = _collect_changed_files()
             if not changed_files and not _is_git_available():
                 print("No changed files detected and git unavailable.", file=sys.stderr)
                 return 1
             plan = self.planner.plan(changed_files)
+            execution_plan = self.orchestrator.build_execution_plan(changed_files)
 
-        _obligations: ObligationSet = self._plan_to_obligations(plan, changed_files)
-        execution_plan = self.orchestrator.build_execution_plan(changed_files)
+        if shard is not None:
+            index, count = validate_shard_request(*shard)
+            assignment = assign_shards(execution_plan, count)
+            if count > 1:
+                from runtime.foundation.verification.execution_shards import (
+                    evidence_path_conflicts,
+                )
+
+                conflicts = evidence_path_conflicts(assignment)
+                if conflicts:
+                    print(
+                        "Refusing to fan out: concurrent tasks would share an "
+                        "evidence destination: " + "; ".join(conflicts),
+                        file=sys.stderr,
+                    )
+                    return 2
+                kept = {t.task_id for t in assignment.shards[index]}
+                print(
+                    f"[run] shard {index + 1}/{count} executing "
+                    f"{len(kept)}/{len(execution_plan.tasks)} task(s); "
+                    f"partition={assignment.partition_fingerprint()[:12]}",
+                    file=sys.stderr,
+                )
+                execution_plan = ExecutionPlan(
+                    plan_id=execution_plan.plan_id,
+                    source_plan_id=execution_plan.source_plan_id,
+                    repository_fingerprint=execution_plan.repository_fingerprint,
+                    changed_files=list(execution_plan.changed_files),
+                    affected_capabilities=list(execution_plan.affected_capabilities),
+                    affected_components=list(execution_plan.affected_components),
+                    invalidated_evidence=list(execution_plan.invalidated_evidence),
+                    reusable_evidence=list(execution_plan.reusable_evidence),
+                    tasks=[t for t in execution_plan.tasks if t.task_id in kept],
+                    escalation_conditions=list(
+                        execution_plan.escalation_conditions
+                    ),
+                    measurement_requirements=list(
+                        execution_plan.measurement_requirements
+                    ),
+                    certification_requirements=list(
+                        execution_plan.certification_requirements
+                    ),
+                    rationale=execution_plan.rationale,
+                    plan_fingerprint=execution_plan.plan_fingerprint,
+                    generated_at=execution_plan.generated_at,
+                    revalidation_sources=list(execution_plan.revalidation_sources),
+                    reusable_measurements=list(execution_plan.reusable_measurements),
+                    boundary_evidence=execution_plan.boundary_evidence,
+                )
 
         # O-2 signal truth: record the run through the canonical event/RunRecord
         # chain even when the caller provided an explicit plan path.
@@ -413,7 +607,6 @@ class ControlPlane:
                 final_decision="interrupted",
                 extra_metadata={"tasks_executed": executed_task_ids},
             )
-            print("[run] INTERRUPTED (SIGINT/SIGTERM)", file=sys.stderr)
             return 130
 
         from runtime.verify import record_execution_report
@@ -1477,7 +1670,12 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return _run_profile_alias(operation)
     cp = ControlPlane()
     if operation == CanonicalOperation.CHECK.value:
-        return cp.check()
+        try:
+            shard, shard_count = _parse_shard_arg(args)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        return cp.check(shard=(shard, shard_count))
     if operation == CanonicalOperation.PLAN.value:
         # Handle --json flag
         json_out = "--json" in args
@@ -1497,7 +1695,16 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             idx = args.index("--plan")
             plan_path = args[idx + 1]
             args = args[:idx] + args[idx + 2 :]
-        return cp.run(plan_path=plan_path, json_out=json_out)
+        try:
+            shard, shard_count = _parse_shard_arg(args)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        return cp.run(
+            plan_path=plan_path,
+            json_out=json_out,
+            shard=(shard, shard_count),
+        )
     if operation == CanonicalOperation.DIAGNOSE.value:
         return cp.diagnose()
     if operation == CanonicalOperation.STRENGTHEN.value:
@@ -1517,6 +1724,45 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         return cp.doctor()
     print(f"Unknown canonical operation: {operation}", file=sys.stderr)
     return 1
+
+
+def _parse_shard_arg(args: list[str]) -> tuple[int | None, int | None]:
+    """Parse ``--shard N`` / ``--shard-count M`` out of *args*.
+
+    Returns ``(None, None)`` when neither flag is present, which the callers
+    normalise to "not sharded" — so an unflagged ``verify check`` takes exactly the
+    code path it took before M10-R2.
+    """
+    shard: int | None = None
+    shard_count: int | None = None
+
+    def _int(raw: str, flag: str) -> int:
+        try:
+            return int(raw)
+        except ValueError:
+            raise ValueError(f"{flag} expects an integer, got {raw!r}") from None
+
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--shard" and i + 1 < len(args):
+            shard = _int(args[i + 1], "--shard")
+            i += 2
+            continue
+        if a.startswith("--shard="):
+            shard = _int(a.split("=", 1)[1], "--shard")
+            i += 1
+            continue
+        if a == "--shard-count" and i + 1 < len(args):
+            shard_count = _int(args[i + 1], "--shard-count")
+            i += 2
+            continue
+        if a.startswith("--shard-count="):
+            shard_count = _int(a.split("=", 1)[1], "--shard-count")
+            i += 1
+            continue
+        i += 1
+    return shard, shard_count
 
 
 def _find_changed_files_arg(args: list[str]) -> list[str] | None:
