@@ -637,8 +637,34 @@ def seed(
                     candidate.unlink()
         # Must be set before the app resolves its database path.
         os.environ["FINANCE_DB_PATH"] = resolved
+        # Reported label is derived from the CLI argument ONLY, never from
+        # `resolved` or `os.environ`.
+        #
+        # `resolved` can originate from FINANCE_DB_PATH, and the report is
+        # printed as clear text by `--json` and by the human summary. Echoing
+        # an environment-derived absolute path there is what CodeQL flags as
+        # `py/clear-text-logging-sensitive-data` (2 high-severity alerts on the
+        # M11 branch), and the finding is legitimate even though the value is
+        # only a filesystem path: it discloses deployment layout, and it makes
+        # the report machine-dependent, which is the opposite of what a
+        # determinism-checked tool should emit.
+        #
+        # The basename is enough for an operator to identify which file was
+        # seeded, and it comes from the argument they typed.
+        database_label = Path(db_path).name
     else:
         resolved = os.environ.get("FINANCE_DB_PATH") or "data/finance.db"
+        database_label = "<environment default>"
+        # `--reset` without `--db` used to be a silent no-op: the unlink lived
+        # only inside the `if db_path:` branch, so the flag appeared to work and
+        # left every existing row in place. That is the worst failure shape for
+        # a reproducibility tool — it reports "seeded" while re-seeding nothing
+        # — so the default target is reset here too.
+        if reset:
+            for suffix in ("", "-wal", "-shm"):
+                candidate = Path(resolved + suffix)
+                if candidate.exists():
+                    candidate.unlink()
 
     client, closer = _build_client(base_url)
     try:
@@ -667,7 +693,7 @@ def seed(
     unexplained_empty = [label for label in empty if label not in KNOWN_EMPTY_SURFACES]
     return {
         "schema": "clarifin/e2e-seed/v1",
-        "database": resolved,
+        "database": database_label,
         "mode": "http" if base_url else "in-process",
         "member": member,
         "written": {
@@ -694,7 +720,14 @@ def seed(
 
 
 def _determinism_view(report: dict[str, Any]) -> dict[str, Any]:
-    """Report with the machine-dependent database path removed."""
+    """Report with the machine-dependent database label removed.
+
+    `report["database"]` is now already machine-independent (a basename, or the
+    literal `<environment default>`), so keeping or dropping it no longer
+    changes determinism. It is still dropped so that a caller diffing the
+    determinism view is never sensitive to how the database was selected, and so
+    the existing `report.pop("database")` contract keeps its meaning.
+    """
     return {k: v for k, v in report.items() if k != "database"}
 
 
@@ -709,7 +742,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--reset",
         action="store_true",
-        help="Delete the target database (and -wal/-shm) before seeding.",
+        help=(
+            "Delete the target database (and -wal/-shm) before seeding. Works "
+            "with or without --db: without it, the backend's default database "
+            "is reset. It previously took effect ONLY alongside --db, so "
+            "`--reset` on its own silently did nothing."
+        ),
     )
     parser.add_argument(
         "--base-url",
