@@ -213,6 +213,18 @@ jobs:
           fi
           exit "$RC"
 
+      - name: Upload leg result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `leg-<id>.json` exactly
+        # where the gate looks for it.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: playwright-result-${{ matrix.leg_id }}
+          path: runtime/generated/legs/leg-${{ matrix.leg_id }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Upload leg artifacts
         if: always()
         uses: ./.github/actions/upload-runtime
@@ -253,7 +265,7 @@ jobs:
       - name: Download all leg results
         uses: ./.github/actions/download-runtime
         with:
-          pattern: "playwright-leg-*"
+          pattern: "playwright-*"
           path: runtime/generated/legs
           merge-multiple: "true"
 

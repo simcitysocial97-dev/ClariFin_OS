@@ -173,6 +173,18 @@ jobs:
           echo "${{ matrix.task_id }} exit=${RC}" >> "$GITHUB_STEP_SUMMARY"
           exit "$RC"
 
+      - name: Upload obligation result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `leg-<n>.json` exactly
+        # where the gate looks for it.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: backend-result-${{ matrix.index }}
+          path: runtime/generated/legs/leg-${{ matrix.index }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Upload obligation artifacts
         if: always()
         uses: ./.github/actions/upload-runtime
@@ -212,7 +224,7 @@ jobs:
       - name: Download all obligation results
         uses: ./.github/actions/download-runtime
         with:
-          pattern: "backend-obligation-*"
+          pattern: "backend-*"
           path: runtime/generated/legs
           merge-multiple: "true"
 

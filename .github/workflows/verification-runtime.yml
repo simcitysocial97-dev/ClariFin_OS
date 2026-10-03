@@ -212,6 +212,18 @@ jobs:
           fi
           exit "$SHARD_RC"
 
+      - name: Upload shard result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `shard-<n>.json` exactly
+        # where the gate looks for it.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: runtime-result-${{ matrix.shard }}
+          path: runtime/generated/shards/shard-${{ matrix.shard }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Upload shard artifacts
         if: always()
         uses: ./.github/actions/upload-runtime
@@ -259,7 +271,7 @@ jobs:
       - name: Download all shard results
         uses: ./.github/actions/download-runtime
         with:
-          pattern: "runtime-shard-*"
+          pattern: "runtime-*"
           path: runtime/generated/shards
           merge-multiple: "true"
 

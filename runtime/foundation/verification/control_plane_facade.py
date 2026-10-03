@@ -2362,6 +2362,21 @@ def _run_profile_alias(operation: str) -> int:
     # inside the loop was already skipped and stays skipped.
     tasks = [t for t in profile.tasks if t.name != "Aggregate evidence"]
 
+    # M10-R2 — an evidence rollup is a BARRIER, never a peer.
+    #
+    # `VerificationTask.dependencies` is empty for every task in every profile, so the
+    # profile model does not express the one ordering that matters here: a rollup reads
+    # the evidence its sibling tasks produce. Run concurrently — which the fan-out
+    # introduced — `aggregate_evidence.py` reads a half-written evidence tree.
+    #
+    # This is the profile-level analogue of the escalation barrier in
+    # `ExecutionOrchestrator.execute`, and it is the same defect class as the runtime
+    # shard-boundary hazard: a consumer must never race its producer.
+    from runtime.foundation.verification.profile_tasks import is_aggregate_task
+
+    rollup_tasks = [t for t in tasks if is_aggregate_task(t)]
+    obligation_tasks = [t for t in tasks if not is_aggregate_task(t)]
+
     log_root = REPO_ROOT / "runtime" / "generated" / "profile-logs" / operation
     log_root.mkdir(parents=True, exist_ok=True)
 
@@ -2415,16 +2430,24 @@ def _run_profile_alias(operation: str) -> int:
     # Concurrency is bounded and never exceeds the work available. On a 2-core CI
     # runner this yields ~2x rather than 7x; the large win for CI is the
     # plan -> matrix -> aggregate topology, not this pool.
-    workers = max_workers_for(len(tasks))
-    if workers > 1 and len(tasks) > 1:
+    workers = max_workers_for(len(obligation_tasks))
+    if workers > 1 and len(obligation_tasks) > 1:
         print(
-            f"[profile:{operation}] running {len(tasks)} task(s) with "
-            f"{workers} worker(s)",
+            f"[profile:{operation}] running {len(obligation_tasks)} obligation(s) "
+            f"with {workers} worker(s)"
+            + (
+                f", then {len(rollup_tasks)} evidence rollup(s)" if rollup_tasks else ""
+            ),
             file=sys.stderr,
         )
 
     try:
-        outcomes = execute_tasks_in_parallel(tasks, _run_task, max_workers=workers)
+        outcomes = execute_tasks_in_parallel(
+            obligation_tasks, _run_task, max_workers=workers
+        )
+        # The rollup runs last, on the calling thread, so it observes a complete set of
+        # evidence rather than a partial one.
+        outcomes.extend(_run_task(t) for t in rollup_tasks)
     except KeyboardInterrupt:
         interrupted_flag = True
         outcomes = []

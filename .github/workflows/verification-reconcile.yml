@@ -263,6 +263,22 @@ jobs:
           fi
           exit "$SHARD_RC"
 
+      - name: Upload shard result
+        # SINGLE-PATH ROOT, deliberately. `upload-artifact` strips the least common
+        # ancestor of the uploaded paths, so mixing the report with evidence/logs
+        # produces an artifact whose root is `runtime/generated/` and the report ends up
+        # at `execution/shards/shard-<n>.json`. The gate then flattens and looks for
+        # `shard-<n>.json` at the top level, and finds nothing. mutation.yml avoids
+        # this by uploading exactly one path, which is what makes the artifact root be
+        # the directory it wants. One path, one root, files where the gate expects them.
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: reconcile-result-${{ matrix.shard }}
+          path: runtime/generated/execution/shards/shard-${{ matrix.shard }}.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Upload shard artifacts
         # `if: always()`: a failed shard is the case where the evidence matters most.
         if: always()
@@ -326,7 +342,7 @@ jobs:
       - name: Download all shard evidence
         uses: ./.github/actions/download-runtime
         with:
-          pattern: "reconcile-shard-*"
+          pattern: "reconcile-*"
           path: runtime/generated/shards
           merge-multiple: "true"
 

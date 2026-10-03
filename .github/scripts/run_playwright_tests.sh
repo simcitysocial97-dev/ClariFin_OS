@@ -100,71 +100,72 @@ fi
 
 # `PLAYWRIGHT_PASS` lets a leg run exactly one of the two passes. Without it the script
 # runs both, which is the original single-runner behaviour.
-run_pass() {
-  case "${PLAYWRIGHT_PASS:-all}" in
-    functional) return 0 ;;
-    visual) return 1 ;;
-    all) return 0 ;;
-    *) echo -e "${RED}✗ Unknown PLAYWRIGHT_PASS=${PLAYWRIGHT_PASS}${NC}"; exit 1 ;;
-  esac
-}
+# M10-R2 — a leg runs exactly one of the two passes.
+#
+# `PLAYWRIGHT_PASS` is resolved into two plain booleans up front. An earlier version
+# used `$(run_pass; echo $?)`, which is wrong under `set -euo pipefail`: `run_pass`
+# returning 1 aborts the command substitution before `echo $?` can run, so the
+# substitution is empty, NEITHER branch matches, and the script silently ran zero
+# passes. A plain variable cannot fail that way.
+PLAYWRIGHT_PASS="${PLAYWRIGHT_PASS:-all}"
+case "$PLAYWRIGHT_PASS" in
+  functional|visual|all) ;;
+  *)
+    echo -e "${RED}✗ Unknown PLAYWRIGHT_PASS=${PLAYWRIGHT_PASS} (expected functional, visual or all)${NC}"
+    exit 1
+    ;;
+esac
 
-if [ "$(run_pass; echo $?)" = "0" ]; then
+OVERALL_RC=0
+
+if [ "$PLAYWRIGHT_PASS" != "visual" ]; then
   echo -e "${YELLOW}Pass 1/2 — functional suite (visual regression excluded)${NC}"
-  npx playwright test "${project_flag[@]}" "${spec_filter[@]}" --reporter=list \
+  # `set +e` so a failing suite is REPORTED and its exit code propagated, rather than
+  # aborting the script before the reason is printed.
+  set +e
+  npx playwright test "${project_flag[@]}" ${spec_filter[@]+"${spec_filter[@]}"} --reporter=list \
     --grep-invert "Visual Regression"
+  PASS1_RC=$?
+  set -e
+  if [ "$PASS1_RC" -ne 0 ]; then
+    OVERALL_RC=$PASS1_RC
+    echo -e "${RED}✗ Functional pass failed (exit ${PASS1_RC})${NC}"
+  fi
 fi
 
-if [ "$(run_pass; echo $?)" = "1" ]; then
-  echo -e "\n${YELLOW}Pass 2/2 — visual regression (immutable, serial)${NC}"
-  # Deliberately no spec filter: the visual pass is one serial sweep, and narrowing it
-  # would silently drop screenshot assertions. The WHY block above explains why it must
-  # not be sharded.
-  if [ -n "${FINANCE_DB_PATH:-}" ]; then
-    rm -f "${FINANCE_DB_PATH}" "${FINANCE_DB_PATH}-wal" "${FINANCE_DB_PATH}-shm"
-    (cd "$REPO_ROOT" && PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py --reset)
-  else
+if [ "$PLAYWRIGHT_PASS" != "functional" ]; then
+  echo -e "\n${YELLOW}Re-seeding the database for a deterministic visual pass...${NC}"
+  if [ -z "${FINANCE_DB_PATH:-}" ]; then
     echo -e "${RED}✗ FINANCE_DB_PATH is not set.${NC}"
+    echo -e "${RED}  Visual regression needs a dedicated, re-seable database:${NC}"
+    echo -e "${RED}  without one it would be compared against order-dependent${NC}"
+    echo -e "${RED}  state. Set FINANCE_DB_PATH in the job environment.${NC}"
     exit 1
   fi
-  set +e
-  npx playwright test "${project_flag[@]}" --reporter=list \
-    --grep "Visual Regression" --workers=1 "${update_flag[@]}"
-  status=$?
-  set -e
-  if [ "$status" -eq 0 ]; then
-    echo -e "${GREEN}✓ All Playwright tests passed${NC}"
-    echo "================================================"
-    exit 0
-  fi
-  echo -e "${RED}✗ Playwright tests failed${NC}"
-  echo "================================================"
-  exit "$status"
-fi
-
-echo -e "\n${YELLOW}Re-seeding the database for a deterministic visual pass...${NC}"
-if [ -n "${FINANCE_DB_PATH:-}" ]; then
   rm -f "${FINANCE_DB_PATH}" "${FINANCE_DB_PATH}-wal" "${FINANCE_DB_PATH}-shm"
   (cd "$REPO_ROOT" && PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py --reset)
-else
-  echo -e "${RED}✗ FINANCE_DB_PATH is not set.${NC}"
-  echo -e "${RED}  Visual regression needs a dedicated, re-seedable database:${NC}"
-  echo -e "${RED}  without one it would be compared against order-dependent${NC}"
-  echo -e "${RED}  state. Set FINANCE_DB_PATH in the job environment.${NC}"
-  exit 1
+
+  echo -e "\n${YELLOW}Pass 2/2 — visual regression (immutable, serial)${NC}"
+  # Deliberately NO spec filter: the visual pass is one serial sweep, and narrowing it
+  # would silently drop screenshot assertions. The WHY block above explains why it must
+  # not be sharded.
+  set +e
+  npx playwright test "${project_flag[@]}" --reporter=list \
+    --grep "Visual Regression" --workers=1 ${update_flag[@]+"${update_flag[@]}"}
+  PASS2_RC=$?
+  set -e
+  if [ "$PASS2_RC" -ne 0 ]; then
+    OVERALL_RC=$PASS2_RC
+    echo -e "${RED}✗ Visual pass failed (exit ${PASS2_RC})${NC}"
+  fi
 fi
 
-echo -e "\n${YELLOW}Pass 2/2 — visual regression (immutable, serial)${NC}"
-npx playwright test "${project_flag[@]}" --reporter=list \
-  --grep "Visual Regression" --workers=1 "${update_flag[@]}"
-
-status=$?
-if [ "$status" -eq 0 ]; then
+if [ "$OVERALL_RC" -eq 0 ]; then
   echo -e "${GREEN}✓ All Playwright tests passed${NC}"
   echo "================================================"
   exit 0
-else
-  echo -e "${RED}✗ Playwright tests failed${NC}"
-  echo "================================================"
-  exit "$status"
 fi
+
+echo -e "${RED}✗ Playwright tests failed${NC}"
+echo "================================================"
+exit "$OVERALL_RC"
