@@ -1,0 +1,23 @@
+{
+  "run_id": "5b105fe4904486df",
+  "timestamp": "2026-10-03T11:38:47.932160+00:00",
+  "repository_sha": "90e8e6dec016dfdbeba2bd683d288e4fd5304c65",
+  "scenario": "deletion",
+  "changed_files": [
+    "backend/src/engines/deleted_engine.py"
+  ],
+  "resolved_capabilities": [
+    "UNMAPPED"
+  ],
+  "obligations": [
+    "unit"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

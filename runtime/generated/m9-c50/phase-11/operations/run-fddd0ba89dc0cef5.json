@@ -1,0 +1,24 @@
+{
+  "run_id": "fddd0ba89dc0cef5",
+  "timestamp": "2026-10-03T15:58:26.724539+00:00",
+  "repository_sha": "c5d67b9b7ea8fb99d0d625db397e8986edf6d23b",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmp6x2agh3i.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}
