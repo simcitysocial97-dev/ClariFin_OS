@@ -203,6 +203,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      # The shard is HANDED the plan it was assigned, rather than re-deriving one.
+      # Two independent derivations agreeing is a hope; one published artefact is a
+      # guarantee. The live run proved the hope wrong: the plan job produced
+      # `execplan-62fa5f9360c9` while the shards produced `execplan-b3c69ea99b69`, and
+      # the gate correctly refused to merge reports from a different plan.
+      - name: Download the authoritative plan
+        uses: ./.github/actions/download-runtime
+        with:
+          name: reconcile-plan
+          path: runtime/generated/execution
+          merge-multiple: "true"
+
       - name: Setup Node.js runtime
         uses: ./.github/actions/setup-node-runtime
         with:
