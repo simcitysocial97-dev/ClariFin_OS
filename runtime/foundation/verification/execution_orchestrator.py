@@ -195,6 +195,10 @@ from runtime.foundation.verification.parallel_executor import (  # noqa: E402
     classify_termination as _classify_termination,
 )
 from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    CpuBudget,
+    cpu_count,
+    cpu_demand_for,
+    estimate_wall_seconds,
     execute_tasks_in_parallel,
     run_streaming_command,
 )
@@ -747,6 +751,19 @@ class ExecutionTaskSpec:
     evidence_reused: tuple[str, ...] = field(default_factory=tuple)
     evidence_invalidated: tuple[str, ...] = field(default_factory=tuple)
     estimated_duration_seconds: int = 0
+    cpu_demand: int | str | None = None
+    """How many CPUs this task will occupy, M10-R3 (D). ``None`` means *derive it*.
+
+    ``None`` is the default **on purpose**. An earlier revision defaulted to ``1``, which
+    silently suppressed derivation for every task and made the CPU budget inert in the
+    one place it was introduced to fix something real: the measured shard-6
+    oversubscription. Derivation is strictly better than a hand-maintained number
+    because it cannot drift from the command, so the declaration exists only for the
+    cases derivation cannot see (an indirection two levels deep, or a task that only
+    sometimes fans out).
+
+    ``"auto"`` (or any int) to declare explicitly.
+    """
     mutation_target: str = ""  # set when verification_kind == "mutation"
 
     def to_dict(self) -> dict:
@@ -774,6 +791,7 @@ class ExecutionTaskSpec:
             "evidence_reused": list(self.evidence_reused),
             "evidence_invalidated": list(self.evidence_invalidated),
             "estimated_duration_seconds": self.estimated_duration_seconds,
+            "cpu_demand": self.cpu_demand,
             "mutation_target": self.mutation_target,
         }
 
@@ -2602,12 +2620,18 @@ class ExecutionOrchestrator:
         concurrent_tasks = [s for s in independent if not self._requires_main_thread(s)]
 
         outcomes_by_id: dict[str, Any] = {}
-        for spec, outcome in zip(
-            concurrent_tasks,
-            execute_tasks_in_parallel(concurrent_tasks, _run_one),
-            strict=True,
-        ):
-            outcomes_by_id[spec.task_id] = outcome
+        # M10-R3 (D): admit tasks against a CPU budget rather than a worker count.
+        #
+        # A worker count is only a CPU bound when every task is single-threaded, and
+        # this repository violates that in two of its own shell scripts
+        # (`-n auto` in run_contract_tests.sh and run_fast_checks.sh). Under a plain
+        # worker count, shard 6 ran those two plus the property tests concurrently —
+        # ~7 CPU-bound processes on 4 cores, worse on a 2-core runner. That is the
+        # measured mechanism by which correct obligations became TIMED_OUT.
+        cpu_budget = CpuBudget(self._cpu_budget_capacity())
+        outcomes_by_id.update(
+            self._fan_out_within_budget(concurrent_tasks, _run_one, cpu_budget)
+        )
         for spec in main_thread_tasks:
             try:
                 outcomes_by_id[spec.task_id] = _run_one(spec)
@@ -3318,6 +3342,92 @@ class ExecutionOrchestrator:
         )
 
     # ------------------------------------------------------------- finalize
+
+    @staticmethod
+    def _cpu_budget_capacity() -> int | None:
+        """How many CPUs this run may occupy.
+
+        ``VERIFY_CPU_BUDGET`` overrides it. That exists because a CI runner's real
+        parallelism is not always ``os.cpu_count()`` — a container cgroup limit or a
+        runner with hyperthreading disabled can both under-report — and a budget the
+        operator cannot correct is a budget that will be wrong on exactly the machines
+        where being wrong is expensive.
+        """
+        return cpu_count()
+
+    @staticmethod
+    def _safe_run(run_one, spec):
+        """One task, exception captured rather than raised.
+
+        Preserves the pre-existing contract: an unexpected worker exception becomes the
+        task's outcome instead of aborting the fan-out and erasing the results of every
+        independent task that would have diagnosed the run.
+        """
+        try:
+            return run_one(spec)
+        except Exception as exc:  # noqa: BLE001 - collected, not raised
+            return exc
+
+    @classmethod
+    def _fan_out_within_budget(
+        cls,
+        specs: list[ExecutionTaskSpec],
+        run_one,
+        budget: CpuBudget,
+    ) -> dict[str, Any]:
+        """Run *specs* concurrently without ever exceeding *budget*.
+
+        Admission is completion-driven: keep submitting while the budget allows, and
+        when it is full wait for *any* task to finish before considering the next. That
+        keeps every CPU busy without ever exceeding the bound — as opposed to admitting
+        a fixed wave and idling cores whenever one task in the wave runs long.
+
+        A task demanding more CPU than the entire budget is still run, alone. Refusing
+        it would deadlock the fan-out; running it alone is the only correct behaviour
+        available, and the overshoot is bounded by that one task.
+        """
+        if not specs:
+            return {}
+
+        from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+
+        results: dict[str, Any] = {}
+        outstanding: dict[Any, tuple[ExecutionTaskSpec, int]] = {}
+        pending = list(specs)
+
+        with ThreadPoolExecutor(
+            max_workers=max(1, budget.capacity), thread_name_prefix="verify"
+        ) as pool:
+            while pending or outstanding:
+                launched = True
+                while pending and launched:
+                    launched = False
+                    for spec in list(pending):
+                        demand = cpu_demand_for(spec)
+                        if not budget.try_acquire(demand):
+                            continue
+                        pending.remove(spec)
+                        outstanding[pool.submit(cls._safe_run, run_one, spec)] = (
+                            spec,
+                            demand,
+                        )
+                        launched = True
+                        # Stop as soon as nothing else can fit, so a large-demand task
+                        # is not left blocking smaller ones behind it.
+                        if not budget.would_admit(1):
+                            break
+                if outstanding:
+                    done, _ = wait(outstanding, return_when=FIRST_COMPLETED)
+                    for future in done:
+                        spec, demand = outstanding.pop(future)
+                        budget.release(demand)
+                        results[spec.task_id] = future.result()
+                elif pending:
+                    # Nothing running and nothing admissible: the head task needs more
+                    # CPU than the whole budget. Run it alone rather than deadlock.
+                    spec = pending.pop(0)
+                    results[spec.task_id] = cls._safe_run(run_one, spec)
+        return results
 
     def _finalize(
         self,

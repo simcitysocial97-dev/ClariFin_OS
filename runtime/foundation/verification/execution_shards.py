@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from collections.abc import Sequence
 from typing import Any
 
 from runtime.foundation.verification.execution_orchestrator import (
@@ -135,6 +136,53 @@ def validate_shard_request(
 def _weight(task: ExecutionTaskSpec) -> int:
     """LPT weight. Never zero — a zero weight would let a task float arbitrarily."""
     return max(int(task.estimated_duration_seconds or 0), 1)
+
+
+def shard_wall_seconds(tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None) -> int:
+    """Wall-clock estimate for one shard, under the CPU budget it will really run with.
+
+    M10-R3 (D). The matrix previously emitted ``sum(estimated_duration)`` as
+    ``estimated_seconds``. That number describes a *serial* machine, so it was wrong in
+    both directions at once: it ignored the concurrency the executor applies, and it
+    ignored that some tasks fork their own worker pools (``-n auto`` in
+    ``run_contract_tests.sh`` and ``run_fast_checks.sh``).
+
+    For shard 6 of the reproduced plan it reported 1741 s — the serial sum — while the
+    shard's real critical path was the max over its concurrent waves. A reader sizing a
+    CI job from that figure, or an operator reasoning about why a shard timed out, was
+    reasoning about a schedule that never ran.
+
+    Now it is the critical path: sum over budget-admitted waves of the slowest task in
+    each wave. ``estimated_seconds_serial`` is retained alongside it so the two can be
+    compared rather than one silently replacing the other.
+    """
+    from runtime.foundation.verification.parallel_executor import (
+        CpuBudget,
+        estimate_wall_seconds,
+    )
+
+    budget = CpuBudget(cpu_budget)
+    return int(round(estimate_wall_seconds(list(tasks), budget)))
+
+
+def shard_cpu_peak(tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None) -> int:
+    """Peak simultaneous CPU demand this shard will reach, and its budget.
+
+    Reported so a workflow sizing ``timeout-minutes`` can see the demand it is
+    scheduling against instead of inferring it from a worker count.
+    """
+    from runtime.foundation.verification.parallel_executor import (
+        CpuBudget,
+        cpu_demand_for,
+        schedule_within_budget,
+    )
+
+    budget = CpuBudget(cpu_budget)
+    waves = schedule_within_budget(list(tasks), budget)
+    return max(
+        (sum(cpu_demand_for(t) for t in wave) for wave in waves),
+        default=0,
+    )
 
 
 def assign_shards(plan: ExecutionPlan, shard_count: int) -> ShardAssignment:
@@ -232,8 +280,17 @@ def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
             "shard_count": assignment.shard_count,
             "task_ids": list(assignment.task_ids(i)),
             "task_count": len(assignment.task_ids(i)),
-            "estimated_seconds": sum(
+            # M10-R3 (D): the critical path under the real CPU budget, with the
+            # serial sum retained for comparison. The old single figure was the
+            # serial sum, which describes a schedule that never runs.
+            "estimated_seconds": shard_wall_seconds(
+                [t for t in assignment.shards[i] if not t.is_escalation]
+            ),
+            "estimated_seconds_serial": sum(
                 _weight(t) for t in assignment.shards[i] if not t.is_escalation
+            ),
+            "cpu_peak": shard_cpu_peak(
+                [t for t in assignment.shards[i] if not t.is_escalation]
             ),
             "includes_escalation": any(t.is_escalation for t in assignment.shards[i]),
         }

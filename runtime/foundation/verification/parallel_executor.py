@@ -515,6 +515,356 @@ def max_workers_for(item_count: int, requested: int | None = None) -> int:
 
 
 # ---------------------------------------------------------------------------
+# CPU budget (M10-R3 / D)
+#
+# The missing execution condition.
+#
+# Checkpoint A reproduced the reconcile failure and established its mechanism. The
+# shard planner assigns by *estimated_seconds*, and the matrix renders that as a SUM —
+# which is only correct if a shard executes serially. It does not: the executor runs up
+# to DEFAULT_MAX_WORKERS tasks concurrently. Worse, some of those tasks fork their own
+# worker pools: `run_contract_tests.sh:78` and `run_fast_checks.sh:89` both pass
+# `-n auto` to pytest.
+#
+# So shard 6 ran `exec-0002` (contract, `-n auto`), `exec-0003` (fast_checks, `-n
+# auto`) and `exec-0004` (property) concurrently — roughly 7 CPU-bound Python processes
+# against 4 cores, and against 2 on a standard GitHub runner. The measured consequence
+# was that `exec-0002` burned 180.3 s of a 360 s budget while `exec-0003` burned 352.2 s
+# of a task declared `estimated_duration=60`. Correct obligations were reclassified
+# TIMED_OUT, and the run looked like a slow or broken suite rather than
+# oversubscription.
+#
+# Nothing in the runtime modelled CPU as a consumable resource. Concurrency was a
+# *worker count*, which is only the same thing as CPU when every task is single-threaded
+# — an assumption this repository violates in two of its own shell scripts.
+# ---------------------------------------------------------------------------
+
+#: Matches an xdist/pytest worker-count flag in any of its spellings. Used to *derive*
+#: CPU demand from the command rather than trusting a hand-maintained declaration —
+#: a declared value that can drift from the command is exactly the kind of inert field
+#: this milestone is removing.
+#: ``-n`` is also the prefix of six shell comparison operators — ``-ne``, ``-eq``,
+#: ``-lt``, ``-gt``, ``-le``, ``-ge`` — which appear inside ``[ ... ]`` tests. The
+#: lookahead rejects exactly those. It deliberately does not reject ``-nauto``: the
+#: operator set is enumerated rather than expressed as "any letters", because
+#: ``-n auto`` is xdist and ``-nauto`` is also xdist, while every other suffix belongs
+#: to something else.
+_CPU_FLAG_RE = re.compile(
+    r"(?:^|\s)(?:-n(?![qe][dlgt]?\b)|--numprocesses)(?:[=\s]+)?([A-Za-z0-9_$'\"$]+)"
+)
+
+#: ``bash <script>`` / ``sh <script>`` / ``. <script>`` — the indirection that hides a
+#: worker-count flag from a plain scan of the command string.
+_SCRIPT_INDIRECTION_RE = re.compile(
+    r"(?:^|\s)(?:bash|sh|zsh|\.)\s+([^\s;|]+\.sh)\b"
+)
+
+#: A shell string test — ``[ -n "$X" ]``, ``[ -n "$X" -a -n "$Y" ]``.
+#:
+#: Without this, ``_CPU_FLAG_RE`` matches the ``-n`` inside every ``[ -n ... ]``
+#: conditional in a shell script and reports the *variable name* as a worker count.
+#: Every one of this repository's scripts is full of them, so the exclusion is what
+#: makes the scan find the real flag at all — ``run_contract_tests.sh`` contains both
+#: ``[ -n "$CHANGED_FILES" ]`` (line 31) and a genuine ``-n auto`` (line 78).
+_SHELL_TEST_BEFORE_RE = re.compile(r"\[\s*$")
+
+#: How deep to follow script indirection. One level is deliberate: following further
+#: would mean parsing arbitrary shell control flow to decide a scheduling parameter, and
+#: an unbounded traversal is the "general-purpose templating engine" this design refuses
+#: to become. One level covers this repository exactly, because its heavy tasks are all
+#: ``bash .github/scripts/<name>.sh``.
+_MAX_SCRIPT_DEPTH = 1
+
+
+def _repo_relative(path_text: str) -> str:
+    """Make *path_text* repo-relative without mangling a leading dot-directory.
+
+    ``lstrip("./")`` is wrong here: ``lstrip`` strips a *set of characters*, so
+    ``".github/scripts/x.sh"`` becomes ``"github/scripts/x.sh"`` — the leading dot is
+    removed along with the intended ``./``, the path does not exist, and every task's
+    demand silently falls back to 1. That is precisely the inert-scheduler failure this
+    function exists to prevent, found by checking the resolved value rather than
+    trusting that the code "looked right".
+    """
+    text = path_text
+    if text.startswith("./"):
+        text = text[2:]
+    return text.lstrip("/")
+
+
+#: Shell punctuation that terminates a token in a script. ``-n auto; then`` must read as
+#: ``auto``, not ``auto;`` — and an unstripped ``;`` made every such flag unresolvable,
+#: so a genuinely fanning-out task was reported as single-threaded.
+_TOKEN_TRAILING_JUNK = ";&|)<>'\""
+
+
+def _token_to_demand(token: str) -> int | None:
+    """Interpret a worker-count token, or ``None`` when it is not resolvable.
+
+    ``None`` means *unresolved*, which is deliberately not the same as 1: a token like
+    ``"$NPROC"`` or ``"$(nproc)"`` means the script may fan out by an unknown amount,
+    and silently treating that as single-threaded would re-introduce the exact
+    oversubscription this mechanism exists to bound.
+    """
+    cleaned = token.strip().strip(_TOKEN_TRAILING_JUNK).strip()
+    if not cleaned or cleaned.startswith("$"):
+        return None
+    if cleaned.lower() == "auto":
+        return cpu_count()
+    if cleaned.isdigit():
+        return max(1, int(cleaned))
+    return None
+
+
+def _first_worker_flag(text: str) -> int | None:
+    """The first genuine xdist/pytest worker count in *text*.
+
+    Shell ``[ -n "$X" ]`` tests are skipped; the first *resolvable* flag wins.
+    """
+    for match in _CPU_FLAG_RE.finditer(text):
+        # Reject a `[ -n ... ]` test: the character before the flag must not be `[`.
+        preceding = text[: match.start()].rstrip()
+        if preceding.endswith("["):
+            continue
+        demand = _token_to_demand(match.group(1))
+        if demand is not None:
+            return demand
+    return None
+
+
+def cpu_demand_in_script(script_text: str) -> int | None:
+    """CPU demand declared by a shell script's contents, or ``None`` if it declares none."""
+    return _first_worker_flag(script_text)
+
+
+def cpu_demand_for(item: Any, *, default: int = 1, _depth: int = 0) -> int:
+    """How many CPUs *item* will actually consume concurrently.
+
+    Resolution order, most authoritative first:
+
+    1. an explicit ``cpu_demand`` attribute — an int, or the string ``"auto"``;
+    2. a worker-count flag in the item's own command (``-n auto``, ``-n4``);
+    3. **a worker-count flag inside the shell script the command invokes.**
+
+    Step 3 is not optional. Every heavy task in this repository is
+    ``bash .github/scripts/<name>.sh``, and the ``-n auto`` lives *inside* those
+    scripts — ``run_contract_tests.sh:78``, ``run_fast_checks.sh:89``. Scanning only the
+    command string returns 1 for all of them, which would make the CPU budget a second
+    inert abstraction in precisely the place it was introduced to fix something real:
+    the measured shard-6 oversubscription. A scheduler that cannot see the fan-out
+    cannot bound it.
+
+    Traversal is one level deep and confined to repo-relative ``.sh`` paths, so it
+    cannot be turned into a shell interpreter or a general dependency walk. A flag
+    deeper than that, or behind an unresolvable variable, is reported by
+    :func:`unresolved_cpu_demand_tasks` rather than silently guessed.
+    """
+    declared = getattr(item, "cpu_demand", None)
+    if declared is not None:
+        if isinstance(declared, str):
+            return (
+                cpu_count()
+                if declared.strip().lower() == "auto"
+                else max(1, int(declared))
+            )
+        return max(1, int(declared))
+
+    command = getattr(item, "command", None)
+    if command is None and isinstance(item, dict):
+        command = item.get("command")
+    if not isinstance(command, str):
+        return max(1, default)
+
+    direct = _first_worker_flag(command)
+    if direct is not None:
+        return direct
+
+    if _depth < _MAX_SCRIPT_DEPTH:
+        for script_match in _SCRIPT_INDIRECTION_RE.finditer(command):
+            rel = _repo_relative(script_match.group(1))
+            path = REPO_ROOT / rel
+            try:
+                if not path.is_file() or path.stat().st_size > 512 * 1024:
+                    continue
+                script_text = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            declared_in_script = cpu_demand_in_script(script_text)
+            if declared_in_script is not None:
+                return declared_in_script
+    return max(1, default)
+
+
+def _script_has_unresolved_worker_flag(script_text: str) -> bool:
+    """True when *script_text* contains a worker-count flag that cannot be resolved.
+
+    Precise on purpose. A script with **no** worker flag at all — like
+    ``run_property_tests.sh`` — genuinely is single-threaded, and reporting it would
+    bury the real findings in noise. Only a flag that is present and unreadable counts,
+    because only that case admits the task and then oversubscribes.
+    """
+    for match in _CPU_FLAG_RE.finditer(script_text):
+        preceding = script_text[: match.start()].rstrip()
+        if preceding.endswith("["):
+            continue  # a shell `[ -n "$X" ]` string test, not a flag
+        if _token_to_demand(match.group(1)) is None:
+            return True
+    return False
+
+
+def unresolved_cpu_demand_tasks(items: Sequence[Any]) -> list[str]:
+    """Tasks whose CPU demand could only be guessed as 1.
+
+    A task that shells into a script carrying a worker count that cannot be resolved —
+    behind a variable, or two levels deep — will be *admitted* as single-threaded and
+    will then oversubscribe the box. That is the defect this whole mechanism exists to
+    prevent, so it is reported rather than tolerated: the scheduler is honest about what
+    it does not know.
+    """
+    unresolved: list[str] = []
+    for item in items:
+        if getattr(item, "cpu_demand", None) is not None:
+            continue
+        command = getattr(item, "command", None)
+        if not isinstance(command, str) or not command:
+            continue
+        if _first_worker_flag(command) is not None:
+            continue  # resolved directly from the command
+        for script_match in _SCRIPT_INDIRECTION_RE.finditer(command):
+            path = REPO_ROOT / _repo_relative(script_match.group(1))
+            try:
+                if not path.is_file() or path.stat().st_size > 512 * 1024:
+                    continue
+                script_text = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            if _script_has_unresolved_worker_flag(script_text):
+                unresolved.append(
+                    f"{getattr(item, 'task_id', '?')}: {command[:70]} invokes a script "
+                    "whose worker count could not be resolved; declare cpu_demand "
+                    "explicitly"
+                )
+            break
+    return unresolved
+
+
+def cpu_count() -> int:
+    """Usable CPU count for scheduling, overridable for testing and CI pinning."""
+    override = os.environ.get("VERIFY_CPU_BUDGET")
+    if override:
+        try:
+            return max(1, int(override))
+        except ValueError:
+            pass
+    return max(1, os.cpu_count() or 1)
+
+
+class CpuBudget:
+    """Admission control over a fixed number of CPUs.
+
+    Deliberately a *resource* rather than a worker count. A worker count answers "how
+    many things at once"; a CPU budget answers "how much CPU at once", which is the
+    question that actually has an answer when the work is heterogeneous. Four serial
+    tasks and one ``-n auto`` task are both "one worker" and neither is one CPU.
+
+    Non-blocking by design: :meth:`try_acquire` never waits, because the caller is
+    mid-iteration over a work list and must be able to skip an item it cannot admit
+    and come back to it.
+    """
+
+    __slots__ = ("_capacity", "_in_flight", "_peak")
+
+    def __init__(self, capacity: int | None = None) -> None:
+        self._capacity = max(1, capacity if capacity is not None else cpu_count())
+        self._in_flight = 0
+        self._peak = 0
+
+    @property
+    def capacity(self) -> int:
+        return self._capacity
+
+    @property
+    def in_flight(self) -> int:
+        return self._in_flight
+
+    @property
+    def peak(self) -> int:
+        """Highest concurrent demand observed. Evidence for the estimator."""
+        return self._peak
+
+    def try_acquire(self, demand: int) -> bool:
+        demand = max(1, demand)
+        if self._in_flight + demand > self._capacity:
+            return False
+        self._in_flight += demand
+        self._peak = max(self._peak, self._in_flight)
+        return True
+
+    def release(self, demand: int) -> None:
+        self._in_flight = max(0, self._in_flight - max(1, demand))
+
+    def would_admit(self, demand: int) -> bool:
+        return self._in_flight + max(1, demand) <= self._capacity
+
+
+def schedule_within_budget(
+    items: Sequence[Any],
+    budget: CpuBudget,
+    *,
+    demand_of: Callable[[Any], int] | None = None,
+) -> list[list[Any]]:
+    """Partition *items* into waves, each fitting inside *budget*.
+
+    Ordered longest-processing-time-first, by *declared duration*, with CPU demand as
+    the tiebreak. Duration is the primary key because it is what determines the number
+    of waves, and the wave count is what the wall-clock estimate is made of. Sorting by
+    demand instead would pack the greedy first-fit worse: it would place every
+    single-threaded task first and leave the heavy ones contending at the end.
+
+    Returns the waves in order. Within a wave, items are independent and may run
+    concurrently.
+    """
+    demand_of = demand_of or (lambda item: cpu_demand_for(item))
+
+    def sort_key(item: Any) -> tuple[float, int, str]:
+        return (
+            -float(getattr(item, "estimated_duration_seconds", 0) or 0),
+            -demand_of(item),
+            str(getattr(item, "task_id", "")),
+        )
+
+    remaining = sorted(items, key=sort_key)
+    waves: list[list[Any]] = []
+    for item in remaining:
+        demand = demand_of(item)
+        for wave in waves:
+            used = sum(demand_of(w) for w in wave)
+            if used + demand <= budget.capacity:
+                wave.append(item)
+                break
+        else:
+            waves.append([item])
+    return waves
+
+
+def estimate_wall_seconds(
+    items: Sequence[Any], budget: CpuBudget
+) -> float:
+    """Wall-clock estimate for *items* under *budget*, from their declared durations.
+
+    This is the sum over *waves* of the slowest item in each wave — i.e. the critical
+    path — rather than the sum over items. The old matrix figure was the plain sum,
+    which describes a serial machine and therefore understated nothing and overstated
+    everything depending on how much parallelism the executor actually applied.
+    """
+    waves = schedule_within_budget(items, budget)
+    total = 0.0
+    for wave in waves:
+        total += max((float(getattr(i, "estimated_duration_seconds", 0) or 0) for i in wave), default=0.0)
+    return total
+
+
+# ---------------------------------------------------------------------------
 # Generic concurrent driver
 # ---------------------------------------------------------------------------
 
