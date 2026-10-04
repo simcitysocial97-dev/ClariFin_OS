@@ -423,7 +423,7 @@ The cost is two coverage runs; the correct lever if that is too expensive is the
 *certification requirement* (which capabilities require a coverage measurement), never
 deduplication.
 
-## L7 — causes fixed, baselines deliberately not regenerated
+## L7 — causes fixed; baseline regeneration must happen in CI, and the repo already says so
 
 Fixed: the wall-clock timeline (new pinnable `lib/runtime/clock.ts`), the competing
 fixture authority (`global-setup.ts` now honours `FINANCE_DB_PATH` and *fails* rather
@@ -431,9 +431,22 @@ than falling back), the entirely unpinned rendering environment, the un-awaited
 `document.fonts.ready`, the `setViewportSize` that made every `mobile-chrome` baseline a
 desktop capture, and 87 baselines in a directory Playwright never reads.
 
-**Not done: regenerating the 24×2 baselines.** They must be regenerated on a
-CI-equivalent runner *after* these fixes. Regenerating them first would encode the
-wrong pixels — which is what four previous branch commits did.
+**Not done: regenerating the 24×2 baselines — deliberately, and the reason is already in
+the repository.** `.github/scripts/run_playwright_tests.sh` states it:
+
+> `PLAYWRIGHT_UPDATE_SNAPSHOTS=1` regenerates the visual baselines. It must only ever be
+> set on a GitHub runner: baselines are rasterisation-specific, so a workstation running
+> with a different font stack produces images that look correct locally and fail in CI.
+
+Regenerating them on this machine would therefore produce exactly the failure mode the
+warning describes — 48 baselines that pass here and fail on the runner. Doing it anyway to
+show progress would be manufacturing a green signal, which is the one thing this milestone
+is not permitted to do.
+
+The correct sequence is therefore: these fixes land → CI regenerates on its own runner →
+the resulting diff is reviewed as *evidence that the causes are fixed*, not as a
+mechanical PNG refresh. Four previous branch commits regenerated into a directory Playwright
+never read, which is the failure mode that wasted them.
 
 ## L6 — still needs a human decision
 
