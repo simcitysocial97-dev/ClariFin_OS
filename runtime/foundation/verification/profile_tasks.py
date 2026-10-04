@@ -92,6 +92,12 @@ def executable_tasks(profile_op: str) -> list[VerificationTask]:
     return [t for t in profile.tasks if t.name != AGGREGATED_TASK_NAME]
 
 
+# M10-R3 (L1c): one teardown margin for every backstop the runtime publishes.
+from runtime.foundation.verification.execution_shards import (
+    INFRA_BACKSTOP_MARGIN_SECONDS,
+)
+
+
 @dataclass(frozen=True, slots=True)
 class ProfileLegResult:
     """One matrix leg's outcome, as written to disk for the gate to read."""
@@ -204,6 +210,19 @@ def profile_matrix(profile_op: str) -> str:
     total = sum(t.estimated_duration_seconds for t in tasks)
     longest = max((t.estimated_duration_seconds for t in tasks), default=0)
 
+    # M10-R3 (L1c): the backstop this leg needs, published rather than hard-coded.
+    # `backend-verify.yml` carried its own `:-1500` literal; the budget it must respect
+    # is the one `run_obligation_leg` is given, which is the profile task timeout. The
+    # literal and the runtime agreed only by coincidence.
+    from runtime.foundation.verification.control_plane_facade import (
+        _profile_task_timeout_seconds,
+    )
+
+    leg_budget_seconds = _profile_task_timeout_seconds()
+    required_minutes = max(
+        1, -(-(leg_budget_seconds + INFRA_BACKSTOP_MARGIN_SECONDS) // 60)
+    )
+
     include = [
         {
             "index": i,
@@ -212,6 +231,8 @@ def profile_matrix(profile_op: str) -> str:
             "task_name": t.name,
             "command_count": len(t.commands),
             "estimated_seconds": t.estimated_duration_seconds,
+            "required_timeout_minutes": required_minutes,
+            "contractual_seconds": leg_budget_seconds,
         }
         for i, t in enumerate(tasks)
     ]

@@ -1,0 +1,25 @@
+{
+  "schema": "m10r3-certification-run/v1",
+  "plan_id": "execplan-scope-test",
+  "decision": "certified",
+  "reason": "all mandatory obligations satisfied and certification conditions met",
+  "exit_code": 5,
+  "duration_seconds": 0.13838255800146726,
+  "fingerprint_before": null,
+  "fingerprint_after": null,
+  "fingerprint_stable": false,
+  "obligations": [
+    {
+      "task_id": "exec-0002",
+      "state": "pass",
+      "is_mandatory": true,
+      "detail": "ok",
+      "duration_seconds": 0.0
+    }
+  ],
+  "topology": "check",
+  "plan_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "tasks_executed": [
+    "exec-0002"
+  ]
+}

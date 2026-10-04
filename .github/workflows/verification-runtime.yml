@@ -194,7 +194,13 @@ jobs:
           # ran and failed. Omitting it would make the gate report "missing" instead
           # of the real failure.
           set +e
-          timeout "${SHARD_TIMEOUT_SECONDS:-2400}" \
+          # M10-R3 (L1c): the budget is the runtime's, published per shard by
+          # `verify runtime-plan` as `required_timeout_minutes` (from
+          # runtime_shards.DEFAULT_SHARD_TIMEOUT_SECONDS). This used to carry its own
+          # `:-2400` literal duplicating that constant.
+          SHARD_BACKSTOP_SECONDS=$(( ${{ matrix.required_timeout_minutes }} * 60 ))
+          export VERIFY_INFRA_BACKSTOP_SECONDS="$SHARD_BACKSTOP_SECONDS"
+          timeout "${SHARD_BACKSTOP_SECONDS}s" \
             .venv/bin/python -m runtime.verify runtime-shard \
               --shard "${{ matrix.shard }}" \
               --count "${{ matrix.shard_count }}" \

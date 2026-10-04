@@ -170,7 +170,14 @@ jobs:
           # Narrow `|| true`: a red obligation must still write its result document, or
           # the gate reports "missing" instead of the real failure.
           set +e
-          timeout "${OBLIGATION_TIMEOUT_SECONDS:-1500}" \
+          # M10-R3 (L1c): the budget is the runtime's, published per leg by
+          # `verify backend-plan` as `required_timeout_minutes`. This used to carry its
+          # own `:-1500` literal, which agreed with the runtime only by coincidence.
+          # Exported so the runtime can refuse to start if the wrapper is smaller than the
+          # obligation it wraps.
+          OBLIGATION_BACKSTOP_SECONDS=$(( ${{ matrix.required_timeout_minutes }} * 60 ))
+          export VERIFY_INFRA_BACKSTOP_SECONDS="$OBLIGATION_BACKSTOP_SECONDS"
+          timeout "${OBLIGATION_BACKSTOP_SECONDS}s" \
             .venv/bin/python -m runtime.verify backend-task \
               --task "${{ matrix.task_id }}" \
               --result-out "runtime/generated/legs/leg-${{ matrix.index }}.json"

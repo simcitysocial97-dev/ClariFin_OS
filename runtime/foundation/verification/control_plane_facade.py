@@ -81,7 +81,10 @@ from runtime.foundation.verification.execution_orchestrator import (
     ExecutionTaskSpec,
     FinalDecision,
 )
-from runtime.foundation.verification.execution_shards import assign_shards
+from runtime.foundation.verification.execution_shards import (
+    assign_shards,
+    validate_infra_backstop,
+)
 from runtime.foundation.verification.parallel_executor import cpu_count
 from runtime.foundation.verification.measurement_truth_integration import (
     get_measurement_truth_integrator,
@@ -755,6 +758,46 @@ class ControlPlane:
         # * escalation tasks are dropped for the same reason `--shard` drops them: they
         #   are gated on the GLOBAL mandatory outcome, and a single-task run cannot
         #   decide that. Running one would execute work the plan never authorised.
+        # M10-R3 (L1c): validate the infrastructure backstop BEFORE any spawn.
+        #
+        # A workflow used to wrap the leg in a hand-written `timeout 85m`. On this
+        # repository that literal is *smaller than an obligation's own declared budget*:
+        # reconcile shard 3 holds a single task with `timeout_seconds=5400` (90 min),
+        # so the wrapper would kill it five minutes before its contractual expiry. The
+        # runner would report a timeout for work that was still legitimately running —
+        # the exact class of opaque failure this milestone exists to end, and the
+        # mission requires this state be rejected rather than documented against.
+        #
+        # VERIFY_INFRA_BACKSTOP_SECONDS is what the wrapper is actually set to. Absent,
+        # the check is skipped: a local run has no infrastructure backstop to violate.
+        if shard is not None and shard[0] is not None and shard[1]:
+            _backstop_raw = os.environ.get("VERIFY_INFRA_BACKSTOP_SECONDS")
+            if _backstop_raw:
+                try:
+                    _backstop = int(_backstop_raw)
+                except ValueError:
+                    print(
+                        f"VERIFY_INFRA_BACKSTOP_SECONDS={_backstop_raw!r} is not an "
+                        f"integer number of seconds; the backstop cannot be validated.",
+                        file=sys.stderr,
+                    )
+                    return 2
+                _problem = validate_infra_backstop(
+                    execution_plan.tasks, _backstop, cpu_count()
+                )
+                if _problem:
+                    print(
+                        f"[run] Refusing to execute shard {shard[0] + 1}/{shard[1]}: "
+                        f"{_problem}",
+                        file=sys.stderr,
+                    )
+                    return 2
+                print(
+                    f"[run] backstop { _backstop }s validated against a contractual "
+                    f"wall clock for this shard",
+                    file=sys.stderr,
+                )
+
         if task_scope:
             known = {t.task_id for t in execution_plan.tasks}
             unknown = [tid for tid in task_scope if tid not in known]

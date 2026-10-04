@@ -265,6 +265,83 @@ def evidence_path_conflicts(assignment: ShardAssignment) -> list[str]:
     return sorted(set(conflicts))
 
 
+def shard_intended_termination_seconds(
+    tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None
+) -> int:
+    """The longest this shard may legitimately run under the real schedule.
+
+    M10-R3 (L1c). This is the shard's **contractual** wall clock, and it is the number
+    the infrastructure backstop must exceed.
+
+    It is the sum over CPU-budget-admitted waves of the slowest task's own
+    ``timeout_seconds`` in that wave — not the maximum across the shard, because the CPU
+    budget serialises the heavy tasks. A shard holding one 3600 s task and one 180 s task
+    needs 3780 s of backstop on a 1-core budget, not 3600 s.
+
+    Deriving this from the task budgets rather than from estimates is the point: the
+    estimate is advisory, the budget is the obligation, and only the obligation may size
+    an infrastructure timeout.
+    """
+    from runtime.foundation.verification.parallel_executor import (
+        CpuBudget,
+        schedule_within_budget,
+    )
+
+    budget = CpuBudget(cpu_budget)
+    waves = schedule_within_budget(list(tasks), budget)
+    return sum(
+        max((int(t.timeout_seconds or 0) for t in wave), default=0) for wave in waves
+    )
+
+
+#: Headroom added on top of the contractual wall clock, in seconds.
+#:
+#: Covers process teardown, evidence flush and the aggregation tail. Not slack for a slow
+#: task: a task that exceeds its own ``timeout_seconds`` is a defect and should be
+#: reported as one, not absorbed by a bigger job timeout.
+INFRA_BACKSTOP_MARGIN_SECONDS = 300
+
+
+def required_backstop_minutes(
+    tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None
+) -> int:
+    """The infrastructure backstop a shard leg must be given, in whole minutes.
+
+    Published in the matrix so the workflow sizes its own ``timeout`` from the runtime's
+    contract rather than a hand-maintained literal. Previously the reconcile workflow
+    repeated the literal ``85m`` in **three** places (the GNU ``timeout`` call, a jq
+    diagnostic, and an error message), so they could drift independently — and did once:
+    the bare-number ``timeout 85`` bug capped every shard at 85 *seconds*.
+    """
+    contractual = shard_intended_termination_seconds(tasks, cpu_budget)
+    total = contractual + INFRA_BACKSTOP_MARGIN_SECONDS
+    return max(1, -(-total // 60))  # ceil, so a short shard still gets a whole minute
+
+
+def validate_infra_backstop(
+    tasks: Sequence[ExecutionTaskSpec],
+    backstop_seconds: int,
+    cpu_budget: int | None = None,
+) -> str | None:
+    """Reject a backstop that expires before the runtime's own termination path.
+
+    M10-R3 (L1c). The mission requires this state be *mechanically rejected* rather than
+    documented against. Without it, a workflow can pass a backstop shorter than the
+    obligations it contains and the runner kills a leg that was still legitimately
+    working — which is exactly the failure this milestone was chartered to end, and
+    exactly what the ``timeout 85`` bug did.
+    """
+    intended = shard_intended_termination_seconds(tasks, cpu_budget)
+    if backstop_seconds <= intended:
+        return (
+            f"infrastructure backstop {backstop_seconds}s expires at or before this "
+            f"shard's contractual wall clock of {intended}s "
+            f"(sum over CPU-budget waves of the slowest task budget). "
+            f"Raise it to at least {required_backstop_minutes(tasks, cpu_budget)} minutes."
+        )
+    return None
+
+
 def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
     """Render the partition as a GitHub Actions dynamic matrix document.
 
@@ -290,6 +367,15 @@ def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
                 _weight(t) for t in assignment.shards[i] if not t.is_escalation
             ),
             "cpu_peak": shard_cpu_peak(
+                [t for t in assignment.shards[i] if not t.is_escalation]
+            ),
+            # L1c: the backstop this leg must be given. Reaches CI automatically now
+            # that the workflow's matrix projection selects shape, not payload — the
+            # two changes are complementary and neither works without the other.
+            "required_timeout_minutes": required_backstop_minutes(
+                [t for t in assignment.shards[i] if not t.is_escalation]
+            ),
+            "contractual_seconds": shard_intended_termination_seconds(
                 [t for t in assignment.shards[i] if not t.is_escalation]
             ),
             "includes_escalation": any(t.is_escalation for t in assignment.shards[i]),

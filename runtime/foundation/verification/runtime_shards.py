@@ -44,6 +44,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from runtime.foundation.verification.execution_shards import (
+    INFRA_BACKSTOP_MARGIN_SECONDS,
+)
+
 
 def _emit(line: str) -> None:
     """One progress line on stderr. Never raises, never touches stdout."""
@@ -174,6 +178,11 @@ def shard_matrix(plan: TestShardPlan) -> str:
             "shard_count": plan.shard_count,
             "file_count": len(plan.shards[i]),
             "estimated_seconds": plan.estimated_seconds[i],
+            # L1c: the backstop this leg needs. Uniform, because every runtime shard
+            # executes the same command under the same budget — the difference between
+            # shards is which FILES they hold, not how long they may take.
+            "required_timeout_minutes": required_shard_backstop_minutes(),
+            "contractual_seconds": DEFAULT_SHARD_TIMEOUT_SECONDS,
         }
         for i in range(plan.shard_count)
         if plan.shards[i]
@@ -409,13 +418,30 @@ def summarise_shards(results: list[ShardResult]) -> str:
     return header + "\n" + "\n".join(rows)
 
 
+#: The runtime-shard budget, named and published rather than duplicated in YAML.
+#:
+#: M10-R3 (L1c): `verification-runtime.yml` carried its own `:-2400` literal, matching
+#: this default today and free to drift tomorrow. The workflow now reads
+#: `required_timeout_minutes` from `shard_matrix`, and this constant is the single
+#: source.
+DEFAULT_SHARD_TIMEOUT_SECONDS = 2400
+
+
+def required_shard_backstop_minutes(timeout_seconds: int | None = None) -> int:
+    """Whole minutes a runtime-shard leg must be given, including teardown margin."""
+    budget = (
+        DEFAULT_SHARD_TIMEOUT_SECONDS if timeout_seconds is None else timeout_seconds
+    )
+    return max(1, -(-(budget + INFRA_BACKSTOP_MARGIN_SECONDS) // 60))
+
+
 def run_test_shard(
     shard_index: int,
     shard_count: int,
     *,
     result_out: Path,
     counts: dict[str, int] | None = None,
-    timeout_seconds: int = 2400,
+    timeout_seconds: int = DEFAULT_SHARD_TIMEOUT_SECONDS,
     timeout_per_test: int = 30,
     extra_args: list[str] | None = None,
 ) -> ShardResult:

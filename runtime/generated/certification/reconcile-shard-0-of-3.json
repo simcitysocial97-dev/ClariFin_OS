@@ -1,0 +1,25 @@
+{
+  "schema": "m10r3-certification-run/v1",
+  "plan_id": "execplan-593a52d6f624",
+  "decision": "certified",
+  "reason": "all mandatory obligations satisfied and certification conditions met",
+  "exit_code": 5,
+  "duration_seconds": 58.016470181999466,
+  "fingerprint_before": null,
+  "fingerprint_after": null,
+  "fingerprint_stable": false,
+  "obligations": [
+    {
+      "task_id": "exec-0007",
+      "state": "pass",
+      "is_mandatory": false,
+      "detail": "ok",
+      "duration_seconds": 57.9
+    }
+  ],
+  "topology": "reconcile-shard-0-of-3",
+  "plan_fingerprint": "593a52d6f624f434cc20d27e63a7f7e89ac572f97615453f8776d63088ce7740",
+  "tasks_executed": [
+    "exec-0007"
+  ]
+}

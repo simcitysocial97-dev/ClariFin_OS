@@ -23,6 +23,8 @@ rules:
     non-empty paths, and a recognised `if-no-files-found` (Rule 12).
 13. No workflow re-projects a runtime-emitted matrix through a hand-written
     field list (Rule 13).
+14. No workflow hard-codes a per-leg timeout; the runtime publishes the
+    required backstop and validates the one it is given (Rule 14).
 """
 
 from __future__ import annotations
@@ -119,6 +121,42 @@ def validate_composite_action(action_dir: Path) -> None:
         err(f"{action_file}: expected runs.using=composite")
 
 
+def validate_leg_timeout_authority(name: str, raw: str) -> None:
+    """Rule 14 — a workflow may not hard-code a per-leg timeout.
+
+    M10-R3 (L1c). Three workflows wrapped a matrix leg in a literal GNU `timeout`
+    (`85m`, `1500`, `2400`) that duplicated a budget the runtime already knows: each
+    task carries its own `timeout_seconds`, and the shard's contractual wall clock is
+    derivable from those budgets under the real CPU-budget schedule.
+
+    The literal was not merely redundant, it was **wrong**. Reconcile shard 3 holds a
+    single task with `timeout_seconds=5400` (90 min), so the hard-coded `85m` wrapper
+    would have killed it five minutes before its contractual expiry — the runner
+    reporting a timeout for work that was still legitimately running. The runtime now
+    publishes `required_timeout_minutes` per shard and *refuses to start* when the
+    wrapper it is given is too small, so the value cannot be wrong silently.
+
+    Legitimate uses are not this rule's concern: a job-level `timeout-minutes` is an
+    infrastructure backstop and may stay literal (the runtime validates the two
+    separately). What is forbidden is a GNU `timeout` with a hard-coded per-leg budget.
+    """
+    for match in re.finditer(
+        r"""timeout\s+["']?\$\{?([A-Z0-9_]+)(?::-(\d+))?\}?([^"'\s\\]*)""", raw
+    ):
+        var, default, suffix = match.group(1), match.group(2), match.group(3)
+        # A default supplied via `${VAR:-N}` is a literal budget in disguise.
+        if default is None:
+            continue
+        line_no = raw[: match.start()].count("\n") + 1
+        err(
+            f"{name}: per-leg timeout defaults to a hard-coded {default}{suffix or 's'} "
+            f"via ${{{var}:-{default}}} (Rule 14, line {line_no}). The runtime "
+            f"publishes the required backstop as `required_timeout_minutes`; use it "
+            f"and pass the value through VERIFY_INFRA_BACKSTOP_SECONDS so the runtime "
+            f"can reject a wrapper that expires before its obligations do."
+        )
+
+
 def validate_matrix_projection(name: str, raw: str) -> None:
     """Rule 13 — a matrix projection must not name runtime fields.
 
@@ -150,7 +188,9 @@ def validate_matrix_projection(name: str, raw: str) -> None:
 def validate_workflow(path: Path) -> None:
     name = path.name
     doc = load_yml(path)
-    validate_matrix_projection(name, path.read_text(encoding="utf-8"))
+    _raw = path.read_text(encoding="utf-8")
+    validate_matrix_projection(name, _raw)
+    validate_leg_timeout_authority(name, _raw)
 
     # concurrency
     conc = doc.get("concurrency")

@@ -251,6 +251,23 @@ jobs:
           set -uo pipefail
           SHARD_INDEX=$(( ${{ matrix.shard }} ))
           SHARD_TOTAL="${{ matrix.shard_count }}"
+          # M10-R3 (L1c): the backstop comes from the RUNTIME, not a literal here.
+          #
+          # This workflow used to hard-code `85m` in three places (the GNU timeout, a
+          # jq diagnostic and an error message) so they could drift independently — and
+          # the literal was itself wrong: reconcile shard 3 holds a single task whose own
+          # `timeout_seconds` is 5400 (90 min), so an 85-minute wrapper would kill it
+          # five minutes before its contractual expiry.
+          #
+          # `required_timeout_minutes` is published per shard by
+          # execution_shards.plan_matrix, derived from the task budgets under the real
+          # CPU-budget schedule. It reaches CI because the matrix projection selects
+          # shape rather than naming fields (Rule 13) — neither change works alone.
+          #
+          # It is handed to the runtime as VERIFY_INFRA_BACKSTOP_SECONDS so the runtime
+          # can REFUSE to start if the wrapper is too small, instead of trusting this
+          # comment to stay true.
+          SHARD_BACKSTOP_MINUTES="${{ matrix.required_timeout_minutes }}"
           OUT_DIR="runtime/generated/execution/shards"
           mkdir -p "$OUT_DIR"
           # The downloaded plan lives at runtime/generated/execution/plan.json, which is
@@ -277,7 +294,11 @@ jobs:
           # A bare number here silently capped every reconcile shard at 85 seconds,
           # which killed every leg whose task took longer and surfaced as exit 124 with
           # no evidence. The suffix is the whole difference.
-          timeout "${SHARD_TIMEOUT_MINUTES:-85}m" \
+          # SECONDS, and the unit is written out. `timeout 85` is 85 SECONDS; the
+          # unit-suffixed form is what the previous `timeout 85m` bug was about.
+          SHARD_BACKSTOP_SECONDS=$(( SHARD_BACKSTOP_MINUTES * 60 ))
+          export VERIFY_INFRA_BACKSTOP_SECONDS="$SHARD_BACKSTOP_SECONDS"
+          timeout "${SHARD_BACKSTOP_SECONDS}s" \
             .venv/bin/python -m runtime.verify run \
               --plan "$PLAN_IN" \
               --shard "$SHARD_INDEX" \
@@ -295,7 +316,7 @@ jobs:
             jq -n --argjson idx "$SHARD_INDEX" \
                   --argjson total "$SHARD_TOTAL" \
                   --argjson rc "$SHARD_RC" \
-                  --arg budget "${SHARD_TIMEOUT_MINUTES:-85}m" \
+                  --arg budget "${SHARD_BACKSTOP_MINUTES}m" \
               '{schema: "m10r2-leg-result/v1",
                 leg_id: ("reconcile-shard " + (($idx + 1) | tostring) + "/" + ($total | tostring)),
                 shard_id: ("reconcile-shard-" + ($idx | tostring)),
@@ -308,7 +329,7 @@ jobs:
                 records: [],
                 note: ("killed by the workflow budget of " + $budget)}' \
               > "$REPORT"
-            echo "::error::shard ${SHARD_INDEX}: TIMED OUT after ${SHARD_TIMEOUT_MINUTES:-85}m (exit 124). Raise the budget only after checking whether the task is genuinely slow."
+            echo "::error::shard ${SHARD_INDEX}: TIMED OUT after ${SHARD_BACKSTOP_MINUTES}m (exit 124). Raise the budget only after checking whether the task is genuinely slow."
           fi
           if [ ! -s "$REPORT" ]; then
             echo "::error::shard ${SHARD_INDEX}: NO TERMINAL RESULT (0 bytes). Its tasks are unreported -- an infrastructure event, not a verification verdict. The [reconcile-shard] lines above name the last task reached."
