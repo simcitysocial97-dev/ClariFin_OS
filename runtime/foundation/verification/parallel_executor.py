@@ -104,18 +104,26 @@ class CommandResult:
     duration_seconds: float
 
 
-def _tee(pipe, path: Path) -> None:
+def _tee(pipe, path: Path, on_line: Callable[[str], None] | None = None) -> None:
     """Stream a pipe to *path*, flushing per line.
 
     Moved from ``execution_orchestrator._tee``. The flush-per-line is the whole point:
     it makes the evidence file exist and grow *while* the child runs, so a kill, a
     signal or an orchestrator crash still leaves the output produced up to that instant.
+
+    ``on_line`` (M10-R3 L8d) surfaces each line to a caller that wants live output.
+    It is called AFTER the line is durably written, so a callback that raises cannot lose
+    evidence — and it is guarded per line, because a logging callback must never be able
+    to abort a verification run.
     """
     try:
         with open(path, "a", encoding="utf-8", errors="replace") as fh:
             for line in iter(pipe.readline, ""):
                 fh.write(line)
                 fh.flush()
+                if on_line is not None:
+                    with contextlib.suppress(Exception):
+                        on_line(line)
     except (OSError, ValueError):
         pass
     finally:
@@ -247,6 +255,8 @@ def run_streaming_command(
     env: dict[str, str] | None = None,
     progress: ProgressContext | None = None,
     heartbeat_seconds: int | None = None,
+    on_line: Callable[[str], None] | None = None,
+    cancel_event: threading.Event | None = None,
 ) -> CommandResult:
     """Run *command*, streaming stdout/stderr to the given evidence files.
 
@@ -273,6 +283,7 @@ def run_streaming_command(
     t0 = time.monotonic()
     exit_code: int | None = None
     timed_out = False
+    cancelled = False
     infra_error: str | None = None
 
     emit = progress is not None and _progress_enabled()
@@ -306,17 +317,40 @@ def run_streaming_command(
             start_new_session=True,
         )
         readers = [
-            threading.Thread(target=_tee, args=(proc.stdout, stdout_path), daemon=True),
-            threading.Thread(target=_tee, args=(proc.stderr, stderr_path), daemon=True),
+            threading.Thread(
+                target=_tee, args=(proc.stdout, stdout_path, on_line), daemon=True
+            ),
+            threading.Thread(
+                target=_tee, args=(proc.stderr, stderr_path, on_line), daemon=True
+            ),
         ]
         for reader in readers:
             reader.start()
-        try:
-            proc.wait(timeout=timeout_seconds)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            exit_code = 124
-            _kill_process_group(proc)
+        if cancel_event is not None:
+            # Cancellation is polled on the same cadence as the timeout wait, so the
+            # process group is killed promptly rather than at the next timeout tick.
+            # M10-R3 (L8d): the canonical worker previously had no way to be cancelled
+            # at all — `Executor.cancel()` killed a process group it no longer owned
+            # after delegation, so cancellation silently became a no-op. Ownership of the
+            # child belongs to the worker, therefore so does the right to stop it.
+            while True:
+                if cancel_event.is_set():
+                    cancelled = True
+                    exit_code = 130
+                    _kill_process_group(proc)
+                    break
+                try:
+                    proc.wait(timeout=0.25)
+                    break
+                except subprocess.TimeoutExpired:
+                    continue
+        else:
+            try:
+                proc.wait(timeout=timeout_seconds)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                exit_code = 124
+                _kill_process_group(proc)
         for reader in readers:
             reader.join(timeout=5)
         # A shell that dies on a signal reports 128+signum, so >128 is a termination
@@ -352,7 +386,11 @@ def run_streaming_command(
         if detected:
             infra_error = detected
 
-    termination = classify_termination(exit_code, timed_out, infra_error)
+    if cancelled:
+        infra_error = infra_error or "cancelled by the caller"
+    termination = classify_termination(
+        exit_code, timed_out or cancelled, infra_error
+    )
 
     if emit and progress is not None:
         # The terminal line carries the termination KIND, not just a non-zero status, so

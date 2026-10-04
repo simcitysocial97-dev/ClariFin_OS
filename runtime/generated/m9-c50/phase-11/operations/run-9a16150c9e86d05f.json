@@ -1,0 +1,24 @@
+{
+  "run_id": "9a16150c9e86d05f",
+  "timestamp": "2026-10-04T17:04:59.164007+00:00",
+  "repository_sha": "203813ac8a3a9bc70562ca96f0a2da11281ff820",
+  "scenario": "capability_change",
+  "changed_files": [
+    "/home/vasantha/AI-Projects/ClariFin_OS/runtime/foundation/verification/tmphf1_wiaz.py"
+  ],
+  "resolved_capabilities": [
+    "verification-runtime"
+  ],
+  "obligations": [
+    "unit",
+    "property"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

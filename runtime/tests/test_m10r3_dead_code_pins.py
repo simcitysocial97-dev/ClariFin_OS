@@ -114,21 +114,74 @@ class TestDiagnosticAgentVocabulary:
             assert concept in source, f"{concept} vanished from diagnostic_agent"
 
 
-class TestExecutorEngineIsNotOnTheCliPath:
-    def test_executor_Executor_has_a_second_spawn_path(self):
-        """The competing engine Checkpoint A identified is still present.
+class TestExecutorEngineIsConsolidated:
+    """L8d — the second process engine is gone.
 
-        Asserted rather than deleted: consolidating it means moving `Executor` onto the
-        canonical worker, which is a change with real blast radius and is better done
-        deliberately than as cleanup. What this test guarantees is that nobody has
-        started routing production through it without noticing.
+    `Executor` used to run its own `subprocess.Popen(shell=True, start_new_session=True)`
+    with its own tee, its own `_kill_process_group` and its own result directory. The
+    repository therefore had two spawn paths for the same work, and only the canonical one
+    had heartbeat, `classify_termination` and missing-binary detection — so anything routed
+    through `Executor` reported a failed assertion for a command that never ran.
+    """
+
+    def test_executor_no_longer_spawns(self):
+        """Parsed, not grepped.
+
+        A textual check for ``Popen(`` matches the module's own docstring describing
+        what it used to do — the same trap that made an earlier test report a workflow
+        comment as a declaration. Only an AST walk sees real calls.
+        """
+        tree = ast.parse((PKG / "executor.py").read_text(encoding="utf-8"))
+        spawns: list[str] = []
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr in {"Popen", "run", "call", "check_call", "check_output"}
+            ):
+                spawns.append(ast.unparse(node.func))
+            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and (
+                node.func.id in {"system", "popen"}
+            ):
+                spawns.append(node.func.id)
+        assert not spawns, (
+            f"executor.py has regained a direct spawn path: {spawns}. The canonical "
+            f"worker is the one place a verification process is created."
+        )
+
+    def test_it_delegates_to_the_canonical_worker(self):
+        executor = (PKG / "executor.py").read_text(encoding="utf-8")
+        assert "run_streaming_command" in executor
+        assert "classify_termination" in executor
+
+    def test_each_retry_attempt_gets_its_own_evidence_file(self):
+        """Attempts must not be concatenated into one file.
+
+        The old code appended every attempt into `<task>-stdout.txt`, so after a retry
+        the file held attempt 1 followed by attempt 2 with nothing to distinguish them.
+        The canonical worker truncates up front — "a file means this execution" — because
+        leftover content masquerading as current output is the stale-evidence hazard.
+        Per-attempt files preserve every attempt *and* make each attributable.
         """
         executor = (PKG / "executor.py").read_text(encoding="utf-8")
-        assert "Popen" in executor, (
-            "executor.Executor no longer spawns directly — if it has been consolidated "
-            "onto run_streaming_command, delete this pin and update the final report's "
-            "remaining-limitations entry."
+        assert "a{attempt}" in executor or "attempt" in executor, (
+            "evidence filenames must distinguish retry attempts"
         )
+
+    def test_cancellation_still_works(self):
+        """Delegating ownership of the child must not have made `cancel()` a no-op.
+
+        It briefly did: `Executor` killed a process group it no longer owned. The
+        canonical worker now accepts a `cancel_event` and kills the tree on it, so the
+        right to stop the child travels with ownership of the child.
+        """
+        from runtime.foundation.verification.parallel_executor import (
+            run_streaming_command,
+        )
+
+        import inspect
+
+        assert "cancel_event" in inspect.signature(run_streaming_command).parameters
 
     def test_parallel_executor_is_the_canonical_worker(self):
         """The one authoritative spawn path, asserted so it cannot quietly fork."""
