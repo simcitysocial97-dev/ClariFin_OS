@@ -78,9 +78,7 @@ class TestCpuDemandDerivation:
         introduced to fix something real.
         """
         assert (
-            px.cpu_demand_for(
-                _Task("c", "bash .github/scripts/run_contract_tests.sh")
-            )
+            px.cpu_demand_for(_Task("c", "bash .github/scripts/run_contract_tests.sh"))
             == px.cpu_count()
         )
         assert (
@@ -208,8 +206,7 @@ class TestScheduling:
             demand = sum(px.cpu_demand_for(t) for t in wave)
             assert demand <= 4, f"wave {demand} CPU exceeds the budget"
         heavy_waves = [
-            i for i, w in enumerate(waves)
-            if any(px.cpu_demand_for(t) > 1 for t in w)
+            i for i, w in enumerate(waves) if any(px.cpu_demand_for(t) > 1 for t in w)
         ]
         assert len(heavy_waves) == 2, "the two fanning-out tasks were not serialised"
 

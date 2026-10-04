@@ -37,12 +37,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 #: A GNU `timeout` whose budget is a literal, in either shell spelling:
 #: `${VAR:-85}` and `${VAR:-85}m`. Written as a normal string because a raw
 #: triple-quoted one collides with the `["']?` character class.
-PATTERN_HARDCODED_TIMEOUT = (
-    "timeout\\s+[\"']?\\$\\{[A-Z0-9_]+:-(\\d+)\\}?"
-)
+PATTERN_HARDCODED_TIMEOUT = "timeout\\s+[\"']?\\$\\{[A-Z0-9_]+:-(\\d+)\\}?"
 
 
-def _spec(task_id: str, *, timeout: int = 600, command: str = "true") -> ExecutionTaskSpec:
+def _spec(
+    task_id: str, *, timeout: int = 600, command: str = "true"
+) -> ExecutionTaskSpec:
     return ExecutionTaskSpec(
         task_id=task_id,
         source_task_id=f"cp-{task_id}",
@@ -98,7 +98,11 @@ class TestContractualWallClock:
         assert shard_intended_termination_seconds(tasks, cpu_budget=4) == 7200
 
     def test_light_tasks_share_a_wave(self):
-        tasks = [_spec("a", timeout=600), _spec("b", timeout=600), _spec("c", timeout=600)]
+        tasks = [
+            _spec("a", timeout=600),
+            _spec("b", timeout=600),
+            _spec("c", timeout=600),
+        ]
         assert shard_intended_termination_seconds(tasks, cpu_budget=4) == 600
 
     def test_derived_from_budgets_not_estimates(self):
@@ -156,7 +160,10 @@ class TestMatrixPublishesTheBackstop:
         by_task = {t: e for e in document["include"] for t in (e.get("task_ids") or [])}
         long_entry = by_task["long"]
         short_entry = by_task["short"]
-        assert long_entry["required_timeout_minutes"] > short_entry["required_timeout_minutes"]
+        assert (
+            long_entry["required_timeout_minutes"]
+            > short_entry["required_timeout_minutes"]
+        )
 
 
 class TestWorkflowsNoLongerHardCodeIt:
@@ -165,7 +172,11 @@ class TestWorkflowsNoLongerHardCodeIt:
 
     @pytest.mark.parametrize(
         "name",
-        ["verification-reconcile.yml", "verification-runtime.yml", "backend-verify.yml"],
+        [
+            "verification-reconcile.yml",
+            "verification-runtime.yml",
+            "backend-verify.yml",
+        ],
     )
     def test_no_per_leg_timeout_default_survives(self, name):
         """Rule 14's regression, asserted on the real files.
@@ -175,14 +186,16 @@ class TestWorkflowsNoLongerHardCodeIt:
         """
         import re
 
-        offenders = re.findall(
-            PATTERN_HARDCODED_TIMEOUT, self._workflow(name)
-        )
+        offenders = re.findall(PATTERN_HARDCODED_TIMEOUT, self._workflow(name))
         assert not offenders, f"{name} still hard-codes a per-leg timeout: {offenders}"
 
     @pytest.mark.parametrize(
         "name",
-        ["verification-reconcile.yml", "verification-runtime.yml", "backend-verify.yml"],
+        [
+            "verification-reconcile.yml",
+            "verification-runtime.yml",
+            "backend-verify.yml",
+        ],
     )
     def test_the_backstop_is_exported_so_the_runtime_can_validate_it(self, name):
         raw = self._workflow(name)
@@ -190,6 +203,7 @@ class TestWorkflowsNoLongerHardCodeIt:
             f"{name} must hand the runtime the backstop it is actually running under, "
             f"or the runtime cannot reject one that expires too early"
         )
+
 
 def _workflow(name: str) -> str:
     return (REPO_ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
@@ -275,7 +289,9 @@ class TestEvidenceRootsArePublished:
     """
 
     def test_the_runtime_publishes_its_own_evidence_roots(self):
-        from runtime.foundation.verification.execution_orchestrator import evidence_roots
+        from runtime.foundation.verification.execution_orchestrator import (
+            evidence_roots,
+        )
 
         roots = evidence_roots()
         assert roots, "the runtime must know at least one evidence root"
@@ -285,14 +301,20 @@ class TestEvidenceRootsArePublished:
 
     def test_no_root_is_the_whole_source_tree(self):
         """`backend/**` as evidence is the duplication being removed."""
-        from runtime.foundation.verification.execution_orchestrator import evidence_roots
+        from runtime.foundation.verification.execution_orchestrator import (
+            evidence_roots,
+        )
 
         for r in evidence_roots():
-            assert r not in {"backend", "backend/**", "."}, (
-                f"{r} would upload the source tree as evidence"
-            )
+            assert r not in {
+                "backend",
+                "backend/**",
+                ".",
+            }, f"{r} would upload the source tree as evidence"
 
-    def test_the_certification_document_carries_the_manifest(self, tmp_path, monkeypatch):
+    def test_the_certification_document_carries_the_manifest(
+        self, tmp_path, monkeypatch
+    ):
         from runtime.foundation.verification import control_plane_facade as facade
         from runtime.foundation.verification.execution_orchestrator import (
             evidence_roots,
@@ -405,10 +427,12 @@ class TestArtifactLayoutIsDeliberate:
             r"name:\s*reconcile-result-\$\{\{ matrix\.shard \}\}\s*\n\s*path:\s*(.+)",
             raw,
         )
-        assert result_upload, "the gate-facing result artifact must remain a single path"
-        assert result_upload.group(1).endswith(".json"), (
-            "the result artifact must be one .json file, not a directory or a bundle"
-        )
+        assert (
+            result_upload
+        ), "the gate-facing result artifact must remain a single path"
+        assert result_upload.group(1).endswith(
+            ".json"
+        ), "the result artifact must be one .json file, not a directory or a bundle"
 
     def test_the_evidence_bundle_is_not_parsed_by_any_step(self):
         """Its multi-path shape is fine precisely because nothing reads its layout."""

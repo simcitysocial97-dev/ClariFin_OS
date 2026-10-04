@@ -213,7 +213,9 @@ class Executor:
             on_line=_emit,
             # Cancellation is the caller's right, and the child now belongs to the
             # canonical worker, so the right is passed down with it.
-            cancel_event=self._cancel_flag if self._cancel_flag.is_set() or True else None,
+            cancel_event=(
+                self._cancel_flag if self._cancel_flag.is_set() or True else None
+            ),
         )
 
         duration = (datetime.now(UTC) - start_time).total_seconds()

@@ -92,9 +92,7 @@ class TestCreateInvestmentDoesNot500:
 
         portfolio = client.get("/api/v1/investments")
         assert portfolio.status_code == 200, portfolio.text
-        assert all(
-            item["type"] != "crypto" for item in portfolio.json()["investments"]
-        )
+        assert all(item["type"] != "crypto" for item in portfolio.json()["investments"])
 
     def test_every_optional_field_is_accepted_and_persisted(
         self, client: TestClient
@@ -217,7 +215,11 @@ class TestRepositoryColumnContract:
             / "db"
             / "schema.py"
         ).read_text()
-        ddl = re.search(r"CREATE TABLE IF NOT EXISTS investments \((.*?)\n\);", schema_source, re.DOTALL)
+        ddl = re.search(
+            r"CREATE TABLE IF NOT EXISTS investments \((.*?)\n\);",
+            schema_source,
+            re.DOTALL,
+        )
         assert ddl is not None, "investments DDL not found"
         ddl_columns = {
             line.strip().split()[0]
@@ -267,9 +269,9 @@ class TestRepositoryColumnContract:
             "maturity_date",
             "linked_account_id",
         ):
-            assert nonexistent not in params, (
-                f"{nonexistent} is not a column on the investments table"
-            )
+            assert (
+                nonexistent not in params
+            ), f"{nonexistent} is not a column on the investments table"
 
     def test_service_signature_matches_the_router_contract(self) -> None:
         import inspect
@@ -358,7 +360,8 @@ class TestFullMutationChain:
 
         remaining = client.get("/api/v1/investments").json()["investment_count"]
         assert all(
-            item["id"] != new_id for item in client.get("/api/v1/investments").json()["investments"]
+            item["id"] != new_id
+            for item in client.get("/api/v1/investments").json()["investments"]
         )
         assert remaining >= 0
 

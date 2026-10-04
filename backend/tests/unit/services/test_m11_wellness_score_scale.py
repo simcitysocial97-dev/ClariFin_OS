@@ -50,13 +50,11 @@ MAX_VALID_WELLNESS_BPS = 10_000
 
 def _seed_transactions(db_path: str, months: int) -> None:
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT INTO accounts (id, name, bank, account_type, balance_paise,
                                   owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 800000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
             "VALUES (1, 'Test Bank', 'test.pdf')"
@@ -92,11 +90,35 @@ class TestEngineContractIsZeroToHundred:
         "inputs",
         [
             # best case
-            (Decimal("1"), 0, Decimal("1"), Decimal("1"), Decimal("-1"), Decimal("0"), Decimal("0")),
+            (
+                Decimal("1"),
+                0,
+                Decimal("1"),
+                Decimal("1"),
+                Decimal("-1"),
+                Decimal("0"),
+                Decimal("0"),
+            ),
             # worst case
-            (Decimal("0"), 100, Decimal("-1"), Decimal("0"), Decimal("2"), Decimal("1"), Decimal("3")),
+            (
+                Decimal("0"),
+                100,
+                Decimal("-1"),
+                Decimal("0"),
+                Decimal("2"),
+                Decimal("1"),
+                Decimal("3"),
+            ),
             # mid
-            (Decimal("0.5"), 50, Decimal("0.1"), Decimal("0.5"), Decimal("0.1"), Decimal("0.2"), Decimal("0.3")),
+            (
+                Decimal("0.5"),
+                50,
+                Decimal("0.1"),
+                Decimal("0.5"),
+                Decimal("0.1"),
+                Decimal("0.2"),
+                Decimal("0.3"),
+            ),
         ],
     )
     def test_engine_always_returns_0_to_100(self, inputs: tuple[Any, ...]) -> None:
@@ -221,7 +243,9 @@ class TestWellnessScoreResponseIsInRange:
 
 
 class TestFinancialIntelligenceConsumer:
-    def test_health_score_inherits_the_corrected_scale(self, db_with_history: str) -> None:
+    def test_health_score_inherits_the_corrected_scale(
+        self, db_with_history: str
+    ) -> None:
         """``_compute_health_score`` passes the wellness score straight through."""
         from src.engines.financial_intelligence.intelligence import (
             _compute_health_score,

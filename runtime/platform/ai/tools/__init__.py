@@ -407,11 +407,20 @@ LEVEL_1_TOOLS: list[dict[str, Any]] = [
 
 
 def register_builtin_tools(registry: ToolRegistry) -> None:
-    """Register all built-in Level 0 and 1 tools.
+    """Populate *registry* with the built-in tool schemas.
 
-    Phase 16: wire to real platform service handlers instead of mocks.
-    Falls back to mock only if handlers module is unavailable.
+    Idempotent (M10-R3): the singleton is now populated where it is defined, and
+    `backend/src/routers/platform.py` still calls this. Without the guard the second
+    call re-registered all 19 tools and logged 19 "Overriding existing tool
+    registration" warnings on every import of the router.
+
+    Registers all built-in Level 0 and 1 tools. Phase 16 wires these to real platform
+    service handlers instead of mocks, falling back to a mock only if the handlers
+    module is unavailable.
     """
+
+    if registry.list_tools():
+        return  # already populated; see the idempotence note above
 
     def _mock_handler_level0(schema: ToolSchema) -> Any:  # type: ignore[no-untyped-def]
         def _handler(args: dict[str, Any]) -> dict[str, Any]:
@@ -530,3 +539,23 @@ def register_builtin_tools(registry: ToolRegistry) -> None:
 
 # Singleton instance
 TOOL_REGISTRY_INSTANCE = ToolRegistry()
+
+# Populate it HERE, where it is defined.
+#
+# M10-R3. `register_builtin_tools()` was exported and called from
+# `backend/src/routers/platform.py` — and from nowhere else. The singleton was
+# therefore only populated if that unrelated router module happened to be imported
+# first, which made the registry's contents a function of import order rather than of
+# the module that owns it.
+#
+# The symptom was a test that passes alone and fails in a larger selection:
+# `test_platform_api_phase13::TestToolRegistry::test_tool_schema_serialization`
+# asserts `get("inspect_health")` is not None, and got None whenever collection order
+# meant the router had not been imported yet. An empty registry is also simply wrong at
+# runtime: `list_tools()` returned 0 tools for any caller that had not imported the
+# router first.
+#
+# Registering at the definition site makes the singleton self-contained and
+# order-independent. The call in platform.py is left in place and is now a no-op,
+# because register_builtin_tools is idempotent.
+register_builtin_tools(TOOL_REGISTRY_INSTANCE)

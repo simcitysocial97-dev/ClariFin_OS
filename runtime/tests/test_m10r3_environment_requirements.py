@@ -69,7 +69,12 @@ class TestRequirementFormParsing:
             ),
             # Explicit prefixes always win over inference
             ("tool:mutmut==3.7.0", "tool_version", "mutmut", "3.7.0"),
-            ("path:.github/scripts/run_property_tests.sh", "path", ".github/scripts/run_property_tests.sh", ""),
+            (
+                "path:.github/scripts/run_property_tests.sh",
+                "path",
+                ".github/scripts/run_property_tests.sh",
+                "",
+            ),
             ("env:FINANCE_DB_PATH", "variable", "FINANCE_DB_PATH", ""),
             ("env:FOO=@workspace/backend", "variable", "FOO", "@workspace/backend"),
             # An explicit prefix may also *force* a form inference would deny
@@ -205,7 +210,9 @@ class TestPlaceholderResolution:
 
 class TestRequirementEnforcement:
     def test_missing_tool_is_named(self):
-        failure = verify_environment_requirement("definitely-not-a-real-tool", _ctx(), {})
+        failure = verify_environment_requirement(
+            "definitely-not-a-real-tool", _ctx(), {}
+        )
         assert failure is not None
         assert failure.form == "tool"
         assert "definitely-not-a-real-tool" in failure.requirement
@@ -253,7 +260,9 @@ class TestRequirementEnforcement:
 
     def test_set_variable_passes(self):
         assert (
-            verify_environment_requirement("FINANCE_DB_PATH", _ctx(), {"FINANCE_DB_PATH": "/x"})
+            verify_environment_requirement(
+                "FINANCE_DB_PATH", _ctx(), {"FINANCE_DB_PATH": "/x"}
+            )
             is None
         )
 
@@ -330,10 +339,18 @@ class TestFieldConsolidation:
                 "prerequisites": [".venv", "FINANCE_DB_PATH", "extra"],
             }
         )
-        assert spec.required_environment == (".venv", "pytest", "FINANCE_DB_PATH", "extra")
+        assert spec.required_environment == (
+            ".venv",
+            "pytest",
+            "FINANCE_DB_PATH",
+            "extra",
+        )
 
     def test_tuple_type_survives_both_paths(self):
-        for payload in (_spec().to_dict(), {**_spec().to_dict(), "prerequisites": [".venv"]}):
+        for payload in (
+            _spec().to_dict(),
+            {**_spec().to_dict(), "prerequisites": [".venv"]},
+        ):
             spec = ExecutionTaskSpec.from_dict(payload)
             assert isinstance(spec.required_environment, tuple)
 

@@ -138,7 +138,9 @@ def _weight(task: ExecutionTaskSpec) -> int:
     return max(int(task.estimated_duration_seconds or 0), 1)
 
 
-def shard_wall_seconds(tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None) -> int:
+def shard_wall_seconds(
+    tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None
+) -> int:
     """Wall-clock estimate for one shard, under the CPU budget it will really run with.
 
     M10-R3 (D). The matrix previously emitted ``sum(estimated_duration)`` as
@@ -165,7 +167,9 @@ def shard_wall_seconds(tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | Non
     return int(round(estimate_wall_seconds(list(tasks), budget)))
 
 
-def shard_cpu_peak(tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None) -> int:
+def shard_cpu_peak(
+    tasks: Sequence[ExecutionTaskSpec], cpu_budget: int | None = None
+) -> int:
     """Peak simultaneous CPU demand this shard will reach, and its budget.
 
     Reported so a workflow sizing ``timeout-minutes`` can see the demand it is
@@ -376,7 +380,11 @@ def leg_environment(
     """
     from pathlib import Path as _Path
 
-    root = _Path(repo_root) if repo_root is not None else _Path(__file__).resolve().parents[3]
+    root = (
+        _Path(repo_root)
+        if repo_root is not None
+        else _Path(__file__).resolve().parents[3]
+    )
     identity = leg or (f"shard-{shard}" if shard is not None else "local")
     token = f"{identity}-{plan_id}" if plan_id else identity
     return {

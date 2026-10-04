@@ -52,7 +52,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 class TestCrashSafeRestoration:
-    def test_backup_is_written_before_anything_is_rewritten(self, monkeypatch, tmp_path):
+    def test_backup_is_written_before_anything_is_rewritten(
+        self, monkeypatch, tmp_path
+    ):
         """The backup must precede the rewrite, not merely the signal handlers.
 
         Installing an exit handler and *then* rewriting leaves the window in which a
@@ -108,10 +110,14 @@ class TestCrashSafeRestoration:
         """
         source = Path(mr.__file__).read_text(encoding="utf-8")
         enter = source.split("def enter(self)", 1)[1]
-        body = enter.split("def _atomic_write", 1)[0] if "def _atomic_write" in enter else enter
-        assert "recover_stale_backup" in body, (
-            "recover_stale_backup must be called in enter() before the dirty check"
+        body = (
+            enter.split("def _atomic_write", 1)[0]
+            if "def _atomic_write" in enter
+            else enter
         )
+        assert (
+            "recover_stale_backup" in body
+        ), "recover_stale_backup must be called in enter() before the dirty check"
         assert body.index("recover_stale_backup") < body.index("_check_dirty_worktree")
 
     def test_a_killed_process_leaves_a_recoverable_state(self, tmp_path):
@@ -171,9 +177,7 @@ class TestCrashSafeRestoration:
 
     def test_the_real_repo_config_is_never_left_damaged(self):
         """Guards the fixture itself: these tests must not damage the repository."""
-        head = (REPO_ROOT / "backend" / "pyproject.toml").read_text(
-            encoding="utf-8"
-        )
+        head = (REPO_ROOT / "backend" / "pyproject.toml").read_text(encoding="utf-8")
         assert "reconciliation_engine" not in head.split("\n\n")[0], (
             "backend/pyproject.toml looks like it was left mutated by a killed "
             "campaign; run `git checkout -- backend/pyproject.toml`"
@@ -197,9 +201,9 @@ class TestBudgetAuthority:
             "a bare 1200 has reappeared in mutation_runner; use "
             "declared_mutation_timeout('target')"
         )
-        orch = (REPO_ROOT / "runtime/foundation/verification/execution_orchestrator.py").read_text(
-            encoding="utf-8"
-        )
+        orch = (
+            REPO_ROOT / "runtime/foundation/verification/execution_orchestrator.py"
+        ).read_text(encoding="utf-8")
         assert "timeout_seconds=1200" not in orch, (
             "the planner re-declared the mutation budget inline; use "
             "declared_mutation_timeout('target')"
@@ -210,7 +214,9 @@ class TestBudgetAuthority:
             declared_mutation_timeout,
         )
 
-        assert declared_mutation_timeout("target") == mr.DECLARED_MUTATION_TIMEOUT_SECONDS
+        assert (
+            declared_mutation_timeout("target") == mr.DECLARED_MUTATION_TIMEOUT_SECONDS
+        )
 
     def test_the_divergence_is_gone_not_merely_recorded(self):
         """L3, closed.
@@ -230,9 +236,9 @@ class TestBudgetAuthority:
 
         declared = declared_mutation_timeout("target")
         enforced = mr.DEFAULT_RUNTIME["target"]
-        assert declared == enforced, (
-            "the declared and enforced mutation budgets must come from one table"
-        )
+        assert (
+            declared == enforced
+        ), "the declared and enforced mutation budgets must come from one table"
         assert mr._declared_mutation_timeout("target", "x") == enforced
         assert declared == 4200
 
@@ -251,9 +257,9 @@ class TestBudgetAuthority:
             source.index("max_runtime\n            or declared_timeout"),
             source.index("or DEFAULT_RUNTIME.get(mode"),
         ]
-        assert precedence == sorted(precedence), (
-            "budget precedence must be max_runtime > declared_timeout > DEFAULT_RUNTIME"
-        )
+        assert precedence == sorted(
+            precedence
+        ), "budget precedence must be max_runtime > declared_timeout > DEFAULT_RUNTIME"
 
     def test_smoke_has_no_declared_budget(self):
         """Distinguishable from 'a budget of zero'."""
@@ -402,7 +408,7 @@ class TestMutationIsCertifiable:
         assert run.decision is FinalDecision.INFRASTRUCTURE_BLOCKED
         assert result is not None
         assert result.enforced_timeout_seconds == 4200
-        assert result.declared_timeout_seconds == declared_mutation_timeout('target')
+        assert result.declared_timeout_seconds == declared_mutation_timeout("target")
 
     def test_the_budget_pair_is_attached_by_replacement(self):
         """`MutationResult` is frozen, so the verdict is attached by replacement.
@@ -457,8 +463,15 @@ class TestPlaywrightGateConsumesTheBracket:
     def test_a_legacy_leg_document_is_refused(self):
         from runtime.foundation.verification.playwright_shards import verify_legs
 
-        problems = verify_legs(["playwright-chromium-visual"], [self._leg(
-            fingerprint_before=None, fingerprint_after=None, fingerprint_stable=False
-        )])
+        problems = verify_legs(
+            ["playwright-chromium-visual"],
+            [
+                self._leg(
+                    fingerprint_before=None,
+                    fingerprint_after=None,
+                    fingerprint_stable=False,
+                )
+            ],
+        )
         assert problems
         assert "no fingerprint bracket" in problems[0]

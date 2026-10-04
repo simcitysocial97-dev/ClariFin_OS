@@ -104,9 +104,9 @@ class TestWorkerKilledMidFlight:
         )
         elapsed = time.monotonic() - started
         assert result.timed_out is True
-        assert result.duration_seconds < 30, (
-            "the wrapper must kill the process group, not wait it out"
-        )
+        assert (
+            result.duration_seconds < 30
+        ), "the wrapper must kill the process group, not wait it out"
         assert elapsed < 30, f"the timeout did not fire promptly ({elapsed:.1f}s)"
 
     def test_a_timeout_produces_timed_out_not_a_silent_success(self):

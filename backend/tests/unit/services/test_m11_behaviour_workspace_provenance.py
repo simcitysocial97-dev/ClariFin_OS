@@ -52,13 +52,11 @@ DEMO_CONFIDENCE = 85
 def _seed(db_path: str, *, with_transactions: bool = True) -> None:
     """Seed a household. `client` already creates account 1 and statement 1."""
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
                 balance_paise, owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute("UPDATE accounts SET balance_paise = 900000 WHERE id = 1")
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
@@ -74,9 +72,7 @@ def _seed(db_path: str, *, with_transactions: bool = True) -> None:
         # month boundary lands in the neighbouring month, which is exactly the
         # arithmetic the forecast duplicate-month defect used.
         year, month = int(today.year), today.month
-        previous_key = (
-            f"{year - 1}-12" if month == 1 else f"{year}-{month - 1:02d}"
-        )
+        previous_key = f"{year - 1}-12" if month == 1 else f"{year}-{month - 1:02d}"
         seq = 0
         for month_key in (previous_key, this_month):
             for day, kind, amount in ((1, "credit", 900000), (1, "debit", 250000)):
@@ -141,7 +137,9 @@ class TestNoFabricatedFigures:
         assert patterns, "three months of debits were seeded"
         assert {p["category"] for p in patterns} <= {"salary", "housing"}
 
-    def test_spending_pattern_amounts_sum_to_recorded_debits(self, populated: str) -> None:
+    def test_spending_pattern_amounts_sum_to_recorded_debits(
+        self, populated: str
+    ) -> None:
         from src.repositories.transaction_repository import TransactionRepository
 
         summary = _summary(populated)
@@ -163,18 +161,20 @@ class TestNoFabricatedFigures:
             "same unit split as the wellness score"
         )
 
-    def test_savings_rate_is_derived_from_recorded_cashflow(self, populated: str) -> None:
+    def test_savings_rate_is_derived_from_recorded_cashflow(
+        self, populated: str
+    ) -> None:
         from src.repositories.transaction_repository import TransactionRepository
 
         transactions = TransactionRepository(populated).get_all_transactions()
         income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-        expenses = sum(
-            t["amount_paise"] for t in transactions if t["type"] == "debit"
-        )
+        expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
         savings = _summary(populated)["savings_rate"]
         assert savings["income_paise"] == income
         assert savings["savings_paise"] == income - expenses
-        assert savings["savings_rate_bps"] == round((income - expenses) / income * 10000)
+        assert savings["savings_rate_bps"] == round(
+            (income - expenses) / income * 10000
+        )
 
     def test_radar_is_not_the_five_constants(self, populated: str) -> None:
         radar = _summary(populated)["wellness_radar"]
@@ -197,9 +197,9 @@ class TestNoFabricatedFigures:
     def test_evidence_confidence_is_not_a_constant(self, populated: str) -> None:
         chain = _summary(populated)["evidence_chain"]
         assert chain["confidence_score"] != DEMO_CONFIDENCE
-        assert chain["confidence_score"] is None, (
-            "no confidence is derived for this aggregate, so none is asserted"
-        )
+        assert (
+            chain["confidence_score"] is None
+        ), "no confidence is derived for this aggregate, so none is asserted"
 
     def test_debt_health_is_not_75_and_0_25(self, populated: str) -> None:
         debt = _summary(populated)["debt_health"]
@@ -214,7 +214,9 @@ class TestNoFabricatedFigures:
 
         source = inspect.getsource(BehaviourWorkspaceService)
         code = "\n".join(
-            line for line in source.splitlines() if not line.strip().startswith(("*", "#"))
+            line
+            for line in source.splitlines()
+            if not line.strip().startswith(("*", "#"))
         )
         assert "wellness_score = 100" not in code
         assert "amount_paise" in code  # sanity: the field is still produced
@@ -251,9 +253,10 @@ class TestInsufficientDataIsReported:
 
     def test_evidence_chain_states_the_transaction_count(self, empty: str) -> None:
         chain = _summary(empty)["evidence_chain"]
-        assert "0 recorded transaction" in chain["summary"] or "0 transactions" in chain[
-            "summary"
-        ]
+        assert (
+            "0 recorded transaction" in chain["summary"]
+            or "0 transactions" in chain["summary"]
+        )
 
 
 # ==================================================================
@@ -279,7 +282,9 @@ class TestEndpointMatchesTheAuthority:
             "has changed and this fixture must be updated"
         )
 
-    def test_workspace_endpoint_returns_200(self, client: TestClient, populated: str) -> None:
+    def test_workspace_endpoint_returns_200(
+        self, client: TestClient, populated: str
+    ) -> None:
         response = client.get("/api/v1/behaviour")
         assert response.status_code == 200, response.text
 

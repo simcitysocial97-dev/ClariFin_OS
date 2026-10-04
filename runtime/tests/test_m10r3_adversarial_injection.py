@@ -180,7 +180,9 @@ class TestInjectedTimeoutTampering:
         outcome). `validate()` is an execution gate, so folding this into it made the
         runtime refuse correct plans in order to report a curiosity.
         """
-        from runtime.foundation.verification.execution_orchestrator import budget_warnings
+        from runtime.foundation.verification.execution_orchestrator import (
+            budget_warnings,
+        )
 
         payload = _plan([_spec()]).to_dict()
         payload["tasks"][0]["estimated_duration_seconds"] = 600
@@ -291,7 +293,9 @@ class TestInjectedEvidenceRootTampering:
 class TestInjectedWrongPlan:
     def test_the_plan_fingerprint_is_preserved_across_narrowing(self):
         """A scoped or sharded leg must still be executing THE plan."""
-        from runtime.foundation.verification.control_plane_facade import _plan_with_tasks
+        from runtime.foundation.verification.control_plane_facade import (
+            _plan_with_tasks,
+        )
 
         plan = _plan([_spec(task_id="exec-0001"), _spec(task_id="exec-0002")])
         narrowed = _plan_with_tasks(plan, {"exec-0002"})
@@ -329,9 +333,7 @@ class TestInjectedWrongPlan:
         is exactly what a developer would do to reproduce a CI failure from an old
         artifact, and the answer must be a refusal.
         """
-        artifact = (
-            REPO_ROOT / "docs" / "audits" / "m10-r3-checkpoint-a-plan.json"
-        )
+        artifact = REPO_ROOT / "docs" / "audits" / "m10-r3-checkpoint-a-plan.json"
         plan = ExecutionPlan.from_dict(json.loads(artifact.read_text()))
         report = ExecutionOrchestrator().execute(plan, dry_run=False)
         assert report.final_decision == FinalDecision.VALIDATION_BLOCKED
@@ -356,7 +358,9 @@ class TestInjectedWrongPlan:
 
 class TestInjectedWrongShard:
     def test_a_shard_beyond_the_count_is_rejected(self):
-        from runtime.foundation.verification.execution_shards import validate_shard_request
+        from runtime.foundation.verification.execution_shards import (
+            validate_shard_request,
+        )
 
         # shard 5 of 7 is legal; 7 of 7 and a negative shard are not.
         assert validate_shard_request(5, 7) == (5, 7)
@@ -365,7 +369,9 @@ class TestInjectedWrongShard:
                 validate_shard_request(bad, 7)
 
     def test_a_non_positive_shard_count_is_rejected(self):
-        from runtime.foundation.verification.execution_shards import validate_shard_request
+        from runtime.foundation.verification.execution_shards import (
+            validate_shard_request,
+        )
 
         for bad in (0, -1):
             with pytest.raises(ValueError):
@@ -383,9 +389,9 @@ class TestInjectedWrongShard:
         first = assign_shards(plan, 3)
         second = assign_shards(plan, 3)
         assert first.partition_fingerprint() == second.partition_fingerprint()
-        assert [
-            [t.task_id for t in shard] for shard in first.shards
-        ] == [[t.task_id for t in shard] for shard in second.shards]
+        assert [[t.task_id for t in shard] for shard in first.shards] == [
+            [t.task_id for t in shard] for shard in second.shards
+        ]
 
     def test_a_different_shard_count_changes_the_partition(self):
         from runtime.foundation.verification.execution_shards import assign_shards
@@ -435,9 +441,12 @@ class TestInjectedRepositoryMutation:
 
     def test_the_working_tree_is_clean_afterwards(self):
         """The injection must not leave the repository modified."""
-        assert MUTATED_FILE.read_bytes() == (
-            REPO_ROOT / "backend" / "src" / "engines" / "loan_engine" / "emi.py"
-        ).read_bytes()
+        assert (
+            MUTATED_FILE.read_bytes()
+            == (
+                REPO_ROOT / "backend" / "src" / "engines" / "loan_engine" / "emi.py"
+            ).read_bytes()
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -663,6 +672,7 @@ class TestInjectedStaleEvidence:
         problems = verify_legs("backend", legs)
         assert any("not in the canonical plan" in p for p in problems)
 
+
 class TestInjectedRegistryGap:
     """L6 — a registry-coverage obligation is not a failing test.
 
@@ -702,9 +712,9 @@ class TestInjectedRegistryGap:
         assert decision == FinalDecision.NOT_CERTIFIABLE
         assert "mapping" in reason
         assert "not a test failure" in reason
-        assert "diagnostic path" in reason, (
-            "the reason must explicitly say the diagnostic path is not the answer"
-        )
+        assert (
+            "diagnostic path" in reason
+        ), "the reason must explicitly say the diagnostic path is not the answer"
 
     def test_it_is_not_confused_with_a_configuration_failure(self):
         from runtime.foundation.verification.execution_orchestrator import (
@@ -737,7 +747,10 @@ class TestInjectedRegistryGap:
     def test_an_empty_command_is_still_rejected_for_every_other_kind(self):
         """The validation exception is narrow on purpose."""
         assert ExecutionPlan.from_dict(
-            {**_plan([_spec()]).to_dict(), "tasks": [{**_spec().to_dict(), "command": ""}]}
+            {
+                **_plan([_spec()]).to_dict(),
+                "tasks": [{**_spec().to_dict(), "command": ""}],
+            }
         ).validate(), "a genuinely empty command on a spawned kind must fail validation"
 
     def test_it_is_revalidated_at_execution_time(self):
@@ -749,7 +762,7 @@ class TestInjectedRegistryGap:
             _unmapped_capabilities_now,
         )
 
-        assert _unmapped_capabilities_now(("definitely-not-a-capability",)), (
-            "an unknown capability must be reported as unmapped, not silently trusted"
-        )
+        assert _unmapped_capabilities_now(
+            ("definitely-not-a-capability",)
+        ), "an unknown capability must be reported as unmapped, not silently trusted"
         assert _unmapped_capabilities_now(()) == []

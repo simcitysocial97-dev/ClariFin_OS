@@ -51,13 +51,11 @@ PLACEHOLDER_NET_PAISE = 4_000_000
 def _seed_months(db_path: str, months: list[str], income: int, expenses: int) -> None:
     """Seed one income and one expense transaction per calendar month."""
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT INTO accounts (id, name, bank, account_type, balance_paise,
                                   owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 1000000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
             "VALUES (1, 'Test Bank', 'test.pdf')"
@@ -193,9 +191,7 @@ class TestCashflowProjectionIsNotFabricated:
         months = [row.month for row in dto.cashflow_projections]
         assert months == ["2026-04", "2026-05", "2026-06"]
 
-    def test_empty_dataset_reports_unavailable_not_zero(
-        self, empty_db: str
-    ) -> None:
+    def test_empty_dataset_reports_unavailable_not_zero(self, empty_db: str) -> None:
         """The absence of a projection is stated, not filled with constants."""
         dto = ForecastService(empty_db).get_forecast_summary(horizon_months=12)
 
@@ -237,9 +233,7 @@ class TestCashflowProjectionIsNotFabricated:
         assert basis.projected_months == 12
         assert basis.reason and "12" in basis.reason
 
-    def test_horizon_one_still_produces_a_single_month(
-        self, populated_db: str
-    ) -> None:
+    def test_horizon_one_still_produces_a_single_month(self, populated_db: str) -> None:
         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=1)
         assert len(dto.cashflow_projections) == 1
         assert dto.cashflow_forecast_basis.projected_months == 1
@@ -252,9 +246,7 @@ class TestCashflowProjectionIsNotFabricated:
 
 class TestNoDuplicateMonthKeys:
     @pytest.mark.parametrize("horizon", [1, 2, 3, 6, 12, 24, 60])
-    def test_cashflow_month_keys_unique(
-        self, populated_db: str, horizon: int
-    ) -> None:
+    def test_cashflow_month_keys_unique(self, populated_db: str, horizon: int) -> None:
         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=horizon)
         keys = [row.month for row in dto.cashflow_projections]
         assert len(keys) == len(set(keys)), f"duplicate cashflow month keys: {keys}"
@@ -264,7 +256,9 @@ class TestNoDuplicateMonthKeys:
         self, populated_db: str, horizon: int
     ) -> None:
         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=horizon)
-        keys = [month_key(date.fromisoformat(p.date)) for p in dto.net_worth_projections]
+        keys = [
+            month_key(date.fromisoformat(p.date)) for p in dto.net_worth_projections
+        ]
         assert len(keys) == len(set(keys)), f"duplicate net worth month keys: {keys}"
 
     def test_scenario_projection_dates_are_valid_iso_dates(
@@ -409,10 +403,10 @@ class TestMapperRejectsUnsupportedClaims:
 
 
 class TestPlaceholderTripwire:
-    @pytest.mark.parametrize(
-        "db_fixture", ["empty_db", "sparse_db", "populated_db"]
-    )
-    def test_placeholder_triple_never_appears(self, request: Any, db_fixture: str) -> None:
+    @pytest.mark.parametrize("db_fixture", ["empty_db", "sparse_db", "populated_db"])
+    def test_placeholder_triple_never_appears(
+        self, request: Any, db_fixture: str
+    ) -> None:
         db = request.getfixturevalue(db_fixture)
         dto = ForecastService(db).get_forecast_summary(horizon_months=12)
 

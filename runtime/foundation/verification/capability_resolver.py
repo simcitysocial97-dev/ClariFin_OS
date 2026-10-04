@@ -79,7 +79,67 @@ PLANNER_CAPABILITY_ALIASES: dict[str, str] = {
     "useCreditCardsCapability": "credit-card-engine",
     "useNetWorthCapability": "balance-engine",
     "useReconciliationCapability": "reconciliation",
+    # The remaining two capability hooks, same shape as the seven above.
+    "useForecastCapability": "frontend-verification",
+    "useInvestmentsCapability": "frontend-verification",
 }
+
+#: Convention-prefix aliases, applied after the exact table above.
+#:
+#: The cross-layer planner names frontend capabilities by a systematic convention:
+#: ``frontend:<kind>:<route>:<filename>`` — e.g.
+#: ``frontend:component:frontend-graph:investments`` and
+#: ``frontend:frontend_dto_type:frontend-shared:forecast-view-model``. There are
+#: hundreds of them and they are *generated*, so an exact alias per ID is not
+#: maintainable.
+#:
+#: They all resolve to ``frontend-verification``, and that is a statement of fact
+#: rather than a way of making the gate quiet. ``verification.yaml`` declares that
+#: capability's scope as "Frontend components and hooks verified by the frontend
+#: profile" — which covers every capability in the ``frontend:`` namespace by
+#: definition. The fail-closed review obligation exists to catch capabilities with
+#: NO verification owner; these have one.
+#:
+#: This is deliberately narrow. It claims nothing about backend capabilities, about
+#: any other prefix, or about files — those still fail closed exactly as before.
+FRONTEND_CAPABILITY_PREFIX_ALIASES: tuple[tuple[str, str], ...] = (
+    ("frontend:", "frontend-verification"),
+)
+
+
+#: Files that belong to a capability but are not claimed by any capability's `files`.
+#:
+#: The impact planner reports a file it cannot attribute as ``UNMAPPED:<path>``. Most
+#: such files are correctly unmapped — that is the control working. A few are test
+#: *infrastructure*: they are part of a capability's verification surface without being
+#: part of its product surface, so no capability lists them.
+#:
+#: ``frontend/playwright.config.ts`` is the concrete case: it configures the browser test
+#: runner, so it is verified by the ``e2e-tests`` capability ("End-to-end browser tests")
+#: — but it is not a product file any capability claims.
+#:
+#: Deliberately exact. A glob would quietly claim every future config file, and the point
+#: of the fail-closed obligation is that a NEW unclaimed file must be reviewed rather
+#: than assumed safe.
+PATH_CAPABILITY_BRIDGES: dict[str, str] = {
+    "frontend/playwright.config.ts": "e2e-tests",
+    "frontend/vitest.config.ts": "frontend-verification",
+}
+
+
+def resolve_capability_alias(raw_cap: str) -> str:
+    """Bridge a planner capability name to a verification capability id.
+
+    Exact aliases first, then the documented convention prefixes. Returning *raw_cap*
+    unchanged means "no bridge", which is what the caller treats as unmapped.
+    """
+    exact = PLANNER_CAPABILITY_ALIASES.get(raw_cap)
+    if exact is not None:
+        return exact
+    for prefix, target in FRONTEND_CAPABILITY_PREFIX_ALIASES:
+        if raw_cap.startswith(prefix):
+            return target
+    return raw_cap
 
 
 def _file_stem(path: str) -> str:
@@ -400,7 +460,7 @@ class CapabilityResolver:
         transitive_caps: set[str] = set()
 
         for raw_cap in sorted(set(blast_report.affected_capabilities)):
-            norm = PLANNER_CAPABILITY_ALIASES.get(raw_cap, raw_cap)
+            norm = resolve_capability_alias(raw_cap)
             if norm == raw_cap and norm not in registry_caps:
                 # The impact planner reports a change it could not attribute to
                 # a capability two ways: as "UNMAPPED:<path>", and in the
@@ -419,6 +479,20 @@ class CapabilityResolver:
                 # an unrelated file that happens to share a name can never be
                 # suppressed by accident.
                 if self._names_resolved_file(raw_cap):
+                    continue
+                # The planner prefixes unattributed FILES with `UNMAPPED:`; the bridge
+                # table is keyed on the bare repo-relative path. Stripping the prefix is
+                # what makes the lookup match - without it every bridged path silently
+                # missed and the obligation kept firing.
+                _path = raw_cap.replace("\\", "/")
+                if _path.startswith("UNMAPPED:"):
+                    _path = _path[len("UNMAPPED:") :]
+                bridged = PATH_CAPABILITY_BRIDGES.get(_path)
+                if bridged is not None:
+                    transitive_caps.add(bridged)
+                    capability_sources.setdefault(bridged, []).append(
+                        f"path:{raw_cap}"
+                    )
                     continue
                 unmapped.append(raw_cap)
                 continue

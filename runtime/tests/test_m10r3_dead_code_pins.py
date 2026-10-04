@@ -49,9 +49,14 @@ def _python_importers(module: str) -> list[Path]:
                 if node.module and node.module.endswith(module):
                     offenders.append(path)
                     break
-                if node.module and node.module.endswith("verification") and names & {
-                    module,
-                }:
+                if (
+                    node.module
+                    and node.module.endswith("verification")
+                    and names
+                    & {
+                        module,
+                    }
+                ):
                     offenders.append(path)
                     break
             elif isinstance(node, ast.Import):
@@ -78,7 +83,9 @@ class TestForensicCliIsUnreachable:
         """
         route_authority = (PKG / "route_authority.py").read_text(encoding="utf-8")
         certification = (PKG / "certification.py").read_text(encoding="utf-8")
-        referenced = "forensic_cli" in route_authority or "forensic_cli" in certification
+        referenced = (
+            "forensic_cli" in route_authority or "forensic_cli" in certification
+        )
         assert referenced, (
             "the provenance strings no longer name forensic_cli, so it can now be "
             "deleted outright — this test and its pin should go with it"
@@ -137,11 +144,14 @@ class TestExecutorEngineIsConsolidated:
             if (
                 isinstance(node, ast.Call)
                 and isinstance(node.func, ast.Attribute)
-                and node.func.attr in {"Popen", "run", "call", "check_call", "check_output"}
+                and node.func.attr
+                in {"Popen", "run", "call", "check_call", "check_output"}
             ):
                 spawns.append(ast.unparse(node.func))
-            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and (
-                node.func.id in {"system", "popen"}
+            elif (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and (node.func.id in {"system", "popen"})
             ):
                 spawns.append(node.func.id)
         assert not spawns, (
@@ -164,9 +174,9 @@ class TestExecutorEngineIsConsolidated:
         Per-attempt files preserve every attempt *and* make each attributable.
         """
         executor = (PKG / "executor.py").read_text(encoding="utf-8")
-        assert "a{attempt}" in executor or "attempt" in executor, (
-            "evidence filenames must distinguish retry attempts"
-        )
+        assert (
+            "a{attempt}" in executor or "attempt" in executor
+        ), "evidence filenames must distinguish retry attempts"
 
     def test_cancellation_still_works(self):
         """Delegating ownership of the child must not have made `cancel()` a no-op.

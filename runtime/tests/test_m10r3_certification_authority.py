@@ -30,7 +30,6 @@ from runtime.foundation.verification.execution_orchestrator import (
     decide_final_outcome,
 )
 
-
 # ---------------------------------------------------------------------------
 # The classifier: one precedence, no second opinion
 # ---------------------------------------------------------------------------
@@ -144,9 +143,9 @@ class TestDecisionPrecedence:
         with CertificationRun("p") as run:
             run.record("a", outcome)
         assert run.exit_code() == expected_exit
-        assert run.exit_code() != 0, (
-            f"{outcome} must never be expressible as a green exit status"
-        )
+        assert (
+            run.exit_code() != 0
+        ), f"{outcome} must never be expressible as a green exit status"
 
     def test_pass_is_the_only_zero(self):
         with CertificationRun("p") as run:

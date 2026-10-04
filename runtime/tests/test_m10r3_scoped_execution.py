@@ -125,9 +125,9 @@ class TestScopedExecutionContract:
         assert code == 2
         err = capsys.readouterr().err
         assert "exec-9999" in err
-        assert "contains 3 task(s)" in err, (
-            "the error must list the real task ids so the operator can correct the typo"
-        )
+        assert (
+            "contains 3 task(s)" in err
+        ), "the error must list the real task ids so the operator can correct the typo"
 
     def test_a_known_task_id_is_accepted_and_narrowed(self, tmp_path, capsys):
         from runtime.foundation.verification.control_plane_facade import ControlPlane
@@ -188,7 +188,9 @@ class TestLocalHarnessReporting:
         assert len(failures) == 1
         assert "validation_blocked" in failures[0][1]
 
-    def test_it_reports_a_per_task_failure_with_its_reproduction_command(self, tmp_path):
+    def test_it_reports_a_per_task_failure_with_its_reproduction_command(
+        self, tmp_path
+    ):
         result = tmp_path / "shard-0.json"
         result.write_text(
             json.dumps(
@@ -214,7 +216,9 @@ class TestLocalHarnessReporting:
     def test_a_passing_task_is_not_a_failure(self, tmp_path):
         result = tmp_path / "shard-0.json"
         result.write_text(
-            json.dumps({"records": [{"task_id": "exec-0001", "completion_state": "pass"}]})
+            json.dumps(
+                {"records": [{"task_id": "exec-0001", "completion_state": "pass"}]}
+            )
         )
         assert facade._harvest_failures(result, _plan(), 0, 1) == []
 
@@ -247,5 +251,9 @@ class TestUnflaggedRunIsFixed:
         assert facade._parse_shard_arg([]) == (None, None)
         # The dispatch must not forward that tuple.
         shard, shard_count = (None, None)
-        normalised = (shard, shard_count) if shard is not None and shard_count is not None else None
+        normalised = (
+            (shard, shard_count)
+            if shard is not None and shard_count is not None
+            else None
+        )
         assert normalised is None

@@ -467,9 +467,7 @@ def _resolve_placeholders(value: str, ctx: ExecutionContext) -> str:
             break
         out.append(value[idx:at])
         tail = value[at + 1 :]
-        matched = next(
-            (t for t in PLACEHOLDER_TOKENS if tail.startswith(t)), None
-        )
+        matched = next((t for t in PLACEHOLDER_TOKENS if tail.startswith(t)), None)
         if matched is None:
             raise RequirementSyntaxError(
                 f"unknown placeholder in {value!r}: '@{tail[:24]}' is not one of "
@@ -606,7 +604,11 @@ def _parse_requirement(raw: str) -> tuple[str, str, str]:
         name, version = name.strip(), version.strip()
         if not name:
             raise RequirementSyntaxError(f"requirement {raw!r} has an empty tool name")
-        form = _REQUIREMENT_FORM_TOOL_VERSION if forced in (None, _REQUIREMENT_FORM_TOOL) else forced
+        form = (
+            _REQUIREMENT_FORM_TOOL_VERSION
+            if forced in (None, _REQUIREMENT_FORM_TOOL)
+            else forced
+        )
         return form, name, version
 
     if "=" in text:
@@ -1234,19 +1236,18 @@ def decide_final_outcome(
         detail = fingerprint_note if fingerprint_note else ""
         if scoped:
             named = ", ".join(
-                f"{o.task_id}" + (f" ({o.detail})" if o.detail else "")
-                for o in scoped
+                f"{o.task_id}" + (f" ({o.detail})" if o.detail else "") for o in scoped
             )
             which = f"invalid scope on {named}"
         else:
             which = "repository drift"
         return (
             FinalDecision.VALIDATION_BLOCKED,
-            f"{which} detected — cannot certify"
-            + (f" ({detail})" if detail else ""),
+            f"{which} detected — cannot certify" + (f" ({detail})" if detail else ""),
         )
     mandatory_config = [
-        o.task_id for o in outcomes
+        o.task_id
+        for o in outcomes
         if o.state == CompletionState.CONFIGURATION and o.is_mandatory
     ]
     if mandatory_config:
@@ -1256,7 +1257,8 @@ def decide_final_outcome(
             f"{', '.join(mandatory_config)} — cannot certify",
         )
     mandatory_registry_gaps = [
-        o for o in outcomes
+        o
+        for o in outcomes
         if o.state == CompletionState.REGISTRY_GAP and o.is_mandatory
     ]
     if mandatory_registry_gaps:
@@ -1276,7 +1278,8 @@ def decide_final_outcome(
             "rather than re-running the diagnostic path.",
         )
     mandatory_failed = [
-        o.task_id for o in outcomes
+        o.task_id
+        for o in outcomes
         if o.state == CompletionState.FAILED and o.is_mandatory
     ]
     if mandatory_failed:
@@ -1483,8 +1486,11 @@ def _unmapped_capabilities_now(capabilities: tuple[str, ...]) -> list[str]:
         from runtime.foundation.verification.capability_registry import (
             capability_contract_registry,
         )
+
         registry = capability_contract_registry()
-        return [cap for cap in capabilities if not cap or not registry.contract_for(cap)]
+        return [
+            cap for cap in capabilities if not cap or not registry.contract_for(cap)
+        ]
     except Exception:
         # A registry that cannot be consulted must not silently certify: report all, so
         # the verdict fails closed and the reason is honest rather than vacuous.
@@ -1664,7 +1670,9 @@ class CertificationRun:
             certification_requirements=self._certification_requirements,
             measurement_lookup=self._measurement_lookup,
             current_sha=(
-                self.fingerprint_before.repository_sha if self.fingerprint_before else ""
+                self.fingerprint_before.repository_sha
+                if self.fingerprint_before
+                else ""
             ),
         )
 
@@ -1734,7 +1742,6 @@ _DECISION_EXIT_CODES: dict[FinalDecision, int] = {
 # ---------------------------------------------------------------------------
 # Execution report
 # ---------------------------------------------------------------------------
-
 
 
 @dataclass
@@ -3169,9 +3176,7 @@ class ExecutionOrchestrator:
                 stderr_tail=[],
                 next_action="none",
             )
-        detail = "no verification-registry mapping for: " + ", ".join(
-            still_unmapped
-        )
+        detail = "no verification-registry mapping for: " + ", ".join(still_unmapped)
         return self._make_record(
             spec,
             plan,
@@ -3185,9 +3190,11 @@ class ExecutionOrchestrator:
                 f"exemption."
             ),
             diagnostic={
-                "stage": FailureStage.NOT_CONFIGURED.value
-                if hasattr(FailureStage, "NOT_CONFIGURED")
-                else "registry_gap",
+                "stage": (
+                    FailureStage.NOT_CONFIGURED.value
+                    if hasattr(FailureStage, "NOT_CONFIGURED")
+                    else "registry_gap"
+                ),
                 "message": detail,
                 "unmapped_capabilities": list(still_unmapped),
                 "kind": "REGISTRY_GAP",

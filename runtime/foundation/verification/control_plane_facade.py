@@ -2594,7 +2594,9 @@ def _local_harness(
         plan = cp.orchestrator.build_execution_plan(changed)
 
     if only_task:
-        unknown = [only_task] if only_task not in {t.task_id for t in plan.tasks} else []
+        unknown = (
+            [only_task] if only_task not in {t.task_id for t in plan.tasks} else []
+        )
         if unknown:
             print(
                 f"Unknown task id: {only_task}. Plan {plan.plan_id} contains "
@@ -2606,9 +2608,7 @@ def _local_harness(
         only_shard = 0
 
     assignment = assign_shards(plan, shards)
-    shard_indices = (
-        [only_shard] if only_shard is not None else list(range(shards))
-    )
+    shard_indices = [only_shard] if only_shard is not None else list(range(shards))
 
     print(
         f"[local] plan={plan.plan_id} tasks={len(plan.tasks)} "
@@ -2656,7 +2656,9 @@ def _shard_level_failure(
     decision, reason = "unknown", ""
     try:
         payload = json.loads(result_out.read_text(encoding="utf-8"))
-        decision = str(payload.get("final_decision") or payload.get("decision") or "unknown")
+        decision = str(
+            payload.get("final_decision") or payload.get("decision") or "unknown"
+        )
         reason = str(payload.get("reason", ""))
     except (OSError, json.JSONDecodeError):
         pass
@@ -2669,7 +2671,9 @@ def _shard_level_failure(
     ]
 
 
-def _harvest_task_rows(result_out: Path, index: int) -> list[tuple[str, str, float, str]]:
+def _harvest_task_rows(
+    result_out: Path, index: int
+) -> list[tuple[str, str, float, str]]:
     """Per-task status/duration/termination from one shard's result document."""
     try:
         payload = json.loads(result_out.read_text(encoding="utf-8"))
@@ -2933,7 +2937,9 @@ def _write_certification_outcome(
         return None
 
     decision, reason = run.decide()
-    fp_before = run.fingerprint_before.fingerprint[:12] if run.fingerprint_before else "-"
+    fp_before = (
+        run.fingerprint_before.fingerprint[:12] if run.fingerprint_before else "-"
+    )
     fp_after = run.fingerprint_after.fingerprint[:12] if run.fingerprint_after else "-"
     lines = [
         "",
@@ -2949,9 +2955,7 @@ def _write_certification_outcome(
     width = max((len(o.task_id) for o in run.outcomes), default=4)
     for o in run.outcomes:
         suffix = f"  {o.detail}" if o.detail else ""
-        lines.append(
-            f"    {o.task_id:<{width}}  {o.state.value:<14}{suffix}"
-        )
+        lines.append(f"    {o.task_id:<{width}}  {o.state.value:<14}{suffix}")
     lines.append("")
     print("\n".join(lines), file=sys.stderr)
     return path
@@ -3243,9 +3247,7 @@ def _run_profile_alias(operation: str) -> int:
         None,
         profile_name=operation,
         elapsed=elapsed,
-        status=(
-            "passed" if decision is FinalDecision.CERTIFIED else "blocked"
-        ),
+        status=("passed" if decision is FinalDecision.CERTIFIED else "blocked"),
         passed=passed,
         failed=failed,
         final_decision=decision.value,
@@ -3445,7 +3447,8 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
                         shards = int(value)
                     except ValueError:
                         print(
-                            f"--shards expects an integer, got {value!r}", file=sys.stderr
+                            f"--shards expects an integer, got {value!r}",
+                            file=sys.stderr,
                         )
                         return 2
                     if shards < 1:
@@ -3456,7 +3459,8 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
                         only_shard = int(value)
                     except ValueError:
                         print(
-                            f"--shard expects an integer, got {value!r}", file=sys.stderr
+                            f"--shard expects an integer, got {value!r}",
+                            file=sys.stderr,
                         )
                         return 2
                 else:

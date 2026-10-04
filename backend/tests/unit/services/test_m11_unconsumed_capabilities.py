@@ -50,13 +50,11 @@ def _seed(db_path: str, transactions: int = 12) -> None:
     so the account is reused rather than inserted again.
     """
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
                 balance_paise, owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute("UPDATE accounts SET balance_paise = 900000 WHERE id = 1")
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
@@ -173,9 +171,7 @@ class TestFinancialGoalsPriorityColumn:
         stored = repository.get_goal(1)
         assert stored is not None
         assert stored["priority"] == "high"
-        assert any(
-            g["id"] == 1 for g in repository.get_household_goals("primary")
-        )
+        assert any(g["id"] == 1 for g in repository.get_household_goals("primary"))
 
     def test_default_priority_is_applied_when_omitted(self, seeded: str) -> None:
         from src.repositories.financial_goal_repository import FinancialGoalRepository
@@ -207,8 +203,7 @@ class TestFinancialGoalsPriorityColumn:
         db = str(finance_db.db_path)
         with sqlite3.connect(db) as conn:
             conn.execute("DROP TABLE financial_goals")
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE financial_goals (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     household_id TEXT NOT NULL DEFAULT 'primary',
@@ -224,8 +219,7 @@ class TestFinancialGoalsPriorityColumn:
                     created_at TEXT DEFAULT (datetime('now')),
                     updated_at TEXT DEFAULT (datetime('now'))
                 )
-                """
-            )
+                """)
             conn.commit()
             columns = {r[1] for r in conn.execute("PRAGMA table_info(financial_goals)")}
         assert "priority" not in columns
@@ -298,7 +292,9 @@ class TestRecommendationsAreDerived:
     def test_detail_for_an_unknown_id_reports_not_found(self, seeded: str) -> None:
         from src.services.recommendation_service import RecommendationService
 
-        payload = RecommendationService(seeded).get_recommendation_details("does-not-exist")
+        payload = RecommendationService(seeded).get_recommendation_details(
+            "does-not-exist"
+        )
         assert payload["found"] is False
         assert payload["detail"] is None
 
@@ -337,7 +333,9 @@ class TestRecommendationsAreDerived:
 
         assert "to_dict()" in code, "recommendations must be serialised with to_dict()"
         for wrong in ("r.dict()", "r.model_dump()"):
-            assert wrong not in code, f"{wrong} is not the serialiser Recommendation has"
+            assert (
+                wrong not in code
+            ), f"{wrong} is not the serialiser Recommendation has"
 
     def test_recommendation_class_really_has_to_dict(self) -> None:
         """Guards the assertion above against the engine changing shape."""
@@ -385,7 +383,9 @@ class TestCapabilityAuditReachability:
             for method, path in endpoints
         ],
     )
-    def test_endpoint_responds(self, client: TestClient, area: str, method: str, path: str) -> None:
+    def test_endpoint_responds(
+        self, client: TestClient, area: str, method: str, path: str
+    ) -> None:
         response = client.request(method, path)
         assert response.status_code == 200, f"{area} {method} {path}: {response.text}"
 

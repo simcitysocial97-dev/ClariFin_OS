@@ -388,9 +388,7 @@ def run_streaming_command(
 
     if cancelled:
         infra_error = infra_error or "cancelled by the caller"
-    termination = classify_termination(
-        exit_code, timed_out or cancelled, infra_error
-    )
+    termination = classify_termination(exit_code, timed_out or cancelled, infra_error)
 
     if emit and progress is not None:
         # The terminal line carries the termination KIND, not just a non-zero status, so
@@ -507,9 +505,7 @@ def _detect_shell_command_not_found(stderr_text: str) -> str | None:
         match = pattern.search(stderr_text)
         if match:
             first_line = stderr_text.strip().splitlines()[0]
-            return (
-                f"command not found (exit 127): {first_line.strip()}"
-            )
+            return f"command not found (exit 127): {first_line.strip()}"
     return None
 
 
@@ -641,9 +637,7 @@ _CPU_FLAG_RE = re.compile(
 
 #: ``bash <script>`` / ``sh <script>`` / ``. <script>`` — the indirection that hides a
 #: worker-count flag from a plain scan of the command string.
-_SCRIPT_INDIRECTION_RE = re.compile(
-    r"(?:^|\s)(?:bash|sh|zsh|\.)\s+([^\s;|]+\.sh)\b"
-)
+_SCRIPT_INDIRECTION_RE = re.compile(r"(?:^|\s)(?:bash|sh|zsh|\.)\s+([^\s;|]+\.sh)\b")
 
 #: A shell string test — ``[ -n "$X" ]``, ``[ -n "$X" -a -n "$Y" ]``.
 #:
@@ -933,9 +927,7 @@ def schedule_within_budget(
     return waves
 
 
-def estimate_wall_seconds(
-    items: Sequence[Any], budget: CpuBudget
-) -> float:
+def estimate_wall_seconds(items: Sequence[Any], budget: CpuBudget) -> float:
     """Wall-clock estimate for *items* under *budget*, from their declared durations.
 
     This is the sum over *waves* of the slowest item in each wave — i.e. the critical
@@ -946,7 +938,10 @@ def estimate_wall_seconds(
     waves = schedule_within_budget(items, budget)
     total = 0.0
     for wave in waves:
-        total += max((float(getattr(i, "estimated_duration_seconds", 0) or 0) for i in wave), default=0.0)
+        total += max(
+            (float(getattr(i, "estimated_duration_seconds", 0) or 0) for i in wave),
+            default=0.0,
+        )
     return total
 
 

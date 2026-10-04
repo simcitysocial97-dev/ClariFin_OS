@@ -77,13 +77,11 @@ def _seed_household(db_path: str) -> None:
     """
     today = date.today()
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
                 balance_paise, owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
             "VALUES (1, 'Test Bank', 'test.pdf')"
@@ -103,7 +101,14 @@ def _seed_household(db_path: str) -> None:
                         date_iso, description, type, amount_paise, category, account_id)
                     VALUES (1, ?, ?, ?, ?, ?, ?, 'x', 1)
                     """,
-                    (seq, when.isoformat(), when.isoformat(), description, kind, amount),
+                    (
+                        seq,
+                        when.isoformat(),
+                        when.isoformat(),
+                        description,
+                        kind,
+                        amount,
+                    ),
                 )
         for back in range(25, 0, -1):
             when = (today - timedelta(days=back)).isoformat()
@@ -131,11 +136,11 @@ def seeded(finance_db: Any) -> str:
 
 
 class TestProfileEndpointIsRepeatable:
-    def test_the_defect_reproduction_shape(self, client: TestClient, seeded: str) -> None:
+    def test_the_defect_reproduction_shape(
+        self, client: TestClient, seeded: str
+    ) -> None:
         """Call 1 -> 200, call 2 -> 500, call 3 -> 500 before the fix."""
-        responses = [
-            client.get("/api/v1/behaviour/profile") for _ in range(3)
-        ]
+        responses = [client.get("/api/v1/behaviour/profile") for _ in range(3)]
         assert [r.status_code for r in responses] == [200, 200, 200], (
             "a repeat call on the same day must refresh the day's snapshot, "
             "not raise UNIQUE(household_id, snapshot_date)"
@@ -170,9 +175,7 @@ class TestProfileEndpointIsRepeatable:
             ).fetchone()[0]
 
         with get_connection_context(seeded) as conn:
-            conn.execute(
-                "UPDATE behaviour_snapshots SET wellness_score_bps = 1234"
-            )
+            conn.execute("UPDATE behaviour_snapshots SET wellness_score_bps = 1234")
             conn.commit()
 
         BehaviourService(seeded).compute_financial_profile()
@@ -227,7 +230,9 @@ class TestPatternsArePopulated:
 
         BehaviourService(seeded).get_patterns()
         with get_connection_context(seeded) as conn:
-            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[0]
+            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[
+                0
+            ]
         assert count > 0, (
             "no amount of seeding can populate behaviour_patterns unless "
             "something writes it; create_pattern had zero callers"
@@ -240,19 +245,25 @@ class TestPatternsArePopulated:
         assert isinstance(body, list)
         assert body, "detectable recurring activity produced no patterns"
 
-    def test_a_recurring_fixed_amount_is_a_subscription(self, client: TestClient, seeded: str) -> None:
+    def test_a_recurring_fixed_amount_is_a_subscription(
+        self, client: TestClient, seeded: str
+    ) -> None:
         body = client.get("/api/v1/behaviour/patterns").json()
         subscriptions = [p for p in body if p["pattern_type"] == "SUBSCRIPTION"]
         assert subscriptions, f"no SUBSCRIPTION detected in {body}"
         assert any("netflix" in p["pattern_key"] for p in subscriptions)
 
-    def test_a_small_repeating_merchant_is_an_impulse(self, client: TestClient, seeded: str) -> None:
+    def test_a_small_repeating_merchant_is_an_impulse(
+        self, client: TestClient, seeded: str
+    ) -> None:
         body = client.get("/api/v1/behaviour/patterns").json()
         impulses = [p for p in body if p["pattern_type"] == "IMPULSE"]
         assert impulses, f"no IMPULSE detected in {body}"
         assert any("zara" in p["pattern_key"] for p in impulses)
 
-    def test_pattern_type_filter_still_works(self, client: TestClient, seeded: str) -> None:
+    def test_pattern_type_filter_still_works(
+        self, client: TestClient, seeded: str
+    ) -> None:
         body = client.get("/api/v1/behaviour/patterns?pattern_type=SUBSCRIPTION").json()
         assert body
         assert {p["pattern_type"] for p in body} == {"SUBSCRIPTION"}
@@ -264,7 +275,9 @@ class TestPatternsArePopulated:
         for pattern in client.get("/api/v1/behaviour/patterns").json():
             assert 0 <= float(pattern["strength"]) <= 1
 
-    def test_total_amount_is_integer_paise(self, client: TestClient, seeded: str) -> None:
+    def test_total_amount_is_integer_paise(
+        self, client: TestClient, seeded: str
+    ) -> None:
         for pattern in client.get("/api/v1/behaviour/patterns").json():
             assert isinstance(pattern["total_amount_paise"], int)
             assert pattern["total_amount_paise"] > 0
@@ -288,7 +301,9 @@ class TestPatternsArePopulated:
         for _ in range(3):
             assert client.get("/api/v1/behaviour/patterns").status_code == 200
         with get_connection_context(seeded) as conn:
-            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[0]
+            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[
+                0
+            ]
         assert count == 2, f"expected one row per detected pattern, got {count}"
 
     def test_create_pattern_upserts(self, finance_db: Any) -> None:
@@ -322,25 +337,21 @@ class TestPatternsArePopulated:
     ) -> None:
         """One debit at one merchant is not a pattern."""
         with get_connection_context(str(finance_db.db_path)) as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
                     balance_paise, owner_id, household_id)
                 VALUES (1, 'A', 'B', 'savings', 100, 'self', 'primary')
-                """
-            )
+                """)
             conn.execute(
                 "INSERT OR IGNORE INTO statements (id, bank, file_name) "
                 "VALUES (1, 'B', 's.pdf')"
             )
-            conn.execute(
-                """
+            conn.execute("""
                 INSERT INTO transactions (statement_id, sequence_num, date, date_iso,
                     description, type, amount_paise, category, account_id)
                 VALUES (1, 1, '2026-09-01', '2026-09-01', 'ONE OFF COFFEE', 'debit',
                         25000, 'x', 1)
-                """
-            )
+                """)
             conn.commit()
 
         from src.services.behaviour_service import BehaviourService
@@ -372,9 +383,9 @@ class TestNoNonPersistedSnapshotKeyIsRead:
         source = inspect.getsource(BehaviourService)
         for key in self.KEYS:
             for accessor in (f'snapshot["{key}"]', f'_snapshot["{key}"]'):
-                assert accessor not in source, (
-                    f"{accessor} reads a key _map_snapshot_row cannot produce"
-                )
+                assert (
+                    accessor not in source
+                ), f"{accessor} reads a key _map_snapshot_row cannot produce"
 
     @pytest.mark.parametrize(
         "path",

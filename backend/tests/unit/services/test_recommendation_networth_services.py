@@ -31,13 +31,11 @@ def _seed_household(db_path: str, *, monthly_emi_paise: int = 0) -> None:
 
     today = date.today()
     with get_connection_context(db_path) as conn:
-        conn.execute(
-            """
+        conn.execute("""
             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
                 balance_paise, owner_id, household_id)
             VALUES (1, 'Salary', 'Test Bank', 'savings', 100000, 'self', 'primary')
-            """
-        )
+            """)
         conn.execute(
             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
             "VALUES (1, 'Test Bank', 'test.pdf')"
@@ -64,7 +62,14 @@ def _seed_household(db_path: str, *, monthly_emi_paise: int = 0) -> None:
                         date_iso, description, type, amount_paise, category, account_id)
                     VALUES (1, ?, ?, ?, ?, ?, ?, 'x', 1)
                     """,
-                    (seq, when.isoformat(), when.isoformat(), f"{kind}-{month_key}", kind, amount),
+                    (
+                        seq,
+                        when.isoformat(),
+                        when.isoformat(),
+                        f"{kind}-{month_key}",
+                        kind,
+                        amount,
+                    ),
                 )
         if monthly_emi_paise:
             # Column names follow backend/src/core/db/schema.py::_DDL_LOANS.
@@ -194,9 +199,9 @@ class TestRecommendationService:
             for t in TransactionRepository(household).get_all_transactions()
             if t["type"] == "debit"
         )
-        assert profile["total_income_paise"] == income, (
-            "the reported income must be the recorded income"
-        )
+        assert (
+            profile["total_income_paise"] == income
+        ), "the reported income must be the recorded income"
         assert profile["total_expenses_paise"] == expenses
         assert profile["months_observed"] == 3
         assert profile["monthly_income_paise"] == income // 3, (
@@ -216,9 +221,9 @@ class TestRecommendationService:
         """
         result = RecommendationService(indebted_household).get_recommendations()
         assert result["status"] == "available"
-        assert result["profile"]["monthly_income_paise"] == 900000, (
-            "three months of 900000 income is 900000 per month"
-        )
+        assert (
+            result["profile"]["monthly_income_paise"] == 900000
+        ), "three months of 900000 income is 900000 per month"
         assert result["profile"]["foir"] >= 0.6, (
             f"an EMI of 630000 against 900000 monthly income is a FOIR of 0.7, "
             f"got {result['profile']['foir']}"
