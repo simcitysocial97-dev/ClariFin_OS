@@ -406,26 +406,26 @@ DEFAULT_RUNTIME = {
 }
 
 
-#: The budget a mutation revalidation task declares in the execution plan.
-#:
-#: Duplicated as a named constant rather than derived, because the declaration lives
-#: as a literal at the two revalidation construction sites in
-#: ``execution_orchestrator`` and re-deriving it here would require instantiating a
-#: planner's private API — trading a real, greppable constant for an indirection.
-#: ``test_mutation_budget_and_toolchain.py`` asserts both sites still agree with this
-#: value, so the duplication cannot rot silently.
-DECLARED_MUTATION_TIMEOUT_SECONDS = 1200
+#: Retained for backward compatibility with importers. The value now *derives* from
+#: ``DEFAULT_RUNTIME`` via ``execution_orchestrator.declared_mutation_timeout`` so the
+#: declared and enforced budgets cannot drift; this alias exists only so existing
+#: assertions keep resolving.
+DECLARED_MUTATION_TIMEOUT_SECONDS = DEFAULT_RUNTIME["target"]
 
 
 def _declared_mutation_timeout(mode: str, target: str | None) -> int:
     """What the *plan* believes this mutation obligation's budget to be.
 
+    M10-R3 (L3): derived from the SAME table that is enforced, so the two cannot drift.
+    Previously this returned a duplicated constant (1200) while enforcement used
+    ``DEFAULT_RUNTIME`` (4200) — the divergence this milestone closed.
+
     Returns 0 for a mode the planner never emits a revalidation task for, so "no
-    declared budget" is distinguishable from "a budget of zero".
+    declared budget" stays distinguishable from "a budget of zero".
     """
     if mode == "smoke":
         return 0
-    return DECLARED_MUTATION_TIMEOUT_SECONDS
+    return int(DEFAULT_RUNTIME.get(mode, DEFAULT_RUNTIME["full"]))
 
 
 def _git_sha() -> str:
@@ -637,6 +637,7 @@ def execute_mutation(
     target: str | None = None,
     shard: str | None = None,
     max_runtime: int | None = None,
+    declared_timeout: int | None = None,
     max_children: int = 0,
     no_cache: bool = False,
     restore_only: bool = False,
@@ -900,7 +901,22 @@ def execute_mutation(
         if max_children and max_children > 0:
             cmd += ["--max-children", str(max_children)]
 
-        timeout = max_runtime or DEFAULT_RUNTIME.get(mode, 5400)
+        # M10-R3 (L3): ONE authority for the campaign budget.
+        #
+        # Precedence, most explicit first:
+        #   1. `max_runtime`        — an operator override on the command line.
+        #   2. `declared_timeout`   — the ceiling the execution PLAN declared. Handed
+        #      down by the orchestrator, so a plan can no longer promise a budget the
+        #      executor silently ignores. This is what closes the 1200-vs-4200 gap:
+        #      previously the plan said 1200 and this line used 4200, and nothing
+        #      recorded either number.
+        #   3. `DEFAULT_RUNTIME[mode]` — the fallback for a direct/smoke invocation
+        #      that has no plan behind it.
+        timeout = (
+            max_runtime
+            or declared_timeout
+            or DEFAULT_RUNTIME.get(mode, DEFAULT_RUNTIME["full"])
+        )
 
         # M10-R3 (C) — reconcile the *declared* budget with the *enforced* one.
         #

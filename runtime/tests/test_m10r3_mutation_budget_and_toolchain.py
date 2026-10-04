@@ -40,7 +40,7 @@ import pytest
 
 from runtime.foundation.verification import mutation_runner as mr
 from runtime.foundation.verification.execution_orchestrator import (
-    DECLARED_MUTATION_TIMEOUT_SECONDS,
+    declared_mutation_timeout,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -195,30 +195,64 @@ class TestBudgetAuthority:
         source = Path(mr.__file__).read_text(encoding="utf-8")
         assert source.count("timeout_seconds=1200") == 0, (
             "a bare 1200 has reappeared in mutation_runner; use "
-            "DECLARED_MUTATION_TIMEOUT_SECONDS"
+            "declared_mutation_timeout('target')"
         )
         orch = (REPO_ROOT / "runtime/foundation/verification/execution_orchestrator.py").read_text(
             encoding="utf-8"
         )
         assert "timeout_seconds=1200" not in orch, (
             "the planner re-declared the mutation budget inline; use "
-            "DECLARED_MUTATION_TIMEOUT_SECONDS"
+            "declared_mutation_timeout('target')"
         )
 
     def test_both_sides_agree_on_the_declared_value(self):
-        assert mr.DECLARED_MUTATION_TIMEOUT_SECONDS == DECLARED_MUTATION_TIMEOUT_SECONDS
+        from runtime.foundation.verification.execution_orchestrator import (
+            declared_mutation_timeout,
+        )
 
-    def test_the_divergence_is_recorded_not_tolerated(self):
-        """The whole point: the discrepancy must be visible in the evidence."""
-        declared = mr._declared_mutation_timeout("target", "reconciliation_engine")
+        assert declared_mutation_timeout("target") == mr.DECLARED_MUTATION_TIMEOUT_SECONDS
+
+    def test_the_divergence_is_gone_not_merely_recorded(self):
+        """L3, closed.
+
+        Was: the plan declared 1200 s while the runner enforced 4200 s, and both were
+        recorded so the gap was visible. Recording a contradiction is not a fix — it
+        leaves a plan able to promise a ceiling the executor silently ignores, and makes
+        it impossible to tell a campaign that hit its own timeout from one the CI runner
+        killed.
+
+        Now both derive from the single ``DEFAULT_RUNTIME`` table and the orchestrator
+        hands the plan's value back to the runner, so they agree *by construction*.
+        """
+        from runtime.foundation.verification.execution_orchestrator import (
+            declared_mutation_timeout,
+        )
+
+        declared = declared_mutation_timeout("target")
         enforced = mr.DEFAULT_RUNTIME["target"]
-        assert declared == DECLARED_MUTATION_TIMEOUT_SECONDS
-        assert enforced == 4200
-        # If these ever converge the divergence machinery becomes dead weight and this
-        # assertion fails loudly, prompting its removal rather than silent rot.
-        assert declared != enforced, (
-            "the declared and enforced mutation budgets have converged; "
-            "the recorded-pair plumbing should now be simplified"
+        assert declared == enforced, (
+            "the declared and enforced mutation budgets must come from one table"
+        )
+        assert mr._declared_mutation_timeout("target", "x") == enforced
+        assert declared == 4200
+
+    def test_a_plan_budget_overrides_the_table(self):
+        """The plan is the authority when there is one.
+
+        Exercised through the precedence expression rather than by launching a campaign:
+        the ordering is the contract, and a campaign launch would cost minutes to prove
+        an integer comparison.
+        """
+        import inspect
+
+        source = inspect.getsource(mr.execute_mutation)
+        # Ordered most-explicit-first; a reordering would silently change semantics.
+        precedence = [
+            source.index("max_runtime\n            or declared_timeout"),
+            source.index("or DEFAULT_RUNTIME.get(mode"),
+        ]
+        assert precedence == sorted(precedence), (
+            "budget precedence must be max_runtime > declared_timeout > DEFAULT_RUNTIME"
         )
 
     def test_smoke_has_no_declared_budget(self):
@@ -355,6 +389,10 @@ class TestMutationIsCertifiable:
                 run,
                 self._safety(restored=True),
                 self._result(
+                    # mode must match the budget passed below: the recorded declared
+                    # budget follows the result's own mode, and the dataclass default
+                    # is "full" (5400s), not "target" (4200s).
+                    mode="target",
                     execution_status="INFRASTRUCTURE_FAILURE",
                     error="mutation run exceeded max_runtime=4200s",
                 ),
@@ -364,7 +402,7 @@ class TestMutationIsCertifiable:
         assert run.decision is FinalDecision.INFRASTRUCTURE_BLOCKED
         assert result is not None
         assert result.enforced_timeout_seconds == 4200
-        assert result.declared_timeout_seconds == DECLARED_MUTATION_TIMEOUT_SECONDS
+        assert result.declared_timeout_seconds == declared_mutation_timeout('target')
 
     def test_the_budget_pair_is_attached_by_replacement(self):
         """`MutationResult` is frozen, so the verdict is attached by replacement.

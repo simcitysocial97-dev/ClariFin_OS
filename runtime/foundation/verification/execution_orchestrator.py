@@ -114,7 +114,26 @@ PASSING_STATES: frozenset[CompletionState] = frozenset(
 #: visible in the evidence. Collapsing them into one authority is the transport work in
 #: Checkpoint D; what this constant guarantees is that there is exactly *one* declared
 #: value, greppable, rather than a literal repeated at two construction sites.
-DECLARED_MUTATION_TIMEOUT_SECONDS = 1200
+def declared_mutation_timeout(mode: str = "target") -> int:
+    """The budget a mutation revalidation task declares in the plan.
+
+    M10-R3 (L3). This used to be a bare ``1200`` literal at two construction sites while
+    ``mutation_runner.DEFAULT_RUNTIME["target"]`` enforced ``4200`` — a 3.5x divergence
+    that made it impossible to tell a campaign that hit its own timeout from one the CI
+    runner killed, and meant a workflow sizing ``timeout-minutes`` from the declared value
+    was sizing it from a number that did not exist.
+
+    Now there is ONE table. The planner asks the runner what a campaign of this mode
+    costs, and the runner is handed the plan's value back when it executes, so declared
+    and enforced agree **by construction** rather than by two constants happening to
+    agree today.
+
+    Read through a function rather than imported as a value so the import graph stays
+    acyclic: ``mutation_runner`` already imports from this module.
+    """
+    from runtime.foundation.verification.mutation_runner import DEFAULT_RUNTIME
+
+    return int(DEFAULT_RUNTIME.get(mode, DEFAULT_RUNTIME["full"]))
 
 
 class FailureStage(str, Enum):
@@ -2113,16 +2132,15 @@ class ExecutionOrchestrator:
                                 ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                # M10-R3 C: shared with mutation_runner so the
-                                # declared budget and the enforced one are named in
-                                # one place. The two still DIFFER
-                                # (DEFAULT_RUNTIME["target"] = 4200 is enforced);
-                                # the divergence is recorded on every result rather
-                                # than silently tolerated, and
-                                # DECLARED_MUTATION_TIMEOUT_SECONDS is asserted
-                                # against this site by test.
-                                timeout_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
-                                estimated_duration_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
+                                # M10-R3 L3: the declared budget IS the enforced
+                                # budget. Both come from
+                                # mutation_runner.DEFAULT_RUNTIME, so a campaign can
+                                # no longer be declared with a ceiling 3.5x smaller
+                                # than the one it is actually given.
+                                timeout_seconds=declared_mutation_timeout("target"),
+                                estimated_duration_seconds=declared_mutation_timeout(
+                                    "target"
+                                ),
                                 mutation_target=component,
                             )
                         )
@@ -2159,16 +2177,15 @@ class ExecutionOrchestrator:
                                 ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                # M10-R3 C: shared with mutation_runner so the
-                                # declared budget and the enforced one are named in
-                                # one place. The two still DIFFER
-                                # (DEFAULT_RUNTIME["target"] = 4200 is enforced);
-                                # the divergence is recorded on every result rather
-                                # than silently tolerated, and
-                                # DECLARED_MUTATION_TIMEOUT_SECONDS is asserted
-                                # against this site by test.
-                                timeout_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
-                                estimated_duration_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
+                                # M10-R3 L3: the declared budget IS the enforced
+                                # budget. Both come from
+                                # mutation_runner.DEFAULT_RUNTIME, so a campaign can
+                                # no longer be declared with a ceiling 3.5x smaller
+                                # than the one it is actually given.
+                                timeout_seconds=declared_mutation_timeout("target"),
+                                estimated_duration_seconds=declared_mutation_timeout(
+                                    "target"
+                                ),
                                 mutation_target=target,
                             )
                         )
@@ -3161,8 +3178,14 @@ class ExecutionOrchestrator:
                 execute_mutation,
             )
 
+            # M10-R3 (L3): the plan's declared budget is the budget enforced. One
+            # authority, so a plan can no longer promise a ceiling the executor
+            # silently ignores.
             result = execute_mutation(
-                mode="target", target=spec.mutation_target, allow_dirty=True
+                mode="target",
+                target=spec.mutation_target,
+                allow_dirty=True,
+                declared_timeout=spec.timeout_seconds,
             )
         except Exception as exc:
             duration = time.monotonic() - t0
