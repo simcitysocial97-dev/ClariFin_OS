@@ -1,0 +1,5 @@
+UNMAPPED capabilities require review (4):
+    - frontend:component:frontend-graph:investments
+    - frontend:frontend_dto_type:frontend-shared:forecast-view-model
+    - useForecastCapability
+    - useInvestmentsCapability

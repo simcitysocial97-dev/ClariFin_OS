@@ -1,0 +1,10 @@
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_snapshot_and_patterns.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_forecast_provenance.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_unconsumed_capabilities.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_recommendation_networth_services.py
+would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_wellness_score_scale.py
+
+Oh no! 💥 💔 💥
+7 files would be reformatted, 577 files would be left unchanged.

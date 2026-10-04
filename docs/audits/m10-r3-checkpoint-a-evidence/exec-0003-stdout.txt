@@ -1,0 +1,950 @@
+================================================
+  ClariFin OS — Fast Quality Checks
+  Target: under 5 minutes
+================================================
+
+[1;33m[1/5] Ruff lint check...[0m
+::error title=ruff (F401),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py,line=28,col=8,endLine=28,endColumn=14::tests/integration/cross_layer/test_journey_investment_mutation.py:28:8: F401 `pytest` imported but unused%0A  help: Remove unused import: `pytest`
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py,line=381,col=51,endLine=381,endColumn=51::tests/integration/cross_layer/test_journey_investment_mutation.py:381:51: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_snapshot_and_patterns.py,line=400,col=71,endLine=400,endColumn=71::tests/unit/services/test_m11_behaviour_snapshot_and_patterns.py:400:71: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (B007),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py,line=82,col=17,endLine=82,endColumn=20::tests/unit/services/test_m11_behaviour_workspace_provenance.py:82:17: B007 Loop control variable `day` not used within loop body%0A  help: Rename unused `day` to `_day`
+::error title=ruff (F821),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py,line=273,col=23,endLine=273,endColumn=33::tests/unit/services/test_m11_behaviour_workspace_provenance.py:273:23: F821 Undefined name `TestClient`
+::error title=ruff (F821),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py,line=282,col=59,endLine=282,endColumn=69::tests/unit/services/test_m11_behaviour_workspace_provenance.py:282:59: F821 Undefined name `TestClient`
+::error title=ruff (F821),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py,line=287,col=23,endLine=287,endColumn=33::tests/unit/services/test_m11_behaviour_workspace_provenance.py:287:23: F821 Undefined name `TestClient`
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py,line=293,col=63,endLine=293,endColumn=63::tests/unit/services/test_m11_behaviour_workspace_provenance.py:293:63: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_forecast_provenance.py,line=443,col=10,endLine=443,endColumn=10::tests/unit/services/test_m11_forecast_provenance.py:443:10: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_unconsumed_capabilities.py,line=403,col=14,endLine=403,endColumn=14::tests/unit/services/test_m11_unconsumed_capabilities.py:403:14: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (W292),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_wellness_score_scale.py,line=313,col=71,endLine=313,endColumn=71::tests/unit/services/test_m11_wellness_score_scale.py:313:71: W292 No newline at end of file%0A  help: Add trailing newline
+::error title=ruff (I001),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_recommendation_networth_services.py,line=8,endLine=15::tests/unit/services/test_recommendation_networth_services.py:8:1: I001 Import block is un-sorted or un-formatted%0A  help: Organize imports
+::error title=ruff (F401),file=/home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_recommendation_networth_services.py,line=10,col=21,endLine=10,endColumn=28::tests/unit/services/test_recommendation_networth_services.py:10:21: F401 `decimal.Decimal` imported but unused%0A  help: Remove unused import: `decimal.Decimal`
+[0;31m✗ Ruff failed[0m
+
+[1;33m[2/5] Black format check...[0m
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py	2026-10-03 01:20:12.765247+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py	2026-10-04 05:26:38.057678+00:00
+@@ -90,13 +90,11 @@
+         )
+         assert response.status_code == 422
+ 
+         portfolio = client.get("/api/v1/investments")
+         assert portfolio.status_code == 200, portfolio.text
+-        assert all(
+-            item["type"] != "crypto" for item in portfolio.json()["investments"]
+-        )
++        assert all(item["type"] != "crypto" for item in portfolio.json()["investments"])
+ 
+     def test_every_optional_field_is_accepted_and_persisted(
+         self, client: TestClient
+     ) -> None:
+         response = client.post(
+@@ -215,11 +213,15 @@
+             / "src"
+             / "core"
+             / "db"
+             / "schema.py"
+         ).read_text()
+-        ddl = re.search(r"CREATE TABLE IF NOT EXISTS investments \((.*?)\n\);", schema_source, re.DOTALL)
++        ddl = re.search(
++            r"CREATE TABLE IF NOT EXISTS investments \((.*?)\n\);",
++            schema_source,
++            re.DOTALL,
++        )
+         assert ddl is not None, "investments DDL not found"
+         ddl_columns = {
+             line.strip().split()[0]
+             for line in ddl.group(1).strip().splitlines()
+             if line.strip()
+@@ -265,13 +267,13 @@
+             "platform",
+             "purchase_date",
+             "maturity_date",
+             "linked_account_id",
+         ):
+-            assert nonexistent not in params, (
+-                f"{nonexistent} is not a column on the investments table"
+-            )
++            assert (
++                nonexistent not in params
++            ), f"{nonexistent} is not a column on the investments table"
+ 
+     def test_service_signature_matches_the_router_contract(self) -> None:
+         import inspect
+ 
+         from src.routers.investments import InvestmentCreate
+@@ -356,11 +358,12 @@
+         assert deleted.status_code == 200, deleted.text
+         assert deleted.json()["success"] is True
+ 
+         remaining = client.get("/api/v1/investments").json()["investment_count"]
+         assert all(
+-            item["id"] != new_id for item in client.get("/api/v1/investments").json()["investments"]
++            item["id"] != new_id
++            for item in client.get("/api/v1/investments").json()["investments"]
+         )
+         assert remaining >= 0
+ 
+ 
+ class TestValidationStillRejectsBadInput:
+@@ -376,6 +379,6 @@
+         assert response.status_code == 422
+ 
+ 
+ def test_isolated_database_is_used(finance_db: Any) -> None:
+     """Guard against the test silently hitting a shared database."""
+-    assert str(finance_db.db_path).endswith(".db")
+\ No newline at end of file
++    assert str(finance_db.db_path).endswith(".db")
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_snapshot_and_patterns.py	2026-10-03 01:20:12.765247+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_snapshot_and_patterns.py	2026-10-04 05:26:55.208497+00:00
+@@ -75,17 +75,15 @@
+     merchant recurs weekly at a small amount. Both are real recurring shapes a
+     detector must be able to recognise from recorded transactions.
+     """
+     today = date.today()
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
+                 balance_paise, owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+         conn.execute("UPDATE accounts SET balance_paise = 900000 WHERE id = 1")
+@@ -101,11 +99,18 @@
+                     """
+                     INSERT INTO transactions (statement_id, sequence_num, date,
+                         date_iso, description, type, amount_paise, category, account_id)
+                     VALUES (1, ?, ?, ?, ?, ?, ?, 'x', 1)
+                     """,
+-                    (seq, when.isoformat(), when.isoformat(), description, kind, amount),
++                    (
++                        seq,
++                        when.isoformat(),
++                        when.isoformat(),
++                        description,
++                        kind,
++                        amount,
++                    ),
+                 )
+         for back in range(25, 0, -1):
+             when = (today - timedelta(days=back)).isoformat()
+             seq += 1
+             conn.execute(
+@@ -129,15 +134,15 @@
+ # Defect A — snapshot upsert
+ # ==================================================================
+ 
+ 
+ class TestProfileEndpointIsRepeatable:
+-    def test_the_defect_reproduction_shape(self, client: TestClient, seeded: str) -> None:
++    def test_the_defect_reproduction_shape(
++        self, client: TestClient, seeded: str
++    ) -> None:
+         """Call 1 -> 200, call 2 -> 500, call 3 -> 500 before the fix."""
+-        responses = [
+-            client.get("/api/v1/behaviour/profile") for _ in range(3)
+-        ]
++        responses = [client.get("/api/v1/behaviour/profile") for _ in range(3)]
+         assert [r.status_code for r in responses] == [200, 200, 200], (
+             "a repeat call on the same day must refresh the day's snapshot, "
+             "not raise UNIQUE(household_id, snapshot_date)"
+         )
+ 
+@@ -168,13 +173,11 @@
+             before = conn.execute(
+                 "SELECT wellness_score_bps FROM behaviour_snapshots"
+             ).fetchone()[0]
+ 
+         with get_connection_context(seeded) as conn:
+-            conn.execute(
+-                "UPDATE behaviour_snapshots SET wellness_score_bps = 1234"
+-            )
++            conn.execute("UPDATE behaviour_snapshots SET wellness_score_bps = 1234")
+             conn.commit()
+ 
+         BehaviourService(seeded).compute_financial_profile()
+         with get_connection_context(seeded) as conn:
+             after = conn.execute(
+@@ -225,11 +228,13 @@
+     ) -> None:
+         from src.services.behaviour_service import BehaviourService
+ 
+         BehaviourService(seeded).get_patterns()
+         with get_connection_context(seeded) as conn:
+-            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[0]
++            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[
++                0
++            ]
+         assert count > 0, (
+             "no amount of seeding can populate behaviour_patterns unless "
+             "something writes it; create_pattern had zero callers"
+         )
+ 
+@@ -238,23 +243,29 @@
+         assert response.status_code == 200, response.text
+         body = response.json()
+         assert isinstance(body, list)
+         assert body, "detectable recurring activity produced no patterns"
+ 
+-    def test_a_recurring_fixed_amount_is_a_subscription(self, client: TestClient, seeded: str) -> None:
++    def test_a_recurring_fixed_amount_is_a_subscription(
++        self, client: TestClient, seeded: str
++    ) -> None:
+         body = client.get("/api/v1/behaviour/patterns").json()
+         subscriptions = [p for p in body if p["pattern_type"] == "SUBSCRIPTION"]
+         assert subscriptions, f"no SUBSCRIPTION detected in {body}"
+         assert any("netflix" in p["pattern_key"] for p in subscriptions)
+ 
+-    def test_a_small_repeating_merchant_is_an_impulse(self, client: TestClient, seeded: str) -> None:
++    def test_a_small_repeating_merchant_is_an_impulse(
++        self, client: TestClient, seeded: str
++    ) -> None:
+         body = client.get("/api/v1/behaviour/patterns").json()
+         impulses = [p for p in body if p["pattern_type"] == "IMPULSE"]
+         assert impulses, f"no IMPULSE detected in {body}"
+         assert any("zara" in p["pattern_key"] for p in impulses)
+ 
+-    def test_pattern_type_filter_still_works(self, client: TestClient, seeded: str) -> None:
++    def test_pattern_type_filter_still_works(
++        self, client: TestClient, seeded: str
++    ) -> None:
+         body = client.get("/api/v1/behaviour/patterns?pattern_type=SUBSCRIPTION").json()
+         assert body
+         assert {p["pattern_type"] for p in body} == {"SUBSCRIPTION"}
+ 
+     def test_strength_is_on_the_documented_zero_to_one_scale(
+@@ -262,11 +273,13 @@
+     ) -> None:
+         """`FinancialPattern.strength` is documented "Strength of the pattern (0-1)"."""
+         for pattern in client.get("/api/v1/behaviour/patterns").json():
+             assert 0 <= float(pattern["strength"]) <= 1
+ 
+-    def test_total_amount_is_integer_paise(self, client: TestClient, seeded: str) -> None:
++    def test_total_amount_is_integer_paise(
++        self, client: TestClient, seeded: str
++    ) -> None:
+         for pattern in client.get("/api/v1/behaviour/patterns").json():
+             assert isinstance(pattern["total_amount_paise"], int)
+             assert pattern["total_amount_paise"] > 0
+ 
+     def test_amounts_are_traceable_to_recorded_debits(
+@@ -286,11 +299,13 @@
+         """The table is UNIQUE per (type, key, household) and detection runs on
+         every read, so a repeat read must update rather than raise."""
+         for _ in range(3):
+             assert client.get("/api/v1/behaviour/patterns").status_code == 200
+         with get_connection_context(seeded) as conn:
+-            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[0]
++            count = conn.execute("SELECT COUNT(*) FROM behaviour_patterns").fetchone()[
++                0
++            ]
+         assert count == 2, f"expected one row per detected pattern, got {count}"
+ 
+     def test_create_pattern_upserts(self, finance_db: Any) -> None:
+         from src.repositories.pattern_repository import PatternRepository
+ 
+@@ -320,29 +335,25 @@
+     def test_a_non_recurring_merchant_is_not_called_a_pattern(
+         self, finance_db: Any
+     ) -> None:
+         """One debit at one merchant is not a pattern."""
+         with get_connection_context(str(finance_db.db_path)) as conn:
+-            conn.execute(
+-                """
++            conn.execute("""
+                 INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
+                     balance_paise, owner_id, household_id)
+                 VALUES (1, 'A', 'B', 'savings', 100, 'self', 'primary')
+-                """
+-            )
++                """)
+             conn.execute(
+                 "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+                 "VALUES (1, 'B', 's.pdf')"
+             )
+-            conn.execute(
+-                """
++            conn.execute("""
+                 INSERT INTO transactions (statement_id, sequence_num, date, date_iso,
+                     description, type, amount_paise, category, account_id)
+                 VALUES (1, 1, '2026-09-01', '2026-09-01', 'ONE OFF COFFEE', 'debit',
+                         25000, 'x', 1)
+-                """
+-            )
++                """)
+             conn.commit()
+ 
+         from src.services.behaviour_service import BehaviourService
+ 
+         assert BehaviourService(str(finance_db.db_path)).get_patterns() == []
+@@ -370,13 +381,13 @@
+         from src.services.behaviour_service import BehaviourService
+ 
+         source = inspect.getsource(BehaviourService)
+         for key in self.KEYS:
+             for accessor in (f'snapshot["{key}"]', f'_snapshot["{key}"]'):
+-                assert accessor not in source, (
+-                    f"{accessor} reads a key _map_snapshot_row cannot produce"
+-                )
++                assert (
++                    accessor not in source
++                ), f"{accessor} reads a key _map_snapshot_row cannot produce"
+ 
+     @pytest.mark.parametrize(
+         "path",
+         [
+             "/api/v1/behaviour",
+@@ -395,6 +406,6 @@
+         self, client: TestClient, seeded: str, path: str
+     ) -> None:
+         """Every endpoint that reads a snapshot must survive one existing."""
+         assert client.get("/api/v1/behaviour/wellness-score").status_code == 200
+         response = client.get(path)
+-        assert response.status_code == 200, f"{path}: {response.text}"
+\ No newline at end of file
++        assert response.status_code == 200, f"{path}: {response.text}"
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py	2026-10-03 01:20:12.765247+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py	2026-10-04 05:26:55.423219+00:00
+@@ -50,17 +50,15 @@
+ 
+ 
+ def _seed(db_path: str, *, with_transactions: bool = True) -> None:
+     """Seed a household. `client` already creates account 1 and statement 1."""
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
+                 balance_paise, owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute("UPDATE accounts SET balance_paise = 900000 WHERE id = 1")
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+@@ -72,13 +70,11 @@
+         this_month = today.strftime("%Y-%m")
+         # Explicit calendar months, not a 30-day offset: a 30-day offset from a
+         # month boundary lands in the neighbouring month, which is exactly the
+         # arithmetic the forecast duplicate-month defect used.
+         year, month = int(today.year), today.month
+-        previous_key = (
+-            f"{year - 1}-12" if month == 1 else f"{year}-{month - 1:02d}"
+-        )
++        previous_key = f"{year - 1}-12" if month == 1 else f"{year}-{month - 1:02d}"
+         seq = 0
+         for month_key in (previous_key, this_month):
+             for day, kind, amount in ((1, "credit", 900000), (1, "debit", 250000)):
+                 when = f"{month_key}-01"
+                 if when > today.isoformat():
+@@ -139,11 +135,13 @@
+     def test_spending_patterns_come_from_real_categories(self, populated: str) -> None:
+         patterns = _summary(populated)["spending_patterns"]
+         assert patterns, "three months of debits were seeded"
+         assert {p["category"] for p in patterns} <= {"salary", "housing"}
+ 
+-    def test_spending_pattern_amounts_sum_to_recorded_debits(self, populated: str) -> None:
++    def test_spending_pattern_amounts_sum_to_recorded_debits(
++        self, populated: str
++    ) -> None:
+         from src.repositories.transaction_repository import TransactionRepository
+ 
+         summary = _summary(populated)
+         recorded = sum(
+             t["amount_paise"]
+@@ -161,22 +159,24 @@
+         assert "current_rate" not in savings, (
+             "a bare percentage here and basis points in the mapper's DTO is the "
+             "same unit split as the wellness score"
+         )
+ 
+-    def test_savings_rate_is_derived_from_recorded_cashflow(self, populated: str) -> None:
++    def test_savings_rate_is_derived_from_recorded_cashflow(
++        self, populated: str
++    ) -> None:
+         from src.repositories.transaction_repository import TransactionRepository
+ 
+         transactions = TransactionRepository(populated).get_all_transactions()
+         income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
+-        expenses = sum(
+-            t["amount_paise"] for t in transactions if t["type"] == "debit"
+-        )
++        expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+         savings = _summary(populated)["savings_rate"]
+         assert savings["income_paise"] == income
+         assert savings["savings_paise"] == income - expenses
+-        assert savings["savings_rate_bps"] == round((income - expenses) / income * 10000)
++        assert savings["savings_rate_bps"] == round(
++            (income - expenses) / income * 10000
++        )
+ 
+     def test_radar_is_not_the_five_constants(self, populated: str) -> None:
+         radar = _summary(populated)["wellness_radar"]
+         scores = [axis["score"] for axis in radar]
+         assert scores != DEMO_RADAR
+@@ -195,13 +195,13 @@
+             pytest.fail("no radar axis matches a measured wellness component")
+ 
+     def test_evidence_confidence_is_not_a_constant(self, populated: str) -> None:
+         chain = _summary(populated)["evidence_chain"]
+         assert chain["confidence_score"] != DEMO_CONFIDENCE
+-        assert chain["confidence_score"] is None, (
+-            "no confidence is derived for this aggregate, so none is asserted"
+-        )
++        assert (
++            chain["confidence_score"] is None
++        ), "no confidence is derived for this aggregate, so none is asserted"
+ 
+     def test_debt_health_is_not_75_and_0_25(self, populated: str) -> None:
+         debt = _summary(populated)["debt_health"]
+         assert "score" not in debt
+         assert debt["debt_to_income_bps"] is not None
+@@ -212,11 +212,13 @@
+ 
+         from src.services.behaviour_workspace_service import BehaviourWorkspaceService
+ 
+         source = inspect.getsource(BehaviourWorkspaceService)
+         code = "\n".join(
+-            line for line in source.splitlines() if not line.strip().startswith(("*", "#"))
++            line
++            for line in source.splitlines()
++            if not line.strip().startswith(("*", "#"))
+         )
+         assert "wellness_score = 100" not in code
+         assert "amount_paise" in code  # sanity: the field is still produced
+ 
+ 
+@@ -249,13 +251,14 @@
+             round(float(BehaviourService(empty).get_wellness_score().score))
+         )
+ 
+     def test_evidence_chain_states_the_transaction_count(self, empty: str) -> None:
+         chain = _summary(empty)["evidence_chain"]
+-        assert "0 recorded transaction" in chain["summary"] or "0 transactions" in chain[
+-            "summary"
+-        ]
++        assert (
++            "0 recorded transaction" in chain["summary"]
++            or "0 transactions" in chain["summary"]
++        )
+ 
+ 
+ # ==================================================================
+ # The endpoint agrees with the authority
+ # ==================================================================
+@@ -277,17 +280,19 @@
+             "the workspace service is not the handler for this path; the route "
+             "collision between behaviour.router and behaviour_workspace.router "
+             "has changed and this fixture must be updated"
+         )
+ 
+-    def test_workspace_endpoint_returns_200(self, client: TestClient, populated: str) -> None:
++    def test_workspace_endpoint_returns_200(
++        self, client: TestClient, populated: str
++    ) -> None:
+         response = client.get("/api/v1/behaviour")
+         assert response.status_code == 200, response.text
+ 
+     def test_workspace_wellness_equals_the_wellness_score_endpoint(
+         self, client: TestClient, populated: str
+     ) -> None:
+         """Two workspaces must not disagree about the same household's score."""
+         workspace = client.get("/api/v1/behaviour").json()
+         canonical = client.get("/api/v1/behaviour/wellness-score").json()
+         assert workspace["wellness_score"] == round(float(canonical["score"]))
+-        assert workspace["wellness_band"] == canonical["band"]
+\ No newline at end of file
++        assert workspace["wellness_band"] == canonical["band"]
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_forecast_provenance.py	2026-10-03 01:20:12.765247+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_forecast_provenance.py	2026-10-04 05:26:55.982210+00:00
+@@ -49,17 +49,15 @@
+ 
+ 
+ def _seed_months(db_path: str, months: list[str], income: int, expenses: int) -> None:
+     """Seed one income and one expense transaction per calendar month."""
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT INTO accounts (id, name, bank, account_type, balance_paise,
+                                   owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 1000000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+         seq = 0
+@@ -191,13 +189,11 @@
+         """A forecast starts after the history, not at a hardcoded date."""
+         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=3)
+         months = [row.month for row in dto.cashflow_projections]
+         assert months == ["2026-04", "2026-05", "2026-06"]
+ 
+-    def test_empty_dataset_reports_unavailable_not_zero(
+-        self, empty_db: str
+-    ) -> None:
++    def test_empty_dataset_reports_unavailable_not_zero(self, empty_db: str) -> None:
+         """The absence of a projection is stated, not filled with constants."""
+         dto = ForecastService(empty_db).get_forecast_summary(horizon_months=12)
+ 
+         assert dto.cashflow_projections == []
+         assert dto.cashflow_forecast_basis.status == "unavailable"
+@@ -235,13 +231,11 @@
+ 
+         assert basis.requested_horizon_months == 24
+         assert basis.projected_months == 12
+         assert basis.reason and "12" in basis.reason
+ 
+-    def test_horizon_one_still_produces_a_single_month(
+-        self, populated_db: str
+-    ) -> None:
++    def test_horizon_one_still_produces_a_single_month(self, populated_db: str) -> None:
+         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=1)
+         assert len(dto.cashflow_projections) == 1
+         assert dto.cashflow_forecast_basis.projected_months == 1
+ 
+ 
+@@ -250,23 +244,23 @@
+ # ==================================================================
+ 
+ 
+ class TestNoDuplicateMonthKeys:
+     @pytest.mark.parametrize("horizon", [1, 2, 3, 6, 12, 24, 60])
+-    def test_cashflow_month_keys_unique(
+-        self, populated_db: str, horizon: int
+-    ) -> None:
++    def test_cashflow_month_keys_unique(self, populated_db: str, horizon: int) -> None:
+         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=horizon)
+         keys = [row.month for row in dto.cashflow_projections]
+         assert len(keys) == len(set(keys)), f"duplicate cashflow month keys: {keys}"
+ 
+     @pytest.mark.parametrize("horizon", [1, 2, 3, 6, 12, 24, 60])
+     def test_net_worth_projection_months_unique(
+         self, populated_db: str, horizon: int
+     ) -> None:
+         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=horizon)
+-        keys = [month_key(date.fromisoformat(p.date)) for p in dto.net_worth_projections]
++        keys = [
++            month_key(date.fromisoformat(p.date)) for p in dto.net_worth_projections
++        ]
+         assert len(keys) == len(set(keys)), f"duplicate net worth month keys: {keys}"
+ 
+     def test_scenario_projection_dates_are_valid_iso_dates(
+         self, populated_db: str
+     ) -> None:
+@@ -407,14 +401,14 @@
+ # Placeholder detection — a direct tripwire for the original defect
+ # ==================================================================
+ 
+ 
+ class TestPlaceholderTripwire:
+-    @pytest.mark.parametrize(
+-        "db_fixture", ["empty_db", "sparse_db", "populated_db"]
+-    )
+-    def test_placeholder_triple_never_appears(self, request: Any, db_fixture: str) -> None:
++    @pytest.mark.parametrize("db_fixture", ["empty_db", "sparse_db", "populated_db"])
++    def test_placeholder_triple_never_appears(
++        self, request: Any, db_fixture: str
++    ) -> None:
+         db = request.getfixturevalue(db_fixture)
+         dto = ForecastService(db).get_forecast_summary(horizon_months=12)
+ 
+         for row in dto.cashflow_projections:
+             assert (
+@@ -438,6 +432,6 @@
+         dto = ForecastService(populated_db).get_forecast_summary(horizon_months=6)
+         distinct = {row.income_paise for row in dto.cashflow_projections}
+         assert distinct == {800000}, (
+             "unexpected projected income — the seeded history is a flat 800000 "
+             f"income per month, got {distinct}"
+-        )
+\ No newline at end of file
++        )
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_unconsumed_capabilities.py	2026-10-03 01:20:12.765247+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_unconsumed_capabilities.py	2026-10-04 05:26:56.173513+00:00
+@@ -48,17 +48,15 @@
+ 
+     Idempotent: the `client` fixture already creates account 1 and statement 1,
+     so the account is reused rather than inserted again.
+     """
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
+                 balance_paise, owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 900000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute("UPDATE accounts SET balance_paise = 900000 WHERE id = 1")
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+@@ -171,13 +169,11 @@
+         )
+         assert goal_id == 1
+         stored = repository.get_goal(1)
+         assert stored is not None
+         assert stored["priority"] == "high"
+-        assert any(
+-            g["id"] == 1 for g in repository.get_household_goals("primary")
+-        )
++        assert any(g["id"] == 1 for g in repository.get_household_goals("primary"))
+ 
+     def test_default_priority_is_applied_when_omitted(self, seeded: str) -> None:
+         from src.repositories.financial_goal_repository import FinancialGoalRepository
+ 
+         repository = FinancialGoalRepository(seeded)
+@@ -205,12 +201,11 @@
+         from src.core.db.schema import run_migrations
+ 
+         db = str(finance_db.db_path)
+         with sqlite3.connect(db) as conn:
+             conn.execute("DROP TABLE financial_goals")
+-            conn.execute(
+-                """
++            conn.execute("""
+                 CREATE TABLE financial_goals (
+                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                     household_id TEXT NOT NULL DEFAULT 'primary',
+                     owner_id TEXT DEFAULT 'self',
+                     goal_type TEXT NOT NULL,
+@@ -222,12 +217,11 @@
+                     category TEXT,
+                     notes TEXT,
+                     created_at TEXT DEFAULT (datetime('now')),
+                     updated_at TEXT DEFAULT (datetime('now'))
+                 )
+-                """
+-            )
++                """)
+             conn.commit()
+             columns = {r[1] for r in conn.execute("PRAGMA table_info(financial_goals)")}
+         assert "priority" not in columns
+ 
+         run_migrations(db)
+@@ -296,11 +290,13 @@
+         assert "RBI survey" not in serialised
+ 
+     def test_detail_for_an_unknown_id_reports_not_found(self, seeded: str) -> None:
+         from src.services.recommendation_service import RecommendationService
+ 
+-        payload = RecommendationService(seeded).get_recommendation_details("does-not-exist")
++        payload = RecommendationService(seeded).get_recommendation_details(
++            "does-not-exist"
++        )
+         assert payload["found"] is False
+         assert payload["detail"] is None
+ 
+     def test_no_demo_profile_or_wrong_serialiser_remains(self) -> None:
+         import inspect
+@@ -335,11 +331,13 @@
+             line for line in code.splitlines() if '"' not in line or "to_dict" in line
+         )
+ 
+         assert "to_dict()" in code, "recommendations must be serialised with to_dict()"
+         for wrong in ("r.dict()", "r.model_dump()"):
+-            assert wrong not in code, f"{wrong} is not the serialiser Recommendation has"
++            assert (
++                wrong not in code
++            ), f"{wrong} is not the serialiser Recommendation has"
+ 
+     def test_recommendation_class_really_has_to_dict(self) -> None:
+         """Guards the assertion above against the engine changing shape."""
+         from src.engines.recommendation_engine.recommendations import Recommendation
+ 
+@@ -383,11 +381,13 @@
+             (area, method, path)
+             for area, endpoints in AREA_ENDPOINTS.items()
+             for method, path in endpoints
+         ],
+     )
+-    def test_endpoint_responds(self, client: TestClient, area: str, method: str, path: str) -> None:
++    def test_endpoint_responds(
++        self, client: TestClient, area: str, method: str, path: str
++    ) -> None:
+         response = client.request(method, path)
+         assert response.status_code == 200, f"{area} {method} {path}: {response.text}"
+ 
+     def test_the_insights_and_search_routers_do_not_exist(self) -> None:
+         """M10's audit named these two areas; neither router is in the repo."""
+@@ -398,6 +398,6 @@
+         backend = os.path.dirname(os.path.dirname(os.path.abspath(src.__file__)))
+         for name in ("insights.py", "search.py"):
+             assert not os.path.exists(os.path.join(backend, "routers", name)), (
+                 f"{name} exists now, so the M11 audit's classification of the "
+                 f"unconsumed areas must be revisited"
+-            )
+\ No newline at end of file
++            )
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_recommendation_networth_services.py	2026-10-03 01:20:12.626045+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_recommendation_networth_services.py	2026-10-04 05:26:56.255922+00:00
+@@ -29,17 +29,15 @@
+ 
+     from src.core.db.connection import get_connection_context
+ 
+     today = date.today()
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT OR IGNORE INTO accounts (id, name, bank, account_type,
+                 balance_paise, owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 100000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+         conn.execute("UPDATE accounts SET balance_paise = 100000 WHERE id = 1")
+@@ -62,11 +60,18 @@
+                     """
+                     INSERT INTO transactions (statement_id, sequence_num, date,
+                         date_iso, description, type, amount_paise, category, account_id)
+                     VALUES (1, ?, ?, ?, ?, ?, ?, 'x', 1)
+                     """,
+-                    (seq, when.isoformat(), when.isoformat(), f"{kind}-{month_key}", kind, amount),
++                    (
++                        seq,
++                        when.isoformat(),
++                        when.isoformat(),
++                        f"{kind}-{month_key}",
++                        kind,
++                        amount,
++                    ),
+                 )
+         if monthly_emi_paise:
+             # Column names follow backend/src/core/db/schema.py::_DDL_LOANS.
+             conn.execute(
+                 """
+@@ -192,13 +197,13 @@
+         expenses = sum(
+             t["amount_paise"]
+             for t in TransactionRepository(household).get_all_transactions()
+             if t["type"] == "debit"
+         )
+-        assert profile["total_income_paise"] == income, (
+-            "the reported income must be the recorded income"
+-        )
++        assert (
++            profile["total_income_paise"] == income
++        ), "the reported income must be the recorded income"
+         assert profile["total_expenses_paise"] == expenses
+         assert profile["months_observed"] == 3
+         assert profile["monthly_income_paise"] == income // 3, (
+             "FOIR is a monthly ratio, so monthly income must be the recorded "
+             "income divided by the months observed — not the multi-month total"
+@@ -214,13 +219,13 @@
+         and the income is in the transactions, so a HIGH result can only come
+         from the engine having inspected real figures.
+         """
+         result = RecommendationService(indebted_household).get_recommendations()
+         assert result["status"] == "available"
+-        assert result["profile"]["monthly_income_paise"] == 900000, (
+-            "three months of 900000 income is 900000 per month"
+-        )
++        assert (
++            result["profile"]["monthly_income_paise"] == 900000
++        ), "three months of 900000 income is 900000 per month"
+         assert result["profile"]["foir"] >= 0.6, (
+             f"an EMI of 630000 against 900000 monthly income is a FOIR of 0.7, "
+             f"got {result['profile']['foir']}"
+         )
+         severities = {r["severity"] for r in result["recommendations"]}
+--- /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_wellness_score_scale.py	2026-10-03 01:20:12.773042+00:00
++++ /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_wellness_score_scale.py	2026-10-04 05:26:56.305957+00:00
+@@ -48,17 +48,15 @@
+ MAX_VALID_WELLNESS_BPS = 10_000
+ 
+ 
+ def _seed_transactions(db_path: str, months: int) -> None:
+     with get_connection_context(db_path) as conn:
+-        conn.execute(
+-            """
++        conn.execute("""
+             INSERT INTO accounts (id, name, bank, account_type, balance_paise,
+                                   owner_id, household_id)
+             VALUES (1, 'Salary', 'Test Bank', 'savings', 800000, 'self', 'primary')
+-            """
+-        )
++            """)
+         conn.execute(
+             "INSERT OR IGNORE INTO statements (id, bank, file_name) "
+             "VALUES (1, 'Test Bank', 'test.pdf')"
+         )
+         seq = 0
+@@ -90,15 +88,39 @@
+ class TestEngineContractIsZeroToHundred:
+     @pytest.mark.parametrize(
+         "inputs",
+         [
+             # best case
+-            (Decimal("1"), 0, Decimal("1"), Decimal("1"), Decimal("-1"), Decimal("0"), Decimal("0")),
++            (
++                Decimal("1"),
++                0,
++                Decimal("1"),
++                Decimal("1"),
++                Decimal("-1"),
++                Decimal("0"),
++                Decimal("0"),
++            ),
+             # worst case
+-            (Decimal("0"), 100, Decimal("-1"), Decimal("0"), Decimal("2"), Decimal("1"), Decimal("3")),
++            (
++                Decimal("0"),
++                100,
++                Decimal("-1"),
++                Decimal("0"),
++                Decimal("2"),
++                Decimal("1"),
++                Decimal("3"),
++            ),
+             # mid
+-            (Decimal("0.5"), 50, Decimal("0.1"), Decimal("0.5"), Decimal("0.1"), Decimal("0.2"), Decimal("0.3")),
++            (
++                Decimal("0.5"),
++                50,
++                Decimal("0.1"),
++                Decimal("0.5"),
++                Decimal("0.1"),
++                Decimal("0.2"),
++                Decimal("0.3"),
++            ),
+         ],
+     )
+     def test_engine_always_returns_0_to_100(self, inputs: tuple[Any, ...]) -> None:
+         score = compute_wellness_score(*inputs)
+         assert Decimal("0") <= score <= Decimal("100")
+@@ -219,11 +241,13 @@
+ # Financial intelligence consumer
+ # ==================================================================
+ 
+ 
+ class TestFinancialIntelligenceConsumer:
+-    def test_health_score_inherits_the_corrected_scale(self, db_with_history: str) -> None:
++    def test_health_score_inherits_the_corrected_scale(
++        self, db_with_history: str
++    ) -> None:
+         """``_compute_health_score`` passes the wellness score straight through."""
+         from src.engines.financial_intelligence.intelligence import (
+             _compute_health_score,
+         )
+ 
+@@ -308,6 +332,6 @@
+         db = str(finance_db.db_path)
+         self._write_snapshot(db, 1_000_000)
+ 
+         run_migrations(db)
+ 
+-        assert self._read_wellness_bps(db) == [MAX_VALID_WELLNESS_BPS]
+\ No newline at end of file
++        assert self._read_wellness_bps(db) == [MAX_VALID_WELLNESS_BPS]
+[0;31m✗ Black failed[0m
+
+[1;33m[3/5] Mypy type check...[0m
+[0;32m✓ Mypy passed[0m
+
+[1;33m[4/5] Unit tests...[0m
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 13%]
+........................................................................ [ 15%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3301 passed, 4 warnings in 148.22s (0:02:28)
+[0;32m✓ Unit tests passed[0m
+
+[1;33m[5/6] Architecture boundary tests...[0m
+.....................................................                    [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+53 passed, 1 warning in 11.55s
+[0;32m✓ Architecture tests passed[0m
+
+[1;33m[6/6] Meta / registry tests...[0m
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 28.36s
+[0;32m✓ Meta tests passed[0m
+
+================================================
+[0;31m  Failed checks: ruff black[0m
+================================================
