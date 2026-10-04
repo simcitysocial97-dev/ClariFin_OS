@@ -336,6 +336,22 @@ def run_streaming_command(
     stderr_path.touch(exist_ok=True)
 
     duration = time.monotonic() - t0
+    stdout_text = _read_text(stdout_path)
+    stderr_text = _read_text(stderr_path)
+
+    # M10-R3 (L4): a missing binary must be infrastructure, not a failed assertion.
+    #
+    # `Popen(..., shell=True)` does NOT raise `FileNotFoundError` for an unresolvable
+    # command — the *shell* runs, fails to resolve, prints "not found" and exits 127. So
+    # the `except FileNotFoundError` above is effectively dead for shell commands, and a
+    # command that never started was indistinguishable from one that ran and asserted.
+    # Every caller that trusted `infra_error` alone would have reported "a test failed"
+    # for a program that never executed.
+    if infra_error is None and exit_code == 127:
+        detected = _detect_shell_command_not_found(stderr_text)
+        if detected:
+            infra_error = detected
+
     termination = classify_termination(exit_code, timed_out, infra_error)
 
     if emit and progress is not None:
@@ -353,8 +369,8 @@ def run_streaming_command(
         exit_code=exit_code,
         timed_out=timed_out,
         infra_error=infra_error,
-        stdout=_read_text(stdout_path),
-        stderr=_read_text(stderr_path),
+        stdout=stdout_text,
+        stderr=stderr_text,
         stdout_path=stdout_path,
         stderr_path=stderr_path,
         duration_seconds=duration,
@@ -425,14 +441,46 @@ def summarise_pytest_outcome(text: str) -> dict | None:
     }
 
 
+#: Shells word their "no such program" message differently, so the recogniser covers the
+#: forms actually emitted by bash, dash and busybox rather than trying to be exhaustive.
+_NOT_FOUND_PATTERNS = (
+    re.compile(r"^.*:\s*(?:command|module)\s+not found", re.IGNORECASE | re.MULTILINE),
+    re.compile(r"^.*:\s*not found", re.IGNORECASE | re.MULTILINE),
+    re.compile(r"^sh:\s*\d+:.*:\s*(?:command|not found)", re.IGNORECASE | re.MULTILINE),
+    re.compile(r"No such file or directory", re.IGNORECASE),
+    re.compile(r"is not recognized as an internal or external command", re.IGNORECASE),
+)
+
+
+def _detect_shell_command_not_found(stderr_text: str) -> str | None:
+    """Recognise a shell's "command not found" report, or return ``None``.
+
+    Deliberately *evidence-based* rather than assuming every exit 127 is a missing
+    binary. A program is free to exit 127 itself, and treating that as infrastructure
+    would let a genuinely failing test be reclassified as an environment fault — the
+    exact substitution this work exists to prevent, just in the other direction.
+
+    So the shell's own diagnostic must be present. That makes the recogniser both
+    narrower and more trustworthy than "127 means missing".
+    """
+    if not stderr_text or not stderr_text.strip():
+        return None
+    for pattern in _NOT_FOUND_PATTERNS:
+        match = pattern.search(stderr_text)
+        if match:
+            first_line = stderr_text.strip().splitlines()[0]
+            return (
+                f"command not found (exit 127): {first_line.strip()}"
+            )
+    return None
+
+
 def classify_termination(
     exit_code: int | None,
     timed_out: bool,
     infra_error: str | None,
 ) -> dict:
-    """Say *how* a task's process ended, not just that it did not pass.
-
-    "the command exited non-zero" is not a diagnosis. A verification run can end
+    """Say *how* a task's process ended, not just that it did not pass. A verification run can end
     because a test failed, because the wrapper killed it, because the process was
     killed by a signal, or because the command never started, and each of those points
     at a different cause. The record keeps them apart so a long run cannot be misread

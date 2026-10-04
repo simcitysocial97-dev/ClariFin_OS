@@ -923,7 +923,24 @@ class ExecutionPlan:
         return json.dumps(self.to_dict(), indent=2, default=str)
 
     def validate(self) -> list[str]:
-        """Integrity checks on the plan. Empty list = OK."""
+        """Integrity checks on the plan. Empty list = OK.
+
+        M10-R3 (L2): the budget and CPU fields are now validated on load.
+
+        ``timeout_seconds`` was recorded but never checked. A plan carrying a negative
+        or zero budget would be executed as written and classified ``TIMED_OUT``
+        instantly — and because the matrix's wall-clock estimate is derived from
+        ``estimated_duration_seconds`` while the budget is derived separately, a
+        mismatched pair would produce an estimate and a ceiling that disagree with no
+        error anywhere. This was the one §16 defect the adversarial suite could not
+        catch, recorded there as ``xfail(strict=True)``; this closes it.
+
+        Validation rather than a raising ``__post_init__`` is deliberate:
+        ``from_dict`` must stay tolerant of older payloads, and the load path
+        (``control_plane_facade``) already rejects a plan whose ``validate()`` is
+        non-empty, so a bad budget becomes a named refusal at load instead of an
+        exception at construction.
+        """
         errors: list[str] = []
         seen_ids: set[str] = set()
         for t in self.tasks:
@@ -934,6 +951,8 @@ class ExecutionPlan:
                 errors.append(f"task {t.task_id} has empty command")
             if not t.capabilities:
                 errors.append(f"task {t.task_id} has no capabilities")
+            errors.extend(_validate_task_budget(t))
+            errors.extend(_validate_estimate(t))
         for t in self.tasks:
             if t.is_escalation:
                 for dep in t.depends_on:
@@ -1284,6 +1303,106 @@ class FingerprintDrift(RuntimeError):
             f"repository fingerprint changed during verification: "
             f"{before.fingerprint[:12]} -> {after.fingerprint[:12]}"
         )
+
+
+#: Longest budget any single task may declare, in seconds (24 h).
+#:
+#: An upper bound, not a policy. Without one, a plan carrying ``timeout_seconds`` of
+#: ``10**12`` would satisfy every check below, be faithfully executed, and then be
+#: indistinguishable at the CI-job level from "no timeout was ever set" — the exact
+#: ambiguity the mission's timeout requirement exists to remove.
+MAX_TASK_TIMEOUT_SECONDS = 86_400
+
+
+def _validate_estimate(task: ExecutionTaskSpec) -> list[str]:
+    """Validate a task's *estimate* — an execution gate, unlike the budget advisory.
+
+    A negative or non-integer estimate is a defect in the producer, and because
+    ``estimate_wall_seconds`` sums these to derive the shard matrix figure, a corrupt
+    value would silently distort every reported schedule.
+    """
+    estimate = task.estimated_duration_seconds
+    if isinstance(estimate, bool) or not isinstance(estimate, int) or estimate < 0:
+        return [
+            f"task {task.task_id} has an invalid estimated_duration_seconds "
+            f"({estimate!r}); the wall-clock estimate is derived from it"
+        ]
+    return []
+
+
+def budget_warnings(plan: ExecutionPlan) -> list[str]:
+    """Advisory budget findings. Reported; never a reason to refuse execution.
+
+    Kept strictly separate from :meth:`ExecutionPlan.validate`, which is an
+    **execution gate** -- ``execute()`` refuses a plan that does not validate.
+
+    The distinction matters. An estimate above its budget is legitimate and common: a
+    short budget over a long estimate is exactly how a bounded probe is constructed
+    (``test_m9_c49::ScenarioITimeout`` sets ``timeout_seconds=1`` over a normal
+    estimate to force a TIMED_OUT outcome). Folding that into ``validate()`` made the
+    runtime refuse correct plans in order to report a curiosity.
+
+    A *large* gap is still worth surfacing: it means the budget and the estimate were
+    derived from different numbers, which is the mutation declared-vs-enforced
+    divergence (L3) in miniature.
+    """
+    warnings: list[str] = []
+    for t in plan.tasks:
+        timeout = t.timeout_seconds
+        estimate = t.estimated_duration_seconds
+        if (
+            isinstance(timeout, int)
+            and not isinstance(timeout, bool)
+            and timeout > 0
+            and isinstance(estimate, int)
+            and not isinstance(estimate, bool)
+            and estimate > timeout
+        ):
+            warnings.append(
+                f"task {t.task_id}: estimated_duration_seconds={estimate} exceeds "
+                f"timeout_seconds={timeout}; the budget may have been derived from a "
+                f"different number than the one recorded"
+            )
+    return warnings
+
+
+def _validate_task_budget(task: ExecutionTaskSpec) -> list[str]:
+    """Validate one task's execution budget. Returns problems; empty means valid."""
+    errors: list[str] = []
+    timeout = task.timeout_seconds
+
+    # bool is an int subclass; True as a budget is a type confusion, not a timeout.
+    if isinstance(timeout, bool) or not isinstance(timeout, int):
+        errors.append(
+            f"task {task.task_id} has a non-integer timeout_seconds "
+            f"({type(timeout).__name__})"
+        )
+    elif timeout <= 0:
+        errors.append(
+            f"task {task.task_id} has a non-positive timeout_seconds ({timeout}); "
+            "a budget of zero or less means 'never run', not 'run immediately'"
+        )
+    elif timeout > MAX_TASK_TIMEOUT_SECONDS:
+        errors.append(
+            f"task {task.task_id} declares timeout_seconds={timeout}, above the "
+            f"{MAX_TASK_TIMEOUT_SECONDS}s (24h) maximum"
+        )
+
+    demand = task.cpu_demand
+    if demand is not None:
+        if isinstance(demand, bool):
+            errors.append(f"task {task.task_id} has a boolean cpu_demand ({demand!r})")
+        elif isinstance(demand, int):
+            if demand < 1:
+                errors.append(
+                    f"task {task.task_id} declares cpu_demand={demand}; the minimum is 1"
+                )
+        elif not isinstance(demand, str):
+            errors.append(
+                f"task {task.task_id} has an invalid cpu_demand "
+                f"({type(demand).__name__}); expected an int or 'auto'"
+            )
+    return errors
 
 
 class CertificationRun:

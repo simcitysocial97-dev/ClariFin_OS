@@ -145,16 +145,78 @@ class TestInjectedTimeoutTampering:
             "M10-R3 final report, remaining limitations L2."
         )
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="GAP (L2): the runtime records timeout_seconds but does not validate it "
-        "on load, so a tampered or corrupt budget is executed as written.",
-    )
     def test_a_tampered_timeout_is_rejected_on_plan_load(self):
+        """L2, closed.
+
+        Was an ``xfail(strict=True)`` gap: the runtime recorded ``timeout_seconds`` but
+        never validated it, so a corrupt budget executed as written. Now checked in
+        ``ExecutionPlan.validate``, which the load path already consults.
+        """
         payload = _plan([_spec()]).to_dict()
         payload["tasks"][0]["timeout_seconds"] = -5
         plan = ExecutionPlan.from_dict(payload)
         assert plan.validate(), "a negative timeout_seconds must fail validation"
+
+    @pytest.mark.parametrize("bad", [0, -5, 10**12, True])
+    def test_an_invalid_budget_is_refused(self, bad):
+        payload = _plan([_spec()]).to_dict()
+        payload["tasks"][0]["timeout_seconds"] = bad
+        errors = ExecutionPlan.from_dict(payload).validate()
+        assert errors, f"timeout_seconds={bad!r} must fail validation"
+
+    def test_an_absurd_budget_is_refused(self):
+        """A 10^12 s ceiling is indistinguishable from 'no timeout' at the job level."""
+        payload = _plan([_spec()]).to_dict()
+        payload["tasks"][0]["timeout_seconds"] = 10**12
+        errors = ExecutionPlan.from_dict(payload).validate()
+        assert any("maximum" in e for e in errors)
+
+    def test_an_estimate_above_the_budget_is_surfaced_not_refused(self):
+        """Advisory, deliberately, and the separation is the point.
+
+        An estimate above its budget is legitimate and common — a short budget over a
+        long estimate is exactly how a bounded probe is constructed
+        (`test_m9_c49::ScenarioITimeout` uses `timeout_seconds=1` to force a TIMED_OUT
+        outcome). `validate()` is an execution gate, so folding this into it made the
+        runtime refuse correct plans in order to report a curiosity.
+        """
+        from runtime.foundation.verification.execution_orchestrator import budget_warnings
+
+        payload = _plan([_spec()]).to_dict()
+        payload["tasks"][0]["estimated_duration_seconds"] = 600
+        payload["tasks"][0]["timeout_seconds"] = 60
+        plan = ExecutionPlan.from_dict(payload)
+
+        assert plan.validate() == [], "an advisory must never block execution"
+        warnings = budget_warnings(plan)
+        assert warnings and "exceeds" in warnings[0]
+
+    def test_a_negative_estimate_IS_refused(self):
+        """The estimate IS a gate: the shard matrix figure is summed from it, so a
+        corrupt value would silently distort every reported schedule."""
+        payload = _plan([_spec()]).to_dict()
+        payload["tasks"][0]["estimated_duration_seconds"] = -1
+        assert ExecutionPlan.from_dict(payload).validate()
+
+    def test_an_invalid_cpu_demand_is_refused(self):
+        for bad in (0, -2):
+            payload = _plan([_spec()]).to_dict()
+            payload["tasks"][0]["cpu_demand"] = bad
+            errors = ExecutionPlan.from_dict(payload).validate()
+            assert any("cpu_demand" in e for e in errors), f"cpu_demand={bad}"
+
+    def test_a_load_path_refuses_an_invalid_plan(self, tmp_path, capsys):
+        """Validation must be reachable from the CLI, not only from the API."""
+        from runtime.foundation.verification.control_plane_facade import ControlPlane
+
+        payload = _plan([_spec()]).to_dict()
+        payload["tasks"][0]["timeout_seconds"] = -5
+        plan_path = tmp_path / "plan.json"
+        plan_path.write_text(json.dumps(payload))
+
+        code = ControlPlane().run(plan_path=str(plan_path))
+        assert code == 2
+        assert "non-positive timeout_seconds" in capsys.readouterr().err
 
     def test_the_budget_is_actually_passed_to_the_worker(self):
         """The declared budget must reach the process, not be advisory."""
