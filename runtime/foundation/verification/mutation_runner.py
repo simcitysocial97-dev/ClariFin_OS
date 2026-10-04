@@ -34,6 +34,7 @@ import signal
 import subprocess
 import sys
 import time
+from dataclasses import replace
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -84,6 +85,14 @@ BACKEND_DIR = REPO_ROOT / "backend"
 SMOKE_DIR = BACKEND_DIR / "tests" / "mutation_infra"
 FULL_CONFIG = BACKEND_DIR / "pyproject.toml"
 SMOKE_CONFIG = SMOKE_DIR / "pyproject.toml"
+#: Durable, pre-write backup of ``FULL_CONFIG`` (M10-R3 C2).
+#:
+#: Kept as a *sibling* of the config rather than under ``runtime/generated/`` because
+#: it has to survive exactly the event it exists for: the process being SIGKILLed
+#: mid-campaign. A backup written somewhere the campaign also rewrites would not be
+#: trustworthy. It is git-ignored via the ``.m10r3-`` prefix and consumed (applied and
+#: deleted) by ``_MutationSafety.recover_stale_backup`` on the next run.
+CONFIG_BACKUP = BACKEND_DIR / ".pyproject.toml.m10r3-backup"
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated" / "mutation"
 
 
@@ -106,6 +115,8 @@ class _MutationSafety:
         self.original_config_text: str | None = None
         self.captured_hashes: dict[str, str] = {}
         self._signal_handlers_installed = False
+        # True when this run repaired a backup left by a previously killed run.
+        self.recovered_stale_backup = False
 
     def _hash_file(self, path: Path) -> str:
         if path.exists():
@@ -210,15 +221,141 @@ class _MutationSafety:
         self._signal_handlers_installed = True
 
     def _restore_config(self) -> None:
-        """Restore backend/pyproject.toml if we modified it."""
-        if self.config_restored or self.original_config_text is None:
+        """Restore ``backend/pyproject.toml`` atomically, from the durable backup.
+
+        M10-R3 (C2). Three defects in one method, all reproduced or provable:
+
+        **1. SIGKILL bypasses every restoration path.** Restoration was reachable
+        only from ``atexit`` and from the SIGTERM/SIGINT handlers. SIGKILL cannot be
+        caught, so a hard kill mid-campaign left ``backend/pyproject.toml`` rewritten
+        to the campaign's target scope. This was observed live during M10-R3
+        Checkpoint A: a reconcile shard leg killed mid-mutation left
+        ``source_paths = ["src/engines/reconciliation_engine.py"]`` in the file.
+
+        **2. The consequence was misattributed.** ``backend/pyproject.toml`` is one of
+        the two files in the repository fingerprint's ``config_hash``, so the *next*
+        run's capture mismatched and the orchestrator reported
+        ``VALIDATION_BLOCKED`` — "scope or fingerprint mismatch detected". The real
+        fault was a killed mutation task that did not restore its toolchain config.
+        A green suite was blocked by a phantom integrity failure.
+
+        **3. A partial write could corrupt the file.** ``write_text`` truncates then
+        writes, so a kill between the two left a truncated TOML that fails to parse
+        for every subsequent command — a total, not a partial, loss.
+
+        The fix is a **durable backup plus an atomic replace**, so restoration no
+        longer depends on catching anything:
+
+        * :meth:`_write_backup` stores the original text *beside* the config before
+          anything is rewritten, so it survives process death;
+        * :meth:`_atomic_write` writes to a sibling temp file and ``os.replace``s it,
+          which is atomic on POSIX — a crash leaves either the old content or the new
+          content, never a truncated file;
+        * :meth:`recover_stale_backup` restores a backup left by a *previous* crashed
+          run, so the repair happens on the next invocation rather than depending on
+          a signal that never arrives.
+
+        SIGKILL still cannot be caught, but it is no longer *fatal to integrity*.
+        """
+        if self.config_restored:
             return
-        with contextlib.suppress(Exception):
-            FULL_CONFIG.write_text(self.original_config_text)
+        text = self.original_config_text
+        if text is None:
+            text = self._read_backup()
+        if text is not None:
+            with contextlib.suppress(Exception):
+                self._atomic_write(FULL_CONFIG, text)
+            with contextlib.suppress(Exception):
+                CONFIG_BACKUP.unlink(missing_ok=True)
         self.config_restored = True
+
+    @staticmethod
+    def _read_backup() -> str | None:
+        try:
+            return CONFIG_BACKUP.read_text(encoding="utf-8")
+        except OSError:
+            return None
+
+    @classmethod
+    def _write_backup(cls, text: str) -> None:
+        """Persist the original config before it is rewritten.
+
+        A classmethod, not an instance method: the backup must be writable from a
+        context where no safety instance exists yet, and it touches no instance state.
+        Written with the same atomic discipline as the restore, because the window that
+        matters is precisely the one in which the process can be killed.
+        """
+        cls._atomic_write(CONFIG_BACKUP, text)
+
+    @staticmethod
+    def _atomic_write(path: Path, text: str) -> None:
+        """Replace *path* with *text* atomically.
+
+        ``os.replace`` on the same filesystem is atomic, so a reader either sees the
+        complete old file or the complete new one. ``Path.write_text`` gives no such
+        guarantee: it truncates first, so an interrupted write is corruption.
+        """
+        tmp = path.with_name(f".{path.name}.m10r3-tmp")
+        tmp.write_text(text, encoding="utf-8")
+        os.replace(tmp, path)
+
+    @classmethod
+    def recover_stale_backup(
+        cls,
+        full_config: Path | None = None,
+        config_backup: Path | None = None,
+    ) -> bool:
+        """Restore a backup left behind by a previously killed run.
+
+        Called at the very start of a mutation run. This is what turns an
+        unrecoverable SIGKILL into a self-healing condition: the damage is repaired
+        on the next invocation instead of persisting until a human notices.
+
+        *full_config* / *config_backup* default to the module-level paths but are
+        overridable so the repair can be exercised against arbitrary files — the
+        restoration path is the one piece of this subsystem that must be provable
+        without mutating the real ``backend/pyproject.toml``.
+
+        Returns ``True`` when a stale backup was found and applied.
+        """
+        target = full_config if full_config is not None else FULL_CONFIG
+        source = config_backup if config_backup is not None else CONFIG_BACKUP
+        if not Path(source).is_file():
+            return False
+        try:
+            text = Path(source).read_text(encoding="utf-8")
+        except OSError:
+            with contextlib.suppress(Exception):
+                Path(source).unlink(missing_ok=True)
+            return False
+        cls._atomic_write(Path(target), text)
+        with contextlib.suppress(Exception):
+            Path(source).unlink(missing_ok=True)
+        return True
+
+    def restore_to(self, text: str | None) -> None:
+        """Restore the config to *text* atomically and consume the backup.
+
+        The single restoration entry point. ``backend/pyproject.toml`` has two writers
+        — the pre-run installer and this post-run restore — and when they used
+        different mechanisms the file could be left non-atomically written or with a
+        stale sidecar, which made the next run's ``recover_stale_backup`` fire against
+        a backup nobody expected. One method, one discipline.
+        """
+        if text is None:
+            return
+        self.original_config_text = text
+        self.config_restored = False  # force the write even if already marked restored
+        self._restore_config()
 
     def enter(self) -> None:
         """Enter the safety context."""
+        # Repair any damage a previously killed run left behind, *before* the
+        # dirty-worktree check. Otherwise the check below reports the stale
+        # mutation edit as an unrelated dirty file and refuses to run, and the
+        # operator is sent to look at a change they did not make.
+        self.recovered_stale_backup = self.recover_stale_backup()
+
         # Check dirty worktree BEFORE capturing hashes (to avoid false positives)
         if not self.allow_dirty:
             dirty = self._check_dirty_worktree()
@@ -228,6 +365,11 @@ class _MutationSafety:
                     f"Unexpected tracked changes: {dirty}. "
                     f"Use --allow-dirty to override."
                 )
+
+        # The backup must exist before anything is rewritten, not merely before
+        # the exit handlers are installed.
+        with contextlib.suppress(OSError):
+            self._write_backup(FULL_CONFIG.read_text(encoding="utf-8"))
 
         self._capture_hashes()
         self.install_signal_handlers()
@@ -262,6 +404,28 @@ DEFAULT_RUNTIME = {
     "full": 5400,
     "incremental": 4200,
 }
+
+
+#: The budget a mutation revalidation task declares in the execution plan.
+#:
+#: Duplicated as a named constant rather than derived, because the declaration lives
+#: as a literal at the two revalidation construction sites in
+#: ``execution_orchestrator`` and re-deriving it here would require instantiating a
+#: planner's private API — trading a real, greppable constant for an indirection.
+#: ``test_mutation_budget_and_toolchain.py`` asserts both sites still agree with this
+#: value, so the duplication cannot rot silently.
+DECLARED_MUTATION_TIMEOUT_SECONDS = 1200
+
+
+def _declared_mutation_timeout(mode: str, target: str | None) -> int:
+    """What the *plan* believes this mutation obligation's budget to be.
+
+    Returns 0 for a mode the planner never emits a revalidation task for, so "no
+    declared budget" is distinguishable from "a budget of zero".
+    """
+    if mode == "smoke":
+        return 0
+    return DECLARED_MUTATION_TIMEOUT_SECONDS
 
 
 def _git_sha() -> str:
@@ -523,6 +687,20 @@ def execute_mutation(
     installed_config_original: str | None = None
     safety_entered = False
 
+    # M10-R3 (B2). Mutation is the sixth and last topology to join the shared
+    # certification authority. It is the one that *deliberately* rewrites repository
+    # files, so it is the clearest proof that the bracket is the right abstraction:
+    # a naive "did the tree change" check would always report drift here, whereas the
+    # bracket plus an explicit `toolchain_restored` distinguishes "mutated and
+    # restored exactly" (certifiable) from "mutated and abandoned" (not).
+    from runtime.foundation.verification.execution_orchestrator import (
+        CertificationRun,
+        CompletionState,
+    )
+
+    certification = CertificationRun(plan_id=f"mutation:{mode}:{run_id}")
+    certification.__enter__()
+
     try:
         safety.enter()
         safety_entered = True
@@ -724,6 +902,25 @@ def execute_mutation(
 
         timeout = max_runtime or DEFAULT_RUNTIME.get(mode, 5400)
 
+        # M10-R3 (C) — reconcile the *declared* budget with the *enforced* one.
+        #
+        # `ExecutionOrchestrator._timeout_for` derives a task's `timeout_seconds` from
+        # its estimated duration (`max(60, 2 * estimated)`, else 900), so a mutation
+        # revalidation task declares 1200s. What is enforced here is
+        # `DEFAULT_RUNTIME[mode]` — 4200s for a target campaign. The declared budget was
+        # 3.5x smaller than the real one and nothing recorded either value, so:
+        #
+        # * a campaign killed by its own timeout and a campaign killed by the CI job
+        #   were indistinguishable;
+        # * a workflow sizing `timeout-minutes` from the declared value was sizing it
+        #   from a number that does not exist.
+        #
+        # The divergence is now *recorded* on every result rather than silently
+        # tolerated. Collapsing the two into one authority is Checkpoint D's transport
+        # work; what matters here is that the two numbers are visible together so the
+        # discrepancy cannot hide.
+        declared_timeout = _declared_mutation_timeout(mode, target)
+
         start = time.monotonic()
         rc: int | None = None
         infra_error: str | None = None
@@ -900,7 +1097,14 @@ def execute_mutation(
             # is still active while `mutmut results` evidence is gathered, so
             # evidence can never silently resolve the wrong engine.
             if installed_config_original is not None:
-                FULL_CONFIG.write_text(installed_config_original)
+                # M10-R3 (C2). Routed through the safety object rather than written
+                # directly. This used to be a bare `FULL_CONFIG.write_text(...)`, which
+                # is the exact two defects the crash-safety work removed:
+                # non-atomic (truncate-then-write, so an interruption corrupts the
+                # file) and unaware of the durable backup (so it left the sidecar
+                # behind, causing the next run's `recover_stale_backup` to fire
+                # spuriously). Both writers of this file now go through one method.
+                safety.restore_to(installed_config_original)
             if log_handle is not None:
                 with contextlib.suppress(Exception):
                     log_handle.flush()
@@ -941,11 +1145,25 @@ def execute_mutation(
             execution_sentinel_path=(
                 str(sentinel_sink.relative_to(REPO_ROOT)) if sentinel_sink else ""
             ),
+            # M10-R3 C: the budget that was actually enforced, and the one the plan
+            # declared. Recorded on both so a future divergence is visible in the
+            # evidence instead of being inferred from two modules.
+            enforced_timeout_seconds=timeout,
+            declared_timeout_seconds=declared_timeout,
         )
         _write_cache_provenance(cwd, config_hash=config_hash)
 
         # Verify safety context (restoration verification)
         safety.exit(installed_config_original)
+
+        # Frozen dataclass: the verdict is attached by replacement, not assignment.
+        result = _finalise_mutation_certification(
+            certification,
+            safety,
+            result,
+            timeout=timeout,
+        )
+        assert result is not None
 
         return result
 
@@ -954,7 +1172,86 @@ def execute_mutation(
         if safety_entered:
             with contextlib.suppress(Exception):
                 safety.exit(installed_config_original)
+        # Close the bracket on the failure path too. An unclosed bracket cannot assert
+        # stability, and a campaign that blew up is exactly the case where the
+        # repository state afterwards is the question an operator is asking. The
+        # verdict is discarded here because the exception is what the caller sees;
+        # what matters is that the state is captured and the config is repaired.
+        with contextlib.suppress(Exception):
+            _finalise_mutation_certification(
+                certification,
+                safety,
+                None,
+                timeout=locals().get("timeout", 0),
+            )
         raise
+
+
+def _finalise_mutation_certification(
+    certification: "CertificationRun",
+    safety: _MutationSafety,
+    result: "MutationResult | None",
+    *,
+    timeout: int,
+) -> "MutationResult | None":
+    """Close the bracket and record mutation's verdict in the shared authority.
+
+    Returns the result carrying the new provenance, because ``MutationResult`` is a
+    **frozen** dataclass. It cannot be enriched in place — an earlier version of this
+    function assigned to its fields, raised ``FrozenInstanceError``, and the enclosing
+    ``contextlib.suppress`` swallowed it, so the verdict was silently never applied.
+    That is the exact failure mode this milestone exists to remove, reproduced in the
+    code that removes it; hence the explicit return value and no broad suppression
+    around the assignments.
+
+    The bracket is deliberately closed *after* ``safety.exit``, so the "after" capture
+    reflects the restored tree. If it were captured before restoration, every healthy
+    campaign would report drift — which is the precise reason a naive per-obligation
+    fingerprint check is wrong for mutation, and the reason the bracket, not a
+    per-obligation hash, is the model.
+    """
+    from runtime.foundation.verification.execution_orchestrator import CompletionState
+
+    certification.__exit__(None, None, None)
+    restored = bool(safety.config_restored)
+    if not restored:
+        # Drift that restoration could not repair is a hard block, and the reason
+        # must survive into the document rather than being inferred from a next-run
+        # fingerprint mismatch.
+        certification.record(
+            "mutation-toolchain",
+            CompletionState.SCOPE,
+            detail=(
+                "the mutation toolchain config (backend/pyproject.toml) was not "
+                "restored; the next fingerprint capture will mismatch and report "
+                "VALIDATION_BLOCKED for the wrong reason"
+            ),
+        )
+    state = (
+        CompletionState.PASS
+        if (result is not None and result.execution_status == "PASS")
+        else CompletionState.INFRASTRUCTURE
+    )
+    certification.record(
+        (result.run_id if result else "mutation"),
+        state,
+        detail=(result.error if result and result.error else ""),
+    )
+    outcome = certification.to_dict()
+    if result is None:
+        return None
+    return replace(
+        result,
+        fingerprint_before=outcome["fingerprint_before"],
+        fingerprint_after=outcome["fingerprint_after"],
+        fingerprint_stable=bool(outcome["fingerprint_stable"]),
+        toolchain_restored=restored,
+        recovered_stale_backup=bool(safety.recovered_stale_backup),
+        certification_decision=outcome["decision"],
+        declared_timeout_seconds=result.declared_timeout_seconds
+        or _declared_mutation_timeout(result.mode, result.target),
+        enforced_timeout_seconds=timeout,
+    )
 
 
 def _write_summary(

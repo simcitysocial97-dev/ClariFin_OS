@@ -211,8 +211,15 @@ def verify_legs(
 ) -> list[str]:
     """Reasons this fan-out must NOT certify. Empty means certified.
 
-    Mirrors the runtime shard gate: every leg reported exactly once, every leg passed.
-    A missing leg means its tests never ran, which must never certify.
+    Mirrors the runtime shard gate: every leg reported exactly once, every leg passed,
+    and — M10-R3 B2 — every leg ran on a repository state that did not move.
+
+    That last clause matters more here than anywhere else in the repository. A
+    Playwright leg is the only obligation that owns mutable per-leg state
+    (``FINANCE_DB_PATH`` points at a database it seeds, mutates and re-seeds), so it
+    is the topology most likely to change something on disk during its own run. It
+    reported only counts and a status before B2, so a leg that rewrote its own
+    database and still exited zero was indistinguishable from a clean one.
     """
     problems: list[str] = []
     expected = list(expected_ids)
@@ -237,8 +244,22 @@ def verify_legs(
 
     for leg in expected:
         result = seen.get(leg)
-        if result is not None and not result.ok:
+        if result is None:
+            continue
+        if not result.ok:
             problems.append(f"{leg} {result.status} (exit={result.exit_code})")
+        if not result.fingerprint_stable:
+            before = (result.fingerprint_before or {}).get("fingerprint", "")[:12]
+            after = (result.fingerprint_after or {}).get("fingerprint", "")[:12]
+            problems.append(
+                f"{leg} "
+                + (
+                    f"repository fingerprint changed during the leg "
+                    f"({before or 'unknown'} -> {after or 'unknown'})"
+                    if before or after
+                    else "reported no fingerprint bracket; cannot certify it"
+                )
+            )
 
     return problems
 

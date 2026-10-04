@@ -287,3 +287,8 @@ backend/tests/mutation_trust/canary/*-sentinel-sink.jsonl
 backend/tests/mutation_trust/canary/mutants/
 backend/tests/mutation_trust/canary/.mutmut-cache/
 backend/tests/mutation_trust/canary/__pycache__/
+
+# M10-R3 C: crash-safe mutation toolchain backup (restored+consumed by the runtime).
+# Tracked never; a leftover copy means a campaign died mid-flight.
+backend/.pyproject.toml.m10r3-backup
+backend/.pyproject.toml.m10r3-tmp

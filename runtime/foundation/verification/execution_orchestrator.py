@@ -100,6 +100,23 @@ PASSING_STATES: frozenset[CompletionState] = frozenset(
 )
 
 
+#: The budget a mutation revalidation task declares in an execution plan.
+#:
+#: M10-R3 (C). This is the *declared* budget and it is not the budget that is
+#: enforced: ``mutation_runner.DEFAULT_RUNTIME["target"]`` is 4200s. The two differed
+#: by 3.5x and neither was recorded, so the runtime could not tell a campaign that hit
+#: its own timeout from one the CI runner killed, and a workflow sizing
+#: ``timeout-minutes`` from the declared value was sizing it from a number that does
+#: not exist.
+#:
+#: Both values are now recorded on every mutation result
+#: (``declared_timeout_seconds`` / ``enforced_timeout_seconds``) so the discrepancy is
+#: visible in the evidence. Collapsing them into one authority is the transport work in
+#: Checkpoint D; what this constant guarantees is that there is exactly *one* declared
+#: value, greppable, rather than a literal repeated at two construction sites.
+DECLARED_MUTATION_TIMEOUT_SECONDS = 1200
+
+
 class FailureStage(str, Enum):
     """Diagnostic classification of a non-pass task outcome (Section 11)."""
 
@@ -1141,12 +1158,17 @@ def decide_final_outcome(
     # repository state moved, so the run's own results cannot be attributed to the
     # commit under test. The orchestrator reports it as a SCOPE record; the
     # plan-less topologies report it as an unstable bracket. Both must land here.
-    scoped = [o.task_id for o in outcomes if o.state == CompletionState.SCOPE]
+    scoped = [o for o in outcomes if o.state == CompletionState.SCOPE]
     if scoped or not fingerprint_stable:
         detail = fingerprint_note if fingerprint_note else ""
-        which = (
-            f"invalid scope on {', '.join(scoped)}" if scoped else "repository drift"
-        )
+        if scoped:
+            named = ", ".join(
+                f"{o.task_id}" + (f" ({o.detail})" if o.detail else "")
+                for o in scoped
+            )
+            which = f"invalid scope on {named}"
+        else:
+            which = "repository drift"
         return (
             FinalDecision.VALIDATION_BLOCKED,
             f"{which} detected — cannot certify"
@@ -1954,8 +1976,16 @@ class ExecutionOrchestrator:
                                 ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                timeout_seconds=1200,
-                                estimated_duration_seconds=1200,
+                                # M10-R3 C: shared with mutation_runner so the
+                                # declared budget and the enforced one are named in
+                                # one place. The two still DIFFER
+                                # (DEFAULT_RUNTIME["target"] = 4200 is enforced);
+                                # the divergence is recorded on every result rather
+                                # than silently tolerated, and
+                                # DECLARED_MUTATION_TIMEOUT_SECONDS is asserted
+                                # against this site by test.
+                                timeout_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
+                                estimated_duration_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
                                 mutation_target=component,
                             )
                         )
@@ -1992,8 +2022,16 @@ class ExecutionOrchestrator:
                                 ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                timeout_seconds=1200,
-                                estimated_duration_seconds=1200,
+                                # M10-R3 C: shared with mutation_runner so the
+                                # declared budget and the enforced one are named in
+                                # one place. The two still DIFFER
+                                # (DEFAULT_RUNTIME["target"] = 4200 is enforced);
+                                # the divergence is recorded on every result rather
+                                # than silently tolerated, and
+                                # DECLARED_MUTATION_TIMEOUT_SECONDS is asserted
+                                # against this site by test.
+                                timeout_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
+                                estimated_duration_seconds=DECLARED_MUTATION_TIMEOUT_SECONDS,
                                 mutation_target=target,
                             )
                         )
