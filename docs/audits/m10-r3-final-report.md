@@ -371,3 +371,94 @@ are genuine defects left standing.
 The answer to the closing question is *yes* on the mechanism, which is what this
 milestone was chartered to build, and *no* on completeness, which is what §15 requires
 before "done" may be claimed.
+---
+
+# Addendum — resolution pass (2026-10-04, after `b7fd1e22`)
+
+Eight limitations were recorded. Six are now closed, one is resolved as
+*not-a-defect*, and one needs a human decision. This addendum supersedes §19 and §20.
+
+## Closed
+
+| # | Limitation | Resolution | Commit |
+|---|---|---|---|
+| **L2** | `timeout_seconds` recorded but never validated | `ExecutionPlan.validate()` rejects non-integer, non-positive and >24h budgets, plus invalid `cpu_demand`. The §16 strict xfail is now a real test. | `233b9558` |
+| **L3** | mutation declared 1200 s vs enforced 4200 s | **One table.** `declared_mutation_timeout()` asks the runner; the orchestrator hands `spec.timeout_seconds` back. They agree by construction. | `fc065cf7` |
+| **L4** | `shell=True` hid a missing binary as exit 127 | `_detect_shell_command_not_found` populates `infra_error` from the shell's own diagnostic — evidence-based, so a program that legitimately exits 127 stays `EXIT_NONZERO`. | `233b9558` |
+| **L1a** | five workflows re-projected the matrix through field lists | Projections now select *shape*, not payload (`{include: .include}`). Measured: the old projection dropped `cpu_peak` and `estimated_seconds_serial`. **Rule 13** in `validate_actions.py` prevents regression, with positive and negative tests. | `60991a52` |
+| **L1b** | **CI legs published no certification document** | Found while answering a design question. Only profile aliases wrote one; the reconcile legs — the ones that go red — wrote nothing. Every leg now publishes `runtime/generated/certification/<leg>.json`. | `3128b6c7` |
+| **L8a** | two classification authorities disagreed on 12 entries | `cli_surface` now re-exports the canonical table. Three commands the facade routes (`mutation-plan`, `mutation-aggregate`, `mutation-trust`) were **missing from the canonical registry** and are now declared. | `d7cb74c5` |
+| **L8b** | — | Removing the field-listing projection **exposed a live runtime bug**: `reasons` was a list in a matrix cell, which GitHub does not accept. The duplication had been masking it. Fixed; the invariant is now tested. | `d7cb74c5` |
+
+## L5 — resolved as *not a defect*
+
+The report's "seven identical coverage tasks" premise is false. The two coverage
+obligations in the plan are **distinct per-capability evidence obligations**:
+
+| task | capability | scope | output |
+|---|---|---|---|
+| `exec-0010` | `account-engine` | `tests/unit/engines` | `measurement-truth-account-engine-coverage.json` |
+| `exec-0011` | `api-contracts` | `.` (whole backend) | `measurement-truth-api-contracts-coverage.json` |
+
+Different capability, different scope, different destination. `certification_gate`
+consumes records per capability, so collapsing them would **remove evidence** — i.e.
+weaken certification, which is precisely what this milestone was chartered to prevent.
+The cost is two coverage runs; the correct lever if that is too expensive is the
+*certification requirement* (which capabilities require a coverage measurement), never
+deduplication.
+
+## L7 — causes fixed, baselines deliberately not regenerated
+
+Fixed: the wall-clock timeline (new pinnable `lib/runtime/clock.ts`), the competing
+fixture authority (`global-setup.ts` now honours `FINANCE_DB_PATH` and *fails* rather
+than falling back), the entirely unpinned rendering environment, the un-awaited
+`document.fonts.ready`, the `setViewportSize` that made every `mobile-chrome` baseline a
+desktop capture, and 87 baselines in a directory Playwright never reads.
+
+**Not done: regenerating the 24×2 baselines.** They must be regenerated on a
+CI-equivalent runner *after* these fixes. Regenerating them first would encode the
+wrong pixels — which is what four previous branch commits did.
+
+## L6 — still needs a human decision
+
+`exec-0009` is a **mandatory, always-failing sentinel**:
+
+    echo 'UNMAPPED capabilities require review (6): …' && exit 1
+
+It makes any plan containing it uncertifiable regardless of code correctness. It was hit
+again in the live shard-6 run above. Whether unmapped capabilities *should* block
+certification is a policy question; relaxing a mandatory gate is not this milestone's to
+take unilaterally.
+
+## Measured: the CPU budget delivered
+
+Same plan, same shard, budgeted vs the unbounded 4-wide contention measured in
+Checkpoint A:
+
+| task | contended | budgeted | delta |
+|---|---|---|---|
+| `exec-0002` | 180.3 s | **105.5 s** | −41% |
+| `exec-0003` | 352.2 s | **215.1 s** | −39% |
+| `exec-0004` | 125.6 s | **79.2 s** | −37% |
+
+Every task got faster in absolute terms as well as in wall clock, because starved work
+was spending most of its time runnable-but-not-running. Total shard wall clock *rose* to
+1183.5 s — the honest trade: the CPU-seconds are real, and the previous figure was only
+small because three tasks were fighting over four cores.
+
+## Revised closing answer
+
+The closing question is now **yes on mechanism and yes on the two original failures'
+root causes, with one policy decision outstanding**:
+
+- what failed — named obligation, one classifier, every topology
+- under what execution conditions — `required_environment` (three forms, enforced before spawn), `timeout_seconds` (validated on load), `cpu_demand` (derived, not declared)
+- why it failed — `FinalDecision` + reason + both fingerprints
+- where its evidence is — **every leg now publishes its own certification document**
+- was the tree stable — bracketed on all six topologies; drift refuses certification
+- reproduce it locally — `verify run --plan … --task <id>`, or `verify local`
+- is CI running what local runs — yes, from one serialized plan; runner-specific
+  differences (concurrency, wall clock) stated rather than hidden
+
+**Still not complete**: L1c (per-leg env duplication, hand-written timeout wrappers,
+multi-path artifact lists, report parsing), L7 baselines, and the L6 policy decision.
