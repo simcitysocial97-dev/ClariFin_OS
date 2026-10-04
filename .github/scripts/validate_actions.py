@@ -21,6 +21,8 @@ rules:
     one job of exactly one workflow (Rule 7a / Rule 11).
 12. Artifact handling is valid: matrix-disambiguated names, workspace-relative
     non-empty paths, and a recognised `if-no-files-found` (Rule 12).
+13. No workflow re-projects a runtime-emitted matrix through a hand-written
+    field list (Rule 13).
 """
 
 from __future__ import annotations
@@ -117,9 +119,38 @@ def validate_composite_action(action_dir: Path) -> None:
         err(f"{action_file}: expected runs.using=composite")
 
 
+def validate_matrix_projection(name: str, raw: str) -> None:
+    """Rule 13 — a matrix projection must not name runtime fields.
+
+    M10-R3 (L1). Five workflows each re-projected the runtime's matrix document with a
+    hand-written list of the fields they wanted:
+
+        jq -c '{include: [.include[] | {shard, task_count, estimated_seconds, ...}]}'
+
+    That is a second, hand-maintained schema for a document the runtime owns. Every
+    field the runtime added was silently dropped unless all five files were edited in
+    the same commit — and they were not: `estimated_seconds_serial` and `cpu_peak`
+    (Checkpoint D) never reached a single workflow, so the measurement improvement was
+    invisible in CI.
+
+    The rule enforces the *shape* selection (`{include: .include}`) rather than a field
+    list, which makes the whole drift class impossible rather than merely discouraged.
+    """
+    # `[.include[] | {` is the tell: a per-item object construction.
+    if re.search(r"\{\s*include\s*:\s*\[\s*\.include\[\]\s*\|", raw):
+        line_no = raw[: raw.index("[.include[] |")].count("\n") + 1
+        err(
+            f"{name}: matrix projection names runtime fields "
+            f"(Rule 13, around line {line_no}). Use "
+            f"`jq -c '{{include: .include}}'` so the matrix is whatever the runtime "
+            f"emitted. Naming fields here silently drops anything the runtime adds."
+        )
+
+
 def validate_workflow(path: Path) -> None:
     name = path.name
     doc = load_yml(path)
+    validate_matrix_projection(name, path.read_text(encoding="utf-8"))
 
     # concurrency
     conc = doc.get("concurrency")

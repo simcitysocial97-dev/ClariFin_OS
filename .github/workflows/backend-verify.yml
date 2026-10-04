@@ -109,7 +109,13 @@ jobs:
           # redirected block, or the matrix is never published and every leg is
           # skipped with "Matching delimiter not found". Shape copied from the proven
           # mutation.yml emission.
-          MATRIX_JSON="$(jq -c '{include: [.include[] | {index, task_id, task_name, estimated_seconds}]}' <<< "$MATRIX")"
+          # M10-R3 (L1): this projection selects the MATRIX SHAPE, not the payload.
+          # It used to name the six fields it wanted, which meant every field the
+          # runtime added was silently dropped unless five YAML files were edited in the
+          # same commit. `estimated_seconds_serial` and `cpu_peak` (Checkpoint D) were
+          # dropped by all five workflows. Selecting `.include` whole makes that class
+          # of drift impossible: the matrix is whatever the runtime said it is.
+          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
           {
             echo "matrix<<MUTMATRIX_EOF"
             echo "$MATRIX_JSON"

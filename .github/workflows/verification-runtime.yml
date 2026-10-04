@@ -112,7 +112,13 @@ jobs:
           # The matrix is also projected down to the scalar fields the leg reads,
           # because the job's `matrix` expression is evaluated by Actions and a
           # bloated document is a size risk for no benefit.
-          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, shard_id, shard_count, file_count, estimated_seconds}]}' <<< "$MATRIX")"
+          # M10-R3 (L1): this projection selects the MATRIX SHAPE, not the payload.
+          # It used to name the six fields it wanted, which meant every field the
+          # runtime added was silently dropped unless five YAML files were edited in the
+          # same commit. `estimated_seconds_serial` and `cpu_peak` (Checkpoint D) were
+          # dropped by all five workflows. Selecting `.include` whole makes that class
+          # of drift impossible: the matrix is whatever the runtime said it is.
+          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
           {
             echo "matrix<<MUTMATRIX_EOF"
             echo "$MATRIX_JSON"
