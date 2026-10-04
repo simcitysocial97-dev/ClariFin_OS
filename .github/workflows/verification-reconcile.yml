@@ -267,7 +267,11 @@ jobs:
           # writes a result -- that is the whole point of --result-out over a stdout
           # redirect, which only produced content if the process survived to the end.
           set +e
-          timeout "${SHARD_TIMEOUT_MINUTES:-85}" \
+          # UNIT MATTERS. `timeout 85` is 85 SECONDS; `timeout 85m` is 85 minutes.
+          # A bare number here silently capped every reconcile shard at 85 seconds,
+          # which killed every leg whose task took longer and surfaced as exit 124 with
+          # no evidence. The suffix is the whole difference.
+          timeout "${SHARD_TIMEOUT_MINUTES:-85}m" \
             .venv/bin/python -m runtime.verify run \
               --plan "$PLAN_IN" \
               --shard "$SHARD_INDEX" \
@@ -277,6 +281,29 @@ jobs:
           SHARD_RC=$?
           set -e
           REPORT="$OUT_DIR/shard-${SHARD_INDEX}.json"
+          if [ "$SHARD_RC" -eq 124 ] && [ ! -s "$REPORT" ]; then
+            # Our own budget killed the shard, which is a terminal outcome we can and
+            # should name. Writing it here — the shell outlives the process `timeout`
+            # signals — means the gate sees "timed_out" rather than an absence, and an
+            # operator sees the budget that was exceeded.
+            jq -n --argjson idx "$SHARD_INDEX" \
+                  --argjson total "$SHARD_TOTAL" \
+                  --argjson rc "$SHARD_RC" \
+                  --arg budget "${SHARD_TIMEOUT_MINUTES:-85}m" \
+              '{schema: "m10r2-leg-result/v1",
+                leg_id: ("reconcile-shard " + (($idx + 1) | tostring) + "/" + ($total | tostring)),
+                shard_id: ("reconcile-shard-" + ($idx | tostring)),
+                outcome: "terminal",
+                status: "timed_out",
+                final_decision: null,
+                exit_code: $rc,
+                duration_seconds: 0,
+                tasks: [],
+                records: [],
+                note: ("killed by the workflow budget of " + $budget)}' \
+              > "$REPORT"
+            echo "::error::shard ${SHARD_INDEX}: TIMED OUT after ${SHARD_TIMEOUT_MINUTES:-85}m (exit 124). Raise the budget only after checking whether the task is genuinely slow."
+          fi
           if [ ! -s "$REPORT" ]; then
             echo "::error::shard ${SHARD_INDEX}: NO TERMINAL RESULT (0 bytes). Its tasks are unreported -- an infrastructure event, not a verification verdict. The [reconcile-shard] lines above name the last task reached."
             echo "::group::shard ${SHARD_INDEX} transport evidence"
