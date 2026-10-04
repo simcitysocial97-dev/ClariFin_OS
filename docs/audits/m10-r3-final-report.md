@@ -491,3 +491,93 @@ root causes, with one policy decision outstanding**:
 
 **Still not complete**: L1c (per-leg env duplication, hand-written timeout wrappers,
 multi-path artifact lists, report parsing), L7 baselines, and the L6 policy decision.
+
+---
+
+# Addendum 2 — second resolution pass (`8844c688`)
+
+Seven more items closed. One is a genuine latent defect the duplication had been hiding.
+
+## L1c — the per-leg timeout was the runtime's, and it was **wrong**
+
+Three workflows wrapped a matrix leg in a literal GNU `timeout` (`85m`, `1500`, `2400`),
+each duplicating a budget the runtime already owned. Reconcile repeated its literal in
+**three** places, so they could drift independently.
+
+Derived from the plan, the literal was smaller than an obligation's own declared budget:
+
+| shard | contractual | hard-coded | shortfall |
+|---|---|---|---|
+| 3 | **90 m** (a single task with `timeout_seconds=5400`) | 85 m | **5 m** |
+| 6 | 96 m | 85 m | 11 m |
+
+Shard 3 would have been killed five minutes before its contractual expiry — the runner
+reporting a timeout for work still legitimately running.
+
+The runtime now publishes `required_timeout_minutes` per shard (derived from task budgets
+under the real CPU-budget schedule) and **refuses to start** when the backstop it is handed
+expires too early. All three workflows read the published value and export it through
+`VERIFY_INFRA_BACKSTOP_SECONDS` so the runtime can validate what it is actually running
+under. **Rule 14** prevents regression and caught three real violations when added.
+
+## L1c — per-leg environment is derived, not declared
+
+Both fan-out workflows declared `FINANCE_DB_PATH` under *different* naming schemes
+(`e2e-playwright-N` vs `e2e-<leg_id>`). That is per-leg mutable state in YAML, and it is
+the value that determines correctness: two legs sharing a database is the cross-shard
+mutation `run_playwright_tests.sh` itself documents as the cause of drifting screenshots.
+
+`execution_shards.leg_environment()` derives both `FINANCE_DB_PATH` and `CLARIFIN_PYTHON`
+from the runtime's own provenance, keyed on leg **and** plan id so isolation survives a
+workflow restructure. Applied with `setdefault` semantics — a deliberate override still
+wins.
+
+Removed from `reconcile.yml` (no seeding step, so nothing needed it pre-runtime). **Kept
+in `playwright.yml` for a real reason**: it runs `tools/e2e_seed.py --reset` in a step that
+executes before any runtime code, so something must name the file first. That distinction
+is asserted, because over-pruning would break seeding.
+
+## L6 — a registry gap is a named condition, not `echo … && exit 1`
+
+`exec-0009` was a `capability` task whose command was
+`echo 'UNMAPPED capabilities require review (6): …' && exit 1`. The verdict read
+*"mandatory obligation failed — run the diagnostic path"*, which is **wrong guidance**:
+nothing was diagnostically broken, and the diagnostic path cannot resolve a missing mapping.
+
+Now `CompletionState.REGISTRY_GAP` (distinct from `FAILED` and `CONFIGURATION`),
+`ObligationKind.REGISTRY_MAPPING`, and `_execute_registry_mapping_task` — which consults the
+live registry, re-checked at execution time so a plan authored while the gap existed cannot
+certify after it closed.
+
+    before: diagnostic — mandatory obligation(s) failed: exec-0009 — run the diagnostic path
+    after:  not_certifiable — verification-registry mapping(s) missing for changed
+            capabilities: exec-0009 (no verification-registry mapping for:
+            unmapped:UNMAPPED[6]). This is a review obligation, not a test failure.
+
+**Nothing weakened**: still `is_mandatory=True`, still non-zero exit. Only the report is now
+accurate. And the policy question is now decidable in one line rather than by reading a
+shell string.
+
+## L8c — pinned, not deleted; and an over-claim corrected
+
+Checkpoint A said `forensic_cli`/`diagnostic_agent` were "genuinely unreachable, and pruning
+them is correct". Reachability was right; the conclusion was not. `forensic_cli` has zero
+Python importers but is named as the **declared implementation site** in provenance
+metadata for `DEPRECATED` routes (`route_authority.py:120`, `certification.py:182`), and
+`diagnostic_agent` supplies the `Uncertainty`/`Explainability`/`CERTIFIABLE` vocabulary those
+strings refer to. Deleting would orphan them.
+
+They are now pinned by 8 tests that **fail if someone wires the module up**, with messages
+saying to delete the pin rather than keep it. It was a third state: neither dead nor live —
+documented as the implementation site for deprecated routes.
+
+## Remaining
+
+- **L7b — baseline regeneration must happen in CI.** `run_playwright_tests.sh` already says
+  so: *"baselines are rasterisation-specific … must only ever be set on a GitHub runner"*.
+  Regenerating here would produce 48 baselines that pass locally and fail in CI — the exact
+  failure the warning describes. The frontend production build succeeds with the L7 changes,
+  and the clock has 10 unit tests, but the pixels must be regenerated on the runner and the
+  resulting diff reviewed as *evidence the causes are fixed*.
+- **L1d — artifact path lists and report parsing** still duplicated in YAML.
+- **L8d — `executor.Executor`** needs *consolidation* onto the canonical worker, not deletion.
