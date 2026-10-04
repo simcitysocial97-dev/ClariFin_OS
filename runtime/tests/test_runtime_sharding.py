@@ -47,7 +47,26 @@ COUNTS = {
 }
 
 
+def _stable_fp() -> dict:
+    """A representative fingerprint document for a shard that ran on a still tree."""
+    return {
+        "repository_sha": "0" * 40,
+        "working_tree_hash": "1" * 64,
+        "config_hash": "2" * 64,
+        "toolchain_hash": "3" * 64,
+        "fingerprint": "4" * 64,
+    }
+
+
 def _ok(shard_id: str) -> ShardResult:
+    """A passing shard that ran inside a stable fingerprint bracket.
+
+    M10-R3 (B2): the bracket is now part of a shard's result document and the
+    aggregate refuses a shard whose repository state moved. A fixture that omits it
+    is read as *unstable* — deliberately, so that a document from an older producer
+    cannot be laundered into a clean pass — so the "everything passed" fixtures must
+    declare a bracket explicitly.
+    """
     return ShardResult(
         shard_id=shard_id,
         status="passed",
@@ -55,6 +74,11 @@ def _ok(shard_id: str) -> ShardResult:
         duration_seconds=1.0,
         file_count=1,
         passed=10,
+        decision="certified",
+        decision_reason="all mandatory obligations satisfied",
+        fingerprint_before=_stable_fp(),
+        fingerprint_after=_stable_fp(),
+        fingerprint_stable=True,
     )
 
 
@@ -204,6 +228,11 @@ def test_a_failing_shard_blocks_certification():
         duration_seconds=1.0,
         passed=5,
         failed=2,
+        decision="diagnostic",
+        decision_reason="mandatory obligation failed",
+        fingerprint_before=_stable_fp(),
+        fingerprint_after=_stable_fp(),
+        fingerprint_stable=True,
     )
     problems = verify_shards(4, results)
     assert problems
@@ -217,6 +246,11 @@ def test_a_timed_out_shard_blocks_certification():
         status="timed_out",
         exit_code=124,
         duration_seconds=1.0,
+        decision="timeout_blocked",
+        decision_reason="obligation timed out",
+        fingerprint_before=_stable_fp(),
+        fingerprint_after=_stable_fp(),
+        fingerprint_stable=True,
     )
     assert verify_shards(3, results)
 

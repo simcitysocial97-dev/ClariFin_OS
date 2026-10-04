@@ -431,7 +431,7 @@ class _Registration:
                 profile_name=self.profile_name or None,
                 purpose=self.purpose,
                 category=self.category,
-                prerequisites=list(self.configuration_authority),
+                required_environment=list(self.configuration_authority),
                 evidence_produced=list(self.produces),
                 evidence_consumed=list(self.consumes),
                 measurement_kinds=(

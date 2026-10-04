@@ -332,7 +332,7 @@ def _task(task_id: str, command: str = "true") -> ExecutionTaskSpec:
         is_escalation=False,
         reason="m10-r2 fixture",
         origin="control_plane",
-        prerequisites=(".venv",),
+        required_environment=(".venv",),
         expected_evidence=("unit_pass",),
         timeout_seconds=60,
     )

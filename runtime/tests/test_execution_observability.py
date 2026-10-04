@@ -336,7 +336,7 @@ def _iso_plan(path: Path) -> dict:
                 is_escalation=False,
                 reason="iso fixture",
                 origin="control_plane",
-                prerequisites=(".venv",),
+                required_environment=(".venv",),
                 expected_evidence=("unit_pass",),
                 timeout_seconds=60,
             )

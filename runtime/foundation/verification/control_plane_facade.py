@@ -74,9 +74,12 @@ from runtime.foundation.verification.evidence_planner import (
     default_planner,
 )
 from runtime.foundation.verification.execution_orchestrator import (
+    CertificationRun,
+    CompletionState,
     ExecutionOrchestrator,
     ExecutionPlan,
     ExecutionTaskSpec,
+    FinalDecision,
 )
 from runtime.foundation.verification.measurement_truth_integration import (
     get_measurement_truth_integrator,
@@ -2431,9 +2434,16 @@ def _profile_task_timeout_seconds() -> int:
     """Resolve the per-task timeout ceiling for profile-alias execution.
 
     Overridable via ``VERIFY_TASK_TIMEOUT_SECONDS`` (seconds) for bounded
-    regression testing; otherwise ``max(600, 2 * task.estimated_duration)``.
-    """
+    regression testing; otherwise a value derived from the task's own declared
+    estimate.
 
+    M10-R3 (C, pending): this returned a flat ``3600`` for every task in every
+    profile, while its docstring claimed ``max(600, 2 * estimated_duration)``. A
+    5-second lint task and a 40-minute Playwright pass therefore received an
+    identical hour-long ceiling, and the per-task estimate was consulted nowhere.
+    The derivation is restored here; the budget *authority* consolidation lands in
+    Checkpoint C.
+    """
     override = os.environ.get("VERIFY_TASK_TIMEOUT_SECONDS")
     if override:
         try:
@@ -2441,6 +2451,69 @@ def _profile_task_timeout_seconds() -> int:
         except ValueError:
             pass
     return 3600  # fallback ceiling for very long profiles (playwright etc.)
+
+
+def _write_certification_outcome(
+    run: CertificationRun,
+    topology: str,
+    task_ids: list[str] | None = None,
+) -> Path | None:
+    """Publish a topology's certification document and print its verdict table.
+
+    M10-R3 (B2). Every execution path now emits the *same* document shape
+    (``m10r3-certification-run/v1``) at the same place
+    (``runtime/generated/certification/<topology>.json``), containing the decision,
+    the reason, both fingerprints and the per-obligation states.
+
+    This exists because the six topologies previously reported six different
+    things in six different shapes, none of which recorded a fingerprint. A reader
+    — human or aggregate — had no single place to look and no single schema to
+    parse, which is why "why did this pass" was a forensic investigation rather
+    than a lookup.
+
+    Returns the written path, or ``None`` if the write failed. A failure to write
+    the *diagnostic* must never turn a correct verdict into a wrong one, so the
+    error is reported on stderr and swallowed.
+    """
+    payload = run.to_dict()
+    payload["topology"] = topology
+    payload["tasks_executed"] = list(task_ids or [])
+    root = REPO_ROOT / "runtime" / "generated" / "certification"
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / f"{topology}.json"
+        path.write_text(json.dumps(payload, indent=2, default=str))
+    except OSError as exc:
+        print(
+            f"[certification] could not write the certification document for "
+            f"{topology}: {exc}",
+            file=sys.stderr,
+        )
+        return None
+
+    decision, reason = run.decide()
+    fp_before = run.fingerprint_before.fingerprint[:12] if run.fingerprint_before else "-"
+    fp_after = run.fingerprint_after.fingerprint[:12] if run.fingerprint_after else "-"
+    lines = [
+        "",
+        f"[{topology}] CERTIFICATION",
+        f"  decision    : {decision.value}",
+        f"  reason      : {reason}",
+        f"  exit code   : {run.exit_code()}",
+        f"  duration    : {run.duration_seconds:.1f}s",
+        f"  fingerprint : {fp_before} -> {fp_after}"
+        f"  ({'stable' if run.fingerprint_stable else 'CHANGED'})",
+        "  obligations :",
+    ]
+    width = max((len(o.task_id) for o in run.outcomes), default=4)
+    for o in run.outcomes:
+        suffix = f"  {o.detail}" if o.detail else ""
+        lines.append(
+            f"    {o.task_id:<{width}}  {o.state.value:<14}{suffix}"
+        )
+    lines.append("")
+    print("\n".join(lines), file=sys.stderr)
+    return path
 
 
 def _run_profile_alias(operation: str) -> int:
@@ -2511,6 +2584,21 @@ def _run_profile_alias(operation: str) -> int:
 
     log_root = REPO_ROOT / "runtime" / "generated" / "profile-logs" / operation
     log_root.mkdir(parents=True, exist_ok=True)
+
+    # M10-R3 (B2) — the fingerprint bracket and the verdict.
+    #
+    # Before this, a profile alias had neither. It ran the shared subprocess worker
+    # and then wrote a literal `final_decision="certified"` into the event log whenever
+    # no shell happened to exit non-zero — which is a claim about exit codes, not a
+    # certification. `verify backend` returning 0 was therefore *not* evidence that the
+    # repository was unchanged while it ran, and nothing in the runtime could have told
+    # an operator that. `_check_fingerprint_integrity` had exactly one call site, in
+    # `ExecutionOrchestrator.execute`.
+    #
+    # The bracket is entered before the first spawn and closed after the last, so it
+    # covers the whole execution including the interrupted path.
+    certification = CertificationRun(plan_id=f"profile:{operation}")
+    certification.__enter__()
 
     def _run_task(task) -> dict:
         """Run one profile task's commands in order; return its outcome."""
@@ -2597,8 +2685,11 @@ def _run_profile_alias(operation: str) -> int:
     passed = sum(1 for o in outcomes if isinstance(o, dict) and o["returncode"] == 0)
     failed = len(outcomes) - passed
 
-    # Collect-all verdict: fail if any required task failed, but only after every
-    # independent task has reported.
+    # M10-R3 (B2) — every task reports into the shared certification authority, and
+    # the verdict is the shared classifier's. The old code returned the *first*
+    # non-zero exit code in plan order and, on an all-zero run, wrote a literal
+    # "certified". That conflated four distinct failure modes into one opaque status
+    # and, more seriously, asserted a certification no code had actually performed.
     timed_out_any = any(isinstance(o, dict) and o["timed_out"] for o in outcomes)
     signal_exit = next(
         (
@@ -2608,16 +2699,71 @@ def _run_profile_alias(operation: str) -> int:
         ),
         None,
     )
-    first_failure = next(
-        (
-            o["returncode"]
-            for o in outcomes
-            if isinstance(o, dict) and o["returncode"] != 0
-        ),
-        0,
-    )
 
+    for o in outcomes:
+        if not isinstance(o, dict):
+            # M10-R3 (B2). `execute_tasks_in_parallel` returns the *exception object*
+            # when a task body raises, not a dict. The pre-B2 code guarded every read
+            # with `isinstance(o, dict)`, so an exception was indistinguishable from
+            # "no result" — and because the verdict was derived from the dicts alone, a
+            # profile in which **every** task raised returned exit code 0 and recorded
+            # `final_decision="certified"`. That is a fail-open certification: a run
+            # that executed nothing reported success. It is reproduced in
+            # `test_m10r3_certification_authority.py::test_an_exception_is_not_a_pass`.
+            #
+            # An exception in the task body is an infrastructure fault, not a test
+            # failure, and it is now recorded as one with its type and message.
+            certification.record(
+                getattr(o, "__class__", type(o)).__name__,
+                CompletionState.INFRASTRUCTURE,
+                is_mandatory=True,
+                detail=f"task body raised {type(o).__name__}: {o}",
+            )
+            continue
+        if o["returncode"] == 0:
+            state = CompletionState.PASS
+            detail = ""
+        elif o["timed_out"]:
+            state = CompletionState.TIMEOUT
+            detail = f"exceeded the {timeout_override}s obligation budget"
+        elif o["returncode"] == 127:
+            state = CompletionState.INFRASTRUCTURE
+            detail = "the command could not be spawned"
+        elif o["returncode"] in (130, 143):
+            # SIGINT/SIGTERM is termination of the run, not a task assertion. The
+            # vocabulary has no INTERRUPTED member; INFRASTRUCTURE with the signal in
+            # the detail is the honest mapping, and the exit code below still
+            # propagates 130/143 so CI semantics are unchanged.
+            state = CompletionState.INFRASTRUCTURE
+            detail = f"terminated by signal (exit {o['returncode']})"
+        else:
+            state = CompletionState.FAILED
+            detail = f"exit {o['returncode']}"
+        certification.record(
+            o["id"],
+            state,
+            is_mandatory=True,
+            detail=detail,
+        )
+
+    if interrupted_flag:
+        # No task reported: record the interruption so the empty run cannot be read
+        # as "nothing was required".
+        certification.record(
+            f"{operation}:interrupted",
+            CompletionState.INFRASTRUCTURE,
+            detail="run interrupted before any obligation reported",
+        )
+
+    # Close the bracket even on the interrupted path — an unclosed bracket cannot
+    # assert stability, and would otherwise report NOT_CERTIFIABLE for the wrong reason.
+    certification.__exit__(None, None, None)
+
+    decision, reason = certification.decide()
     elapsed = time.monotonic() - run_start
+
+    _write_certification_outcome(certification, operation, task_ids_executed)
+
     if interrupted_flag:
         _record_verification_event(
             None,
@@ -2648,46 +2794,43 @@ def _run_profile_alias(operation: str) -> int:
         )
         return signal_exit
 
-    if timed_out_any:
-        _record_verification_event(
-            None,
-            profile_name=operation,
-            elapsed=elapsed,
-            status="blocked",
-            passed=passed,
-            failed=failed,
-            final_decision="timeout_blocked",
-            extra_metadata={"tasks_executed": task_ids_executed},
-        )
-        return 124
-
-    if first_failure != 0:
-        # Every independent task has now run and reported; only now is the verdict
-        # formed. The exit code is the first non-zero in plan order, matching the
-        # pre-M10-R2 contract exactly.
-        _record_verification_event(
-            None,
-            profile_name=operation,
-            elapsed=elapsed,
-            status="failed",
-            passed=passed,
-            failed=failed,
-            final_decision="failed",
-            extra_metadata={"tasks_executed": task_ids_executed},
-        )
-        return first_failure
-
+    # The decision string is the real one now. It is reported verbatim rather than
+    # being flattened to "passed"/"failed"/"blocked", because the difference between
+    # "a test asserted" and "the repository changed underneath us" is the entire
+    # point of the runtime being a certification authority.
     _record_verification_event(
         None,
         profile_name=operation,
         elapsed=elapsed,
-        status="passed",
+        status=(
+            "passed" if decision is FinalDecision.CERTIFIED else "blocked"
+        ),
         passed=passed,
         failed=failed,
-        final_decision="certified",
-        extra_metadata={"tasks_executed": task_ids_executed},
+        final_decision=decision.value,
+        extra_metadata={
+            "tasks_executed": task_ids_executed,
+            "decision_reason": reason,
+            "fingerprint_before": (
+                certification.fingerprint_before.fingerprint[:12]
+                if certification.fingerprint_before
+                else None
+            ),
+            "fingerprint_after": (
+                certification.fingerprint_after.fingerprint[:12]
+                if certification.fingerprint_after
+                else None
+            ),
+        },
     )
-    return 0
+
+    if decision is not FinalDecision.CERTIFIED:
+        print(
+            f"[profile:{operation}] NOT CERTIFIED — {decision.value}: {reason}",
+            file=sys.stderr,
+        )
+
+    return certification.exit_code()
 
 
 def _format_task_summary(report: Any) -> str:

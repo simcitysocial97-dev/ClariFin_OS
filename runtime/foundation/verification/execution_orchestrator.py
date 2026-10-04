@@ -46,7 +46,7 @@ import re
 import subprocess
 import sys
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field, fields
 from datetime import UTC, datetime
 from enum import Enum
@@ -294,6 +294,373 @@ class RepositoryFingerprint:
 
 
 # ---------------------------------------------------------------------------
+# Environment requirements (M10-R3 / B1)
+#
+# ONE field, THREE validated forms, resolved BEFORE any spawn.
+#
+# History, because it explains the shape. Two fields used to mean "what this
+# obligation needs": ``ExecutionTaskSpec.prerequisites`` (repository paths, and
+# only paths) and ``ExecutableVerificationTask.required_environment`` (tools).
+# The second was declared, populated 25 times, serialised, and **read by nothing
+# outside its own ``to_dict()``** -- and it lived on a class that no execution
+# path instantiates. ``verify_prerequisites`` read the first field, and then
+# *skipped* five of its values (``.venv``, ``git``, ``mutmut==3.7.0``,
+# ``pytest``, ``coverage``) outright, so it never checked a tool or a version.
+#
+# The consolidation is therefore not "add a variable axis". It is: one field,
+# ``required_environment``, on the one class that actually executes, with a
+# resolver that makes all three forms real. There is no second representation to
+# drift.
+#
+# Forms (syntactically distinct, so a requirement is never ambiguous):
+#
+#   ".venv"                          PATH     repo-relative path must exist
+#   "pytest"                         TOOL     resolvable, .venv/bin first
+#   "mutmut==3.7.0"                  TOOL     resolvable AND version must match
+#   "FINANCE_DB_PATH"                VARIABLE must be present in the child env
+#   "PLAYWRIGHT_PROJECT=chromium"    VARIABLE present AND equal to the value
+#   "FINANCE_DB_PATH=@workspace/x"   VARIABLE value resolved from provenance
+#
+# The resolver is deliberately not a template engine. Exactly six placeholders
+# are substitutable, they come from :class:`ExecutionContext`, and an unknown
+# ``@token`` is a hard error rather than a literal -- a silently unexpanded
+# ``@workspace`` in a CI leg would be indistinguishable from a correct value.
+# ---------------------------------------------------------------------------
+
+#: The complete, closed set of substitutable placeholders.
+PLACEHOLDER_TOKENS: tuple[str, ...] = (
+    "workspace",
+    "leg",
+    "shard",
+    "shard_count",
+    "plan_id",
+    "execution_id",
+)
+
+_REQUIREMENT_FORM_PATH = "path"
+_REQUIREMENT_FORM_TOOL = "tool"
+_REQUIREMENT_FORM_TOOL_VERSION = "tool_version"
+_REQUIREMENT_FORM_VARIABLE = "variable"
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionContext:
+    """The provenance an environment requirement may be resolved against.
+
+    This is what makes one declaration yield the correct value in a CI shard leg,
+    in a local reproduction, and on a laptop: the *requirement* is declared once
+    and the *value* is supplied by whoever is executing. It is also the reason
+    local and CI execution can be byte-identical rather than merely similar.
+    """
+
+    workspace: str = str(REPO_ROOT)
+    leg: str = ""
+    shard: int | None = None
+    shard_count: int | None = None
+    plan_id: str = ""
+    execution_id: str = ""
+
+    def placeholder_value(self, token: str) -> str:
+        """Return the value for *token*, or raise ``KeyError`` if unknown."""
+        match token:
+            case "workspace":
+                return self.workspace
+            case "leg":
+                return self.leg
+            case "shard":
+                return "" if self.shard is None else str(self.shard)
+            case "shard_count":
+                return "" if self.shard_count is None else str(self.shard_count)
+            case "plan_id":
+                return self.plan_id
+            case "execution_id":
+                return self.execution_id
+            case _:
+                raise KeyError(token)
+
+
+@dataclass(frozen=True, slots=True)
+class RequirementFailure:
+    """One unmet environment requirement, named precisely enough to act on."""
+
+    task_id: str
+    form: str
+    requirement: str
+    detail: str
+
+    def render(self) -> str:
+        return f"{self.task_id}: [{self.form}] {self.requirement} — {self.detail}"
+
+
+class RequirementSyntaxError(ValueError):
+    """A requirement string could not be parsed. Raised, never ignored."""
+
+
+def _resolve_placeholders(value: str, ctx: ExecutionContext) -> str:
+    """Substitute ``@token`` from *ctx*. Unknown tokens raise.
+
+    Only ``@``-prefixed whole tokens are substituted. ``user@host`` and a path
+    containing ``@`` are therefore left alone, which is why the substitution
+    requires the ``@`` to introduce a known token.
+    """
+    out: list[str] = []
+    idx = 0
+    while idx < len(value):
+        at = value.find("@", idx)
+        if at == -1:
+            out.append(value[idx:])
+            break
+        out.append(value[idx:at])
+        tail = value[at + 1 :]
+        matched = next(
+            (t for t in PLACEHOLDER_TOKENS if tail.startswith(t)), None
+        )
+        if matched is None:
+            raise RequirementSyntaxError(
+                f"unknown placeholder in {value!r}: '@{tail[:24]}' is not one of "
+                + ", ".join(f"@{t}" for t in PLACEHOLDER_TOKENS)
+            )
+        # Reject a partial-token match such as ``@shard_count`` matching ``@shard``.
+        after = tail[len(matched) :]
+        if after and (after[0].isalnum() or after[0] == "_"):
+            raise RequirementSyntaxError(
+                f"unknown placeholder in {value!r}: '@{matched}' must be followed by "
+                "a non-identifier character"
+            )
+        out.append(ctx.placeholder_value(matched))
+        idx = at + 1 + len(matched)
+    return "".join(out)
+
+
+def _find_tool(name: str) -> Path | None:
+    """Resolve *name* to an executable, preferring the canonical ``.venv``.
+
+    ``.venv`` first is not a preference: ``AGENTS.md`` makes the repository-root
+    virtualenv the single sanctioned environment, and a bare ``pytest`` resolved
+    off ``PATH`` can be a different interpreter's.
+    """
+    candidate = REPO_ROOT / ".venv" / "bin" / name
+    if candidate.exists():
+        return candidate
+    import shutil
+
+    found = shutil.which(name)
+    return Path(found) if found else None
+
+
+def _tool_version_of(path: Path) -> str:
+    """Best-effort version read for an executable.
+
+    Installed-distribution metadata is tried first, and ``--version`` second.
+    That order is not cosmetic: ``mutmut --version`` raises in this repository
+    (its ``__main__`` imports ``mutmut.utils.safe_setproctitle``, which fails to
+    import), so a ``--version``-only probe reports *any* pinned tool as a version
+    mismatch — turning a working environment into a false prerequisite failure.
+    The subprocess remains as the fallback for tools that are not installed
+    distributions (shell scripts, system binaries).
+    """
+    import importlib.metadata as _md
+
+    name = path.name
+    for candidate in (name, name.removesuffix(".exe")):
+        try:
+            return _md.version(candidate)
+        except (_md.PackageNotFoundError, ValueError):
+            continue
+
+    import subprocess as _sp
+
+    try:
+        proc = _sp.run(
+            [str(path), "--version"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, _sp.SubprocessError):
+        return ""
+    output = (proc.stdout or proc.stderr or "").strip()
+    return output.splitlines()[0] if output else ""
+
+
+_FORM_PREFIX_TOOL = "tool"
+_FORM_PREFIX_PATH = "path"
+_FORM_PREFIX_VARIABLE = "env"
+
+
+def _classify_bare(subject: str) -> str:
+    """Infer a requirement's form from a bare (unprefixed) subject.
+
+    The inference is deliberately narrow and total, because a bare name is the
+    only genuinely ambiguous form and an ambiguous requirement is an unenforceable
+    one. Any author who does not agree with the inference can write the explicit
+    prefix instead — ``tool:``, ``path:`` or ``env:`` — and the prefix always
+    wins.
+
+    * contains ``/``              → PATH   (``.venv``, ``backend/pyproject.toml``)
+    * starts with ``.``           → PATH   (``.venv``, ``.git``)
+    * SHOUTING_SNAKE              → VARIABLE (``FINANCE_DB_PATH``)
+    * anything else               → TOOL   (``pytest``, ``coverage``, ``git``)
+    """
+    if "/" in subject or subject.startswith("."):
+        return _REQUIREMENT_FORM_PATH
+    if subject.replace("_", "").isupper() and subject.upper() == subject:
+        return _REQUIREMENT_FORM_VARIABLE
+    return _REQUIREMENT_FORM_TOOL
+
+
+def _parse_requirement(raw: str) -> tuple[str, str, str]:
+    """Parse one requirement into ``(form, subject, expected_value)``.
+
+    Accepted spellings::
+
+        ".venv"                       PATH       inferred
+        "backend/pyproject.toml"      PATH       inferred
+        "pytest"                      TOOL       inferred
+        "mutmut==3.7.0"               TOOL       inferred (version pinned)
+        "FINANCE_DB_PATH"             VARIABLE   inferred (must be set)
+        "PLAYWRIGHT_PROJECT=chromium" VARIABLE   inferred (must equal)
+        "tool:mutmut==3.7.0"          TOOL       explicit
+        "path:.github/scripts/x.sh"   PATH       explicit
+        "env:FINANCE_DB_PATH"         VARIABLE   explicit
+        "env:FOO=@workspace/bar"      VARIABLE   explicit, ``@token`` value
+
+    Note ``==`` is tested *before* ``=``: ``mutmut==3.7.0`` is a pinned tool, not
+    a variable named ``mutmut`` whose value is ``=3.7.0``.
+    """
+    if not raw or not raw.strip():
+        raise RequirementSyntaxError("empty requirement")
+    text = raw.strip()
+
+    forced: str | None = None
+    for prefix, form in (
+        (f"{_FORM_PREFIX_TOOL}:", _REQUIREMENT_FORM_TOOL),
+        (f"{_FORM_PREFIX_PATH}:", _REQUIREMENT_FORM_PATH),
+        (f"{_FORM_PREFIX_VARIABLE}:", _REQUIREMENT_FORM_VARIABLE),
+    ):
+        if text.startswith(prefix):
+            forced = form
+            text = text[len(prefix) :].strip()
+            break
+    if not text:
+        raise RequirementSyntaxError(f"requirement {raw!r} has an empty subject")
+
+    if "==" in text:
+        name, _, version = text.partition("==")
+        name, version = name.strip(), version.strip()
+        if not name:
+            raise RequirementSyntaxError(f"requirement {raw!r} has an empty tool name")
+        form = _REQUIREMENT_FORM_TOOL_VERSION if forced in (None, _REQUIREMENT_FORM_TOOL) else forced
+        return form, name, version
+
+    if "=" in text:
+        name, _, value = text.partition("=")
+        name, value = name.strip(), value.strip()
+        if not name:
+            raise RequirementSyntaxError(
+                f"requirement {raw!r} has an empty variable name"
+            )
+        if not name.replace("_", "").isalnum():
+            raise RequirementSyntaxError(
+                f"requirement {raw!r}: {name!r} is not a valid variable name"
+            )
+        form = (
+            _REQUIREMENT_FORM_VARIABLE
+            if forced in (None, _REQUIREMENT_FORM_VARIABLE)
+            else forced
+        )
+        return form, name, value
+
+    if forced is not None:
+        return forced, text, ""
+    return _classify_bare(text), text, ""
+
+
+def verify_environment_requirement(
+    raw: str,
+    ctx: ExecutionContext,
+    env: dict[str, str] | None,
+    task_id: str = "",
+) -> RequirementFailure | None:
+    """Check one requirement. Returns ``None`` when satisfied.
+
+    This is the single place an environment requirement is decided. Every
+    enforcement path calls it, so a requirement cannot be enforced on one path
+    and ignored on another.
+    """
+    try:
+        form, subject, expected = _parse_requirement(raw)
+    except RequirementSyntaxError as exc:
+        return RequirementFailure(task_id, "syntax", raw, str(exc))
+
+    if form == _REQUIREMENT_FORM_PATH:
+        target = REPO_ROOT / subject.lstrip("/")
+        if not target.exists():
+            return RequirementFailure(
+                task_id, form, raw, f"path does not exist: {subject}"
+            )
+        return None
+
+    if form in (_REQUIREMENT_FORM_TOOL, _REQUIREMENT_FORM_TOOL_VERSION):
+        located = _find_tool(subject)
+        if located is None:
+            return RequirementFailure(
+                task_id,
+                form,
+                raw,
+                f"executable {subject!r} not found in .venv/bin or on PATH",
+            )
+        if form == _REQUIREMENT_FORM_TOOL_VERSION:
+            found = _tool_version_of(located)
+            if expected and expected not in found:
+                return RequirementFailure(
+                    task_id,
+                    form,
+                    raw,
+                    f"{subject} version mismatch: required {expected}, "
+                    f"found {found or '<unreported>'} at {located}",
+                )
+        return None
+
+    # VARIABLE
+    assert env is not None, "variable requirements need a child environment"
+    if subject not in env:
+        return RequirementFailure(
+            task_id, form, raw, f"environment variable {subject} is not set"
+        )
+    if expected:
+        try:
+            resolved = _resolve_placeholders(expected, ctx)
+        except RequirementSyntaxError as exc:
+            return RequirementFailure(task_id, "syntax", raw, str(exc))
+        if env[subject] != resolved:
+            return RequirementFailure(
+                task_id,
+                form,
+                raw,
+                f"{subject}={env[subject]!r} but the obligation requires "
+                f"{resolved!r}",
+            )
+    return None
+
+
+def verify_task_environment(
+    task_id: str,
+    requirements: tuple[str, ...] | list[str],
+    ctx: ExecutionContext,
+    env: dict[str, str] | None,
+) -> list[RequirementFailure]:
+    """Check every requirement of one task. Returns the failures, in order."""
+    failures: list[RequirementFailure] = []
+    for raw in requirements:
+        failure = verify_environment_requirement(raw, ctx, env, task_id)
+        if failure is not None:
+            failures.append(failure)
+    return failures
+
+
+# ---------------------------------------------------------------------------
 # Capability → mutation target (capability vocabulary → ENGINE_SELECTION)
 # ---------------------------------------------------------------------------
 
@@ -331,7 +698,28 @@ class ExecutionTaskSpec:
     is_escalation: bool
     reason: str
     origin: str  # TaskOrigin
-    prerequisites: tuple[str, ...] = field(default_factory=tuple)
+    required_environment: tuple[str, ...] = field(default_factory=tuple)
+    """The single declaration of what this task needs in order to exist.
+
+    Three forms, all validated by :func:`verify_environment_requirement` before
+    any spawn:
+
+    * PATH   ``".venv"`` — repo-relative path must exist.
+    * TOOL   ``"pytest"`` / ``"mutmut==3.7.0"`` — resolvable (``.venv/bin``
+      first, per ``AGENTS.md``), and the version must match when pinned.
+    * VARIABLE ``"FINANCE_DB_PATH"`` / ``"PLAYWRIGHT_PROJECT=chromium"`` — must be
+      present in the child environment, and equal to the value when one is given.
+      A value may contain ``@token`` placeholders resolved from an
+      :class:`ExecutionContext`, which is what lets one declaration be correct in
+      a CI shard leg, a local reproduction, and on a laptop.
+
+    This field *replaces* ``prerequisites`` (repository paths only, and it
+    silently skipped five of its own values) and the never-read
+    ``required_environment`` on the dead ``ExecutableVerificationTask``. A
+    pre-M10-R3 ``plan.json`` carrying ``prerequisites`` still loads:
+    :meth:`from_dict` folds it in. There is no second field to drift.
+    """
+
     depends_on: tuple[str, ...] = field(default_factory=tuple)
     expected_evidence: tuple[str, ...] = field(default_factory=tuple)
     measurement_required: tuple[str, ...] = field(default_factory=tuple)
@@ -358,7 +746,7 @@ class ExecutionTaskSpec:
             "is_escalation": self.is_escalation,
             "reason": self.reason,
             "origin": self.origin,
-            "prerequisites": list(self.prerequisites),
+            "required_environment": list(self.required_environment),
             "depends_on": list(self.depends_on),
             "expected_evidence": list(self.expected_evidence),
             "measurement_required": list(self.measurement_required),
@@ -397,10 +785,16 @@ class ExecutionTaskSpec:
           so before M10-R2 those tuples were silently becoming lists in the live
           plan. Every such rebuild now routes through this classmethod, which is
           what makes the declared types honest and the round-trip exact.
+        * **``prerequisites`` is a legacy input, not a second field.** M10-R3
+          merged it into ``required_environment``. A plan written before that
+          still deserialises, and its declarations survive — they are folded in
+          rather than silently dropped, because dropping them would turn a
+          satisfied requirement into an unenforced one, which is the exact defect
+          this consolidation exists to remove.
         """
         tuple_fields = {
             "capabilities",
-            "prerequisites",
+            "required_environment",
             "depends_on",
             "expected_evidence",
             "measurement_required",
@@ -408,8 +802,16 @@ class ExecutionTaskSpec:
             "evidence_reused",
             "evidence_invalidated",
         }
+        payload = dict(d)
+        legacy = payload.pop("prerequisites", None)
         known = {f.name for f in fields(cls)}
-        kwargs = {k: v for k, v in d.items() if k in known}
+        kwargs = {k: v for k, v in payload.items() if k in known}
+        if legacy:
+            merged = list(kwargs.get("required_environment") or ())
+            for item in legacy:
+                if item not in merged:
+                    merged.append(item)
+            kwargs["required_environment"] = merged
         for name in tuple_fields & known:
             if name in kwargs and kwargs[name] is not None:
                 kwargs[name] = tuple(kwargs[name])
@@ -603,8 +1005,458 @@ class TaskExecutionRecord:
 
 
 # ---------------------------------------------------------------------------
+# The certification authority (M10-R3 / B2)
+#
+# ONE classifier, SIX producers.
+#
+# The defect this removes was measured, not inferred. Of the six ways this
+# repository executes a verification obligation, exactly one (``verify check`` /
+# ``verify run``) produced a ``FinalDecision`` and bracketed execution with a
+# repository fingerprint. The other five — profile aliases, obligation legs,
+# runtime shards, Playwright legs, mutation — used the *same* subprocess worker
+# but formed their verdict as "first non-zero exit code in plan order" and wrote
+# a literal ``final_decision="certified"`` into the event log without ever
+# capturing a fingerprint.
+#
+# The consequence: a green ``verify backend`` was not evidence that the
+# repository was unchanged during the run. It was evidence that no shell exited
+# non-zero. Those are different claims and only one of them is a certification.
+#
+# So the decision is extracted from ``ExecutionOrchestrator._finalize`` — where
+# it already existed and was already correct — into a module-level classifier
+# over a minimal outcome type that *every* topology can produce without a plan,
+# and the fingerprint bracket is lifted into a context manager that wraps the
+# whole execution. The orchestrator becomes the first consumer rather than the
+# only one.
+#
+# Deliberately NOT a new framework: no new engine, no new spawn path, no new
+# vocabulary. ``CompletionState`` and ``FinalDecision`` already existed and are
+# reused verbatim.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class ObligationOutcome:
+    """The minimum an execution path must report to be certifiable.
+
+    Five topologies never build a :class:`TaskExecutionRecord` — they have no plan,
+    no capabilities list and no artifact inventory. Rather than force a plan onto
+    them (which would be the "envelope" approach, and would give them a richer
+    record without giving them a real decision), they report this.
+    """
+
+    task_id: str
+    state: CompletionState
+    is_mandatory: bool = True
+    detail: str = ""
+
+    @classmethod
+    def from_record(cls, record: TaskExecutionRecord) -> ObligationOutcome:
+        """Adapt a full record. The orchestrator's own path."""
+        state = record.completion_state
+        if not isinstance(state, CompletionState):
+            state = _coerce_completion_state(state)
+        detail = ""
+        if record.diagnostic:
+            detail = str(record.diagnostic.get("message", ""))[:400]
+        return cls(
+            task_id=record.task_id,
+            state=state,
+            is_mandatory=record.is_mandatory,
+            detail=detail,
+        )
+
+
+def _coerce_completion_state(value: Any) -> CompletionState:
+    """Tolerate a state that arrived as a string.
+
+    ``CompletionState`` is a ``str`` enum, but records round-trip through JSON, so
+    a value can arrive as the enum itself, as its lowercase value (``"scope"``),
+    as its member name (``"SCOPE"``), or as a qualified repr
+    (``"CompletionState.SCOPE"``) — the last of which is what an
+    ``f"{state}"``-style serialiser produces. All four must resolve to the same
+    member.
+
+    An unrecognised value falls back to ``FAILED``, never to ``PASS``: a state the
+    classifier cannot understand must not be able to certify.
+    """
+    if isinstance(value, CompletionState):
+        return value
+    text = str(value).strip()
+    if "." in text:
+        text = text.rsplit(".", 1)[1]
+    for candidate in (text, text.lower(), text.upper()):
+        try:
+            return CompletionState(candidate)
+        except ValueError:
+            continue
+    return CompletionState.FAILED
+
+
+def decide_final_outcome(
+    outcomes: Sequence[ObligationOutcome],
+    *,
+    fingerprint_stable: bool = True,
+    fingerprint_note: str = "",
+    certification_requirements: Sequence[dict] = (),
+    measurement_lookup: Callable[[str, str], Any] | None = None,
+    current_sha: str = "",
+) -> tuple[FinalDecision, str]:
+    """Classify a set of obligation outcomes. The single decision function.
+
+    Precedence is deliberate and is the same precedence ``_finalize`` used:
+
+    1. ``INFRASTRUCTURE``  — the run could not be measured at all.
+    2. ``TIMEOUT``        — never converts to PASS.
+    3. fingerprint drift  — the repository changed under us.
+    4. ``CONFIGURATION`` on a mandatory task.
+    5. ``FAILED`` on a mandatory task.
+    6. ``AUTHORIZATION_REQUIRED``.
+    7. certification gate — measurement thresholds.
+    8. ``CERTIFIED``.
+
+    Ordering matters and is not cosmetic. Drift is checked *after* timeout so a
+    timed-out run reports ``TIMEOUT_BLOCKED`` (the actionable cause) rather than
+    a fingerprint mismatch (a symptom). Drift is checked *before* a mandatory
+    failure so a run whose tree moved cannot be diagnosed as an ordinary test
+    failure — the test result is not trustworthy once the tree has moved under it.
+    """
+    states = [o.state for o in outcomes]
+
+    if any(s == CompletionState.INFRASTRUCTURE for s in states):
+        ids = [o.task_id for o in outcomes if o.state == CompletionState.INFRASTRUCTURE]
+        return (
+            FinalDecision.INFRASTRUCTURE_BLOCKED,
+            f"obligation(s) {', '.join(ids)} reported infrastructure failure — "
+            "cannot certify",
+        )
+    if any(s == CompletionState.TIMEOUT for s in states):
+        ids = [o.task_id for o in outcomes if o.state == CompletionState.TIMEOUT]
+        return (
+            FinalDecision.TIMEOUT_BLOCKED,
+            f"obligation(s) {', '.join(ids)} timed out — cannot certify "
+            "(a timeout never converts to PASS)",
+        )
+    # SCOPE and fingerprint drift are the same phenomenon observed two ways: the
+    # repository state moved, so the run's own results cannot be attributed to the
+    # commit under test. The orchestrator reports it as a SCOPE record; the
+    # plan-less topologies report it as an unstable bracket. Both must land here.
+    scoped = [o.task_id for o in outcomes if o.state == CompletionState.SCOPE]
+    if scoped or not fingerprint_stable:
+        detail = fingerprint_note if fingerprint_note else ""
+        which = (
+            f"invalid scope on {', '.join(scoped)}" if scoped else "repository drift"
+        )
+        return (
+            FinalDecision.VALIDATION_BLOCKED,
+            f"{which} detected — cannot certify"
+            + (f" ({detail})" if detail else ""),
+        )
+    mandatory_config = [
+        o.task_id for o in outcomes
+        if o.state == CompletionState.CONFIGURATION and o.is_mandatory
+    ]
+    if mandatory_config:
+        return (
+            FinalDecision.VALIDATION_BLOCKED,
+            f"configuration failure on mandatory obligation(s) "
+            f"{', '.join(mandatory_config)} — cannot certify",
+        )
+    mandatory_failed = [
+        o.task_id for o in outcomes
+        if o.state == CompletionState.FAILED and o.is_mandatory
+    ]
+    if mandatory_failed:
+        return (
+            FinalDecision.DIAGNOSTIC,
+            f"mandatory obligation(s) failed: {', '.join(mandatory_failed)} — "
+            "run the diagnostic path",
+        )
+    if any(s == CompletionState.AUTHORIZATION_REQUIRED for s in states):
+        return (
+            FinalDecision.AWAITING_AUTHORIZATION,
+            "one or more obligations require explicit human authorization; "
+            "production changes were not attempted",
+        )
+
+    missing = _certification_gate_gaps(
+        certification_requirements, measurement_lookup, current_sha
+    )
+    if missing:
+        return (
+            FinalDecision.NOT_CERTIFIABLE,
+            "certification conditions not satisfied: " + "; ".join(missing),
+        )
+    return (
+        FinalDecision.CERTIFIED,
+        "all mandatory obligations satisfied and certification conditions met",
+    )
+
+
+def _certification_gate_gaps(
+    certification_requirements: Sequence[dict],
+    measurement_lookup: Callable[[str, str], Any] | None,
+    current_sha: str,
+) -> list[str]:
+    """Evaluate declared certification thresholds. Extracted, not reimplemented."""
+    if measurement_lookup is None:
+        return []
+    gaps: list[str] = []
+    for cr in certification_requirements:
+        cap = cr.get("capability", "")
+        minimum = cr.get("minimum_mutation_score")
+        if minimum is None:
+            continue
+        found = measurement_lookup(cap, "mutation")
+        record = found[0] if isinstance(found, tuple) else found
+        if record is None or not _certification_gate(record):
+            gaps.append(f"{cap} mutation measurement authoritative+current")
+            continue
+        record_sha = str(getattr(record, "repository_sha", ""))
+        if current_sha and record_sha != current_sha:
+            gaps.append(f"{cap} mutation record sha={record_sha[:8]} != current")
+            continue
+        score = getattr(record, "mutation_score", None) or 0
+        if score < minimum:
+            gaps.append(f"{cap} mutation score {score} < {minimum}")
+    return gaps
+
+
+def _certification_gate(record: Any) -> bool:
+    from runtime.foundation.verification.measurement_truth import certification_gate
+
+    return bool(certification_gate(record))
+
+
+class FingerprintDrift(RuntimeError):
+    """The repository changed while verification was executing.
+
+    Raised only where the caller asked for fail-fast (``strict=True``). The
+    default is to *record* the drift and let :meth:`CertificationRun.decide`
+    return ``VALIDATION_BLOCKED``, because a drift discovered mid-run usually has
+    useful partial evidence attached to it and throwing that away helps nobody.
+    """
+
+    def __init__(self, before: RepositoryFingerprint, after: RepositoryFingerprint):
+        self.before = before
+        self.after = after
+        super().__init__(
+            f"repository fingerprint changed during verification: "
+            f"{before.fingerprint[:12]} -> {after.fingerprint[:12]}"
+        )
+
+
+class CertificationRun:
+    """Brackets one execution with a fingerprint and produces its verdict.
+
+    This is the object the five plan-less topologies were missing. Used as a
+    context manager it guarantees the *final* fingerprint is captured even when the
+    body raises, which is what makes the invariant hold on the interrupted and
+    timed-out paths as well as the clean one — a bracket that only closes on the
+    happy path is not an invariant.
+
+    ::
+
+        with CertificationRun(plan_id=plan.plan_id) as run:
+            for task in tasks:
+                run.record(task.id, CompletionState.PASS)
+            ... execute ...
+        print(run.decision, run.reason, run.exit_code)
+
+    Three properties are load-bearing:
+
+    * **One classifier.** :meth:`decide` delegates to :func:`decide_final_outcome`.
+      There is no second precedence table to drift from the orchestrator's.
+    * **Drift is always reported.** :attr:`fingerprint_stable` is computed from the
+      bracket, never asserted by the caller.
+    * **A partial run is not a pass.** With no recorded obligations the decision is
+      ``NOT_CERTIFIABLE``, not ``CERTIFIED``. An execution that recorded nothing
+      has certified nothing, and the difference must not be expressible as green.
+    """
+
+    __slots__ = (
+        "_outcomes",
+        "_started_at",
+        "fingerprint_after",
+        "fingerprint_before",
+        "fingerprint_note",
+        "plan_id",
+        "strict",
+        "_certification_requirements",
+        "_measurement_lookup",
+    )
+
+    def __init__(
+        self,
+        plan_id: str = "",
+        *,
+        certification_requirements: Sequence[dict] = (),
+        measurement_lookup: Callable[[str, str], Any] | None = None,
+        strict: bool = False,
+    ) -> None:
+        self.plan_id = plan_id
+        self._outcomes: list[ObligationOutcome] = []
+        self.fingerprint_before: RepositoryFingerprint | None = None
+        self.fingerprint_after: RepositoryFingerprint | None = None
+        self.fingerprint_note = ""
+        self.strict = strict
+        self._certification_requirements = list(certification_requirements)
+        self._measurement_lookup = measurement_lookup
+        self._started_at = 0.0
+
+    # -- context manager ---------------------------------------------------
+
+    def __enter__(self) -> CertificationRun:
+        self._started_at = time.monotonic()
+        self.fingerprint_before = RepositoryFingerprint.capture()
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> bool:
+        # Captured in a finally-equivalent: if the body raised, we still close the
+        # bracket, because "the tree changed AND the run blew up" is the diagnosis
+        # an operator needs, and losing the 'after' fingerprint loses half of it.
+        self.fingerprint_after = RepositoryFingerprint.capture()
+        if self.strict and not self.fingerprint_stable:
+            assert self.fingerprint_before is not None
+            raise FingerprintDrift(self.fingerprint_before, self.fingerprint_after)
+        return False  # never swallow
+
+    # -- recording ---------------------------------------------------------
+
+    def record(
+        self,
+        task_id: str,
+        state: CompletionState | str,
+        *,
+        is_mandatory: bool = True,
+        detail: str = "",
+    ) -> ObligationOutcome:
+        """Record one obligation's outcome. Order-preserving and repeatable."""
+        outcome = ObligationOutcome(
+            task_id=task_id,
+            state=_coerce_completion_state(state),
+            is_mandatory=is_mandatory,
+            detail=detail,
+        )
+        self._outcomes.append(outcome)
+        return outcome
+
+    def adopt(self, records: Sequence[TaskExecutionRecord]) -> None:
+        """Adopt a full set of orchestrator records."""
+        for record in records:
+            self._outcomes.append(ObligationOutcome.from_record(record))
+
+    @property
+    def outcomes(self) -> tuple[ObligationOutcome, ...]:
+        return tuple(self._outcomes)
+
+    # -- verdict -----------------------------------------------------------
+
+    @property
+    def fingerprint_stable(self) -> bool:
+        """True unless both captures exist and differ."""
+        if self.fingerprint_before is None or self.fingerprint_after is None:
+            # An unclosed bracket cannot assert stability. Reporting True here would
+            # let a crash before __exit__ certify silently.
+            return False
+        return self.fingerprint_before.matches(self.fingerprint_after)
+
+    @property
+    def duration_seconds(self) -> float:
+        return time.monotonic() - self._started_at if self._started_at else 0.0
+
+    def decide(self) -> tuple[FinalDecision, str]:
+        """Classify. The one call every topology makes."""
+        if not self._outcomes:
+            return (
+                FinalDecision.NOT_CERTIFIABLE,
+                "no obligation reported an outcome — nothing was certified",
+            )
+        stable = self.fingerprint_stable
+        note = self.fingerprint_note
+        if not stable and self.fingerprint_before and self.fingerprint_after:
+            note = (
+                f"before={self.fingerprint_before.fingerprint[:12]} "
+                f"after={self.fingerprint_after.fingerprint[:12]}"
+            )
+        return decide_final_outcome(
+            self._outcomes,
+            fingerprint_stable=stable,
+            fingerprint_note=note,
+            certification_requirements=self._certification_requirements,
+            measurement_lookup=self._measurement_lookup,
+            current_sha=(
+                self.fingerprint_before.repository_sha if self.fingerprint_before else ""
+            ),
+        )
+
+    @property
+    def decision(self) -> FinalDecision:
+        return self.decide()[0]
+
+    @property
+    def reason(self) -> str:
+        return self.decide()[1]
+
+    def exit_code(self) -> int:
+        """Map the decision onto a process exit code.
+
+        ``CERTIFIED`` is 0 and nothing else is. Every blocked decision gets a
+        distinct non-zero code so a CI log distinguishes "the tree moved" from
+        "something timed out" from "a test asserted" without parsing prose.
+        """
+        return _DECISION_EXIT_CODES.get(self.decision, 1)
+
+    def to_dict(self) -> dict:
+        decision, reason = self.decide()
+        return {
+            "schema": "m10r3-certification-run/v1",
+            "plan_id": self.plan_id,
+            "decision": decision.value,
+            "reason": reason,
+            "exit_code": self.exit_code(),
+            "duration_seconds": round(self.duration_seconds, 3),
+            "fingerprint_before": (
+                self.fingerprint_before.to_dict() if self.fingerprint_before else None
+            ),
+            "fingerprint_after": (
+                self.fingerprint_after.to_dict() if self.fingerprint_after else None
+            ),
+            "fingerprint_stable": self.fingerprint_stable,
+            "obligations": [
+                {
+                    "task_id": o.task_id,
+                    "state": o.state.value,
+                    "is_mandatory": o.is_mandatory,
+                    "detail": o.detail,
+                }
+                for o in self._outcomes
+            ],
+        }
+
+
+#: Distinct exit codes per blocked decision, so a CI leg can tell the failure modes
+#: apart from the exit status alone without parsing prose.
+#:
+#: Two of these are conventions worth preserving rather than renumbering:
+#: ``124`` is GNU ``timeout``'s "command timed out", and CI tooling, shell wrappers
+#: and humans all read it that way. ``2`` is argparse's usage-error code, so
+#: authorization deliberately does not take it.
+_DECISION_EXIT_CODES: dict[FinalDecision, int] = {
+    FinalDecision.CERTIFIED: 0,
+    FinalDecision.NOT_CERTIFIABLE: 1,
+    FinalDecision.DIAGNOSTIC: 1,
+    FinalDecision.AWAITING_AUTHORIZATION: 6,
+    FinalDecision.INFRASTRUCTURE_BLOCKED: 3,
+    FinalDecision.TIMEOUT_BLOCKED: 124,
+    FinalDecision.VALIDATION_BLOCKED: 5,
+}
+
+
+# ---------------------------------------------------------------------------
 # Execution report
 # ---------------------------------------------------------------------------
+
 
 
 @dataclass
@@ -896,7 +1748,7 @@ class ExecutionOrchestrator:
             )
             auth_required = is_mutation
             expected_evidence = list(inv_entry.evidence_produced) if inv_entry else []
-            prereqs = list(inv_entry.prerequisites) if inv_entry else [".venv"]
+            prereqs = list(inv_entry.required_environment) if inv_entry else [".venv"]
             dedup_key = (cp_task.command.strip(),)
             bucket = dedup.get(dedup_key)
             if bucket is None:
@@ -913,7 +1765,7 @@ class ExecutionOrchestrator:
                     is_escalation=cp_task.is_escalation,
                     reason=cp_task.reason,
                     origin=TaskOrigin.CONTROL_PLANE.value,
-                    prerequisites=tuple(prereqs),
+                    required_environment=tuple(prereqs),
                     expected_evidence=tuple(expected_evidence),
                     measurement_required=tuple(
                         m.value for m in cp_task.measurement_required
@@ -1091,7 +1943,7 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(
+                                required_environment=(
                                     ".venv",
                                     "mutmut==3.7.0",
                                     "git",
@@ -1129,7 +1981,7 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(
+                                required_environment=(
                                     ".venv",
                                     "mutmut==3.7.0",
                                     "git",
@@ -1210,7 +2062,7 @@ class ExecutionOrchestrator:
                         + f" (single execution; records fanned out to {', '.join(caps)})"
                     ),
                     origin=TaskOrigin.REVALIDATION.value,
-                    prerequisites=(".venv", "coverage"),
+                    required_environment=(".venv", "coverage"),
                     expected_evidence=("measurement_truth",),
                     measurement_required=("coverage",),
                     authorization_required=False,
@@ -1476,35 +2328,86 @@ class ExecutionOrchestrator:
             )
         return errors, live_fp
 
-    def verify_prerequisites(self, plan: ExecutionPlan) -> tuple[bool, list[str]]:
-        """Verify prerequisites for all tasks. Returns (ok, missing list)."""
-        missing: list[str] = []
-        # Global prerequisites
+    def verify_prerequisites(
+        self,
+        plan: ExecutionPlan,
+        ctx: ExecutionContext | None = None,
+        env: dict[str, str] | None = None,
+    ) -> tuple[bool, list[str]]:
+        """Verify every declared environment requirement, before any spawn.
+
+        M10-R3 (B1). This used to verify repository *paths only*, and to skip five
+        of its own declared values outright (``.venv``, ``git``,
+        ``mutmut==3.7.0``, ``pytest``, ``coverage``) — so it never once checked a
+        tool, a version, or an environment variable. The ``required_environment``
+        field that was supposed to carry those was read by nothing outside its own
+        serialiser.
+
+        It now resolves all three forms through
+        :func:`verify_environment_requirement`, which is the single place an
+        environment requirement is decided. Every failure names the task, the
+        form, the requirement and what was actually found — so a missing
+        prerequisite is a *named prerequisite failure at second zero* instead of a
+        non-zero exit several minutes later with the real cause in a log nobody
+        was watching.
+
+        Returns ``(ok, rendered_failures)``. ``rendered_failures`` is a list of
+        human-readable strings for backward compatibility with the existing
+        ``missing prerequisites: ...`` report line; the structured failures are
+        available via :meth:`collect_requirement_failures`.
+        """
+        failures = self.collect_requirement_failures(plan, ctx=ctx, env=env)
+        return (not failures), [f.render() for f in failures]
+
+    def collect_requirement_failures(
+        self,
+        plan: ExecutionPlan,
+        ctx: ExecutionContext | None = None,
+        env: dict[str, str] | None = None,
+    ) -> list[RequirementFailure]:
+        """Structured form of :meth:`verify_prerequisites`.
+
+        Kept separate because the call sites that *report* want strings and the
+        call sites that *classify* want the form and the detail.
+        """
+        if ctx is None:
+            ctx = ExecutionContext(workspace=str(REPO_ROOT), plan_id=plan.plan_id)
+        if env is None:
+            from runtime.foundation.verification.env import child_process_env
+
+            env = dict(child_process_env())
+
+        failures: list[RequirementFailure] = []
+
+        # Global requirements. These are the repository-level preconditions every
+        # obligation inherits; they are reported against the plan itself because
+        # they are not any one task's declaration.
         if not (REPO_ROOT / ".venv" / "bin" / "python").exists():
-            missing.append(".venv/bin/python")
+            failures.append(
+                RequirementFailure(
+                    "<plan>",
+                    _REQUIREMENT_FORM_PATH,
+                    ".venv/bin/python",
+                    "the canonical virtualenv interpreter is missing; run "
+                    "scripts/bootstrap.sh",
+                )
+            )
         for path in (".git", "backend", "pyproject.toml"):
             if not (REPO_ROOT / path).exists():
-                missing.append(path)
-        # Per-task prerequisite paths
-        seen: set[str] = set()
+                failures.append(
+                    RequirementFailure(
+                        "<plan>",
+                        _REQUIREMENT_FORM_PATH,
+                        path,
+                        "required repository path is missing",
+                    )
+                )
+
         for t in plan.tasks:
-            for p in t.prerequisites:
-                if p in seen:
-                    continue
-                seen.add(p)
-                if p in (
-                    ".venv",
-                    "git",
-                    "mutmut==3.7.0",
-                    "pytest",
-                    "coverage",
-                ):
-                    continue
-                # explicit script path
-                pth = REPO_ROOT / p.lstrip("/")
-                if not pth.exists():
-                    missing.append(f"{t.task_id}: {p}")
-        return (not missing), missing
+            failures.extend(
+                verify_task_environment(t.task_id, t.required_environment, ctx, env)
+            )
+        return failures
 
     # ------------------------------------------------------------- execution
 
@@ -2384,88 +3287,28 @@ class ExecutionOrchestrator:
         records: list[TaskExecutionRecord],
         live_fp: RepositoryFingerprint,
     ) -> tuple[FinalDecision, str]:
-        states = [r.completion_state for r in records]
-        # Blockers first
-        if any(s == CompletionState.INFRASTRUCTURE for s in states):
-            return (
-                FinalDecision.INFRASTRUCTURE_BLOCKED,
-                "one or more tasks reported infrastructure failure — cannot certify",
-            )
-        if any(s == CompletionState.TIMEOUT for s in states):
-            return (
-                FinalDecision.TIMEOUT_BLOCKED,
-                "one or more tasks timed out — cannot certify (timeout never converts to PASS)",
-            )
-        if any(s == CompletionState.SCOPE for s in states):
-            return (
-                FinalDecision.VALIDATION_BLOCKED,
-                "scope or fingerprint mismatch detected — cannot certify",
-            )
-        if any(
-            s == CompletionState.CONFIGURATION and r.is_mandatory
-            for s, r in zip(states, records, strict=False)
-        ):
-            return (
-                FinalDecision.VALIDATION_BLOCKED,
-                "configuration failure on a mandatory task — cannot certify",
-            )
-        if any(
-            s == CompletionState.FAILED and r.is_mandatory
-            for s, r in zip(states, records, strict=False)
-        ):
-            failed = [
-                r.task_id
-                for r in records
-                if r.completion_state == CompletionState.FAILED and r.is_mandatory
-            ]
-            return (
-                FinalDecision.DIAGNOSTIC,
-                f"mandatory tasks failed: {', '.join(failed)} — run diagnostic path",
-            )
-        if any(s == CompletionState.AUTHORIZATION_REQUIRED for s in states):
-            return (
-                FinalDecision.AWAITING_AUTHORIZATION,
-                "one or more tasks require explicit human authorization; production "
-                "changes were not attempted",
-            )
-        # All mandatory tasks passed (or reused or skipped). Certification gate:
-        required_kinds: dict[tuple[str, str], dict] = {}
-        for cr in plan.certification_requirements:
-            required_kinds[(cr.get("capability", ""), "mutation")] = cr
-        missing: list[str] = []
-        from runtime.foundation.verification.measurement_truth import (
-            MeasurementKind,
-            certification_gate,
-        )
+        """Classify a completed run.
 
-        for cr in plan.certification_requirements:
-            cap = cr.get("capability", "")
-            mm_score = cr.get("minimum_mutation_score")
-            if mm_score is None:
-                continue
-            record, _path = self._find_measurement_record(
-                cap, MeasurementKind.MUTATION.value, ""
-            )
-            if record is None or not certification_gate(record):
-                missing.append(f"{cap} mutation measurement authoritative+current")
-                continue
-            if record.repository_sha != live_fp.repository_sha:
-                missing.append(
-                    f"{cap} mutation record sha={record.repository_sha[:8]} != current"
-                )
-                continue
-            if (record.mutation_score or 0) < mm_score:
-                missing.append(
-                    f"{cap} mutation score {record.mutation_score} < {mm_score}"
-                )
-        if missing:
-            return (
-                FinalDecision.NOT_CERTIFIABLE,
-                "certification conditions not satisfied: " + "; ".join(missing),
-            )
-        return (
-            FinalDecision.CERTIFIED,
-            "all mandatory tasks passed and certification conditions satisfied",
+        M10-R3 (B2): this used to carry its own precedence table. It now delegates
+        to :func:`decide_final_outcome` — the *same* function the five plan-less
+        topologies call — so the orchestrator and a CI shard leg cannot reach
+        different verdicts from identical outcomes. A second precedence table is
+        exactly how "green means two different things" happens.
+        """
+        return decide_final_outcome(
+            [ObligationOutcome.from_record(r) for r in records],
+            # The orchestrator already materialised drift as a SCOPE record inside
+            # its own bracket, so the flag stays True here; SCOPE carries it.
+            fingerprint_stable=True,
+            certification_requirements=plan.certification_requirements,
+            # The classifier's lookup protocol is (capability, kind); the
+            # orchestrator's resolver also takes an explicit mapping path, which
+            # the gate does not use. Adapted here rather than changing either
+            # signature to suit the other.
+            measurement_lookup=lambda cap, kind: self._find_measurement_record(
+                cap, kind, ""
+            ),
+            current_sha=live_fp.repository_sha,
         )
 
     # ------------------------------------------------------------- helpers

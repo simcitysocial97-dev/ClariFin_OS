@@ -61,7 +61,7 @@ def test_tuple_fields_survive_the_round_trip_as_tuples():
     for spec in plan.tasks:
         for name in (
             "capabilities",
-            "prerequisites",
+            "required_environment",
             "depends_on",
             "expected_evidence",
             "measurement_required",
@@ -114,7 +114,7 @@ def test_unknown_keys_are_tolerated():
 def test_missing_optional_fields_fall_back_to_dataclass_defaults():
     payload = _plan().tasks[0].to_dict()
     for defaulted in (
-        "prerequisites",
+        "required_environment",
         "depends_on",
         "expected_evidence",
         "measurement_required",

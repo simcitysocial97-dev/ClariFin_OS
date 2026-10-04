@@ -206,6 +206,16 @@ class ShardResult:
     passed: int = 0
     failed: int = 0
     errors: int = 0
+    # M10-R3 (B2) — the shard's own certification verdict and fingerprint bracket.
+    # A shard is the unit CI actually runs; before this it reported counts and a
+    # status, so the aggregate could not tell a clean shard on a stable tree from a
+    # clean shard on a tree that had moved. Absence defaults to unstable, so a
+    # document written by an older producer is read as "not certified", never as a pass.
+    decision: str = ""
+    decision_reason: str = ""
+    fingerprint_before: dict | None = None
+    fingerprint_after: dict | None = None
+    fingerprint_stable: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -217,7 +227,30 @@ class ShardResult:
             "passed": self.passed,
             "failed": self.failed,
             "errors": self.errors,
+            "decision": self.decision,
+            "decision_reason": self.decision_reason,
+            "fingerprint_before": self.fingerprint_before,
+            "fingerprint_after": self.fingerprint_after,
+            "fingerprint_stable": self.fingerprint_stable,
         }
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> ShardResult:
+        return cls(
+            shard_id=d.get("shard_id", ""),
+            status=d.get("status", ""),
+            exit_code=int(d.get("exit_code", 1)),
+            duration_seconds=float(d.get("duration_seconds", 0.0)),
+            file_count=int(d.get("file_count", 0)),
+            passed=int(d.get("passed", 0)),
+            failed=int(d.get("failed", 0)),
+            errors=int(d.get("errors", 0)),
+            decision=d.get("decision", ""),
+            decision_reason=d.get("decision_reason", ""),
+            fingerprint_before=d.get("fingerprint_before"),
+            fingerprint_after=d.get("fingerprint_after"),
+            fingerprint_stable=bool(d.get("fingerprint_stable", False)),
+        )
 
     @property
     def ok(self) -> bool:
@@ -275,18 +308,13 @@ def read_shard_results(
             rejected.append(f"{path.name}: unsupported schema {schema!r}")
             continue
         try:
-            results.append(
-                ShardResult(
-                    shard_id=payload["shard_id"],
-                    status=payload["status"],
-                    exit_code=int(payload.get("exit_code", 1)),
-                    duration_seconds=float(payload.get("duration_seconds", 0.0)),
-                    file_count=int(payload.get("file_count", 0)),
-                    passed=int(payload.get("passed", 0)),
-                    failed=int(payload.get("failed", 0)),
-                    errors=int(payload.get("errors", 0)),
-                )
-            )
+            # Required keys checked explicitly: from_dict defaults them, and a
+            # document missing its identity must be reported as a *producer* fault
+            # rather than defaulted into a plausible-looking shard.
+            for required in ("shard_id", "status", "exit_code"):
+                if required not in payload:
+                    raise KeyError(required)
+            results.append(ShardResult.from_dict(payload))
         except (KeyError, TypeError, ValueError) as exc:
             malformed.append(f"{path.name}: {type(exc).__name__}: {exc}")
     return results, absent, malformed, rejected
@@ -305,10 +333,17 @@ def verify_shards(
     """Reasons this fan-out must NOT certify. Empty means certified.
 
     Asserts, in order: every expected shard reported, exactly once; every shard passed;
-    and — when supplied — that the independent integrity obligation also passed. This
-    is the runtime-side analogue of the reconcile split-brain guard, and it is what
-    makes "the aggregate job succeeded" mean "every shard succeeded" rather than
-    "the aggregate ran".
+    every shard ran on a repository state that did not move (M10-R3 B2); and — when
+    supplied — that the independent integrity obligation also passed. This is the
+    runtime-side analogue of the reconcile split-brain guard, and it is what makes
+    "the aggregate job succeeded" mean "every shard succeeded" rather than "the
+    aggregate ran".
+
+    The fingerprint clause is the substantive addition. A shard is a 40-minute pytest
+    run on its own runner; before B2 its result document carried counts and a status
+    and nothing about the tree it ran against, so four shards reporting green was
+    consistent with the tree having changed underneath them. A shard document with no
+    bracket is read as **unstable**, never as a pass.
     """
     problems: list[str] = []
     expected = expected_shard_ids(shard_count)
@@ -333,11 +368,25 @@ def verify_shards(
 
     for shard_id in expected:
         result = seen.get(shard_id)
-        if result is not None and not result.ok:
+        if result is None:
+            continue
+        if not result.ok:
             problems.append(
                 f"{shard_id} {result.status} "
                 f"(passed={result.passed} failed={result.failed} "
                 f"errors={result.errors} exit={result.exit_code})"
+            )
+        if not result.fingerprint_stable:
+            before = (result.fingerprint_before or {}).get("fingerprint", "")[:12]
+            after = (result.fingerprint_after or {}).get("fingerprint", "")[:12]
+            problems.append(
+                f"{shard_id} "
+                + (
+                    f"repository fingerprint changed during the shard "
+                    f"({before or 'unknown'} -> {after or 'unknown'})"
+                    if before or after
+                    else "reported no fingerprint bracket; cannot certify it"
+                )
             )
 
     if integrity_ok is False:
@@ -349,10 +398,14 @@ def verify_shards(
 def summarise_shards(results: list[ShardResult]) -> str:
     rows = [
         f"| {r.shard_id} | {r.status} | {r.file_count} | {r.passed} | "
-        f"{r.duration_seconds:.1f} s |"
+        f"{r.duration_seconds:.1f} s | {r.decision or 'unclassified'} | "
+        f"{'stable' if r.fingerprint_stable else 'UNSTABLE'} |"
         for r in sorted(results, key=lambda x: x.shard_id)
     ]
-    header = "| shard | status | files | passed | duration |\n" "|---|---|---|---|---|"
+    header = (
+        "| shard | status | files | passed | duration | decision | fingerprint |\n"
+        "|---|---|---|---|---|---|---|"
+    )
     return header + "\n" + "\n".join(rows)
 
 
@@ -415,6 +468,20 @@ def run_test_shard(
     # log must answer while it runs.
     from runtime.foundation.verification.parallel_executor import ProgressContext
 
+    # M10-R3 (B2) — a shard brackets itself in the shared certification authority.
+    #
+    # A runtime shard is the longest-running unit in CI (a 40-minute pytest run on its
+    # own runner) and it previously reported only counts and a status. It now also
+    # reports the fingerprint bracket it ran inside, so a shard that ran for forty
+    # minutes against a tree that moved underneath it cannot be aggregated as a pass.
+    from runtime.foundation.verification.execution_orchestrator import (
+        CertificationRun,
+        CompletionState,
+    )
+
+    certification = CertificationRun(plan_id=f"runtime-shard:{shard_id}")
+    certification.__enter__()
+
     _emit(
         f"[runtime-shard {shard_index + 1}/{shard_count}] shard_id={shard_id} "
         f"files={len(shard_files)}"
@@ -432,6 +499,7 @@ def run_test_shard(
             timeout_seconds=timeout_seconds,
         ),
     )
+    certification.__exit__(None, None, None)
 
     output = result.stdout + "\n" + result.stderr
     passed = _count(output, r"(\d+) passed")
@@ -440,10 +508,23 @@ def run_test_shard(
 
     if result.timed_out:
         status, exit_code = "timed_out", 124
-    elif result.infra_error or result.exit_code != 0:
+        state = CompletionState.TIMEOUT
+        detail = f"exceeded the {timeout_seconds}s shard budget"
+    elif result.infra_error:
+        status, exit_code = "failed", 127
+        state = CompletionState.INFRASTRUCTURE
+        detail = result.infra_error
+    elif result.exit_code != 0:
         status, exit_code = "failed", int(result.exit_code or 1)
+        state = CompletionState.FAILED
+        detail = f"exit {result.exit_code}"
     else:
         status, exit_code = "passed", 0
+        state, detail = CompletionState.PASS, ""
+
+    certification.record(shard_id, state, is_mandatory=True, detail=detail)
+    decision, reason = certification.decide()
+    outcome = certification.to_dict()
 
     shard = ShardResult(
         shard_id=shard_id,
@@ -454,6 +535,11 @@ def run_test_shard(
         passed=passed,
         failed=failed,
         errors=errors,
+        decision=decision.value,
+        decision_reason=reason,
+        fingerprint_before=outcome["fingerprint_before"],
+        fingerprint_after=outcome["fingerprint_after"],
+        fingerprint_stable=outcome["fingerprint_stable"],
     )
     result_out.parent.mkdir(parents=True, exist_ok=True)
     result_out.write_text(json.dumps(shard.to_dict(), indent=2), encoding="utf-8")

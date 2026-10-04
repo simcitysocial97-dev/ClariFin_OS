@@ -104,6 +104,17 @@ class ProfileLegResult:
     duration_seconds: float
     stdout_path: str = ""
     stderr_path: str = ""
+    # M10-R3 (B2). The leg's own certification verdict and the fingerprint bracket it
+    # was executed inside. Before this a leg reported only a status and an exit code,
+    # so the aggregate could not tell a clean run on a stable tree from a clean run on
+    # a tree that had moved underneath it — and it had no way to say so even after the
+    # fact. Defaults keep an older document readable; absence is treated as
+    # "not certified" by the gate rather than as a pass.
+    decision: str = ""
+    decision_reason: str = ""
+    fingerprint_before: dict | None = None
+    fingerprint_after: dict | None = None
+    fingerprint_stable: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -115,7 +126,31 @@ class ProfileLegResult:
             "duration_seconds": self.duration_seconds,
             "stdout_path": self.stdout_path,
             "stderr_path": self.stderr_path,
+            "decision": self.decision,
+            "decision_reason": self.decision_reason,
+            "fingerprint_before": self.fingerprint_before,
+            "fingerprint_after": self.fingerprint_after,
+            "fingerprint_stable": self.fingerprint_stable,
         }
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> ProfileLegResult:
+        return cls(
+            profile=d.get("profile", ""),
+            task_id=d.get("task_id", ""),
+            task_name=d.get("task_name", ""),
+            status=d.get("status", ""),
+            exit_code=int(d.get("exit_code", 1)),
+            duration_seconds=float(d.get("duration_seconds", 0.0)),
+            stdout_path=d.get("stdout_path", ""),
+            stderr_path=d.get("stderr_path", ""),
+            decision=d.get("decision", ""),
+            decision_reason=d.get("decision_reason", ""),
+            fingerprint_before=d.get("fingerprint_before"),
+            fingerprint_after=d.get("fingerprint_after"),
+            # Absent means unknown, and unknown is not stable.
+            fingerprint_stable=bool(d.get("fingerprint_stable", False)),
+        )
 
     @property
     def ok(self) -> bool:
@@ -212,18 +247,20 @@ def read_leg_results(directory: Path) -> tuple[list[ProfileLegResult], list[str]
     for path in sorted(Path(directory).glob("leg-*.json")):
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
-            results.append(
-                ProfileLegResult(
-                    profile=payload["profile"],
-                    task_id=payload["task_id"],
-                    task_name=payload.get("task_name", ""),
-                    status=payload["status"],
-                    exit_code=int(payload.get("exit_code", 1)),
-                    duration_seconds=float(payload.get("duration_seconds", 0.0)),
-                    stdout_path=payload.get("stdout_path", ""),
-                    stderr_path=payload.get("stderr_path", ""),
-                )
-            )
+            if not isinstance(payload, dict):
+                raise ValueError("leg document is not a JSON object")
+            # Required keys are checked explicitly even though from_dict defaults
+            # them. A leg document missing its identity is a *producer* fault and
+            # must be reported as unreadable; defaulting it to "" would produce a
+            # leg with an empty task_id that the gate then treats as an unknown
+            # obligation, converting a producer bug into a confusing plan mismatch.
+            for required in ("profile", "task_id", "status", "exit_code"):
+                if required not in payload:
+                    raise KeyError(required)
+            # via from_dict so the certification fields (decision, fingerprint
+            # bracket) are populated. Constructing the dataclass field-by-field here
+            # would silently drop them and every leg would read as "unstable".
+            results.append(ProfileLegResult.from_dict(payload))
         except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
             unreadable.append(f"{path.name}: {type(exc).__name__}")
     return results, unreadable
@@ -232,12 +269,20 @@ def read_leg_results(directory: Path) -> tuple[list[ProfileLegResult], list[str]
 def verify_legs(profile_op: str, results: list[ProfileLegResult]) -> list[str]:
     """Return the reasons this fan-out must NOT certify. Empty means certified.
 
-    Three ways to fail, all of them obligations:
+    Four ways to fail, all of them obligations:
 
     1. a canonical obligation produced no result at all (missing leg);
     2. an obligation reported a non-passing status;
     3. an unknown task id was reported — the plan and the legs disagree, which is the
-       same split-brain risk the reconcile shard merge guards against.
+       same split-brain risk the reconcile shard merge guards against;
+    4. **a leg ran on a repository state that moved** (M10-R3 B2).
+
+    The fourth is new and is the point of the exercise. Until B2 a leg reported only a
+    status and an exit code, so "every leg passed" meant "no shell exited non-zero" —
+    a claim about exit codes, not a certification. A leg now carries the fingerprint
+    bracket it ran inside, and this gate refuses the fan-out when any leg's bracket
+    moved. A document with no bracket is treated as **unstable**, not as a pass: an
+    older producer's document must not be readable as a clean leg.
     """
     expected = expected_obligation_ids(profile_op)
     expected_set = set(expected)
@@ -261,11 +306,25 @@ def verify_legs(profile_op: str, results: list[ProfileLegResult]) -> list[str]:
 
     for task_id in expected:
         result = seen.get(task_id)
-        if result is not None and not result.ok:
+        if result is None:
+            continue
+        if not result.ok:
             problems.append(
                 f"{task_id} ({result.task_name}) {result.status}"
                 + (f" exit={result.exit_code}" if result.exit_code else "")
             )
+        # Checked independently of status: a leg can pass its own command while the
+        # tree it ran against is not the tree the gate is about to certify.
+        if not result.fingerprint_stable:
+            before = (result.fingerprint_before or {}).get("fingerprint", "")[:12]
+            after = (result.fingerprint_after or {}).get("fingerprint", "")[:12]
+            detail = (
+                f"repository fingerprint changed during the leg "
+                f"({before or 'unknown'} -> {after or 'unknown'})"
+                if before or after
+                else "leg reported no fingerprint bracket; cannot certify it"
+            )
+            problems.append(f"{task_id} ({result.task_name}) {detail}")
 
     unknown = sorted(set(seen) - expected_set)
     if unknown:
@@ -281,6 +340,8 @@ def summarise_legs(results: list[ProfileLegResult]) -> str:
     """A stable, deterministic summary for the job summary and logs."""
     rows = [
         f"| {r.task_id} | {r.task_name} | {r.status} | {r.duration_seconds:.1f} s |"
+        f" {r.decision or 'unclassified'} |"
+        f" {'stable' if r.fingerprint_stable else 'UNSTABLE'} |"
         for r in sorted(results, key=lambda x: x.task_id)
     ]
     return "\n".join(rows)
@@ -325,6 +386,21 @@ def run_obligation_leg(
     stdout_path = log_root / f"{task.id}-stdout.log"
     stderr_path = log_root / f"{task.id}-stderr.log"
 
+    # M10-R3 (B2) — a leg brackets itself in the shared certification authority.
+    #
+    # A CI leg is the unit that actually runs in the matrix, so it is the unit that
+    # must be able to say "the repository was provably unchanged while I ran". Before
+    # this it could not: `ProfileLegResult` carried a status, an exit code and two log
+    # paths, and nothing else. The gate read those documents and had no way to
+    # distinguish "ran clean" from "ran clean on a tree that had moved".
+    from runtime.foundation.verification.execution_orchestrator import (
+        CertificationRun,
+        CompletionState,
+    )
+
+    certification = CertificationRun(plan_id=f"leg:{profile_op}:{task_id}")
+    certification.__enter__()
+
     last = None
     for index, command in enumerate(task.commands):
         suffix = f"-{index}" if len(task.commands) > 1 else ""
@@ -347,18 +423,35 @@ def run_obligation_leg(
         if last.infra_error or last.timed_out or last.exit_code != 0:
             break
 
+    certification.__exit__(None, None, None)
+
     if last is None:
         status, exit_code, duration = "failed", 127, 0.0
+        state, detail = CompletionState.INFRASTRUCTURE, "no command was executed"
     elif last.timed_out:
         status, exit_code, duration = "timed_out", 124, last.duration_seconds
-    elif last.infra_error or last.exit_code != 0:
+        state = CompletionState.TIMEOUT
+        detail = f"exceeded the {timeout_seconds}s obligation budget"
+    elif last.infra_error:
+        status, exit_code, duration = "failed", 127, last.duration_seconds
+        state = CompletionState.INFRASTRUCTURE
+        detail = last.infra_error
+    elif last.exit_code != 0:
         status, exit_code, duration = (
             "failed",
             int(last.exit_code or 1),
             (last.duration_seconds),
         )
+        state = CompletionState.FAILED
+        detail = f"exit {last.exit_code}"
     else:
         status, exit_code, duration = "passed", 0, last.duration_seconds
+        state, detail = CompletionState.PASS, ""
+
+    certification.record(task.id, state, is_mandatory=True, detail=detail)
+    decision, reason = certification.decide()
+    outcome = certification.to_dict()
+    outcome["topology"] = f"leg:{profile_op}"
 
     result = ProfileLegResult(
         profile=profile_op,
@@ -369,6 +462,13 @@ def run_obligation_leg(
         duration_seconds=round(duration, 2),
         stdout_path=str(stdout_path),
         stderr_path=str(stderr_path),
+        # The leg's own classification, alongside its status. The gate can now refuse a
+        # leg whose tree moved without re-deriving anything.
+        decision=decision.value,
+        decision_reason=reason,
+        fingerprint_before=outcome["fingerprint_before"],
+        fingerprint_after=outcome["fingerprint_after"],
+        fingerprint_stable=outcome["fingerprint_stable"],
     )
     result_out.parent.mkdir(parents=True, exist_ok=True)
     result_out.write_text(json.dumps(result.to_dict(), indent=2), encoding="utf-8")

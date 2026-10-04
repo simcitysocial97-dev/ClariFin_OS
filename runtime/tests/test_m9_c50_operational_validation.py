@@ -789,8 +789,27 @@ class TestProfileCacheWiring:
         from runtime.foundation.verification.parallel_executor import CommandResult
 
         def _fake_worker(
-            command, *, stdout_path, stderr_path, timeout_seconds, cwd=None, env=None
+            command,
+            *,
+            stdout_path,
+            stderr_path,
+            timeout_seconds,
+            cwd=None,
+            env=None,
+            **_ignored,
         ):
+            # M10-R3: `_ignored` is load-bearing, not decoration. This stub pinned an
+            # exact keyword signature and therefore did NOT match the real call, which
+            # passes `progress=`. Every task raised TypeError inside the worker, and
+            # `execute_tasks_in_parallel` returns the exception object rather than a
+            # result dict. The pre-B2 verdict logic read only dicts, so an all-exception
+            # run produced an empty outcome set, no detectable failure, and **exit code
+            # 0 with `final_decision="certified"`** — this test passed because the code
+            # under test failed open, not because the profile passed.
+            #
+            # The same trap is already documented in the sibling m9c57 timeout test,
+            # which uses the same `_ignored` pattern. Both now absorb instrumentation
+            # kwargs so they remain coupled to behaviour rather than to call shape.
             stdout_path.parent.mkdir(parents=True, exist_ok=True)
             stdout_path.write_text("", encoding="utf-8")
             stderr_path.write_text("", encoding="utf-8")

@@ -8,7 +8,7 @@ capability:
 * command
 * purpose
 * accepted scope
-* prerequisites
+* required_environment (tool, path, and variable forms)
 * evidence produced
 * evidence consumed
 * failure semantics
@@ -98,10 +98,11 @@ class CommandInventoryEntry:
     accepted_scope: list[VerificationScope] = field(default_factory=list)
     category: CommandCategory = CommandCategory.QUALITY_GATE
 
-    # Prerequisites
-    prerequisites: list[str] = field(
-        default_factory=list
-    )  # e.g., [".venv", "backend/pyproject.toml"]
+    # Requirements. Same vocabulary as ExecutionTaskSpec.required_environment, which
+    # is what this feeds — one declaration language, enforced in one place
+    # (execution_orchestrator.verify_environment_requirement).
+    # e.g., [".venv", "backend/pyproject.toml", "pytest", "FINANCE_DB_PATH"]
+    required_environment: list[str] = field(default_factory=list)
     requires_git: bool = False
     requires_docker: bool = False
     requires_network: bool = False
@@ -329,7 +330,7 @@ class CommandInventoryBuilder:
             purpose=workflow.description,
             accepted_scope=workflow.scopes,
             category=category,
-            prerequisites=[".venv", "backend/pyproject.toml"],
+            required_environment=[".venv", "backend/pyproject.toml"],
             requires_git=True,
             failure_semantics=failure_semantics,
             escalation_behavior=cast(
@@ -366,7 +367,7 @@ class CommandInventoryBuilder:
                 command="verify.py status",
                 purpose="Show workspace status",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=5,
             ),
             CommandInventoryEntry(
@@ -374,7 +375,7 @@ class CommandInventoryBuilder:
                 command="verify.py metrics",
                 purpose="Show verification metrics",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=5,
             ),
             CommandInventoryEntry(
@@ -382,7 +383,7 @@ class CommandInventoryBuilder:
                 command="verify.py diagnose",
                 purpose="Diagnose impact of changed files",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=10,
             ),
@@ -391,7 +392,7 @@ class CommandInventoryBuilder:
                 command="verify.py affected",
                 purpose="Show affected components and verification plan",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=10,
             ),
@@ -400,7 +401,7 @@ class CommandInventoryBuilder:
                 command="verify.py plan --tier <local|pr|deep>",
                 purpose="Emit tier-aware verification plan manifest",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=10,
             ),
@@ -409,7 +410,7 @@ class CommandInventoryBuilder:
                 command="verify.py mutation [--smoke|--target <engine>|--restore]",
                 purpose="Run mutation testing (authoritative full campaign or targeted)",
                 category=CommandCategory.MUTATION_TEST,
-                prerequisites=[".venv", "backend/pyproject.toml"],
+                required_environment=[".venv", "backend/pyproject.toml"],
                 requires_git=True,
                 failure_semantics=FailureSemantics.INFRASTRUCTURE_FAILED,
                 escalation_behavior="repository_wide",
@@ -430,7 +431,7 @@ class CommandInventoryBuilder:
                 command="verify.py measurement-truth <record.json> [--json]",
                 purpose="Inspect a measurement truth record",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=5,
                 evidence_consumed=["measurement_truth"],
             ),
@@ -439,7 +440,7 @@ class CommandInventoryBuilder:
                 command="verify.py measurement coverage <scope>",
                 purpose="Measure coverage for a scope and produce measurement truth record",
                 category=CommandCategory.COVERAGE_MEASUREMENT,
-                prerequisites=[".venv", "backend/pyproject.toml"],
+                required_environment=[".venv", "backend/pyproject.toml"],
                 requires_git=True,
                 estimated_duration_seconds=1800,
                 measurement_kinds=["coverage"],
@@ -450,7 +451,7 @@ class CommandInventoryBuilder:
                 command="verify.py mutation-intel [survivor_id] [--json]",
                 purpose="Inspect durable survivor intelligence",
                 category=CommandCategory.INTELLIGENCE,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=5,
                 evidence_consumed=["survivor_intel"],
             ),
@@ -459,7 +460,7 @@ class CommandInventoryBuilder:
                 command="verify.py forensic-diagnose <engine>",
                 purpose="Forensic diagnosis of mutation survivors",
                 category=CommandCategory.INTELLIGENCE,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=300,
                 evidence_consumed=["survivor_intel", "measurement_truth"],
@@ -469,7 +470,7 @@ class CommandInventoryBuilder:
                 command="verify.py strengthen-analyze <engine>",
                 purpose="Analyze survivors for strengthening opportunities",
                 category=CommandCategory.INTELLIGENCE,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=300,
                 requires_human_authorization=True,
@@ -481,7 +482,7 @@ class CommandInventoryBuilder:
                 command="verify.py env-check",
                 purpose="Verify canonical .venv environment",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=10,
             ),
             CommandInventoryEntry(
@@ -489,7 +490,7 @@ class CommandInventoryBuilder:
                 command="verify.py env-contract",
                 purpose="Build authoritative environment contract for reproducible verification (C55)",
                 category=CommandCategory.DIAGNOSTIC,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 estimated_duration_seconds=5,
             ),
             CommandInventoryEntry(
@@ -497,7 +498,7 @@ class CommandInventoryBuilder:
                 command="verify.py audit",
                 purpose="Run engineering platform certification audit",
                 category=CommandCategory.CERTIFICATION,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=300,
                 is_certifiable=True,
@@ -507,7 +508,7 @@ class CommandInventoryBuilder:
                 command="verify.py api-contracts",
                 purpose="Run API contract integrity gate",
                 category=CommandCategory.CONTRACT_TEST,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=180,
                 is_certifiable=True,
@@ -518,7 +519,7 @@ class CommandInventoryBuilder:
                 command="verify.py contract-governance",
                 purpose="Run contract governance certification",
                 category=CommandCategory.CERTIFICATION,
-                prerequisites=[".venv"],
+                required_environment=[".venv"],
                 requires_git=True,
                 estimated_duration_seconds=600,
                 is_certifiable=True,
@@ -542,7 +543,7 @@ class CommandInventoryBuilder:
                     purpose=f"Minimum verification for {contract.name}",
                     profile_name=contract.minimum_verification_profile,
                     category=CommandCategory.QUALITY_GATE,
-                    prerequisites=[".venv", "backend/pyproject.toml"],
+                    required_environment=[".venv", "backend/pyproject.toml"],
                     requires_git=True,
                     failure_semantics=FailureSemantics.VERIFICATION_FAILED,
                     escalation_behavior="targeted_mutation",
@@ -585,7 +586,7 @@ class CommandInventoryBuilder:
                     purpose=f"Escalation verification for {contract.name} (level {i+1})",
                     profile_name=profile,
                     category=CommandCategory.QUALITY_GATE,
-                    prerequisites=[".venv", "backend/pyproject.toml"],
+                    required_environment=[".venv", "backend/pyproject.toml"],
                     requires_git=True,
                     failure_semantics=FailureSemantics.VERIFICATION_FAILED,
                     escalation_behavior=(
@@ -639,7 +640,7 @@ def format_inventory_entry(entry: CommandInventoryEntry) -> str:
     lines.append(
         f"  Scope: {', '.join(s.value for s in entry.accepted_scope) or 'any'}"
     )
-    lines.append(f"  Prerequisites: {', '.join(entry.prerequisites) or 'none'}")
+    lines.append(f"  Prerequisites: {', '.join(entry.required_environment) or 'none'}")
     lines.append(f"  Evidence produced: {', '.join(entry.evidence_produced) or 'none'}")
     lines.append(f"  Evidence consumed: {', '.join(entry.evidence_consumed) or 'none'}")
     lines.append(f"  Measurements: {', '.join(entry.measurement_kinds) or 'none'}")
