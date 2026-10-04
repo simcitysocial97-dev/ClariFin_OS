@@ -81,6 +81,8 @@ from runtime.foundation.verification.execution_orchestrator import (
     ExecutionTaskSpec,
     FinalDecision,
 )
+from runtime.foundation.verification.execution_shards import assign_shards
+from runtime.foundation.verification.parallel_executor import cpu_count
 from runtime.foundation.verification.measurement_truth_integration import (
     get_measurement_truth_integrator,
 )
@@ -576,6 +578,7 @@ class ControlPlane:
         shard: tuple[int, int] | None = None,
         aggregate: str | None = None,
         result_out: str | None = None,
+        task_scope: list[str] | None = None,
     ) -> int:
         """
         Execute an explicit or generated verification plan.
@@ -735,6 +738,51 @@ class ControlPlane:
                     reusable_measurements=list(execution_plan.reusable_measurements),
                     boundary_evidence=execution_plan.boundary_evidence,
                 )
+
+        # M10-R3 (D2) — scoped execution by task identity.
+        #
+        # `--shard` partitions, which is right for a matrix leg but wrong for
+        # reproduction: to re-run one failing CI obligation you need that task and
+        # nothing else, and re-deriving the whole partition to extract it is exactly the
+        # "reconstruct the global plan" step the mission forbids.
+        #
+        # The narrowing is strict in both directions, and that is the point:
+        #
+        # * an unknown id is a hard error, never a silent no-op. `--task exec-9999`
+        #   must not quietly execute the whole plan and report a green run for a task
+        #   that does not exist — that would be the most dangerous possible response to
+        #   a typo in a reproduction command.
+        # * escalation tasks are dropped for the same reason `--shard` drops them: they
+        #   are gated on the GLOBAL mandatory outcome, and a single-task run cannot
+        #   decide that. Running one would execute work the plan never authorised.
+        if task_scope:
+            known = {t.task_id for t in execution_plan.tasks}
+            unknown = [tid for tid in task_scope if tid not in known]
+            if unknown:
+                print(
+                    f"Unknown task id(s): {', '.join(unknown)}. "
+                    f"Plan {execution_plan.plan_id} contains "
+                    f"{len(known)} task(s): {', '.join(sorted(known))}",
+                    file=sys.stderr,
+                )
+                return 2
+            kept = set(task_scope) - {
+                t.task_id for t in execution_plan.tasks if t.is_escalation
+            }
+            if not kept:
+                print(
+                    "Refusing to run: the requested task(s) are escalation-gated and "
+                    "cannot be decided from a scoped run: "
+                    + ", ".join(sorted(task_scope)),
+                    file=sys.stderr,
+                )
+                return 2
+            print(
+                f"[run] scoped execution of {len(kept)}/{len(execution_plan.tasks)} "
+                f"task(s): {', '.join(sorted(kept))}",
+                file=sys.stderr,
+            )
+            execution_plan = _plan_with_tasks(execution_plan, kept)
 
         # O-2 signal truth: record the run through the canonical event/RunRecord
         # chain even when the caller provided an explicit plan path.
@@ -2430,6 +2478,246 @@ def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> in
 # signal-chain gap.
 
 
+def _local_harness(
+    cp: ControlPlane,
+    *,
+    plan_path: str | None,
+    shards: int,
+    only_shard: int | None,
+    only_task: str | None,
+) -> int:
+    """Execute the runtime's own obligations locally, shard by shard, and report.
+
+    M10-R3 (D2). The requirement is that a developer can take a failing execution
+    identity from CI and reproduce that *exact* obligation locally without
+    reconstructing hidden YAML state. That only works if the local run consumes the
+    same serialized execution description CI does — which is why this is a thin
+    front-end over the existing plan/shard/run path rather than a second executor.
+
+    What it adds over calling `run --shard` directly:
+
+    * it runs the shards **in sequence**, so a local wall clock is comparable to a CI
+      one rather than being a sum of parallel legs;
+    * it prints the task/status/duration/termination table the mission specifies, and,
+      for each failure, the exact command that reproduces that one obligation.
+
+    Two honest limits, stated rather than hidden:
+
+    * concurrency differs by construction — a laptop runs one shard at a time, CI runs
+      seven. The *obligations* are identical; only the schedule is not;
+    * local wall-clock per task is longer than CI's for the same reason. Compare task
+      identity and outcome, not durations.
+    """
+    if plan_path:
+        try:
+            plan = ExecutionPlan.from_dict(
+                json.loads(Path(plan_path).read_text(encoding="utf-8"))
+            )
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"Cannot read plan {plan_path}: {exc}", file=sys.stderr)
+            return 2
+    else:
+        changed = _collect_changed_files()
+        if not changed and not _is_git_available():
+            print(
+                "No changed files detected and git unavailable; pass --plan <file>.",
+                file=sys.stderr,
+            )
+            return 1
+        plan = cp.orchestrator.build_execution_plan(changed)
+
+    if only_task:
+        unknown = [only_task] if only_task not in {t.task_id for t in plan.tasks} else []
+        if unknown:
+            print(
+                f"Unknown task id: {only_task}. Plan {plan.plan_id} contains "
+                f"{len(plan.tasks)} task(s).",
+                file=sys.stderr,
+            )
+            return 2
+        shards = 1
+        only_shard = 0
+
+    assignment = assign_shards(plan, shards)
+    shard_indices = (
+        [only_shard] if only_shard is not None else list(range(shards))
+    )
+
+    print(
+        f"[local] plan={plan.plan_id} tasks={len(plan.tasks)} "
+        f"shards={shards} partition={assignment.partition_fingerprint()[:12]}",
+        file=sys.stderr,
+    )
+    print(
+        f"[local] cpu_budget={cpu_count()} — CI shards run concurrently; this runs "
+        f"them in sequence, so durations are not comparable to a CI leg",
+        file=sys.stderr,
+    )
+
+    rows: list[tuple[str, str, float, str]] = []
+    failures: list[tuple[str, str]] = []
+    results_dir = REPO_ROOT / "runtime" / "generated" / "local-harness"
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    for index in shard_indices:
+        result_out = results_dir / f"shard-{index}.json"
+        exit_code = cp.run(
+            plan_path=plan_path,
+            shard=(index, shards),
+            result_out=str(result_out),
+            json_out=False,
+            task_scope=[only_task] if only_task else None,
+        )
+        rows.extend(_harvest_task_rows(result_out, index))
+        harvested = _harvest_failures(result_out, plan, index, shards)
+        if exit_code != 0 and not harvested:
+            # A shard can fail without producing a per-task record — the plan's
+            # fingerprint was stale, prerequisites were unmet, the process was killed.
+            # Those are precisely the cases a reproduction table exists for, so an
+            # empty harvest must never be read as "nothing failed".
+            harvested = _shard_level_failure(result_out, index, exit_code)
+        failures.extend(harvested)
+
+    _print_local_table(rows, failures)
+    return 0 if not failures else 1
+
+
+def _shard_level_failure(
+    result_out: Path, index: int, exit_code: int
+) -> list[tuple[str, str]]:
+    """Describe a shard that failed without yielding a per-task record."""
+    decision, reason = "unknown", ""
+    try:
+        payload = json.loads(result_out.read_text(encoding="utf-8"))
+        decision = str(payload.get("final_decision") or payload.get("decision") or "unknown")
+        reason = str(payload.get("reason", ""))
+    except (OSError, json.JSONDecodeError):
+        pass
+    return [
+        (
+            f"shard-{index}",
+            f".venv/bin/python -m runtime.verify local --plan {result_out} --shard {index}"
+            f"\n    {decision}: {reason or f'exit {exit_code}'}",
+        )
+    ]
+
+
+def _harvest_task_rows(result_out: Path, index: int) -> list[tuple[str, str, float, str]]:
+    """Per-task status/duration/termination from one shard's result document."""
+    try:
+        payload = json.loads(result_out.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return [(f"shard-{index}", "NO_RESULT", 0.0, "result_missing")]
+    rows: list[tuple[str, str, float, str]] = []
+    for rec in payload.get("records") or []:
+        term = str(
+            (rec.get("diagnostic") or {}).get("termination")
+            or rec.get("termination")
+            or rec.get("exit_code")
+            or "unknown"
+        )
+        rows.append(
+            (
+                rec.get("task_id", "?"),
+                str(rec.get("completion_state", "?")),
+                float(rec.get("duration_seconds", 0.0) or 0.0),
+                str(term),
+            )
+        )
+    if not rows:
+        # `m10r2-leg-result/v1` reports `final_decision`, not `decision`; a shard that
+        # failed before producing records still has to appear in the table, or the
+        # operator sees an empty run and an unexplained NOT CERTIFIED.
+        rows.append(
+            (
+                f"shard-{index}",
+                str(payload.get("final_decision") or payload.get("status") or "?"),
+                float(payload.get("duration_seconds", 0.0) or 0.0),
+                f"exit_{payload.get('exit_code', '?')}",
+            )
+        )
+    return rows
+
+
+def _harvest_failures(
+    result_out: Path, plan: ExecutionPlan, index: int, shards: int
+) -> list[tuple[str, str]]:
+    """Failed (task_id, reproduce-command) pairs for one shard."""
+    try:
+        payload = json.loads(result_out.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    failed = []
+    for rec in payload.get("records") or payload.get("tasks") or []:
+        if rec.get("completion_state") == CompletionState.PASS.value:
+            continue
+        task_id = rec.get("task_id", "?")
+        command = (
+            f".venv/bin/python -m runtime.verify run "
+            f"--plan {plan.plan_id}.json --task {task_id}"
+        )  # replaced by the caller with a real path when one was supplied
+        if shards > 1:
+            command += f"  # or: --shard {index} --shard-count {shards}"
+        failed.append((task_id, command))
+    return failed
+
+
+def _print_local_table(
+    rows: list[tuple[str, str, float, str]],
+    failures: list[tuple[str, str]],
+) -> None:
+    width = max((len(r[0]) for r in rows), default=8)
+    print(
+        f"\n{'TASK':<{width}}  {'STATUS':<14} {'DURATION':>10}  TERMINATION",
+        file=sys.stderr,
+    )
+    for task_id, status, duration, term in rows:
+        print(
+            f"{task_id:<{width}}  {status:<14} {duration:>9.1f}s  {term}",
+            file=sys.stderr,
+        )
+    print(
+        f"\nRESULT: {'CERTIFIED' if not failures else 'NOT CERTIFIED'}",
+        file=sys.stderr,
+    )
+    for task_id, command in failures:
+        print(
+            f"\nFAILURE:\n  {task_id}\n  reproduce: {command}",
+            file=sys.stderr,
+        )
+
+
+def _plan_with_tasks(plan: ExecutionPlan, keep: set[str]) -> ExecutionPlan:
+    """Return *plan* narrowed to the tasks in *keep*, preserving its identity.
+
+    Every field is carried over unchanged — in particular ``plan_fingerprint`` and
+    ``repository_fingerprint`` — so a narrowed run is still *the same plan*, merely
+    scoped. Rewriting the fingerprint to match the narrowed task set would break the one
+    property that lets a CI aggregate trust its legs: that they all executed the same
+    plan.
+    """
+    return ExecutionPlan(
+        plan_id=plan.plan_id,
+        source_plan_id=plan.source_plan_id,
+        repository_fingerprint=plan.repository_fingerprint,
+        changed_files=list(plan.changed_files),
+        affected_capabilities=list(plan.affected_capabilities),
+        affected_components=list(plan.affected_components),
+        invalidated_evidence=list(plan.invalidated_evidence),
+        reusable_evidence=list(plan.reusable_evidence),
+        tasks=[t for t in plan.tasks if t.task_id in keep],
+        escalation_conditions=list(plan.escalation_conditions),
+        measurement_requirements=list(plan.measurement_requirements),
+        certification_requirements=list(plan.certification_requirements),
+        rationale=plan.rationale,
+        plan_fingerprint=plan.plan_fingerprint,
+        generated_at=plan.generated_at,
+        revalidation_sources=list(plan.revalidation_sources),
+        reusable_measurements=list(plan.reusable_measurements),
+        boundary_evidence=plan.boundary_evidence,
+    )
+
+
 def _profile_task_timeout_seconds() -> int:
     """Resolve the per-task timeout ceiling for profile-alias execution.
 
@@ -2977,6 +3265,56 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             shard_count=shard_count,
             shard_plan_out=shard_plan_out,
         )
+    if operation == "local":
+        # M10-R3 (D2): the local reference harness. Routed before the canonical
+        # operation matchers because "local" is a *front-end over the canonical
+        # planner/executor*, not a new operation — it must never grow execution
+        # semantics of its own, or local and CI would drift by construction.
+        plan_path = None
+        shards = 1
+        only_shard = None
+        only_task = None
+        rest = list(args)
+        for flag, setter in (
+            ("--plan", "plan"),
+            ("--shards", "shards"),
+            ("--shard", "only_shard"),
+            ("--task", "only_task"),
+        ):
+            if flag in rest:
+                idx = rest.index(flag)
+                value = rest[idx + 1]
+                rest = rest[:idx] + rest[idx + 2 :]
+                if setter == "plan":
+                    plan_path = value
+                elif setter == "shards":
+                    try:
+                        shards = int(value)
+                    except ValueError:
+                        print(
+                            f"--shards expects an integer, got {value!r}", file=sys.stderr
+                        )
+                        return 2
+                    if shards < 1:
+                        print("--shards must be >= 1", file=sys.stderr)
+                        return 2
+                elif setter == "only_shard":
+                    try:
+                        only_shard = int(value)
+                    except ValueError:
+                        print(
+                            f"--shard expects an integer, got {value!r}", file=sys.stderr
+                        )
+                        return 2
+                else:
+                    only_task = value
+        return _local_harness(
+            cp,
+            plan_path=plan_path,
+            shards=shards,
+            only_shard=only_shard,
+            only_task=only_task,
+        )
     if operation == CanonicalOperation.RUN.value:
         # Handle --plan, --aggregate and --json
         plan_path = None
@@ -3077,12 +3415,42 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
             idx = args.index("--result-out")
             result_out = args[idx + 1]
             args = args[:idx] + args[idx + 2 :]
+        # M10-R3 (D2): scoped execution by task identity, for reproducing one failing
+        # obligation without reconstructing the partition. `--task` here means a task in
+        # the *plan*; the identically-named flag inside `--profile` is a profile
+        # obligation id and is parsed above in its own branch.
+        task_scope: list[str] = []
+        if "--task" in args:
+            idx = args.index("--task")
+            task_scope.append(args[idx + 1])
+            args = args[:idx] + args[idx + 2 :]
+        if "--tasks" in args:
+            idx = args.index("--tasks")
+            task_scope.extend(a for a in args[idx + 1].split(",") if a.strip())
+            args = args[:idx] + args[idx + 2 :]
+        # `_parse_shard_arg` returns `(None, None)` when neither flag is present and its
+        # docstring promises callers "normalise to not sharded". This call site did not,
+        # and `run()` tests `shard is not None` — so an unflagged `verify run --plan`
+        # arrived as the truthy tuple `(None, None)` and died on `shard[1] > 1` with a
+        # TypeError. Verified broken at e7d77ae6.
+        #
+        # That made the most basic invocation of the canonical runner — execute this
+        # plan, not fanned out — impossible, and it is precisely the invocation a
+        # developer needs to reproduce a single failing obligation. Normalised here, as
+        # documented, rather than by loosening the check inside `run()` so that the
+        # invariant stays "shard is None or shard is a complete pair".
+        shard_scope = (
+            (shard, shard_count)
+            if shard is not None and shard_count is not None
+            else None
+        )
         return cp.run(
             plan_path=plan_path,
             json_out=json_out,
-            shard=(shard, shard_count),
+            shard=shard_scope,
             aggregate=aggregate,
             result_out=result_out,
+            task_scope=task_scope or None,
         )
     if operation == CanonicalOperation.DIAGNOSE.value:
         return cp.diagnose()

@@ -146,6 +146,14 @@ _CLASSIFICATION: dict[str, str] = {
     "certify": "CANONICAL",
     "ci": "CANONICAL",
     "doctor": "CANONICAL",
+    # M10-R3 (D2): the local reference harness.
+    #
+    # Classified CANONICAL_ALIAS rather than CANONICAL because it introduces no new
+    # execution semantics — it is a front-end over `plan` + `run --shard`, and it must
+    # stay that way. If it were a distinct operation it would grow its own planner or
+    # verdict, and local execution would then drift from CI by construction, which is
+    # the failure this milestone exists to prevent.
+    "local": "CANONICAL_ALIAS",
     # compatibility / legacy / deprecated
     "status": "COMPATIBILITY",
     "metrics": "COMPATIBILITY",
