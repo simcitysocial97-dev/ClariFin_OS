@@ -69,6 +69,14 @@ class ObligationKind(str, Enum):
     CAPABILITY = "capability"
     INTEGRATION = "integration"
     E2E = "e2e"
+    REGISTRY_MAPPING = "registry_mapping"
+    """A review obligation: a changed capability has no verification-registry mapping.
+
+    M10-R3 (L6). Previously expressed as a ``capability`` task whose command was
+    ``echo 'UNMAPPED capabilities ...' && exit 1`` — which made a registry fact
+    indistinguishable from a failing test. It is a kind of obligation in its own right
+    and now says so in the one vocabulary that names obligation kinds.
+    """
 
 
 @dataclass(frozen=True, slots=True)

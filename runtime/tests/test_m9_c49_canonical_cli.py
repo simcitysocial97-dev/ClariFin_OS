@@ -327,10 +327,20 @@ def test_obligation_model_has_closed_disposition_vocabulary():
 
 
 def test_obligation_model_has_closed_kind_vocabulary():
-    """The obligation model has exactly 10 obligation kinds (C58 added integration+e2e)."""
+    """The obligation model has exactly 11 obligation kinds.
+
+    Ten from C58 (which added integration + e2e), plus `registry_mapping` from M10-R3 L6.
+
+    That eleventh kind exists because a registry-coverage obligation was being smuggled
+    through as a `capability` task whose command was `echo 'UNMAPPED capabilities ...'
+    && exit 1`. It is a distinct kind of obligation — a review task, not a verification
+    of anything — and asserting the exact count is what makes adding one a deliberate act
+    rather than an accident.
+    """
     from runtime.foundation.verification.obligation import ObligationKind
 
-    assert len(ObligationKind) == 10
+    assert len(ObligationKind) == 11
+    assert ObligationKind.REGISTRY_MAPPING.value == "registry_mapping"
     expected = {
         "unit",
         "property",
@@ -342,6 +352,7 @@ def test_obligation_model_has_closed_kind_vocabulary():
         "capability",
         "integration",
         "e2e",
+        "registry_mapping",  # M10-R3 L6
     }
     actual = {k.value for k in ObligationKind}
     assert actual == expected

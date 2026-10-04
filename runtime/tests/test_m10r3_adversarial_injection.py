@@ -662,3 +662,94 @@ class TestInjectedStaleEvidence:
         )
         problems = verify_legs("backend", legs)
         assert any("not in the canonical plan" in p for p in problems)
+
+class TestInjectedRegistryGap:
+    """L6 — a registry-coverage obligation is not a failing test.
+
+    It used to be a `capability` task whose command was
+    ``echo 'UNMAPPED capabilities require review (N): ...' && exit 1``. That made a
+    registry fact indistinguishable from an assertion failure: the record said
+    "command exit 1" and the verdict said "run the diagnostic path", which cannot
+    resolve a missing mapping. Nothing is weakened — still mandatory, still fails closed.
+    """
+
+    def test_it_has_its_own_completion_state(self):
+        from runtime.foundation.verification.execution_orchestrator import (
+            NON_PASS_STATES,
+            PASSING_STATES,
+        )
+
+        gap = CompletionState.REGISTRY_GAP
+        assert gap.value == "registry_gap"
+        assert gap in NON_PASS_STATES, "a registry gap must never read as a pass"
+        assert gap not in PASSING_STATES
+
+    def test_the_verdict_names_the_remedy_not_a_diagnostic(self):
+        from runtime.foundation.verification.execution_orchestrator import (
+            ObligationOutcome,
+            decide_final_outcome,
+        )
+
+        decision, reason = decide_final_outcome(
+            [
+                ObligationOutcome(
+                    "exec-0009",
+                    CompletionState.REGISTRY_GAP,
+                    detail="no mapping for: unmapped:Foo",
+                )
+            ]
+        )
+        assert decision == FinalDecision.NOT_CERTIFIABLE
+        assert "mapping" in reason
+        assert "not a test failure" in reason
+        assert "diagnostic path" in reason, (
+            "the reason must explicitly say the diagnostic path is not the answer"
+        )
+
+    def test_it_is_not_confused_with_a_configuration_failure(self):
+        from runtime.foundation.verification.execution_orchestrator import (
+            ObligationOutcome,
+            decide_final_outcome,
+        )
+
+        gap, _ = decide_final_outcome(
+            [ObligationOutcome("a", CompletionState.REGISTRY_GAP)]
+        )
+        config, _ = decide_final_outcome(
+            [ObligationOutcome("a", CompletionState.CONFIGURATION)]
+        )
+        assert gap != config, (
+            "a missing mapping and a malformed configuration are different problems "
+            "with different remedies"
+        )
+
+    def test_the_task_no_longer_carries_a_shell_command(self):
+        """The condition was moved out of the shell; that is the whole point."""
+        from runtime.foundation.verification.control_plane import REGISTRY_MAPPING_KIND
+
+        assert REGISTRY_MAPPING_KIND == "registry_mapping"
+        spec = _spec(verification_kind=REGISTRY_MAPPING_KIND, command="")
+        assert spec.command == "", (
+            "an internally-executed task must not also carry a shell command; the "
+            "condition is decided by the runtime"
+        )
+
+    def test_an_empty_command_is_still_rejected_for_every_other_kind(self):
+        """The validation exception is narrow on purpose."""
+        assert ExecutionPlan.from_dict(
+            {**_plan([_spec()]).to_dict(), "tasks": [{**_spec().to_dict(), "command": ""}]}
+        ).validate(), "a genuinely empty command on a spawned kind must fail validation"
+
+    def test_it_is_revalidated_at_execution_time(self):
+        """A plan authored while the gap existed must not certify after it closed.
+
+        The authority is re-checked where the knowledge is, not trusted from the plan.
+        """
+        from runtime.foundation.verification.execution_orchestrator import (
+            _unmapped_capabilities_now,
+        )
+
+        assert _unmapped_capabilities_now(("definitely-not-a-capability",)), (
+            "an unknown capability must be reported as unmapped, not silently trusted"
+        )
+        assert _unmapped_capabilities_now(()) == []

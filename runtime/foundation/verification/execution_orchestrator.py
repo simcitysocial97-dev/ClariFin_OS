@@ -79,6 +79,20 @@ class CompletionState(str, Enum):
     AUTHORIZATION_REQUIRED = "authorization_required"
     REUSED = "reused"
     SKIPPED = "skipped"  # sufficiency: minimum verification already satisfied
+    REGISTRY_GAP = "registry_gap"
+    """A required capability has no verification-registry mapping.
+
+    M10-R3 (L6). This state exists because the condition was expressed as a shell
+    command — ``echo 'UNMAPPED capabilities require review (6): ...' && exit 1`` — which
+    made a *registry* fact indistinguishable from a *test* failure. The verdict read
+    "mandatory obligation failed ... run the diagnostic path", and that is wrong
+    guidance: nothing is diagnostically broken, no assertion failed, and the diagnostic
+    path cannot help. A missing mapping is a review obligation and the verdict should
+    say so.
+
+    Distinct from CONFIGURATION (the configuration is malformed) and from FAILED
+    (something asserted). The mapping is simply absent, which is a third thing.
+    """
 
 
 # States that mean "the run is observably not a pass"
@@ -92,6 +106,7 @@ NON_PASS_STATES: frozenset[CompletionState] = frozenset(
         CompletionState.CONFIGURATION,
         CompletionState.CERTIFICATION,
         CompletionState.AUTHORIZATION_REQUIRED,
+        CompletionState.REGISTRY_GAP,
     }
 )
 
@@ -966,7 +981,7 @@ class ExecutionPlan:
             if t.task_id in seen_ids:
                 errors.append(f"duplicate task_id={t.task_id}")
             seen_ids.add(t.task_id)
-            if not t.command:
+            if not t.command and t.verification_kind not in INTERNALLY_EXECUTED_KINDS:
                 errors.append(f"task {t.task_id} has empty command")
             if not t.capabilities:
                 errors.append(f"task {t.task_id} has no capabilities")
@@ -1240,6 +1255,26 @@ def decide_final_outcome(
             f"configuration failure on mandatory obligation(s) "
             f"{', '.join(mandatory_config)} — cannot certify",
         )
+    mandatory_registry_gaps = [
+        o for o in outcomes
+        if o.state == CompletionState.REGISTRY_GAP and o.is_mandatory
+    ]
+    if mandatory_registry_gaps:
+        # NOT_CERTIFIABLE, not DIAGNOSTIC. A registry gap is not a diagnostic problem:
+        # no assertion failed, and "run the diagnostic path" is advice that cannot
+        # resolve a missing mapping. It fails closed either way — the mandatory gate is
+        # unchanged — but it now names the actual remedy.
+        named = ", ".join(
+            f"{o.task_id}" + (f" ({o.detail})" if o.detail else "")
+            for o in mandatory_registry_gaps
+        )
+        return (
+            FinalDecision.NOT_CERTIFIABLE,
+            "verification-registry mapping(s) missing for changed capabilities: "
+            f"{named}. This is a review obligation, not a test failure — map the "
+            "capability to a verification contract (or record an explicit exemption) "
+            "rather than re-running the diagnostic path.",
+        )
     mandatory_failed = [
         o.task_id for o in outcomes
         if o.state == CompletionState.FAILED and o.is_mandatory
@@ -1422,6 +1457,38 @@ def _validate_task_budget(task: ExecutionTaskSpec) -> list[str]:
                 f"({type(demand).__name__}); expected an int or 'auto'"
             )
     return errors
+
+
+#: The verification kind for a registry-mapping review obligation (M10-R3 L6).
+REGISTRY_MAPPING_KIND = "registry_mapping"
+
+#: Kinds the runtime decides itself, so a task of this kind needs no command string.
+#:
+#: An empty command is otherwise a plan defect worth rejecting. It is legitimate here
+#: precisely because the condition was *moved out of the shell* (L6): the executor
+#: consults the registry and reports the outcome, so there is nothing to spawn. Keeping
+#: the exception explicit means a genuinely empty command on any other kind still fails.
+INTERNALLY_EXECUTED_KINDS: frozenset[str] = frozenset({REGISTRY_MAPPING_KIND})
+
+
+def _unmapped_capabilities_now(capabilities: tuple[str, ...]) -> list[str]:
+    """Which of *capabilities* are still unmapped in the live registry.
+
+    Re-checked at execution time rather than trusted from the plan, so a plan authored
+    while a gap existed cannot certify after the gap was closed. An unknown capability is
+    reported, because "not in the registry" and "mapped to no contract" are the same
+    operational problem.
+    """
+    try:
+        from runtime.foundation.verification.capability_registry import (
+            capability_contract_registry,
+        )
+        registry = capability_contract_registry()
+        return [cap for cap in capabilities if not cap or not registry.contract_for(cap)]
+    except Exception:
+        # A registry that cannot be consulted must not silently certify: report all, so
+        # the verdict fails closed and the reason is honest rather than vacuous.
+        return list(capabilities)
 
 
 class CertificationRun:
@@ -3031,8 +3098,72 @@ class ExecutionOrchestrator:
             return self._execute_measurement_task(spec, plan, live_fp)
         if spec.verification_kind == "coverage":
             return self._execute_coverage_task(spec, plan, live_fp)
+        if spec.verification_kind == REGISTRY_MAPPING_KIND:
+            return self._execute_registry_mapping_task(spec, plan)
         # Default: shell command
         return self._execute_shell_task(spec, plan)
+
+    def _execute_registry_mapping_task(
+        self, spec: ExecutionTaskSpec, plan: ExecutionPlan
+    ) -> TaskExecutionRecord:
+        """A registry gap, decided here rather than by spawning a shell.
+
+        M10-R3 (L6). This task used to be an ordinary shell task whose command was
+        ``echo 'UNMAPPED capabilities require review (6): ...' && exit 1``. Expressing a
+        *registry* fact as a process exit had three costs:
+
+        * it cost a spawn, a timeout budget and an evidence directory to express a value
+          that was already known before anything ran;
+        * the record said ``command exit 1``, indistinguishable from a test asserting;
+        * the verdict said "run the diagnostic path", which cannot resolve a missing
+          mapping — no diagnostic is broken.
+
+        Nothing is weakened: the obligation is still mandatory and still fails closed.
+        It is now decided where the knowledge is, and reported as what it is.
+
+        The authority is re-checked here rather than trusted from the plan, so a plan
+        written while the gap existed cannot certify after it was closed.
+        """
+        capabilities = tuple(spec.capabilities)
+        still_unmapped = _unmapped_capabilities_now(capabilities)
+        if not still_unmapped:
+            return self._make_record(
+                spec,
+                plan,
+                exit_code=0,
+                state=CompletionState.PASS,
+                reason_text="verification-registry mapping resolved since the plan was built",
+                stderr_tail=[],
+                next_action="none",
+            )
+        detail = "no verification-registry mapping for: " + ", ".join(
+            still_unmapped
+        )
+        return self._make_record(
+            spec,
+            plan,
+            exit_code=1,
+            state=CompletionState.REGISTRY_GAP,
+            stderr_tail=[detail],
+            reason_text=(
+                f"{len(still_unmapped)} changed capabilit(y/ies) resolved to an "
+                f"unmapped capability. {detail}. This is a review obligation: map the "
+                f"capability to a verification contract, or record an explicit "
+                f"exemption."
+            ),
+            diagnostic={
+                "stage": FailureStage.NOT_CONFIGURED.value
+                if hasattr(FailureStage, "NOT_CONFIGURED")
+                else "registry_gap",
+                "message": detail,
+                "unmapped_capabilities": list(still_unmapped),
+                "kind": "REGISTRY_GAP",
+            },
+            next_action=(
+                "add a verification contract for the capability in the registry, or "
+                "record an exemption; re-running the diagnostic path cannot resolve it"
+            ),
+        )
 
     def _execute_shell_task(
         self, spec: ExecutionTaskSpec, plan: ExecutionPlan
