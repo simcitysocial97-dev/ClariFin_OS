@@ -60,7 +60,12 @@ export function TimeRail({ className, onPositionChange }: TimeRailProps) {
     // No selection: the playhead has no defined position. Parked at the start rather
     // than tracking the wall clock, so an idle rail renders identically every day.
     return 0;
-  }, [segments, granularity]);
+    // `segments` alone. `granularity` was in the dependency array when this read the
+    // wall clock and needed it; the body no longer does, and eslint
+    // (react-hooks/exhaustive-deps) correctly flagged it as an unnecessary dependency —
+    // which is how this was caught in CI. `granularity` still drives `segments`
+    // upstream, so a granularity change still re-derives the position through it.
+  }, [segments]);
 
   const handleRailClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

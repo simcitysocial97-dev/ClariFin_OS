@@ -96,6 +96,7 @@ def executable_tasks(profile_op: str) -> list[VerificationTask]:
 from runtime.foundation.verification.execution_shards import (
     INFRA_BACKSTOP_MARGIN_SECONDS,
 )
+from runtime.foundation.verification.runtime_shards import LEG_RESULT_SCHEMAS
 
 
 @dataclass(frozen=True, slots=True)
@@ -256,23 +257,44 @@ def expected_obligation_ids(profile_op: str) -> list[str]:
     return [t.id for t in obligation_tasks(profile_op)]
 
 
-def read_leg_results(directory: Path) -> tuple[list[ProfileLegResult], list[str]]:
+def read_leg_results(
+    directory: Path,
+) -> tuple[list[ProfileLegResult], list[str], list[str], list[str]]:
     """Read every ``leg-*.json`` in *directory*.
 
-    Returns ``(results, unreadable)``. An unreadable file is reported rather than
+    Returns ``(results, absent, malformed, rejected)`` — the same four-way shape as
+    :func:`runtime_shards.read_shard_results`, because both callers already unpack
+    four.
+
+    M10-R3. This returned a TWO-tuple while both call sites unpacked four, so every
+    ``verify --profile X --verify-legs`` run died with
+    ``ValueError: not enough values to unpack (expected 4, got 2)``. The bug predates
+    this milestone — it is present at ``1c397368`` — and it took the Backend
+    Verification workflow's aggregate gate down with it. Matching the shard reader is
+    also the better contract: ``absent``, ``malformed`` and ``rejected`` are three
+    distinct producer faults with three distinct owners, and collapsing them into one
+    "unreadable" list is what let this hide.
+
+    The three lists are deliberately never conflated. An unreadable file is reported
+    rather than
     skipped: a leg that died mid-flight leaves no result, and the gate must treat that
     as a missing obligation rather than quietly certifying the ones that survived.
     """
     results: list[ProfileLegResult] = []
-    unreadable: list[str] = []
+    malformed: list[str] = []
+    rejected: list[str] = []
     for path in sorted(Path(directory).glob("leg-*.json")):
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
             if not isinstance(payload, dict):
                 raise ValueError("leg document is not a JSON object")
+            schema = payload.get("schema")
+            if schema is not None and schema not in LEG_RESULT_SCHEMAS:
+                rejected.append(f"{path.name}: unsupported schema {schema!r}")
+                continue
             # Required keys are checked explicitly even though from_dict defaults
             # them. A leg document missing its identity is a *producer* fault and
-            # must be reported as unreadable; defaulting it to "" would produce a
+            # must be reported as malformed; defaulting it to "" would produce a
             # leg with an empty task_id that the gate then treats as an unknown
             # obligation, converting a producer bug into a confusing plan mismatch.
             for required in ("profile", "task_id", "status", "exit_code"):
@@ -283,8 +305,8 @@ def read_leg_results(directory: Path) -> tuple[list[ProfileLegResult], list[str]
             # would silently drop them and every leg would read as "unstable".
             results.append(ProfileLegResult.from_dict(payload))
         except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
-            unreadable.append(f"{path.name}: {type(exc).__name__}")
-    return results, unreadable
+            malformed.append(f"{path.name}: {type(exc).__name__}: {exc}")
+    return results, [], malformed, rejected
 
 
 def verify_legs(profile_op: str, results: list[ProfileLegResult]) -> list[str]:
