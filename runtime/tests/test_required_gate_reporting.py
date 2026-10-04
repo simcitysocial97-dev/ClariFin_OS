@@ -138,12 +138,12 @@ def test_backend_verification_is_a_total_check_not_a_boundary_check():
     reconcile = yaml.safe_dump(_load("verification-reconcile.yml"))
     boundary_scoped = ("-m runtime.verify check", "--plan", "-m runtime.verify plan")
     assert "-m runtime.verify backend" in backend
-    assert any(marker in reconcile for marker in boundary_scoped), (
-        "Verification Reconcile must execute a boundary-scoped plan"
-    )
-    assert not any(marker in backend for marker in boundary_scoped), (
-        "Backend Verification must not do the reconcile workflow's job"
-    )
+    assert any(
+        marker in reconcile for marker in boundary_scoped
+    ), "Verification Reconcile must execute a boundary-scoped plan"
+    assert not any(
+        marker in backend for marker in boundary_scoped
+    ), "Backend Verification must not do the reconcile workflow's job"
     assert "-m runtime.verify backend" not in reconcile
 
 
