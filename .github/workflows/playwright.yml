@@ -147,8 +147,16 @@ jobs:
       PLAYWRIGHT_PROJECT: ${{ matrix.project }}
       CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
       PLAYWRIGHT_UPDATE_SNAPSHOTS: ${{ inputs.update_snapshots && '1' || '' }}
-      # Each leg is its own runner, so it gets its own database file. The seed step below
-      # writes this path and the webServer reads it.
+      # M10-R3 (L1c): this one CANNOT be removed, and the reason is worth recording.
+      #
+      # The runtime derives a per-leg FINANCE_DB_PATH for itself (execution_shards.
+      # leg_environment), but the seeding step below runs OUTSIDE the runtime —
+      # `tools/e2e_seed.py --reset` plus `rm -f "$FINANCE_DB_PATH"` — so something must
+      # name the file before any runtime code executes. Keeping it here is a real
+      # requirement, not the duplication reconcile.yml just deleted.
+      #
+      # The runtime's `setdefault` semantics mean the value below wins, which is what
+      # makes this consistent rather than a conflict: seed and verify then agree.
       FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-${{ matrix.leg_id }}.db
     steps:
       - name: Checkout code

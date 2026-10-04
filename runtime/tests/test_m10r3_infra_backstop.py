@@ -190,3 +190,71 @@ class TestWorkflowsNoLongerHardCodeIt:
             f"{name} must hand the runtime the backstop it is actually running under, "
             f"or the runtime cannot reject one that expires too early"
         )
+
+def _workflow(name: str) -> str:
+    return (REPO_ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
+
+
+class TestPerLegEnvironmentIsDerived:
+    """L1c: per-leg mutable state is runtime-owned, not YAML-owned."""
+
+    def test_two_legs_cannot_share_a_database(self):
+        from runtime.foundation.verification.execution_shards import leg_environment
+
+        a = leg_environment(leg="shard-0", plan_id="p")["FINANCE_DB_PATH"]
+        b = leg_environment(leg="shard-1", plan_id="p")["FINANCE_DB_PATH"]
+        assert a != b, (
+            "two legs deriving the same database is the cross-shard mutation the "
+            "Playwright script documents as the cause of drifting screenshots"
+        )
+
+    def test_the_name_carries_the_plan_id_so_reruns_do_not_collide(self):
+        from runtime.foundation.verification.execution_shards import leg_environment
+
+        assert "p1" in leg_environment(leg="x", plan_id="p1")["FINANCE_DB_PATH"]
+        assert "p2" in leg_environment(leg="x", plan_id="p2")["FINANCE_DB_PATH"]
+
+    def test_the_interpreter_is_the_canonical_venv(self):
+        from runtime.foundation.verification.execution_shards import leg_environment
+
+        resolved = leg_environment(leg="x")["CLARIFIN_PYTHON"]
+        assert resolved.endswith("/.venv/bin/python"), (
+            "AGENTS.md makes the repository-root .venv the single sanctioned "
+            "environment; a hand-written path is a second place for it to drift"
+        )
+
+    @staticmethod
+    def _job_env(name: str) -> dict:
+        """The fan-out job's declared env, parsed.
+
+        Parsed rather than grepped: the workflow's *comment* discusses these variables,
+        and a substring assertion would report the explanation as the declaration.
+        """
+        import yaml
+
+        doc = yaml.safe_load(_workflow(name))
+        for job in doc.get("jobs", {}).values():
+            env = job.get("env") or {}
+            if "PLAYWRIGHT_PROJECT" in env:
+                return env
+        return {}
+
+    def test_reconcile_no_longer_declares_it(self):
+        env = self._job_env("verification-reconcile.yml")
+        assert "FINANCE_DB_PATH" not in env, (
+            "reconcile.yml has no seeding step, so nothing needs the path before the "
+            "runtime runs — the declaration is pure duplication"
+        )
+        assert "CLARIFIN_PYTHON" not in env
+
+    def test_playwright_keeps_it_because_it_seeds_outside_the_runtime(self):
+        """The distinction is load-bearing, and easy to erase by over-pruning.
+
+        `playwright.yml` runs `tools/e2e_seed.py --reset` and `rm -f "$FINANCE_DB_PATH"`
+        in a step that executes before any runtime code, so something must name the file
+        first. Deleting it would break seeding — which is why this is asserted rather
+        than left to judgement.
+        """
+        env = self._job_env("playwright.yml")
+        assert "FINANCE_DB_PATH" in env
+        assert "e2e_seed.py" in _workflow("playwright.yml")

@@ -198,14 +198,21 @@ jobs:
     env:
       VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
       VERIFICATION_HEAD_REF: ${{ github.sha }}
-      # M10-R2 closeout. `run_playwright_tests.sh` exits 1 when FINANCE_DB_PATH is unset,
-      # so ANY reconcile shard assigned the Playwright task was guaranteed to fail it: the
-      # pre-M10-R2 single job carried this environment and the split dropped it.
-      # Per-shard, so two reconcile legs never share a database -- the exact cross-shard
-      # mutation that script documents as the cause of drifting screenshots.
-      FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-playwright-${{ matrix.shard }}.db
+      # M10-R3 (L1c): FINANCE_DB_PATH and CLARIFIN_PYTHON are NO LONGER DECLARED HERE.
+      #
+      # They were, under a different naming scheme than the Playwright workflow used
+      # (`e2e-playwright-N` vs `e2e-<leg_id>`), so per-leg mutable state lived in YAML
+      # and two reconcile legs sharing a database was one rename away.
+      #
+      # The runtime now derives both from its own provenance — the repository root it
+      # runs in, plus the leg identity and plan id — via
+      # `execution_shards.leg_environment`, so isolation holds by construction. It
+      # applies them only when unset, so a deliberate override still wins.
+      #
+      # Unlike playwright.yml, this workflow has no seeding step: nothing here needs the
+      # path before the runtime starts, which is why the declaration could be deleted
+      # outright rather than merely annotated.
       PLAYWRIGHT_PROJECT: chromium
-      CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

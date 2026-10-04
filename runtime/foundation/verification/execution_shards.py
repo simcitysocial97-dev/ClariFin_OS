@@ -342,6 +342,53 @@ def validate_infra_backstop(
     return None
 
 
+def leg_environment(
+    *,
+    leg: str,
+    plan_id: str = "",
+    shard: int | None = None,
+    repo_root: Path | None = None,
+) -> dict[str, str]:
+    """The per-leg environment the runtime requires, derived from its own provenance.
+
+    M10-R3 (L1c). Both fan-out workflows declared this by hand:
+
+        FINANCE_DB_PATH: .../backend/data/e2e-playwright-${{ matrix.shard }}.db
+        PLAYWRIGHT_PROJECT: chromium
+        CLARIFIN_PYTHON: .../.venv/bin/python
+
+    with a *different* naming scheme in each file (``e2e-playwright-N`` vs ``e2e-`` +
+    leg id). That is per-leg mutable state living in YAML, which is the mission's
+    "the workflow must not know: environment variables" — and it is exactly the value
+    that determines correctness, since two legs sharing a database is the cross-shard
+    mutation the Playwright script documents as the cause of drifting screenshots.
+
+    The runtime already knows all of it: ``REPO_ROOT`` is where it runs, and ``leg`` /
+    ``shard`` identify the unit. So the declaration is derived rather than copied.
+
+    Semantics for callers: these are **defaults**. A value already present in the
+    environment is left alone, so an operator can still override deliberately. What is
+    removed is the *obligation* to know any of it in YAML.
+
+    The database name includes ``leg`` and ``plan_id`` so isolation survives a workflow
+    restructure: two legs cannot collide because they cannot produce the same name unless
+    they are the same leg.
+    """
+    from pathlib import Path as _Path
+
+    root = _Path(repo_root) if repo_root is not None else _Path(__file__).resolve().parents[3]
+    identity = leg or (f"shard-{shard}" if shard is not None else "local")
+    token = f"{identity}-{plan_id}" if plan_id else identity
+    return {
+        # Per-leg isolated database: the single most correctness-relevant variable here.
+        "FINANCE_DB_PATH": str(root / "backend" / "data" / f"e2e-{token}.db"),
+        # The canonical interpreter. `AGENTS.md` makes the repository-root .venv the
+        # single sanctioned environment; a workflow reproducing that path by hand was a
+        # second place for it to drift.
+        "CLARIFIN_PYTHON": str(root / ".venv" / "bin" / "python"),
+    }
+
+
 def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
     """Render the partition as a GitHub Actions dynamic matrix document.
 

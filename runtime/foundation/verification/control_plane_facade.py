@@ -798,6 +798,27 @@ class ControlPlane:
                     file=sys.stderr,
                 )
 
+        # M10-R3 (L1c): the runtime supplies the per-leg environment it requires.
+        #
+        # Both fan-out workflows declared FINANCE_DB_PATH and CLARIFIN_PYTHON by hand,
+        # under *different* naming schemes (`e2e-playwright-N` vs `e2e-<leg_id>`). That
+        # is per-leg mutable state in YAML, and it is the value that determines
+        # correctness: two legs sharing a database is the cross-shard mutation the
+        # Playwright script itself documents as the cause of drifting screenshots.
+        #
+        # The runtime already knows the repository root and the leg's own identity, so
+        # this is derived rather than copied. Anything already set in the environment is
+        # left alone, so a deliberate override still wins — what is removed is the
+        # *obligation* to know any of it in YAML.
+        if shard is not None and shard[0] is not None:
+            from runtime.foundation.verification.execution_shards import leg_environment
+
+            for _key, _value in leg_environment(
+                leg=f"reconcile-shard-{shard[0]}-of-{shard[1] or 1}",
+                plan_id=execution_plan.plan_id,
+            ).items():
+                os.environ.setdefault(_key, _value)
+
         if task_scope:
             known = {t.task_id for t in execution_plan.tasks}
             unknown = [tid for tid in task_scope if tid not in known]
