@@ -154,6 +154,16 @@ _CLASSIFICATION: dict[str, str] = {
     # verdict, and local execution would then drift from CI by construction, which is
     # the failure this milestone exists to prevent.
     "local": "CANONICAL_ALIAS",
+    # M10-R3 (L8): the mutation campaign's planning, aggregation and trust commands.
+    #
+    # These were recorded as CANONICAL in cli_surface.py and routed by the facade, but
+    # were **missing from this table** — so the canonical registry did not know three
+    # commands it actually serves. A second classification authority disagreed with the
+    # canonical one on 12 entries in total. cli_surface now delegates here, so this is
+    # the only place the answer lives.
+    "mutation-plan": "CANONICAL",
+    "mutation-aggregate": "CANONICAL",
+    "mutation-trust": "CANONICAL",
     # compatibility / legacy / deprecated
     "status": "COMPATIBILITY",
     "metrics": "COMPATIBILITY",

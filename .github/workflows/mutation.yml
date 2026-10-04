@@ -258,7 +258,7 @@ jobs:
             echo ""
             echo "| Shard | Component | Selected because |"
             echo "|-------|-----------|------------------|"
-            jq -r '.include[] | "| \(.shard) | \(.component) | \(.reasons | join(", ") // "full campaign") |"' <<< "$MATRIX" >> $GITHUB_STEP_SUMMARY
+            jq -r '.include[] | "| \(.shard) | \(.component) | \(.reasons // "full campaign") |"' <<< "$MATRIX" >> $GITHUB_STEP_SUMMARY
             echo ""
           } >> $GITHUB_STEP_SUMMARY
 
