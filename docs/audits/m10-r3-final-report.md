@@ -132,12 +132,28 @@ decision function** — `decide_final_outcome`, six producers.
 | **Fixed** | `_verify_legs` / `verify_shards` / Playwright gate now refuse drift |
 | **Fixed** | SIGKILL-during-mutation corruption (durable backup + atomic replace + self-heal) |
 
-**Not deleted**, and why: `executor.Executor`, `executor_pipeline.py`, `cli_surface.py`,
-`verification/cli/cli.py`, `forensic_cli.py`, `diagnostic_agent.py` are all genuinely
-unreachable or contradictory, and pruning them is correct — but each has existing tests
-asserting today's behaviour, and collapsing them is a separate, mechanical change that
-would obscure the semantic changes above. They are recorded as remaining work, not
-quietly left.
+**Not deleted, and why — corrected after investigation.** This section originally claimed
+`forensic_cli.py` and `diagnostic_agent.py` were "genuinely unreachable", which
+over-stated the case. The *reachability* claim was right (zero Python importers) but the
+implication was wrong:
+
+* `forensic_cli` is named as the **declared implementation site** in provenance metadata
+  for routes the canonical table marks `DEPRECATED` (`route_authority.py:120`,
+  `certification.py:182`). Those strings are load-bearing — they are how this repository
+  records where an implementation lives. Deleting the module would orphan them.
+* `diagnostic_agent` supplies the `Uncertainty` / `Explainability` / `CERTIFIABLE`
+  vocabulary those strings refer to, and is imported only by `forensic_cli`.
+
+`cli_surface.py` was the exception and **was** consolidated (see L8a): its duplicate
+classification table is gone and it re-exports the canonical one.
+
+So the remaining surfaces — `executor.Executor`, `executor_pipeline.py`,
+`verification/cli/cli.py`, `forensic_cli.py`, `diagnostic_agent.py` — are now **pinned by
+test** (`test_m10r3_dead_code_pins.py`) rather than deleted on a belief. Each pin FAILS if
+someone wires the module up, and the failure message says to delete the pin rather than
+keep it. Converting "I believe this is dead" into a mechanically enforced claim is worth
+more than a tidy file list, and `executor.Executor` in particular needs *consolidation*
+onto the canonical worker, not deletion.
 
 ## 6. What remains intentionally separate
 
