@@ -646,3 +646,84 @@ why, where the evidence is, and how to reproduce it locally?* — is now **yes**
 exceptions stated above rather than smoothed over. The two originally-open failures have
 established root causes and fixed causes; one of them (Playwright) additionally cannot be
 *completed* outside CI, and the report says so instead of implying otherwise.
+
+---
+
+# Addendum 4 — the last three items (`ab120d28`)
+
+## L8d — the second process engine is gone
+
+`Executor` ran its own `Popen(shell=True, start_new_session=True)` with its own tee, its
+own `_kill_process_group` and its own result directory. Two spawn paths for the same work,
+and only the canonical one had heartbeat, `classify_termination` and missing-binary
+detection — so anything routed through `Executor` reported a failed assertion for a
+command that never ran.
+
+It now delegates. Two capabilities it had moved *into* the worker rather than being
+preserved in the caller:
+
+- **`on_line`** — per-line live output, called after the line is durably written and
+  guarded per line, so a logging callback can never lose evidence or abort a run.
+- **`cancel_event`** — cancellation. Delegating ownership briefly made `cancel()` a no-op,
+  because it killed a process group it no longer owned. **That is the real lesson of
+  consolidation: ownership of a resource carries the right to stop it.** Cancelling
+  `sleep 45` now returns in 1.0 s.
+
+**Retry evidence is now per-attempt.** The old code appended every attempt into
+`<task>-stdout.txt`, so after a retry the file held attempt 1 followed by attempt 2 with
+nothing to distinguish them. The worker truncates up front — *"a file means this
+execution"* — because leftover content masquerading as current output is the stale-evidence
+hazard. Per-attempt files preserve every attempt *and* make each attributable.
+
+A contract I nearly broke: `test_executor_artifact_persistence` asserts a three-way
+distinction in `error` (`None` = no error, `""` = failed with no stderr, text = reason). My
+first version substituted `"exit 1"` for the empty case, collapsing the second and third.
+
+## L1d — my earlier characterisation was wrong
+
+I twice flagged "multi-path `upload-artifact` declarations" as reconstruction the runtime
+should own. Investigating before changing anything showed the opposite for the one that
+matters:
+
+- `reconcile-result-<n>` — which the **aggregate actually reads** — is *already* a
+  single-path upload, with a seven-line comment explaining exactly the LCA problem I
+  independently raised: mixing the report with evidence puts the artifact root at
+  `runtime/generated/`, the report at `execution/shards/shard-<n>.json`, and the gate
+  flattens and finds nothing.
+- `reconcile-shard-<n>` — the multi-path bundle — is human-facing evidence that **no step
+  parses**. Its layout is not consumed.
+
+So flipping those paths would have replaced a deliberate, correct design with churn. The
+`evidence_roots()` manifest is still worth having — a *new* evidence location then needs no
+YAML edit — but there is no bug here. Both facts are now pinned so a future "tidy the
+artifact list" change cannot break certification silently.
+
+## L7b — the "must run on a GitHub runner" rule was mostly wrong
+
+`run_playwright_tests.sh` prohibited baseline regeneration on a workstation because
+"baselines are rasterisation-specific". Investigated, because a blanket prohibition stops
+the baselines ever being corrected. Most of what it blamed on rasterisation was unpinned
+*configuration*:
+
+- **the UI font is self-hosted by the build** — `next/font/google` emits 21 woff2 files
+  into `dist/`, so nothing depends on the machine's font list;
+- **U+20B9 (₹) is covered** — verified by *parsing* the emitted `unicode-range` blocks. My
+  first check string-matched a range I had truncated for display and wrongly concluded the
+  rupee fell back to a system font. Parsing it properly shows the currency block
+  (U+20A0–U+20CF) is included;
+- the Chromium revision is pinned and checked;
+- `playwright.config.ts` now pins locale, timezoneId, colorScheme and reducedMotion, and
+  disables animations;
+- the timeline no longer reads the wall clock.
+
+What genuinely still varies is **Chromium's anti-aliasing** — Skia's hinting and subpixel
+settings follow the host's fontconfig/freetype, and that cannot be pinned from application
+code.
+
+So the guard is narrowed to the true rule: regenerate on the runner's **platform**
+(Linux), refuse on anything else, and treat a diff that is only soft grey-edge
+antialiasing as noise rather than a regression.
+
+**Baselines are still not regenerated here.** The remaining AA difference is
+unverifiable without comparing against a runner, and regenerating blind would replace one
+unverified claim with another.

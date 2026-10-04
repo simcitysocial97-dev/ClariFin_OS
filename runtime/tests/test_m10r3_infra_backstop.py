@@ -347,3 +347,73 @@ class TestEvidenceRootsArePublished:
             "runtime produced instead of reconstructing the list"
         )
         assert isinstance(doc["evidence_roots"], list)
+
+
+class TestArtifactLayoutIsDeliberate:
+    """L1d — correction: the multi-path artifact is not a defect, and must not become one.
+
+    Checkpoint A and the first resolution pass both flagged "multi-path `upload-artifact`
+    declarations" as reconstruction the runtime should own. Investigating before changing
+    anything showed the opposite for the one that matters:
+
+    * `reconcile-result-<n>` — which the **aggregate actually reads** — is already a
+      single-path upload, with a seven-line comment explaining exactly why: mixing the
+      report with evidence makes the artifact root `runtime/generated/`, the report lands
+      at `execution/shards/shard-<n>.json`, and the gate flattens and finds nothing. The
+      workflow had already solved the LCA problem I independently raised.
+    * `reconcile-shard-<n>` — the multi-path bundle — is human-facing evidence that
+      nothing parses. Its internal layout is not consumed by any step.
+
+    So flipping those paths to a runtime manifest would have replaced a deliberate,
+    correct design with churn. The manifest the runtime publishes is still worth having —
+    it means a *new* evidence location does not need a YAML edit — but there is no bug to
+    fix here, and my earlier characterisation was wrong.
+    """
+
+    @staticmethod
+    def _shard_upload_paths(name: str) -> list[str]:
+        import yaml
+
+        doc = yaml.safe_load(_workflow(name))
+        paths: list[str] = []
+        for job in doc.get("jobs", {}).values():
+            for step in job.get("steps", []) or []:
+                if "upload-artifact" not in str(step.get("uses", "")):
+                    continue
+                raw = ((step.get("with") or {}).get("path")) or ""
+                if not isinstance(raw, str):
+                    raw = str(raw)
+                paths.extend(
+                    line.strip()
+                    for line in raw.splitlines()
+                    if line.strip() and not line.strip().startswith("#")
+                )
+        return paths
+
+    def test_the_gate_facing_result_artifact_stays_single_path(self):
+        """One path, one root — this is what makes the aggregate able to find the report.
+
+        Merging it with the evidence bundle would push the report to
+        `execution/shards/shard-<n>.json` inside the artifact and the gate would read
+        nothing. Asserted so a future "tidy the artifact list" change cannot quietly break
+        certification.
+        """
+        import re
+
+        raw = _workflow("verification-reconcile.yml")
+        result_upload = re.search(
+            r"name:\s*reconcile-result-\$\{\{ matrix\.shard \}\}\s*\n\s*path:\s*(.+)",
+            raw,
+        )
+        assert result_upload, "the gate-facing result artifact must remain a single path"
+        assert result_upload.group(1).endswith(".json"), (
+            "the result artifact must be one .json file, not a directory or a bundle"
+        )
+
+    def test_the_evidence_bundle_is_not_parsed_by_any_step(self):
+        """Its multi-path shape is fine precisely because nothing reads its layout."""
+        raw = _workflow("verification-reconcile.yml")
+        aggregate_start = raw.index("run --aggregate")
+        aggregate = raw[aggregate_start : aggregate_start + 2000]
+        # The aggregate reads from the workspace ($OUT_DIR / $AGG), not an artifact.
+        assert "download-artifact" not in aggregate

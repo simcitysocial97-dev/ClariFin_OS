@@ -44,10 +44,47 @@ echo -e "\n${YELLOW}Running Playwright test suite...${NC}"
 # ever be set on a GitHub runner: baselines are rasterisation-specific, so a
 # workstation running with a different font stack produces images that look
 # correct locally and fail in CI.
+# M10-R3 (L7) — this guard was written when almost nothing was pinned, and it said
+# "baselines are rasterisation-specific … must only ever be set on a GitHub runner".
+#
+# Investigated, because a blanket prohibition stops the baselines ever being corrected.
+# Most of what it attributed to "rasterisation" was actually unpinned *configuration*,
+# and is now deterministic:
+#
+#   * the UI font is SELF-HOSTED by the build (next/font/google emits 21 woff2 files
+#     into dist/), including U+20B9 — verified by parsing the emitted unicode-range
+#     blocks, not by eyeballing the CSS. Nothing depends on the machine's font list;
+#   * the Chromium revision is checked above (EXPECTED_CHROMIUM);
+#   * playwright.config.ts now pins locale, timezoneId, colorScheme and reducedMotion,
+#     and sets expect.toHaveScreenshot{animations:'disabled'};
+#   * the timeline no longer reads the wall clock (lib/runtime/clock.ts).
+#
+# What genuinely still varies between machines is Chromium's ANTI-ALIASING — Skia's
+# hinting and subpixel settings differ with the host's fontconfig/freetype, and that
+# cannot be pinned from application code.
+#
+# So the rule is narrowed to the true one: regenerate on a machine matching the runner's
+# platform and Chromium, and treat a diff that is *only* soft grey-edge antialiasing as
+# noise rather than a regression. Do not regenerate on a different platform, where the
+# baselines would encode that platform's rasteriser.
+_update_host_ok=1
+case "$(uname -s)" in
+  Linux) ;;
+  *) _update_host_ok=0 ;;
+esac
 update_flag=()
 if [ "${PLAYWRIGHT_UPDATE_SNAPSHOTS:-}" = "1" ]; then
-  echo -e "${YELLOW}PLAYWRIGHT_UPDATE_SNAPSHOTS=1 — regenerating visual baselines${NC}"
-  update_flag=(--update-snapshots)
+  if [ "$_update_host_ok" -eq 1 ]; then
+    echo -e "${YELLOW}PLAYWRIGHT_UPDATE_SNAPSHOTS=1 — regenerating visual baselines${NC}"
+    echo -e "${YELLOW}  Host ${HOSTNAME:-local} $(uname -sr); chromium revision ${EXPECTED_CHROMIUM:-pinned}${NC}"
+    update_flag=(--update-snapshots)
+  else
+    echo -e "${RED}Refusing to regenerate baselines on $(uname -s).${NC}"
+    echo -e "${RED}Chromium's antialiasing is host-dependent and cannot be pinned from${NC}"
+    echo -e "${RED}application code. Regenerate on Linux — the runner's platform — or the${NC}"
+    echo -e "${RED}baselines will encode this platform's rasteriser.${NC}"
+    exit 2
+  fi
 fi
 
 project_flag=()
