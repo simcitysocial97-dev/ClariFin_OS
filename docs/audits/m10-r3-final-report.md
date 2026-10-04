@@ -581,3 +581,68 @@ documented as the implementation site for deprecated routes.
   resulting diff reviewed as *evidence the causes are fixed*.
 - **L1d — artifact path lists and report parsing** still duplicated in YAML.
 - **L8d — `executor.Executor`** needs *consolidation* onto the canonical worker, not deletion.
+
+---
+
+# Addendum 3 — final status (`203813ac`)
+
+## Verification
+
+**2089 passed, 15 skipped, 0 failed** across the 97-file affected set (all M10-R3 suites
+plus every file touching mutation, sharding, legs, profiles, planning, certification,
+playwright, CLI governance, workflow topology and the mutation campaign).
+`validate_actions.py`: **ALL CHECKS PASSED**.
+
+The one failure seen in an intermediate run was **my own fault**: I edited
+`control_plane_facade.py` while a 23-minute regression was in flight, so
+`inspect.getsource(facade.main)` read a half-written file. It passes cleanly in isolation
+and in the clean re-run. Worth recording because the symptom — a source-introspection
+test failing on a file I had just touched — looks exactly like a real regression, and the
+cheap way to tell the difference is to re-run the single test before believing it.
+
+## Limitation ledger, final
+
+| # | Item | Status |
+|---|---|---|
+| L1a | matrix projections named runtime fields | **Closed** — `{include: .include}` + Rule 13 |
+| L1b | CI legs published no certification document | **Closed** — every leg publishes one |
+| L1c | per-leg timeout hard-coded in YAML | **Closed** — runtime publishes it, validates it, Rule 14 |
+| L1c | per-leg environment in YAML | **Closed** for reconcile; **justified** for playwright (seeds pre-runtime) |
+| L1d | evidence-root reconstruction | **Manifest published**; the `upload-artifact` lists themselves unchanged (see below) |
+| L2 | `timeout_seconds` unvalidated | **Closed** |
+| L3 | mutation 1200 s vs 4200 s | **Closed** — one table |
+| L4 | missing binary read as exit 127 | **Closed** — evidence-based detector |
+| L5 | "7 identical coverage tasks" | **Not a defect** — distinct per-capability evidence |
+| L6 | `echo 'UNMAPPED…' && exit 1` | **Closed** — `REGISTRY_GAP`, decided by the runtime |
+| L7 | Playwright causes | **Closed** (clock, fixture authority, env pinning, emulation, 87 dead baselines) |
+| L7b | baseline regeneration | **Must happen in CI** — the repository already forbids doing it here |
+| L8a | two classification authorities | **Closed** — and 3 routed commands were missing from the canonical registry |
+| L8b | runtime emitted a list in a matrix cell | **Closed** — exposed by removing the projection that hid it |
+| L8c | dead surfaces | **Pinned, not deleted**; my "genuinely unreachable" claim corrected |
+| L8d | `executor.Executor` competing engine | **Pinned**; needs consolidation, not deletion |
+
+## The three things still open, and why
+
+1. **L7b — baseline regeneration in CI.** `run_playwright_tests.sh`: *"baselines are
+   rasterisation-specific … must only ever be set on a GitHub runner"*. Regenerating here
+   would produce 48 baselines that pass locally and fail in CI. The frontend production
+   build succeeds with the L7 changes and the clock has 10 unit tests, but the pixels must
+   be regenerated on the runner, and the resulting diff reviewed as *evidence the causes
+   are fixed* rather than as a mechanical PNG refresh.
+2. **L1d — the `upload-artifact` path lists.** The runtime now publishes
+   `evidence_roots` in every certification document, so the migration is a mechanical edit
+   driven by the runtime's own answer. Changing the lists alters the artifact's internal
+   layout (LCA behaviour), which a consumer may be pinned to, and it cannot be validated
+   without a CI run. Trading a documented remaining item for an unverifiable one is a bad
+   trade.
+3. **L8d — `executor.Executor` consolidation.** Real, but a change with blast radius that
+   belongs in a deliberate checkpoint. Pinned so nobody starts routing production through it
+   unnoticed.
+
+## Closing answer, final
+
+The mission's question — *will the runtime tell us what failed, under what conditions,
+why, where the evidence is, and how to reproduce it locally?* — is now **yes**, with three
+exceptions stated above rather than smoothed over. The two originally-open failures have
+established root causes and fixed causes; one of them (Playwright) additionally cannot be
+*completed* outside CI, and the report says so instead of implying otherwise.
