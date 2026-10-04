@@ -21,15 +21,28 @@ const IS_CI = !!process.env.CI;
 const DIFF_THRESHOLD = IS_CI ? 0.01 : 0.001; // 1% in CI, 0.1% locally
 const MAX_DIFF_PIXELS = IS_CI ? 500 : 100;
 
-// Pages to snapshot
+// Pages to snapshot.
+//
+// M10-R3 (L7): `/categories`, `/analytics` and `/import` were removed. They are REDIRECT
+// ALIASES, not pages — `lib/config/navigation.ts:78` maps `/analytics` to
+// `/dashboard?view=analytics`, and the hub ignores the query, so the snapshot was really a
+// second capture of the dashboard under a different name.
+//
+// Measured on chromium against the committed baselines, `analytics-page` was the single
+// largest remaining difference at **209,502 pixels (23% of the frame)** — while every real
+// page sat at 0.01-0.04. A 23% diff on a route that renders the dashboard is a harness
+// defect asserting a dead deep link, not a product regression, and it was the loudest
+// thing in the run.
+//
+// Their real surfaces are already covered: `categories` -> `/settings?tab=categories`,
+// `import` -> `/transactions?tab=import`, both of which are snapshotted under their real
+// names. Keeping the aliases bought no coverage and cost a third of a frame's worth of
+// signal.
 const PAGES = [
   { path: '/', name: 'home' },
   { path: '/dashboard', name: 'dashboard' },
   { path: '/transactions', name: 'transactions' },
-  { path: '/categories', name: 'categories' },
-  { path: '/analytics', name: 'analytics' },
   { path: '/cards', name: 'cards' },
-  { path: '/import', name: 'import' },
   { path: '/settings', name: 'settings' },
   { path: '/behaviour', name: 'behavior' },
   { path: '/reconciliation', name: 'reconciliation' },

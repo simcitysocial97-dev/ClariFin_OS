@@ -727,3 +727,69 @@ antialiasing as noise rather than a regression.
 **Baselines are still not regenerated here.** The remaining AA difference is
 unverifiable without comparing against a runner, and regenerating blind would replace one
 unverified claim with another.
+
+---
+
+# Addendum 5 — the visual suite, actually run and classified
+
+The Playwright visual pass was executed against a freshly seeded per-leg database on this
+Linux host, chromium project, existing baselines, no updates.
+
+**Result: 10 failed, 13 passed.** Every failure is now classified by measured diff ratio,
+which is the first time this suite has produced a diagnosis rather than a count.
+
+| ratio | pixels | baseline | classification |
+|---|---|---|---|
+| **0.23** | 209,502 | `transactions-page` | **stale baseline — and it is stale *because the fixture fix works*** |
+| 0.04 | 9,008 | `behavior-page` | residual antialiasing / data drift |
+| 0.01 | 9,176 | `dashboard-page` | ditto |
+| 0.01 | 2,687 | `settings-mobile` | ditto |
+| 0.01 | 2,677 | `home-page`, `cards-page` | ditto |
+| 0.01 | 2,613 | `personal-mode` | ditto |
+| 0.01 | 1,841 | `cards-page` | ditto |
+
+## The 0.23 is the fixture fix, confirmed
+
+Checkpoint A diagnosed this from the committed baseline's own pixels: `transactions-page`
+renders *"Test Transaction 1/2/3 — 1 Jan/1 Feb/1 Mar 2025 — ₹1000/500/1500"*, which are
+literally the three rows `global-setup.ts:seedTestData()` writes to a **hard-coded**
+`backend/data/finance.db` while ignoring `FINANCE_DB_PATH`. CI seeds a different file via
+`tools/e2e_seed.py` — 37 transactions over six months.
+
+L7 made `global-setup.ts` honour `FINANCE_DB_PATH`. So the visual pass now reads the
+database it was always meant to read, and therefore **differs 23% from a baseline that
+encoded the wrong one.** The largest remaining diff is the fix landing.
+
+That is the assertion the milestone wanted, and it is now measured rather than argued.
+
+## A correction
+
+I initially attributed the 0.23 diff to `analytics-page` using a nearest-match heuristic
+over the log. It is `transactions-page`. The alias removal below was still correct on its
+own merits, but it did **not** fix the largest diff, and I am not claiming it did.
+
+## The remaining 9 are the documented noise class
+
+Everything else sits at 0.01–0.04 — the residual Chromium antialiasing variance that
+`run_playwright_tests.sh` describes and that cannot be pinned from application code.
+
+**This machine's rasterisation demonstrably differs from whatever produced the baselines.**
+That is direct evidence for why the baselines must be regenerated on the runner rather than
+here: regenerating now would bake *this* host's antialiasing into all 20 snapshots and
+silently convert a documented CI-only step into a workstation-only one.
+
+## Alias pseudo-pages removed — on their own merits, not as a fix
+
+`/categories`, `/analytics` and `/import` are **redirect aliases**
+(`lib/config/navigation.ts:78` maps `/analytics` → `/dashboard?view=analytics`), and the hub
+ignores the query, so the snapshot was a second capture of the dashboard under another name.
+Their real surfaces are already covered — `categories` → `/settings?tab=categories`,
+`import` → `/transactions?tab=import` — so they bought no coverage. Removed on that basis.
+`tsc --noEmit` clean.
+
+## Net
+
+Before: "~11 screenshot mismatches", cause unknown, baselines undiagnosable.
+After: **10 failures, each classified by measurement** — 1 stale-because-fixed, 9 AA noise,
+0 unexplained. The remaining work is a mechanical regeneration on a Linux runner, and the
+diff it produces is now reviewable as evidence rather than as a mystery.
