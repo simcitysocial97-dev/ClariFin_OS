@@ -122,18 +122,28 @@ def test_backend_verification_is_a_total_check_not_a_boundary_check():
     """Removing the filter is only honest if the check is total.
 
     `Backend Verification` runs `runtime verify backend` over the whole backend.
-    Boundary-scoped runtime verification is owned by Verification Reconcile
-    (`runtime verify check`) — a different command over a different scope — so
-    running it on a PR that changed no backend code is added coverage, not a
-    second copy of the same work.
+    Boundary-scoped runtime verification is owned by Verification Reconcile — a
+    different command over a different scope — so running it on a PR that changed no
+    backend code is added coverage, not a second copy of the same work.
+
+    M10-R2 closeout: Reconcile's shards execute `runtime verify run --plan <plan>
+    --shard N` rather than `runtime verify check`. The invariant is unchanged and
+    arguably tightened — the shard runs the *exact* boundary plan the plan job
+    published, instead of re-deriving the boundary itself — so the assertion is
+    restated in terms of SCOPE rather than of one literal command string. What must
+    still hold is that Reconcile is boundary-scoped and Backend Verification is not,
+    and that neither workflow has taken on the other's job.
     """
     backend = yaml.safe_dump(_load("backend-verify.yml"))
     reconcile = yaml.safe_dump(_load("verification-reconcile.yml"))
+    boundary_scoped = ("-m runtime.verify check", "--plan", "-m runtime.verify plan")
     assert "-m runtime.verify backend" in backend
-    assert "-m runtime.verify check" in reconcile
-    assert (
-        "-m runtime.verify check" not in backend
-    ), "Backend Verification must not do the reconcile workflow's job"
+    assert any(marker in reconcile for marker in boundary_scoped), (
+        "Verification Reconcile must execute a boundary-scoped plan"
+    )
+    assert not any(marker in backend for marker in boundary_scoped), (
+        "Backend Verification must not do the reconcile workflow's job"
+    )
     assert "-m runtime.verify backend" not in reconcile
 
 

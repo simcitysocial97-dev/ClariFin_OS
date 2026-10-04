@@ -306,7 +306,10 @@ def run_obligation_leg(
     nothing is indistinguishable from a leg that never ran. That ambiguity is treated
     as a missing obligation, never as success.
     """
-    from runtime.foundation.verification.parallel_executor import run_streaming_command
+    from runtime.foundation.verification.parallel_executor import (
+        ProgressContext,
+        run_streaming_command,
+    )
 
     tasks = {t.id: t for t in executable_tasks(profile_op)}
     task = tasks.get(task_id)
@@ -331,6 +334,15 @@ def run_obligation_leg(
             stderr_path=log_root / f"{task.id}{suffix}-stderr.log",
             timeout_seconds=timeout_seconds,
             env=child_process_env(),
+            # M10-R2 closeout: live lifecycle logging. This is the seam the backend
+            # obligation legs and the Playwright legs both execute through, so one change
+            # covers both without either workflow inventing its own heartbeat.
+            progress=ProgressContext(
+                label=f"{profile_op}:{task.id}",
+                kind="obligation",
+                log_dir=log_root,
+                timeout_seconds=timeout_seconds,
+            ),
         )
         if last.infra_error or last.timed_out or last.exit_code != 0:
             break

@@ -261,10 +261,12 @@ def test_unreadable_results_are_reported_not_skipped(tmp_path):
     (tmp_path / "shard-1.json").write_text(
         json.dumps(_ok("runtime-tests-shard-1").to_dict()), encoding="utf-8"
     )
-    results, unreadable = read_shard_results(tmp_path)
+    results, absent, malformed, rejected = read_shard_results(tmp_path)
     assert len(results) == 1
-    assert len(unreadable) == 1
-    assert "shard-0.json" in unreadable[0]
+    assert absent == []
+    assert len(malformed) == 1
+    assert "shard-0.json" in malformed[0]
+    assert rejected == []
 
 
 def test_results_round_trip(tmp_path):
@@ -280,8 +282,8 @@ def test_results_round_trip(tmp_path):
     (tmp_path / "shard-0.json").write_text(
         json.dumps(shard.to_dict()), encoding="utf-8"
     )
-    results, unreadable = read_shard_results(tmp_path)
-    assert unreadable == []
+    results, absent, malformed, rejected = read_shard_results(tmp_path)
+    assert absent == [] and malformed == [] and rejected == []
     assert results[0] == shard
     assert results[0].ok is True
 

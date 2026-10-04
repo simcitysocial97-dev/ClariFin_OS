@@ -1046,7 +1046,19 @@ class TestC54RealScenarioExecution(unittest.TestCase):
         self.assertGreater(len(result.stdout.strip().split("\n")), 0)
 
     def test_scenario_E_mutation_evidence_reconciliation(self):
-        """E: Reconciliation delegates to the canonical verification check."""
+        """E: Reconciliation delegates to the canonical verification system.
+
+        M10-R2 closeout: the shard legs now execute
+        ``runtime verify run --plan <published plan> --shard N`` rather than
+        ``runtime verify check``, so that a shard runs the exact plan the plan job
+        published instead of re-deriving the boundary itself.
+
+        The scenario's invariant is DELEGATION, not one literal subcommand: reconcile
+        must drive the canonical runtime and must never hand-roll verification steps.
+        Asserting the specific word "check" would fail on a *more* faithful delegation,
+        so the assertion is restated to the invariant it was actually protecting — and
+        tightened, because it now also rejects any workflow that stops delegating.
+        """
         from runtime.foundation.verification.workflow_convergence import (
             inventory_workflows,
         )
@@ -1056,11 +1068,26 @@ class TestC54RealScenarioExecution(unittest.TestCase):
             (i for i in invs if i.filename == "verification-reconcile.yml"), None
         )
         self.assertIsNotNone(reconcile)
-        for job in reconcile.jobs:
-            for step in job.steps:
-                if "runtime.verify check" in (step.run or ""):
-                    return
-        self.fail("No canonical verification check found")
+        delegated = [
+            step.run
+            for job in reconcile.jobs
+            for step in job.steps
+            if "runtime.verify" in (step.run or "")
+            or "runtime/verify.py" in (step.run or "")
+        ]
+        self.assertTrue(
+            delegated,
+            "Verification Reconcile must delegate to the canonical runtime "
+            "(runtime.verify / runtime/verify.py), never to hand-rolled steps",
+        )
+        # It must delegate for BOTH the execution and the reconciliation phase; a
+        # workflow that only planned, or only aggregated, would be delegating in name.
+        self.assertTrue(
+            any(
+                "run" in d and ("--plan" in d or "--aggregate" in d) for d in delegated
+            ),
+            "Reconcile must delegate both plan execution and aggregation",
+        )
 
     def test_scenario_G_ci_failure_blocks(self):
         """G: CI failure blocks certification."""

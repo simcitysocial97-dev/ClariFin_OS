@@ -45,6 +45,7 @@ import os
 import re
 import signal
 import subprocess
+import sys
 import threading
 import time
 from collections.abc import Callable, Sequence
@@ -145,6 +146,97 @@ def _read_text(path: Path) -> str:
         return ""
 
 
+@dataclass(frozen=True, slots=True)
+class ProgressContext:
+    """Opt-in live-logging context for one long-running command.
+
+    M10-R2 closeout. This exists because M10-R2-C3 moved task output out of stdout and
+    into per-task evidence files. That change was correct — it fixed the 0-byte-log
+    problem — but it silently removed the only *live* signal a CI operator had. A leg
+    would print one line and then go silent for the twenty minutes that mattered, and
+    the two remaining CI failures were undiagnosable for exactly that reason.
+
+    The contract is deliberately narrow:
+
+    * **Lifecycle, not content.** The start/heartbeat/terminal lines say what is running,
+      for how long, and how it ended. The command's own output stays in the artifact.
+      A twenty-minute pytest run must not become a twenty-minute CI log.
+    * **Opt-in.** ``progress=None`` is byte-identical to the pre-M10-R2 behaviour, so
+      local runs and the existing suite are untouched.
+    * **Driven by a watchdog, not by the output stream.** The parent blocks in
+      ``proc.wait(timeout=...)``, so anything driven by the child's output emits nothing
+      during exactly the window the operator needs to see. A command shorter than one
+      interval never reaches a tick, so a fast obligation costs only its two lifecycle
+      lines with no extra suppression rule needed.
+    """
+
+    label: str
+    #: One of "shard", "obligation", "task", "integrity". Purely descriptive; it appears
+    #: in the start line so a reader can tell what kind of unit is executing.
+    kind: str
+    #: Where the FULL output lives, echoed once so the log points at the artifact.
+    log_dir: Path
+    timeout_seconds: int
+
+
+def _progress_stream():
+    """The stream progress lines go to: stderr, resolved at CALL time.
+
+    Never stdout — stdout is reserved for machine-readable documents, the invariant
+    established when a `[check] boundary=` banner corrupted a shard report.
+
+    Resolved per call rather than bound at import so that any later redirection of
+    ``sys.stderr`` (a test harness, a log wrapper) is honoured. Binding the stream once
+    at import time silently defeats both.
+    """
+    return sys.stderr
+
+
+def _progress_enabled() -> bool:
+    return os.environ.get("VERIFY_PROGRESS", "1").strip().lower() not in (
+        "0",
+        "false",
+        "no",
+        "off",
+    )
+
+
+def _heartbeat_seconds(override: int | None) -> int:
+    if override is not None:
+        return max(0, int(override))
+    raw = os.environ.get("VERIFY_HEARTBEAT_SECONDS")
+    if raw:
+        with contextlib.suppress(ValueError):
+            return max(0, int(raw))
+    return 60
+
+
+def _emit_progress(line: str) -> None:
+    """Write one progress line, never raising.
+
+    Instrumentation must not be able to fail a verification run.
+    """
+    # Diagnostics must never be able to fail a verification run.
+    with contextlib.suppress(Exception):
+        print(line, file=_progress_stream(), flush=True)
+
+
+def _heartbeat_loop(
+    stop: threading.Event,
+    label: str,
+    t0: float,
+    interval: int,
+) -> None:
+    """Emit ``running elapsed=Ns`` until *stop* is set.
+
+    A plain daemon thread rather than anything derived from the child's output: the
+    parent is blocked in ``proc.wait()`` for the whole run, so an output-driven heartbeat
+    would be silent for the entire duration it exists to cover.
+    """
+    while not stop.wait(interval):
+        _emit_progress(f"[{label}] running elapsed={int(time.monotonic() - t0)}s")
+
+
 def run_streaming_command(
     command: str,
     *,
@@ -153,6 +245,8 @@ def run_streaming_command(
     timeout_seconds: int,
     cwd: Path | None = None,
     env: dict[str, str] | None = None,
+    progress: ProgressContext | None = None,
+    heartbeat_seconds: int | None = None,
 ) -> CommandResult:
     """Run *command*, streaming stdout/stderr to the given evidence files.
 
@@ -167,6 +261,9 @@ def run_streaming_command(
     * the child gets its own process group and a timeout kills the whole tree;
     * both files are touched afterwards so they exist even if the child produced
       nothing and was killed before its first line.
+
+    *progress* adds live lifecycle lines to stderr. It is None by default, which is
+    exactly the behaviour above with no output at all.
     """
     stdout_path.parent.mkdir(parents=True, exist_ok=True)
     for stale in (stdout_path, stderr_path):
@@ -177,6 +274,24 @@ def run_streaming_command(
     exit_code: int | None = None
     timed_out = False
     infra_error: str | None = None
+
+    emit = progress is not None and _progress_enabled()
+    if emit and progress is not None:
+        _emit_progress(
+            f"[{progress.label}] start kind={progress.kind} "
+            f"timeout={timeout_seconds}s logs={progress.log_dir}"
+        )
+
+    interval = _heartbeat_seconds(heartbeat_seconds)
+    stop = threading.Event()
+    watchdog: threading.Thread | None = None
+    if emit and progress is not None and interval > 0:
+        watchdog = threading.Thread(
+            target=_heartbeat_loop,
+            args=(stop, progress.label, t0, interval),
+            daemon=True,
+        )
+        watchdog.start()
 
     try:
         proc = subprocess.Popen(
@@ -212,9 +327,26 @@ def run_streaming_command(
         infra_error = f"command not found: {exc}"
     except Exception as exc:  # defensive
         infra_error = f"subprocess raised: {type(exc).__name__}: {exc}"
+    finally:
+        stop.set()
+        if watchdog is not None:
+            watchdog.join(timeout=2)
 
     stdout_path.touch(exist_ok=True)
     stderr_path.touch(exist_ok=True)
+
+    duration = time.monotonic() - t0
+    termination = classify_termination(exit_code, timed_out, infra_error)
+
+    if emit and progress is not None:
+        # The terminal line carries the termination KIND, not just a non-zero status, so
+        # the log distinguishes a timeout from a signal death from an ordinary failure
+        # without anyone opening an artifact.
+        _emit_progress(
+            f"[{progress.label}] exit={exit_code} elapsed={duration:.1f}s "
+            f"timeout={'true' if timed_out else 'false'} "
+            f"term={termination['kind']} stdout={stdout_path} stderr={stderr_path}"
+        )
 
     return CommandResult(
         command=command,
@@ -225,7 +357,7 @@ def run_streaming_command(
         stderr=_read_text(stderr_path),
         stdout_path=stdout_path,
         stderr_path=stderr_path,
-        duration_seconds=time.monotonic() - t0,
+        duration_seconds=duration,
     )
 
 

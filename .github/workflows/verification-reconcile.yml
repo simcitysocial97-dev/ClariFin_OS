@@ -192,6 +192,14 @@ jobs:
     env:
       VERIFICATION_BASE_REF: ${{ github.base_ref || github.event.before }}
       VERIFICATION_HEAD_REF: ${{ github.sha }}
+      # M10-R2 closeout. `run_playwright_tests.sh` exits 1 when FINANCE_DB_PATH is unset,
+      # so ANY reconcile shard assigned the Playwright task was guaranteed to fail it: the
+      # pre-M10-R2 single job carried this environment and the split dropped it.
+      # Per-shard, so two reconcile legs never share a database -- the exact cross-shard
+      # mutation that script documents as the cause of drifting screenshots.
+      FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-playwright-${{ matrix.shard }}.db
+      PLAYWRIGHT_PROJECT: chromium
+      CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -254,35 +262,34 @@ jobs:
           # had to disambiguate. `check --shard` derives the same plan from the same
           # boundary, which is why all shards agree on plan_fingerprint.
 
-          # `|| true` is deliberate and narrow: a red shard must still write its
-          # report, because the aggregate needs to know this leg ran and failed.
-          # Omitting the record would make the gate report "incomplete" rather than
-          # the real failure. The shard's exit status is re-asserted below.
+          # The terminal result is written by the runner on EVERY terminal path, so the
+          # assertion below is about TRANSPORT, not task success. A red shard still
+          # writes a result -- that is the whole point of --result-out over a stdout
+          # redirect, which only produced content if the process survived to the end.
           set +e
           timeout "${SHARD_TIMEOUT_MINUTES:-85}" \
             .venv/bin/python -m runtime.verify run \
               --plan "$PLAN_IN" \
               --shard "$SHARD_INDEX" \
               --shard-count "$SHARD_TOTAL" \
-              --json > "$OUT_DIR/shard-${SHARD_INDEX}.json"
+              --result-out "$OUT_DIR/shard-${SHARD_INDEX}.json" \
+              --json
           SHARD_RC=$?
           set -e
-          echo "shard ${SHARD_INDEX} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
-          # The task streams to evidence files, so the job log alone shows nothing
-          # actionable. Surface the report's own verdict inline, so a failed shard is
-          # diagnosable without downloading artifacts.
-          if [ -s "$OUT_DIR/shard-${SHARD_INDEX}.json" ]; then
-            {
-              echo "### Reconcile shard ${SHARD_INDEX}"
-              echo '```json'
-              jq -c '{final_decision, decision_reason, efficiency}' \
-                "$OUT_DIR/shard-${SHARD_INDEX}.json" 2>/dev/null || cat \
-                "$OUT_DIR/shard-${SHARD_INDEX}.json"
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
+          REPORT="$OUT_DIR/shard-${SHARD_INDEX}.json"
+          if [ ! -s "$REPORT" ]; then
+            echo "::error::shard ${SHARD_INDEX}: NO TERMINAL RESULT (0 bytes). Its tasks are unreported -- an infrastructure event, not a verification verdict. The [reconcile-shard] lines above name the last task reached."
+            echo "::group::shard ${SHARD_INDEX} transport evidence"
+            ls -la "$OUT_DIR" || true
+            find runtime/generated/m9-c49/logs -name '*.log' 2>/dev/null | tail -10 || true
+            echo "::endgroup::"
+          elif ! jq -e . "$REPORT" >/dev/null 2>&1; then
+            echo "::error::shard ${SHARD_INDEX}: MALFORMED result document (producer bug)"
+            head -c 400 "$REPORT"
           else
-            echo "::error::shard ${SHARD_INDEX} produced no report; its tasks are unreported."
+            echo "shard ${SHARD_INDEX} terminal result: $(jq -c '{leg_id, outcome, status, final_decision, exit_code, tasks: (.tasks | length)}' "$REPORT")"
           fi
+          echo "shard ${SHARD_INDEX} exit=${SHARD_RC}" >> "$GITHUB_STEP_SUMMARY"
           exit "$SHARD_RC"
 
       - name: Upload shard result
@@ -315,10 +322,15 @@ jobs:
             runtime/generated/m9-c49/logs/
             runtime/generated/m9-c49/measurements/
             runtime/generated/evidence/
+            # M10-R2 closeout: profile-task output streams here via `_run_profile_alias`
+            # (the C3 evidence-streaming stabilization). Without it a dead leg's per-task
+            # output is invisible.
+            runtime/generated/profile-logs/
             runtime/generated/engineering-history.json
             runtime/generated/verification-cache.json
             runtime/generated/verification-progress/
           retention-days: 14
+          if-no-files-found: warn
 
       - name: Record canonical status
         # No `if: always()`: this is an informational print, not evidence. Making it

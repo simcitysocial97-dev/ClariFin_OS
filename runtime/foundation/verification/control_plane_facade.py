@@ -572,6 +572,7 @@ class ControlPlane:
         json_out: bool = False,
         shard: tuple[int, int] | None = None,
         aggregate: str | None = None,
+        result_out: str | None = None,
     ) -> int:
         """
         Execute an explicit or generated verification plan.
@@ -740,8 +741,38 @@ class ControlPlane:
         def _capture_record(rec):
             executed_task_ids.append(rec.task_id)
 
+        # M10-R2 closeout. Two changes, both about making a shard diagnosable:
+        #
+        # 1. Live per-task lifecycle logging. The reconcile leg previously printed one
+        #    line (`shard 1/7 executing 1/11 task(s)`) and then went silent for the rest
+        #    of the run, so a leg that died mid-task left no indication of what it was
+        #    doing.
+        # 2. A terminal result document, written on EVERY terminal path below, instead of
+        #    a stdout redirect. A stdout redirect only produces content if the process
+        #    survives to the end, which is why four of seven legs left 0-byte reports and
+        #    the aggregate could not tell a killed leg from a failing one.
+        prefix = None
+        if shard is not None and shard[1] > 1:
+            prefix = f"reconcile-shard {shard[0] + 1}/{shard[1]}"
+        orchestrator = self.orchestrator
+        if prefix and getattr(orchestrator, "_progress_prefix", None) is None:
+            orchestrator = ExecutionOrchestrator(
+                command_overrides=orchestrator._command_overrides,
+                measurement_search_dirs=orchestrator._measurement_search_dirs,
+                max_runtime_overrides=orchestrator._max_runtime_overrides,
+                evidence_root=orchestrator._evidence_root,
+                progress_prefix=prefix,
+            )
+            print(
+                f"[{prefix}] plan={execution_plan.plan_id} "
+                f"tasks={len(execution_plan.tasks)} "
+                f"ids={','.join(t.task_id for t in execution_plan.tasks) or '-'}",
+                file=sys.stderr,
+                flush=True,
+            )
+
         try:
-            report = self.orchestrator.execute(
+            report = orchestrator.execute(
                 execution_plan,
                 authorize={t.task_id for t in execution_plan.tasks},
                 dry_run=False,
@@ -749,6 +780,16 @@ class ControlPlane:
             )
         except KeyboardInterrupt:
             elapsed = time.monotonic() - run_start
+            _write_leg_result(
+                result_out,
+                leg_id=prefix or "run",
+                shard_id=(f"reconcile-shard-{shard[0]}" if shard is not None else None),
+                status="interrupted",
+                final_decision="interrupted",
+                exit_code=130,
+                duration_seconds=elapsed,
+                tasks=executed_task_ids,
+            )
             from runtime.verify import _record_verification_event
 
             _record_verification_event(
@@ -762,6 +803,25 @@ class ControlPlane:
                 extra_metadata={"tasks_executed": executed_task_ids},
             )
             return 130
+
+        _write_leg_result(
+            result_out,
+            leg_id=prefix or "run",
+            shard_id=(f"reconcile-shard-{shard[0]}" if shard is not None else None),
+            status="passed" if report.final_decision == "certified" else "failed",
+            final_decision=report.final_decision,
+            exit_code=0 if report.final_decision == "certified" else 1,
+            duration_seconds=time.monotonic() - run_start,
+            tasks=executed_task_ids,
+            records=[
+                {
+                    "task_id": r.task_id,
+                    "completion_state": str(r.completion_state),
+                    "reason": r.reason,
+                }
+                for r in report.records
+            ],
+        )
 
         from runtime.verify import record_execution_report
 
@@ -799,14 +859,26 @@ class ControlPlane:
         )
 
         started = time.monotonic()
-        results, unreadable = read_leg_results(Path(results_dir))
+        results, absent, malformed, rejected = read_leg_results(Path(results_dir))
         expected = expected_leg_ids(shard_count or 4)
 
         problems: list[str] = []
-        if unreadable:
+        # absent / malformed / rejected are three different failures with three
+        # different owners; see read_shard_results for why they are never conflated.
+        if absent:
             problems.append(
-                "leg result(s) unreadable, their tests are unreported: "
-                + ", ".join(unreadable)
+                "leg(s) produced NO TERMINAL RESULT (killed, cancelled or never "
+                "started), so their tests are unreported: " + ", ".join(absent)
+            )
+        if malformed:
+            problems.append(
+                "leg result document(s) MALFORMED (producer bug): "
+                + ", ".join(malformed)
+            )
+        if rejected:
+            problems.append(
+                "leg result document(s) REJECTED (unsupported schema): "
+                + ", ".join(rejected)
             )
         problems.extend(verify_legs(expected, results))
 
@@ -909,12 +981,15 @@ class ControlPlane:
             return 2
 
         started = time.monotonic()
-        results, unreadable = read_shard_results(Path(verify_dir))
+        results, absent, malformed, rejected = read_shard_results(Path(verify_dir))
         # The integrity obligation runs here, after the shards: it is a distinct
         # canonical operation (`runtime.verify integrity`) that the monolithic
         # self-test used to run sequentially. Running it in the gate keeps it a real
         # obligation rather than folding it into the last shard.
-        print(f"[runtime-gate] {len(results)} shard result(s) read")
+        print(
+            f"[runtime-gate] {len(results)} shard result(s) read; "
+            f"absent={len(absent)} malformed={len(malformed)} rejected={len(rejected)}"
+        )
         summary = summarise_shards(results)
         if summary:
             print(summary)
@@ -925,14 +1000,28 @@ class ControlPlane:
         # obligation rather than being folded into whichever shard happened to be
         # last — otherwise a green suite could mask a red integrity scan.
         integrity_ok: bool | None = None
-        if not unreadable and all(r.ok for r in results):
+        if not (absent or malformed or rejected) and all(r.ok for r in results):
             integrity_ok = _run_runtime_integrity(Path(verify_dir))
 
         problems: list[str] = []
-        if unreadable:
+        # Three distinct failure buckets, never conflated. A leg with no file never
+        # reached a terminal result (infrastructure); a malformed or rejected file is a
+        # producer bug. Collapsing them into one "unreadable" list is what made the
+        # earlier reconcile failure undiagnosable.
+        if absent:
             problems.append(
-                "shard result(s) unreadable, their tests are unreported: "
-                + ", ".join(unreadable)
+                "shard(s) produced NO TERMINAL RESULT (killed, cancelled or never "
+                "started), so their tests are unreported: " + ", ".join(absent)
+            )
+        if malformed:
+            problems.append(
+                "shard result document(s) MALFORMED (producer bug): "
+                + ", ".join(malformed)
+            )
+        if rejected:
+            problems.append(
+                "shard result document(s) REJECTED (unsupported schema): "
+                + ", ".join(rejected)
             )
         problems.extend(
             verify_shards(
@@ -1053,12 +1142,23 @@ class ControlPlane:
             return 2
 
         started = time.monotonic()
-        results, unreadable = read_leg_results(Path(verify_legs))
+        results, absent, malformed, rejected = read_leg_results(Path(verify_legs))
         problems: list[str] = []
-        if unreadable:
+        if absent:
             problems.append(
-                "leg result(s) unreadable, their obligations are unreported: "
-                + ", ".join(unreadable)
+                "obligation leg(s) produced NO TERMINAL RESULT (killed, cancelled or "
+                "never started), so their obligations are unreported: "
+                + ", ".join(absent)
+            )
+        if malformed:
+            problems.append(
+                "obligation result document(s) MALFORMED (producer bug): "
+                + ", ".join(malformed)
+            )
+        if rejected:
+            problems.append(
+                "obligation result document(s) REJECTED (unsupported schema): "
+                + ", ".join(rejected)
             )
         problems.extend(verify_leg_results(profile_op, results))
 
@@ -1143,6 +1243,9 @@ class ControlPlane:
         from runtime.foundation.verification.execution_shards import (
             merge_shard_reports,
         )
+        from runtime.foundation.verification.runtime_shards import (
+            expected_shard_ids,
+        )
 
         root = Path(shard_dir)
         plan_file = root / "plan.json"
@@ -1159,7 +1262,12 @@ class ControlPlane:
             print(f"[aggregate] unreadable plan {plan_file}: {exc}", file=sys.stderr)
             return 2
 
+        # A shard whose process was killed leaves no file at all. That is an
+        # infrastructure event and the gate must be able to NAME it, so the shard count
+        # is compared against how many files actually arrived rather than the gate
+        # discovering it as "0 of N tasks missing".
         shard_files = sorted(root.glob("shard-*.json"))
+        expected_shards = len(expected_shard_ids(len(shard_files) or 1))
         if not shard_files:
             print(
                 f"[aggregate] no shard-*.json reports in {shard_dir}; a gate that "
@@ -1168,6 +1276,13 @@ class ControlPlane:
                 file=sys.stderr,
             )
             return 2
+        if len(shard_files) != expected_shards:
+            print(
+                f"[aggregate] TRANSPORT: expected {expected_shards} shard result(s), "
+                f"{len(shard_files)} arrived. At least one leg produced NO TERMINAL "
+                "RESULT (killed, cancelled, or never started).",
+                file=sys.stderr,
+            )
 
         reports: list[ExecutionReport] = []
         unreadable: list[str] = []
@@ -2354,6 +2469,7 @@ def _run_profile_alias(operation: str) -> int:
 
     from runtime.foundation.verification.env import child_process_env
     from runtime.foundation.verification.parallel_executor import (
+        ProgressContext,
         execute_tasks_in_parallel,
         max_workers_for,
         run_streaming_command,
@@ -2413,6 +2529,15 @@ def _run_profile_alias(operation: str) -> int:
                 timeout_seconds=timeout_override,
                 cwd=REPO_ROOT,
                 env=env,
+                # M10-R2 closeout: live per-task lifecycle logging for profile aliases.
+                # A failing alias previously produced a single `task 'x' failed` line and
+                # then silence for the rest of the run.
+                progress=ProgressContext(
+                    label=f"{operation}:{task.id}",
+                    kind="task",
+                    log_dir=log_root,
+                    timeout_seconds=timeout_override,
+                ),
             )
             if result.infra_error:
                 # The command never started. Reported distinctly from a failure so the
@@ -2802,11 +2927,19 @@ def _dispatch_canonical(operation: str, args: list[str]) -> int:
         except ValueError as exc:
             print(str(exc), file=sys.stderr)
             return 2
+        # `--result-out` is parsed once, up front, because it is shared by both leg
+        # kinds: a profile obligation leg and a `run --plan` shard leg.
+        result_out = None
+        if "--result-out" in args:
+            idx = args.index("--result-out")
+            result_out = args[idx + 1]
+            args = args[:idx] + args[idx + 2 :]
         return cp.run(
             plan_path=plan_path,
             json_out=json_out,
             shard=(shard, shard_count),
             aggregate=aggregate,
+            result_out=result_out,
         )
     if operation == CanonicalOperation.DIAGNOSE.value:
         return cp.diagnose()
@@ -2863,6 +2996,74 @@ def _runtime_test_counts() -> dict[str, int] | None:
         line.split("::", 1)[0] for line in completed.stdout.splitlines() if "::" in line
     )
     return dict(counter) or None
+
+
+#: Schema for a matrix leg's terminal result. The aggregate distinguishes three states
+#: from this and its ABSENCE:
+#:
+#:   no file      the leg never reached a terminal result (killed, cancelled, never
+#:                started) -- an infrastructure event
+#:   status=failed the leg ran and failed a verification obligation
+#:   status=passed the leg completed
+#:
+#: An externally killed process cannot write anything, and that is not a defect to paper
+#: over -- it is a state the gate must be able to name. What IS a defect, and what this
+#: schema exists to remove, is the previous shape where a *normal* failed execution left a
+#: 0-byte stdout redirect and was therefore indistinguishable from a kill.
+LEG_RESULT_SCHEMA = "m10r2-leg-result/v1"
+
+
+def _write_leg_result(
+    result_out: str | None,
+    *,
+    leg_id: str,
+    status: str,
+    final_decision: str | None,
+    exit_code: int,
+    duration_seconds: float,
+    tasks: list[str],
+    records: list[dict] | None = None,
+    shard_id: str | None = None,
+) -> None:
+    """Write a leg's terminal result. Never raises; a write failure is reported."""
+    import contextlib
+
+    if not result_out:
+        return
+    payload = {
+        "schema": LEG_RESULT_SCHEMA,
+        # `leg_id` is the human label a reader sees in the log ("reconcile-shard 2/3");
+        # `shard_id` is the stable machine key the shared reader matches on. Both are
+        # emitted so ONE result contract serves all four fan-out workflows rather than
+        # each growing its own shape.
+        "leg_id": leg_id,
+        "shard_id": shard_id or leg_id,
+        "outcome": "terminal",
+        "status": status,
+        "final_decision": final_decision,
+        "exit_code": exit_code,
+        "duration_seconds": round(float(duration_seconds), 2),
+        "tasks": list(tasks),
+        "records": records or [],
+    }
+    try:
+        path = Path(result_out)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+        print(
+            f"[{leg_id}] report={path} bytes={path.stat().st_size} "
+            f"status={status} outcome=terminal",
+            file=sys.stderr,
+            flush=True,
+        )
+    except Exception as exc:  # noqa: BLE001 - reporting must not fail the run
+        with contextlib.suppress(Exception):
+            print(
+                f"[{leg_id}] could not write terminal result: "
+                f"{type(exc).__name__}: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
 
 
 def _as_state(value: Any) -> Any:
@@ -2977,12 +3178,22 @@ def _run_runtime_integrity(result_dir: Path) -> bool:
     from runtime.foundation.verification.parallel_executor import run_streaming_command
 
     result_dir.mkdir(parents=True, exist_ok=True)
+    from runtime.foundation.verification.parallel_executor import ProgressContext
+
     result = run_streaming_command(
         ".venv/bin/python -m runtime.verify integrity",
         stdout_path=result_dir / "integrity-stdout.log",
         stderr_path=result_dir / "integrity-stderr.log",
         timeout_seconds=_profile_task_timeout_seconds(),
         env=child_process_env(),
+        # Live logging: the integrity scan is the gate's own obligation, so its progress
+        # and termination kind belong in the job log next to the shard summaries.
+        progress=ProgressContext(
+            label="runtime:integrity",
+            kind="integrity",
+            log_dir=result_dir,
+            timeout_seconds=_profile_task_timeout_seconds(),
+        ),
     )
     ok = result.exit_code == 0 and not result.timed_out and not result.infra_error
     (result_dir / "integrity.json").write_text(

@@ -697,7 +697,19 @@ class ExecutionOrchestrator:
         measurement_search_dirs: list[str] | None = None,
         max_runtime_overrides: dict[str, int] | None = None,
         evidence_root: Path | None = None,
+        progress_prefix: str | None = None,
     ) -> None:
+        """*progress_prefix* enables live per-task lifecycle logging (M10-R2 closeout).
+
+        When set, every task executed through this orchestrator emits
+        ``[<prefix>/<task_id>] start|running|exit=...`` to stderr. This is the only
+        orchestrator-side change live observability needs: the per-task line is composed
+        here and executed by ``run_streaming_command``, which every verification
+        subprocess in the repository already routes through.
+
+        ``None`` (the default) restores byte-identical behaviour, so local runs and the
+        existing suite are unaffected.
+        """
         from runtime.foundation.verification.capability_contract import (
             get_capability_contract_registry,
         )
@@ -722,6 +734,7 @@ class ExecutionOrchestrator:
         #: decided by the most recent `_inject_revalidations`. Read by
         #: `fan_out_shared_measurement_records`.
         self._last_coverage_groups: dict[str, list[str]] = {}
+        self._progress_prefix = progress_prefix
 
     def fan_out_shared_measurement_records(
         self,
@@ -1941,6 +1954,23 @@ class ExecutionOrchestrator:
         # shared with executor.py via env.child_process_env.
         from runtime.foundation.verification.env import child_process_env
 
+        # M10-R2 closeout: live per-task lifecycle logging. Composed here so the label
+        # carries the leg AND the canonical task id — the reconcile shard log line that
+        # reads `shard=1/7 ... tasks=playwright-e2e` is what makes a failing leg
+        # diagnosable without waiting for its artifact.
+        progress = None
+        if self._progress_prefix:
+            from runtime.foundation.verification.parallel_executor import (
+                ProgressContext,
+            )
+
+            progress = ProgressContext(
+                label=f"{self._progress_prefix}/{spec.task_id}",
+                kind="task",
+                log_dir=log_dir,
+                timeout_seconds=spec.timeout_seconds,
+            )
+
         result = run_streaming_command(
             command,
             stdout_path=stdout_path,
@@ -1948,6 +1978,7 @@ class ExecutionOrchestrator:
             timeout_seconds=spec.timeout_seconds,
             cwd=REPO_ROOT,
             env=child_process_env(),
+            progress=progress,
         )
 
         exit_code = result.exit_code

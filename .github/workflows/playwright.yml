@@ -233,6 +233,10 @@ jobs:
           name: playwright-leg-${{ matrix.leg_id }}
           path: |
             runtime/generated/legs/
+            # M10-R2 closeout. `_run_profile_alias` streams task output here (the C3
+            # evidence-streaming stabilization), so WITHOUT this the visual-leg failure is
+            # unreadable: the leg's own log holds only the facade's one-line summary.
+            runtime/generated/profile-logs/
             frontend/test-results/
             frontend/playwright-report/
           retention-days: 14

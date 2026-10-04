@@ -243,10 +243,12 @@ def verify_legs(
     return problems
 
 
-def read_leg_results(directory: Path) -> tuple[list[ShardResult], list[str]]:
-    """Read every ``leg-*.json``, reporting unreadable ones rather than skipping.
+def read_leg_results(
+    directory: Path,
+) -> tuple[list[ShardResult], list[str], list[str], list[str]]:
+    """Read every ``leg-*.json``, classifying each leg's outcome.
 
     Re-exported from the runtime shard module so both fan-outs read their evidence
-    identically.
+    identically, and so both get the absent / malformed / rejected split.
     """
     return read_shard_results(Path(directory))

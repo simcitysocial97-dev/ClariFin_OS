@@ -534,7 +534,12 @@ class TestInterruptionTruth:
             timeout_seconds,
             cwd=None,
             env=None,
+            **_ignored,
         ):
+            # `_ignored` absorbs the M10-R2 closeout's progress kwargs. A stub that
+            # pinned the exact signature broke the moment instrumentation was added
+            # here, which is a sign the stub was coupled to the call shape rather than
+            # to the behaviour under test.
             stdout_path.parent.mkdir(parents=True, exist_ok=True)
             stdout_path.write_text("", encoding="utf-8")
             stderr_path.write_text("", encoding="utf-8")
@@ -591,7 +596,12 @@ class TestInterruptionTruth:
             timeout_seconds,
             cwd=None,
             env=None,
+            **_ignored,
         ):
+            # `_ignored` absorbs the M10-R2 closeout's progress kwargs. A stub that
+            # pinned the exact signature broke the moment instrumentation was added
+            # here, which is a sign the stub was coupled to the call shape rather than
+            # to the behaviour under test.
             stdout_path.parent.mkdir(parents=True, exist_ok=True)
             stdout_path.write_text("", encoding="utf-8")
             stderr_path.write_text("", encoding="utf-8")

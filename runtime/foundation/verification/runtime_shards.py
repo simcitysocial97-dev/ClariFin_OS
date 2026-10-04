@@ -44,6 +44,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+
+def _emit(line: str) -> None:
+    """One progress line on stderr. Never raises, never touches stdout."""
+    import contextlib
+    import sys
+
+    with contextlib.suppress(Exception):
+        print(line, file=sys.stderr, flush=True)
+
+
 __all__ = [
     "ShardResult",
     "TestShardPlan",
@@ -214,18 +224,57 @@ class ShardResult:
         return self.status == "passed"
 
 
-def read_shard_results(directory: Path) -> tuple[list[ShardResult], list[str]]:
-    """Read every ``shard-*.json`` in *directory*, reporting unreadable ones.
+#: Accepted result-document schemas. Anything else is REJECTED rather than coerced:
+#: a document this build cannot interpret must never be read as a passing leg.
+LEG_RESULT_SCHEMAS: frozenset[str] = frozenset({"m10r2-leg-result/v1"})
 
-    An unreadable result is surfaced, never skipped: a shard that died mid-flight leaves
-    no result, and the gate must treat that as a missing obligation rather than quietly
-    certifying the shards that survived.
+
+def read_shard_results(
+    directory: Path,
+) -> tuple[list[ShardResult], list[str], list[str], list[str]]:
+    """Read every ``shard-*.json``, classifying each leg's outcome.
+
+    Returns ``(results, absent, malformed, rejected)``. The three failure buckets are
+    kept apart because they have different owners and must never be conflated:
+
+    * **absent** — no file at all for this leg. The leg never reached a terminal result:
+      killed, cancelled, or never started. An infrastructure event.
+    * **malformed** — a file exists but is not valid JSON, or is missing a required key.
+      A producer bug.
+    * **rejected** — valid JSON with a schema this build does not recognise. Also a
+      producer/deployment bug, but a different one from a corrupt file.
+
+    The previous shape returned a single ``unreadable`` list for all three and defaulted
+    missing fields (``payload.get("exit_code", 1)``), which meant a document missing its
+    status could be read as a leg that ran and failed. Silent coercion of an
+    uninterpretable document into a verdict is the one behaviour this gate must never have.
     """
     results: list[ShardResult] = []
-    unreadable: list[str] = []
-    for path in sorted(Path(directory).glob("shard-*.json")):
+    absent: list[str] = []
+    malformed: list[str] = []
+    rejected: list[str] = []
+
+    directory = Path(directory)
+    paths = sorted(directory.glob("shard-*.json"))
+    if not paths:
+        # No files at all is not "all legs absent" — it is a transport fault, and the
+        # caller must be able to say so rather than reporting every task as missing.
+        absent.append("no shard-*.json files found")
+
+    for path in paths:
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            malformed.append(f"{path.name}: {type(exc).__name__}")
+            continue
+        if not isinstance(payload, dict):
+            malformed.append(f"{path.name}: not a JSON object")
+            continue
+        schema = payload.get("schema")
+        if schema is not None and schema not in LEG_RESULT_SCHEMAS:
+            rejected.append(f"{path.name}: unsupported schema {schema!r}")
+            continue
+        try:
             results.append(
                 ShardResult(
                     shard_id=payload["shard_id"],
@@ -238,9 +287,9 @@ def read_shard_results(directory: Path) -> tuple[list[ShardResult], list[str]]:
                     errors=int(payload.get("errors", 0)),
                 )
             )
-        except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
-            unreadable.append(f"{path.name}: {type(exc).__name__}")
-    return results, unreadable
+        except (KeyError, TypeError, ValueError) as exc:
+            malformed.append(f"{path.name}: {type(exc).__name__}: {exc}")
+    return results, absent, malformed, rejected
 
 
 def expected_shard_ids(shard_count: int) -> list[str]:
@@ -361,12 +410,27 @@ def run_test_shard(
         ]
     )
 
+    # M10-R2 closeout: live lifecycle logging. A runtime shard is the longest-running
+    # unit in CI, so "is it alive and which files is it on" is exactly the question the
+    # log must answer while it runs.
+    from runtime.foundation.verification.parallel_executor import ProgressContext
+
+    _emit(
+        f"[runtime-shard {shard_index + 1}/{shard_count}] shard_id={shard_id} "
+        f"files={len(shard_files)}"
+    )
     result = run_streaming_command(
         command,
         stdout_path=log_dir / "stdout.log",
         stderr_path=log_dir / "stderr.log",
         timeout_seconds=timeout_seconds,
         env=child_process_env(),
+        progress=ProgressContext(
+            label=f"runtime-shard {shard_index + 1}/{shard_count}",
+            kind="shard",
+            log_dir=log_dir,
+            timeout_seconds=timeout_seconds,
+        ),
     )
 
     output = result.stdout + "\n" + result.stderr
