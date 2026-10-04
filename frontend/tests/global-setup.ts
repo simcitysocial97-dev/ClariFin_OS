@@ -139,12 +139,40 @@ async function seedTestData(): Promise<boolean> {
     const { existsSync } = await import('fs');
     
     const backendPath = resolve(process.cwd(), '..', 'backend');
-    const dbPath = resolve(backendPath, 'data', 'finance.db');
-    
+    // M10-R3 (L7) — FIXTURE AUTHORITY.
+    //
+    // This used to hard-code `backend/data/finance.db`, ignoring FINANCE_DB_PATH.
+    // The consequence was measured directly from the committed baseline PNG: the
+    // `transactions-page` baseline renders "Test Transaction 1/2/3 — 1 Jan/1 Feb/1 Mar
+    // 2025 — Rs 1000/500/1500", which are literally the rows seeded a few lines below.
+    // CI seeds a *different* file (`backend/data/e2e-<leg_id>.db`) via
+    // tools/e2e_seed.py — 27 rows over six months. Two competing fixture authorities,
+    // and the visual pass read the one nobody re-seeded. That alone accounted for most
+    // of the reported screenshot mismatches.
+    //
+    // Now the database is whatever FINANCE_DB_PATH names, exactly like every other
+    // backend process in this repository. One authority: whoever provisions the database
+    // also seeds it.
+    const configuredDb = process.env.FINANCE_DB_PATH;
+    const dbPath = configuredDb
+      ? resolve(configuredDb)
+      : resolve(backendPath, 'data', 'finance.db');
+
     if (!existsSync(dbPath)) {
+      if (configuredDb) {
+        // The operator named a database explicitly, so its absence is a provisioning
+        // failure that must stop the run. Silently seeding a different file is precisely
+        // the defect being removed.
+        throw new Error(
+          `FINANCE_DB_PATH names a database that does not exist: ${dbPath}. ` +
+            `Seed it before running the suite (tools/e2e_seed.py) — this setup will ` +
+            `not fall back to another file.`,
+        );
+      }
       console.log('⚠️  Database not found at:', dbPath);
       return false;
     }
+    console.log('🌱 Seeding test data into:', dbPath);
     
     const seedScript = `
 import sqlite3
