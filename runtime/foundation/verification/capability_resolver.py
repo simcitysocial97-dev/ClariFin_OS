@@ -490,9 +490,7 @@ class CapabilityResolver:
                 bridged = PATH_CAPABILITY_BRIDGES.get(_path)
                 if bridged is not None:
                     transitive_caps.add(bridged)
-                    capability_sources.setdefault(bridged, []).append(
-                        f"path:{raw_cap}"
-                    )
+                    capability_sources.setdefault(bridged, []).append(f"path:{raw_cap}")
                     continue
                 unmapped.append(raw_cap)
                 continue
