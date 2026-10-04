@@ -81,6 +81,7 @@ from runtime.foundation.verification.execution_orchestrator import (
     ExecutionTaskSpec,
     FinalDecision,
 )
+from runtime.foundation.verification.execution_orchestrator import evidence_roots
 from runtime.foundation.verification.execution_shards import (
     assign_shards,
     validate_infra_backstop,
@@ -2840,6 +2841,9 @@ def _publish_leg_certification(
     payload["decision"] = report.final_decision
     payload["reason"] = report.decision_reason
     payload["duration_seconds"] = report.total_duration_seconds
+    # L1d: the evidence this leg produced, as the runtime knows it — so the workflow
+    # uploads exactly these instead of reconstructing the list.
+    payload["evidence_roots"] = evidence_roots()
 
     root = REPO_ROOT / "runtime" / "generated" / "certification"
     try:
@@ -2909,6 +2913,11 @@ def _write_certification_outcome(
     """
     payload = run.to_dict()
     payload["topology"] = topology
+    # L1d: the evidence this leg produced, as the runtime knows it. A workflow should
+    # upload exactly these rather than reconstructing the list. Reconstruction is how
+    # `backend/**` ended up inside an evidence artifact, and how adding one root
+    # re-shapes the whole upload.
+    payload["evidence_roots"] = evidence_roots()
     payload["tasks_executed"] = list(task_ids or [])
     root = REPO_ROOT / "runtime" / "generated" / "certification"
     try:

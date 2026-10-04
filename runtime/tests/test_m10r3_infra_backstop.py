@@ -258,3 +258,92 @@ class TestPerLegEnvironmentIsDerived:
         env = self._job_env("playwright.yml")
         assert "FINANCE_DB_PATH" in env
         assert "e2e_seed.py" in _workflow("playwright.yml")
+
+
+class TestEvidenceRootsArePublished:
+    """L1d — the runtime knows its own evidence locations; the workflow should not guess.
+
+    Eight `upload-artifact` sites declare multiple paths, and `verification-reconcile.yml`
+    uploads `runtime/**` *and* `backend/**`. Two consequences the workflow cannot see:
+
+    * `upload-artifact` preserves each path's position under the least common ancestor of
+      the declared paths, so adding one root re-shapes the entire artifact — a consumer
+      pinned to the current layout breaks on a change that moved no evidence;
+    * `backend/**` is the source tree uploaded as evidence. It is there only because
+      mutation evidence lands in `backend/tests/generated/mutation`, a runtime-owned
+      location the workflow had to know about.
+    """
+
+    def test_the_runtime_publishes_its_own_evidence_roots(self):
+        from runtime.foundation.verification.execution_orchestrator import evidence_roots
+
+        roots = evidence_roots()
+        assert roots, "the runtime must know at least one evidence root"
+        for r in roots:
+            assert not r.startswith("/"), "roots must be workspace-relative for upload"
+            assert (REPO_ROOT / r).is_dir(), f"{r} is published but does not exist"
+
+    def test_no_root_is_the_whole_source_tree(self):
+        """`backend/**` as evidence is the duplication being removed."""
+        from runtime.foundation.verification.execution_orchestrator import evidence_roots
+
+        for r in evidence_roots():
+            assert r not in {"backend", "backend/**", "."}, (
+                f"{r} would upload the source tree as evidence"
+            )
+
+    def test_the_certification_document_carries_the_manifest(self, tmp_path, monkeypatch):
+        from runtime.foundation.verification import control_plane_facade as facade
+        from runtime.foundation.verification.execution_orchestrator import (
+            evidence_roots,
+        )
+
+        class _Run:
+            def __init__(self, *_a, **_k):
+                pass
+
+            def to_dict(self):
+                return {"decision": "certified", "obligations": []}
+
+            def decide(self):
+                from runtime.foundation.verification.execution_orchestrator import (
+                    FinalDecision,
+                )
+
+                return FinalDecision.CERTIFIED, "ok"
+
+            @property
+            def outcomes(self):
+                return ()
+
+            @property
+            def duration_seconds(self):
+                return 0.0
+
+            @property
+            def fingerprint_before(self):
+                return None
+
+            @property
+            def fingerprint_after(self):
+                return None
+
+            @property
+            def fingerprint_stable(self):
+                return True
+
+            def exit_code(self):
+                return 0
+
+        monkeypatch.setattr(facade, "REPO_ROOT", tmp_path)
+        (tmp_path / "runtime" / "generated" / "certification").mkdir(parents=True)
+        published = facade._write_certification_outcome(_Run(), "quick")
+        assert published is not None
+        import json
+
+        doc = json.loads(published.read_text())
+        assert "evidence_roots" in doc, (
+            "the document must name its own evidence, so a workflow uploads what the "
+            "runtime produced instead of reconstructing the list"
+        )
+        assert isinstance(doc["evidence_roots"], list)

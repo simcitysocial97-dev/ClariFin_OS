@@ -1,0 +1,24 @@
+{
+  "run_id": "34891723a24404c3",
+  "timestamp": "2026-10-04T14:55:36.820034+00:00",
+  "repository_sha": "9f9551a2b725a305022d315e600bb992baf6dcfd",
+  "scenario": "rename",
+  "changed_files": [
+    "backend/src/engines/new_name.py"
+  ],
+  "resolved_capabilities": [
+    "UNMAPPED",
+    "INVALIDATED"
+  ],
+  "obligations": [
+    "unit"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "planned",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

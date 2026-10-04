@@ -1491,6 +1491,39 @@ def _unmapped_capabilities_now(capabilities: tuple[str, ...]) -> list[str]:
         return list(capabilities)
 
 
+def evidence_roots() -> list[str]:
+    """Every directory the runtime writes evidence into, workspace-relative.
+
+    M10-R3 (L1d). Eight `upload-artifact` sites across the workflows declare **multiple**
+    paths, and `verification-reconcile.yml` uploads `runtime/**` together with
+    `backend/**`.
+
+    Two problems with that, both of which the workflow cannot see:
+
+    * **The artifact's internal shape changes with the path list.** `upload-artifact`
+      preserves each path's position under the least common ancestor of the declared
+      paths, so adding or removing one re-shapes the whole artifact. A downstream
+      consumer pinned to the current layout breaks on a change that moved no evidence.
+    * **`backend/**` is source code presented as evidence.** It is there because mutation
+      evidence lands in `backend/tests/generated/mutation` — a runtime-owned location the
+      workflow had to know about. That is precisely the reconstruction the mission
+      forbids: the runtime knows its own evidence roots; the workflow was guessing.
+
+    So the runtime publishes them. Only directories that actually exist are returned, so a
+    workflow never uploads an empty path it would have to special-case.
+    """
+    roots = [
+        "runtime/generated/certification",
+        "runtime/generated/m9-c49",
+        "runtime/generated/execution",
+        "runtime/generated/profile-logs",
+        "runtime/generated/local-harness",
+        "runtime/generated/legs",
+        "runtime/tests/generated/mutation",
+    ]
+    return [r for r in roots if (REPO_ROOT / r).exists()]
+
+
 class CertificationRun:
     """Brackets one execution with a fingerprint and produces its verdict.
 
