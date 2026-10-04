@@ -878,6 +878,8 @@ class ControlPlane:
 
         record_execution_report("run", report, time.monotonic() - run_start)
 
+        _publish_leg_certification(report, shard=shard, prefix=prefix)
+
         if json_out:
             print(report.to_json())
         else:
@@ -2716,6 +2718,84 @@ def _plan_with_tasks(plan: ExecutionPlan, keep: set[str]) -> ExecutionPlan:
         reusable_measurements=list(plan.reusable_measurements),
         boundary_evidence=plan.boundary_evidence,
     )
+
+
+def _publish_leg_certification(
+    report,
+    *,
+    shard: tuple[int | None, int | None] | None,
+    prefix: str | None,
+) -> Path | None:
+    """Publish a certification document for this leg. M10-R3.
+
+    Closing a gap the adversarial pass exposed: **only profile aliases** wrote a
+    ``m10r3-certification-run/v1`` document. The reconcile shard legs — the units that
+    actually run in CI and actually fail — published nothing. So the one place the
+    answer to "what failed here, under what conditions, and is my evidence trustworthy"
+    was unavailable was precisely the place the mission's closing question is asked.
+
+    The document is named for the leg, not the run, because seven concurrent legs write
+    into one directory:
+
+        runtime/generated/certification/reconcile-shard-3-of-7.json
+        runtime/generated/certification/check.json
+
+    Naming per leg also means a developer holding one leg's document from a CI log can
+    open that file locally and see the identical shape — no second format to learn.
+    """
+    if shard is not None and shard[0] is not None and shard[1]:
+        topology = f"reconcile-shard-{shard[0]}-of-{shard[1]}"
+    else:
+        topology = prefix or "check"
+
+    from runtime.foundation.verification.execution_orchestrator import (
+        CertificationRun,
+    )
+
+    run = CertificationRun(plan_id=report.plan_id)
+    run.adopt(report.records)
+    payload = run.to_dict()
+    # `ObligationOutcome` carries no duration, so take each task's own wall clock from
+    # the report. Without it the published table says "failed" without saying how long
+    # it took, which is the first number anyone wants.
+    _durations = {
+        getattr(rec, "task_id", None): getattr(rec, "duration_seconds", 0.0)
+        for rec in report.records
+    }
+    for obligation in payload["obligations"]:
+        obligation["duration_seconds"] = round(
+            float(_durations.get(obligation["task_id"], 0.0) or 0.0), 2
+        )
+    payload["topology"] = topology
+    payload["plan_id"] = report.plan_id
+    payload["plan_fingerprint"] = report.plan_fingerprint
+    payload["tasks_executed"] = [r.task_id for r in report.records]
+    # The orchestrator already bracketed the run and folded drift into a SCOPE record,
+    # so the shared classifier is the single source of the verdict here too — this is a
+    # publication, not a second opinion.
+    payload["decision"] = report.final_decision
+    payload["reason"] = report.decision_reason
+    payload["duration_seconds"] = report.total_duration_seconds
+
+    root = REPO_ROOT / "runtime" / "generated" / "certification"
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / f"{topology}.json"
+        path.write_text(json.dumps(payload, indent=2, default=str))
+    except OSError as exc:
+        # Failing to write the diagnostic must never change the verdict.
+        print(
+            f"[certification] could not publish the leg document for {topology}: {exc}",
+            file=sys.stderr,
+        )
+        return None
+
+    print(
+        f"[{topology}] {report.final_decision} — {report.decision_reason} "
+        f"({len(report.records)} task record(s)); document: {path}",
+        file=sys.stderr,
+    )
+    return path
 
 
 def _profile_task_timeout_seconds() -> int:
