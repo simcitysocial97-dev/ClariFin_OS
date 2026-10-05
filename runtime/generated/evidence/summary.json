@@ -1,10 +1,10 @@
 {
-  "summary_id": "run-20260925-105551",
-  "generated_at": "2026-09-25T10:55:51.266260+00:00",
-  "commit": "fc5775643977008ec623ee1e59a76d7088417e7d",
-  "branch": "m9c9-merge-authorization-resolution",
+  "summary_id": "run-20261005-055243",
+  "generated_at": "2026-10-05T05:52:43.656804+00:00",
+  "commit": "a624857ab3ff90d86e5ace8bac194a573b5df116",
+  "branch": "m11/parallelism-correctness",
   "verification_plan": "selective",
-  "overall_status": "not_run",
+  "overall_status": "pass",
   "backend": {
     "unit_tests": {
       "status": "unknown",
@@ -37,7 +37,26 @@
       }
     }
   },
-  "frontend": {},
+  "frontend": {
+    "schema": "frontend-verification/v1",
+    "overall_status": "pass",
+    "unit_id": "",
+    "phases": {
+      "lint": {
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 107,
+        "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/lint.log"
+      },
+      "typecheck": {
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 33,
+        "log": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/typecheck.log"
+      }
+    },
+    "evidence_path": "runtime/generated/evidence/frontend/frontend-verification.json"
+  },
   "unit_failures": [],
   "attention_needed": [],
   "ai_context": {

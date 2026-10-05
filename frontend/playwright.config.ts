@@ -37,6 +37,30 @@ export default defineConfig({
   // Expect timeout
   expect: {
     timeout: 10000,
+
+    // M10-R3 (L7) — deterministic screenshot capture.
+    //
+    // These were entirely absent, and their absence is why the suite could not be
+    // trusted regardless of how many baselines were regenerated:
+    //
+    // * `animations` defaults to `'allow'`, so CSS transitions (`tw-animate-css`) and
+    //   Recharts' 1500 ms default animation were mid-flight when pixels were captured.
+    //   A screenshot of an animating chart is a coin flip.
+    // * `caret` defaults to `'hide'`, which is already right, but stated explicitly so
+    //   the intent is visible rather than inherited from a default that can change.
+    // * A tolerance is required. `maxDiffPixels: 0` would make the suite a font-rendering
+    //   and GPU-comparison oracle, which no baseline set survives across machines;
+    //   `maxDiffPixelRatio` is the ratio-based form and is the right knob here.
+    //
+    // Pinned environment below (`locale`, `timezoneId`, `colorScheme`, `reducedMotion`)
+    // matters for the same reason: date/number formatting and media queries change
+    // pixels without any code changing.
+    toHaveScreenshot: {
+      animations: 'disabled',
+      caret: 'hide',
+      maxDiffPixelRatio: 0.01,
+      scale: 'css',
+    },
   },
   
   // Global setup
@@ -69,6 +93,16 @@ export default defineConfig({
     
     // Navigation timeout
     navigationTimeout: 30000,
+
+    // M10-R3 (L7) — pin the rendering environment.
+    //
+    // Every one of these changes pixels with no code change, so an unpinned value makes
+    // a baseline describe *the runner that captured it* rather than the application.
+    // None were set before.
+    locale: 'en-US',
+    timezoneId: 'UTC',
+    colorScheme: 'light',
+    reducedMotion: 'reduce',
   },
   
   // Configure projects for supported browsers only

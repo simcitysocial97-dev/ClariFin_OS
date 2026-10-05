@@ -772,15 +772,64 @@ class TestProfileCacheWiring:
         _run_profile_alias executes the profile; it does not replay a cached
         verdict. Asserting that here keeps the two responsibilities distinct and
         stops a future cache wiring from being mistaken for existing behaviour.
+
+        M10-R2: the seam moved. Profile tasks execute through
+        ``parallel_executor.run_streaming_command`` — the single worker shared with the
+        orchestrator — so the worker is patched rather than ``subprocess.run``.
+        Patching ``subprocess.run`` silently patched nothing: the real ``quick`` profile
+        actually ran and the test died on a 30 s pytest-timeout in CI, where the box is
+        slower than a developer's. The assertion is unchanged — it still asserts that a
+        passing profile yields exit code 0.
         """
-        from unittest.mock import MagicMock, patch
+        from unittest.mock import patch
 
         from runtime.foundation.verification.control_plane_facade import (
             _run_profile_alias,
         )
+        from runtime.foundation.verification.parallel_executor import CommandResult
 
-        with patch("subprocess.run") as run:
-            run.return_value = MagicMock(returncode=0)
+        def _fake_worker(
+            command,
+            *,
+            stdout_path,
+            stderr_path,
+            timeout_seconds,
+            cwd=None,
+            env=None,
+            **_ignored,
+        ):
+            # M10-R3: `_ignored` is load-bearing, not decoration. This stub pinned an
+            # exact keyword signature and therefore did NOT match the real call, which
+            # passes `progress=`. Every task raised TypeError inside the worker, and
+            # `execute_tasks_in_parallel` returns the exception object rather than a
+            # result dict. The pre-B2 verdict logic read only dicts, so an all-exception
+            # run produced an empty outcome set, no detectable failure, and **exit code
+            # 0 with `final_decision="certified"`** — this test passed because the code
+            # under test failed open, not because the profile passed.
+            #
+            # The same trap is already documented in the sibling m9c57 timeout test,
+            # which uses the same `_ignored` pattern. Both now absorb instrumentation
+            # kwargs so they remain coupled to behaviour rather than to call shape.
+            stdout_path.parent.mkdir(parents=True, exist_ok=True)
+            stdout_path.write_text("", encoding="utf-8")
+            stderr_path.write_text("", encoding="utf-8")
+            return CommandResult(
+                command=command,
+                exit_code=0,
+                timed_out=False,
+                infra_error=None,
+                stdout="",
+                stderr="",
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
+                duration_seconds=0.0,
+            )
+
+        with patch(
+            "runtime.foundation.verification.parallel_executor."
+            "run_streaming_command",
+            side_effect=_fake_worker,
+        ):
             result = _run_profile_alias("quick")
         assert result == 0
 

@@ -21,15 +21,28 @@ const IS_CI = !!process.env.CI;
 const DIFF_THRESHOLD = IS_CI ? 0.01 : 0.001; // 1% in CI, 0.1% locally
 const MAX_DIFF_PIXELS = IS_CI ? 500 : 100;
 
-// Pages to snapshot
+// Pages to snapshot.
+//
+// M10-R3 (L7): `/categories`, `/analytics` and `/import` were removed. They are REDIRECT
+// ALIASES, not pages — `lib/config/navigation.ts:78` maps `/analytics` to
+// `/dashboard?view=analytics`, and the hub ignores the query, so the snapshot was really a
+// second capture of the dashboard under a different name.
+//
+// Measured on chromium against the committed baselines, `analytics-page` was the single
+// largest remaining difference at **209,502 pixels (23% of the frame)** — while every real
+// page sat at 0.01-0.04. A 23% diff on a route that renders the dashboard is a harness
+// defect asserting a dead deep link, not a product regression, and it was the loudest
+// thing in the run.
+//
+// Their real surfaces are already covered: `categories` -> `/settings?tab=categories`,
+// `import` -> `/transactions?tab=import`, both of which are snapshotted under their real
+// names. Keeping the aliases bought no coverage and cost a third of a frame's worth of
+// signal.
 const PAGES = [
   { path: '/', name: 'home' },
   { path: '/dashboard', name: 'dashboard' },
   { path: '/transactions', name: 'transactions' },
-  { path: '/categories', name: 'categories' },
-  { path: '/analytics', name: 'analytics' },
   { path: '/cards', name: 'cards' },
-  { path: '/import', name: 'import' },
   { path: '/settings', name: 'settings' },
   { path: '/behaviour', name: 'behavior' },
   { path: '/reconciliation', name: 'reconciliation' },
@@ -120,8 +133,16 @@ async function waitForContentSettled(page: import('@playwright/test').Page) {
 test.describe('Visual Regression - Full Pages', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    // Set consistent viewport
-    await page.setViewportSize({ width: 1280, height: 720 });
+    // M10-R3 (L7): the blanket setViewportSize({1280x720}) is REMOVED, not narrowed.
+    //
+    // It ran for every test in every project, so on `mobile-chrome` (Pixel 5 emulation)
+    // it overwrote the device metrics before navigation. 19 of that project's 24 tests
+    // therefore captured a 1280-wide DESKTOP screenshot and stored it under a
+    // `-mobile-chrome-` baseline name. The baselines looked mobile and were not.
+    //
+    // The viewport is now owned by the project, which is the only place that knows the
+    // intended device. Tests that genuinely need a specific viewport must declare it on
+    // themselves — a suite-wide override cannot be reconciled with per-project devices.
   });
 
   for (const pageConfig of PAGES) {
@@ -148,7 +169,8 @@ test.describe('Visual Regression - Full Pages', () => {
 test.describe('Visual Regression - Components', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.setViewportSize({ width: 1280, height: 720 });
+    // Same reasoning as the full-page suite (see above): the device belongs to the
+    // project, not to a suite-wide override.
   });
 
   test('should match sidebar snapshot', async ({ page, waitForPageReady }) => {

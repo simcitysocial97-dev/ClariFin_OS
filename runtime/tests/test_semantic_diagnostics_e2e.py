@@ -8,15 +8,15 @@ from __future__ import annotations
 
 import pytest
 
+from runtime.foundation.verification.diagnostics.formatter import (
+    DiagnosticFormatter,
+    EnrichedFailureReport,
+)
 from runtime.foundation.verification.semantics.assertions import (
     FinancialAssertion,
     FinancialInvariantViolation,
 )
 from runtime.foundation.verification.semantics.parser import SemanticFailureParser
-from runtime.foundation.verification.diagnostics.formatter import (
-    DiagnosticFormatter,
-    EnrichedFailureReport,
-)
 
 
 class TestSemanticDiagnosticsE2E:

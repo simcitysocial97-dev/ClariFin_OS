@@ -17,26 +17,34 @@ class InvestmentService(BaseService):
     def get_portfolio(self) -> InvestmentsDTO:
         """Get all investments with calculated returns."""
         assert self.repository is not None
+        # `get_all_models` returns `Investment` domain entities, which carry
+        # `Money` value objects (`inv.invested.paise`) and name the type field
+        # `type` (it comes from the `investment_type` column). This method read
+        # `inv.invested_paise` / `inv.current_value_paise` /
+        # `inv.investment_type`, none of which exist, so it raised
+        # AttributeError on the first investment row. That was invisible while
+        # every create failed with HTTP 500 and the table could never hold a
+        # row; it is reached now that creation works.
         investments = self.repository.get_all_models()  # type: ignore[attr-defined]
-        total_invested = sum(i.invested_paise for i in investments)
-        total_current = sum(i.current_value_paise for i in investments)
+        total_invested = sum(i.invested.paise for i in investments)
+        total_current = sum(i.current_value.paise for i in investments)
 
         investments_data = [
             {
                 "id": inv.id,
                 "name": inv.name,
-                "type": inv.investment_type,
-                "institution": getattr(inv, "institution", ""),
-                "current_value_paise": inv.current_value_paise,
-                "invested_paise": inv.invested_paise,
-                "returns_paise": inv.current_value_paise - inv.invested_paise,
+                "type": inv.type,
+                "institution": getattr(inv, "institution", "") or "",
+                "current_value_paise": inv.current_value.paise,
+                "invested_paise": inv.invested.paise,
+                "returns_paise": inv.current_value.paise - inv.invested.paise,
                 "returns_percentage": (
                     (
-                        (inv.current_value_paise - inv.invested_paise)
-                        / inv.invested_paise
+                        (inv.current_value.paise - inv.invested.paise)
+                        / inv.invested.paise
                         * 100
                     )
-                    if inv.invested_paise > 0
+                    if inv.invested.paise > 0
                     else 0
                 ),
                 "returns_ytd_bps": 0,
@@ -69,6 +77,8 @@ class InvestmentService(BaseService):
         current_value_paise: int,
         units: float | None = None,
         buy_price_paise: int | None = None,
+        current_price_paise: int | None = None,
+        as_of_date: str | None = None,
         notes: str | None = None,
     ) -> dict[str, Any]:
         """Create a new investment."""
@@ -78,12 +88,20 @@ class InvestmentService(BaseService):
             investment_type=investment_type,
             invested_paise=invested_paise,
             current_value_paise=current_value_paise,
+            as_of_date=as_of_date,
             units=units,
             buy_price_paise=buy_price_paise,
+            current_price_paise=current_price_paise,
             notes=notes,
         )
         result = self.repository.get_by_id(investment_id)  # type: ignore[attr-defined]
-        return result or {}
+        if not result:
+            return {}
+        # The row's primary key is an integer; the API contract for an
+        # investment identifier is a string (``InvestmentSummaryDTO.id``,
+        # ``HoldingDTO.id``). Coercing here keeps the mutation response and the
+        # read response reporting the same identifier for the same row.
+        return {**result, "id": str(result["id"])}
 
     def update_investment(
         self,

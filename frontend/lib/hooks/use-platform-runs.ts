@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface HistoryRunSummary {
   id: string;
@@ -82,7 +82,7 @@ export function usePlatformRuns(page = 1, page_size = 20) {
         `/platform/v1/runs?page=${page}&page_size=${page_size}`
       ) as Promise<RunsListResponse>,
     staleTime: LIST_STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 
@@ -95,7 +95,7 @@ export function usePlatformRun(runId: string | undefined) {
       ) as Promise<RunDetailResponse>,
     enabled: !!runId,
     staleTime: DETAIL_STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

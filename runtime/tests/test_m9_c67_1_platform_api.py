@@ -426,7 +426,7 @@ class TestCrossSurfaceValidation:
         ).stdout.strip()
 
         status_body = _assert_envelope_ok(client.get("/platform/v1/status"))
-        verif_body = _assert_envelope_ok(client.get("/platform/v1/verification"))
+        _assert_envelope_ok(client.get("/platform/v1/verification"))
 
         assert status_body["data"]["commit_sha"] == expected
         # The verification endpoint's commit field may be empty (it tracks
@@ -450,8 +450,8 @@ class TestCrossSurfaceValidation:
         """Platform API must not introduce a second capability/evidence/workflow registry."""
         # If counts agree across endpoints, there's no second registry.
         status_body = _assert_envelope_ok(client.get("/platform/v1/status"))
-        caps_body = _assert_envelope_ok(client.get("/platform/v1/capabilities"))
-        wf_body = _assert_envelope_ok(client.get("/platform/v1/workflows"))
+        _assert_envelope_ok(client.get("/platform/v1/capabilities"))
+        _assert_envelope_ok(client.get("/platform/v1/workflows"))
 
         from runtime.foundation.verification.capability_catalog import (
             get_capability_catalog,
@@ -514,7 +514,7 @@ class TestNoBypass:
                 / "platform.py"
             )
         if router_path.exists():
-            src = router_path.read_text()
+            router_path.read_text()
             # The router itself delegates to services; check that service
             # modules don't import executor directly.
             pass  # Delegation is through services, which is correct.

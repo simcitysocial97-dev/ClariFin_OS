@@ -1,0 +1,18 @@
+[reconcile-shard 7/7/exec-0002] start kind=task timeout=360s logs=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3
+[reconcile-shard 7/7/exec-0009] start kind=task timeout=900s logs=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3
+[reconcile-shard 7/7/exec-0003] start kind=task timeout=3600s logs=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3
+[reconcile-shard 7/7/exec-0004] start kind=task timeout=600s logs=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3
+[reconcile-shard 7/7/exec-0009] exit=1 elapsed=0.0s timeout=false term=EXIT_NONZERO stdout=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0009-stdout.log stderr=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0009-stderr.log
+[reconcile-shard 7/7/exec-0002] running elapsed=60s
+[reconcile-shard 7/7/exec-0004] running elapsed=60s
+[reconcile-shard 7/7/exec-0003] running elapsed=60s
+[reconcile-shard 7/7/exec-0004] running elapsed=120s
+[reconcile-shard 7/7/exec-0003] running elapsed=120s
+[reconcile-shard 7/7/exec-0002] running elapsed=120s
+[reconcile-shard 7/7/exec-0004] exit=0 elapsed=125.6s timeout=false term=EXIT_ZERO stdout=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0004-stdout.log stderr=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0004-stderr.log
+[reconcile-shard 7/7/exec-0003] running elapsed=180s
+[reconcile-shard 7/7/exec-0002] running elapsed=180s
+[reconcile-shard 7/7/exec-0002] exit=1 elapsed=180.3s timeout=false term=EXIT_NONZERO stdout=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0002-stdout.log stderr=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0002-stderr.log
+[reconcile-shard 7/7/exec-0003] running elapsed=240s
+[reconcile-shard 7/7/exec-0003] running elapsed=300s
+[reconcile-shard 7/7/exec-0003] exit=1 elapsed=352.2s timeout=false term=EXIT_NONZERO stdout=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0003-stdout.log stderr=/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/m9-c49/logs/execplan-2c8aa6c390d3/exec-0003-stderr.log

@@ -12,7 +12,7 @@
  */
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { apiFetch, apiFetchJson } from '@/lib/api/gateway';
+import { apiFetch, apiFetchJson, SAME_ORIGIN_BASE_URL } from '@/lib/api/gateway';
 
 // ---------------------------------------------------------------------------
 // Types matching backend contracts (runtime/platform/api/contracts/diagnostics.py)
@@ -174,9 +174,25 @@ export function useDiagnosticSignatures() {
   return useQuery<LocalSignatureStore, Error>({
     queryKey: ['platform', 'diagnostic-signatures'],
     queryFn: async () => {
-      const response = await apiFetch('/platform/v1/diagnostics/signatures');
+      // M10-A3: this called `/platform/v1/diagnostics/signatures`, which the
+      // backend does not expose — the platform router has `/diagnostics`
+      // (GET), `/diagnose` (POST) and `/diagnose/register` (POST) and no
+      // signatures route — so every load 404'd and this hook always resolved to
+      // the empty-store fallback, making the "Failure Signature" section on
+      // /platform/diagnostics/detail/[id] permanently unrenderable.
+      //
+      // The signature store is a frontend-owned artifact served by this app's
+      // own route handler (`app/api/diagnostic-signatures/route.ts`), whose own
+      // docstring states it exists to "provide the frontend with failure
+      // signature data that would otherwise require a backend endpoint". Read
+      // it from there. Same-origin, so it also needs no CORS grant.
+      const response = await apiFetch(
+        '/api/diagnostic-signatures',
+        undefined,
+        SAME_ORIGIN_BASE_URL,
+      );
       if (!response.ok) {
-        // Return empty store if file doesn't exist
+        // Return empty store if the artifact is absent.
         return { signatures: [], index: {} };
       }
       return response.json() as Promise<LocalSignatureStore>;

@@ -42,14 +42,12 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import json
-import os
 import re
-import signal
 import subprocess
-import threading
+import sys
 import time
-from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
+from collections.abc import Callable, Sequence
+from dataclasses import asdict, dataclass, field, fields
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -81,6 +79,20 @@ class CompletionState(str, Enum):
     AUTHORIZATION_REQUIRED = "authorization_required"
     REUSED = "reused"
     SKIPPED = "skipped"  # sufficiency: minimum verification already satisfied
+    REGISTRY_GAP = "registry_gap"
+    """A required capability has no verification-registry mapping.
+
+    M10-R3 (L6). This state exists because the condition was expressed as a shell
+    command — ``echo 'UNMAPPED capabilities require review (6): ...' && exit 1`` — which
+    made a *registry* fact indistinguishable from a *test* failure. The verdict read
+    "mandatory obligation failed ... run the diagnostic path", and that is wrong
+    guidance: nothing is diagnostically broken, no assertion failed, and the diagnostic
+    path cannot help. A missing mapping is a review obligation and the verdict should
+    say so.
+
+    Distinct from CONFIGURATION (the configuration is malformed) and from FAILED
+    (something asserted). The mapping is simply absent, which is a third thing.
+    """
 
 
 # States that mean "the run is observably not a pass"
@@ -94,12 +106,49 @@ NON_PASS_STATES: frozenset[CompletionState] = frozenset(
         CompletionState.CONFIGURATION,
         CompletionState.CERTIFICATION,
         CompletionState.AUTHORIZATION_REQUIRED,
+        CompletionState.REGISTRY_GAP,
     }
 )
 
 PASSING_STATES: frozenset[CompletionState] = frozenset(
     {CompletionState.PASS, CompletionState.REUSED, CompletionState.SKIPPED}
 )
+
+
+#: The budget a mutation revalidation task declares in an execution plan.
+#:
+#: M10-R3 (C). This is the *declared* budget and it is not the budget that is
+#: enforced: ``mutation_runner.DEFAULT_RUNTIME["target"]`` is 4200s. The two differed
+#: by 3.5x and neither was recorded, so the runtime could not tell a campaign that hit
+#: its own timeout from one the CI runner killed, and a workflow sizing
+#: ``timeout-minutes`` from the declared value was sizing it from a number that does
+#: not exist.
+#:
+#: Both values are now recorded on every mutation result
+#: (``declared_timeout_seconds`` / ``enforced_timeout_seconds``) so the discrepancy is
+#: visible in the evidence. Collapsing them into one authority is the transport work in
+#: Checkpoint D; what this constant guarantees is that there is exactly *one* declared
+#: value, greppable, rather than a literal repeated at two construction sites.
+def declared_mutation_timeout(mode: str = "target") -> int:
+    """The budget a mutation revalidation task declares in the plan.
+
+    M10-R3 (L3). This used to be a bare ``1200`` literal at two construction sites while
+    ``mutation_runner.DEFAULT_RUNTIME["target"]`` enforced ``4200`` — a 3.5x divergence
+    that made it impossible to tell a campaign that hit its own timeout from one the CI
+    runner killed, and meant a workflow sizing ``timeout-minutes`` from the declared value
+    was sizing it from a number that did not exist.
+
+    Now there is ONE table. The planner asks the runner what a campaign of this mode
+    costs, and the runner is handed the plan's value back when it executes, so declared
+    and enforced agree **by construction** rather than by two constants happening to
+    agree today.
+
+    Read through a function rather than imported as a value so the import graph stays
+    acyclic: ``mutation_runner`` already imports from this module.
+    """
+    from runtime.foundation.verification.mutation_runner import DEFAULT_RUNTIME
+
+    return int(DEFAULT_RUNTIME.get(mode, DEFAULT_RUNTIME["full"]))
 
 
 class FailureStage(str, Enum):
@@ -169,152 +218,29 @@ _PYTEST_SUMMARY = re.compile(
 )
 
 
-def _summarise_pytest_outcome(text: str) -> dict | None:
-    """Name the inner pytest failure precisely, from its own output.
+# M10-R2: the process-execution worker and its diagnosis vocabulary now live in
+# `parallel_executor`, which is the single execution core both call paths use. These
+# names remain bound here because they are referenced throughout this module and by
+# external readers; the implementations are the ones in parallel_executor, so there is
+# exactly one streaming tee, one process-group kill, one termination classifier and one
+# pytest-outcome summariser in the repository. Defining a second copy here is precisely
+# the divergence this milestone exists to remove.
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    classify_termination as _classify_termination,
+)
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    CpuBudget,
+    cpu_count,
+    cpu_demand_for,
+    estimate_wall_seconds,
+    execute_tasks_in_parallel,
+    run_streaming_command,
+)
+from runtime.foundation.verification.parallel_executor import (  # noqa: E402
+    summarise_pytest_outcome as _summarise_pytest_outcome,
+)
 
-    A verification script that runs pytest and then aggregates several checks
-    exits with a single non-zero status, which loses the distinction the
-    investigation actually needs: was this an assertion failure, a per-test
-    timeout, or a collection/internal error? Those have different causes and
-    different fixes, and "the suite failed" is not evidence for any of them.
-
-    Returns None when the text contains no pytest signal at all, so callers can
-    leave non-pytest tasks untouched. The classification is derived only from
-    pytest's own summary and short-summary lines — it never re-runs anything and
-    never guesses.
-    """
-    if not text or "pytest" not in text and "passed" not in text:
-        return None
-
-    failed = _PYTEST_FAILURE_LINE.findall(text)
-    summary = _PYTEST_SUMMARY.search(text)
-    counts = {
-        "failed": int(summary.group(1)) if summary and summary.group(1) else 0,
-        "passed": int(summary.group(2)) if summary and summary.group(2) else 0,
-        "skipped": int(summary.group(3)) if summary and summary.group(3) else 0,
-        "errors": int(summary.group(4)) if summary and summary.group(4) else 0,
-        "xfailed": int(summary.group(5)) if summary and summary.group(5) else 0,
-        "xpassed": int(summary.group(6)) if summary and summary.group(6) else 0,
-    }
-    duration = float(summary.group(7)) if summary and summary.group(7) else None
-
-    if not failed and not summary:
-        return None
-
-    # A per-test timeout is reported by pytest-timeout in the failure body; a
-    # timeout and an assertion failure are different defects even when both
-    # surface as a non-zero pytest exit.
-    timed_out = _PYTEST_TIMEOUT_MARKER in text
-    errored = any(tag == "ERROR" for tag, _ in failed) or counts["errors"] > 0
-
-    if timed_out:
-        kind = "TEST_TIMEOUT"
-    elif errored:
-        kind = "COLLECTION_OR_INTERNAL_ERROR"
-    elif counts["failed"] or failed:
-        kind = "TEST_ASSERTION_FAILURE"
-    else:
-        kind = "PASSED"
-
-    return {
-        "kind": kind,
-        "failed_nodeids": [nodeid for _, nodeid in failed],
-        "counts": counts,
-        "duration_seconds": duration,
-    }
-
-
-def _read_text(path: Path) -> str:
-    """Read an evidence file, tolerating a missing or undecodable one."""
-    try:
-        return path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return ""
-
-
-def _tee(pipe, path: Path) -> None:
-    """Copy a child pipe into an evidence file line by line, flushing each line.
-
-    Flushing per line is the whole point: the file is valid, and contains
-    everything produced so far, even if the child is killed, the orchestrator is
-    interrupted, or the machine loses the process. It mirrors ``_tee`` in
-    executor.py, which streams the same way for the same reason.
-    """
-    try:
-        with path.open("a", encoding="utf-8") as handle:
-            for raw in pipe:
-                line = (
-                    raw
-                    if isinstance(raw, str)
-                    else raw.decode("utf-8", errors="replace")
-                )
-                handle.write(line)
-                handle.flush()
-    except (OSError, ValueError):
-        # A closed pipe during teardown is expected, not an error worth raising
-        # into the verification run.
-        pass
-    finally:
-        with contextlib.suppress(Exception):
-            pipe.close()
-
-
-def _kill_process_group(proc) -> None:
-    """Kill the child's whole process group (F19, as in executor.py).
-
-    The child is a shell that runs pytest, which runs further processes. Killing
-    only the shell would leave the real work running after a wrapper timeout.
-    """
-    with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
-        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-        time.sleep(0.5)
-        with contextlib.suppress(ProcessLookupError, PermissionError, OSError):
-            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-
-
-def _classify_termination(
-    exit_code: int | None, timed_out: bool, infra_error: str | None
-) -> dict:
-    """Say *how* a task's process ended, not just that it did not pass.
-
-    "the command exited non-zero" is not a diagnosis. A verification run can
-    end because a test failed, because the wrapper killed it, because the
-    process was killed by a signal, or because the command never started, and
-    each of those points at a different cause. The record keeps them apart so a
-    long run cannot be misread as a flaky one.
-    """
-    if infra_error:
-        return {"kind": "INFRASTRUCTURE", "detail": infra_error, "signal": None}
-    if timed_out:
-        return {
-            "kind": "WRAPPER_TIMEOUT",
-            "detail": "verification wrapper killed the command before it finished",
-            "signal": None,
-        }
-    if exit_code is not None and exit_code < 0:
-        return {
-            "kind": "SIGNAL_TERMINATION",
-            "detail": f"child terminated by signal {-exit_code}",
-            "signal": -exit_code,
-        }
-    if exit_code is not None and exit_code > 128:
-        signum = exit_code - 128
-        try:
-            signame = signal.Signals(signum).name
-        except ValueError:
-            signame = f"SIG{signum}"
-        return {
-            "kind": "SIGNAL_TERMINATION",
-            "detail": f"shell reported 128+{signum} ({signame})",
-            "signal": signum,
-        }
-    if exit_code == 0:
-        return {"kind": "EXIT_ZERO", "detail": "command exit 0", "signal": None}
-    return {
-        "kind": "EXIT_NONZERO",
-        "detail": f"command reported exit {exit_code}",
-        "signal": None,
-    }
+_PYTEST_RE = re.compile(_PYTEST_SUMMARY.pattern, re.MULTILINE)
 
 
 def _hash_file(path: Path) -> str:
@@ -423,6 +349,375 @@ class RepositoryFingerprint:
 
 
 # ---------------------------------------------------------------------------
+# Environment requirements (M10-R3 / B1)
+#
+# ONE field, THREE validated forms, resolved BEFORE any spawn.
+#
+# History, because it explains the shape. Two fields used to mean "what this
+# obligation needs": ``ExecutionTaskSpec.prerequisites`` (repository paths, and
+# only paths) and ``ExecutableVerificationTask.required_environment`` (tools).
+# The second was declared, populated 25 times, serialised, and **read by nothing
+# outside its own ``to_dict()``** -- and it lived on a class that no execution
+# path instantiates. ``verify_prerequisites`` read the first field, and then
+# *skipped* five of its values (``.venv``, ``git``, ``mutmut==3.7.0``,
+# ``pytest``, ``coverage``) outright, so it never checked a tool or a version.
+#
+# The consolidation is therefore not "add a variable axis". It is: one field,
+# ``required_environment``, on the one class that actually executes, with a
+# resolver that makes all three forms real. There is no second representation to
+# drift.
+#
+# Forms (syntactically distinct, so a requirement is never ambiguous):
+#
+#   ".venv"                          PATH     repo-relative path must exist
+#   "pytest"                         TOOL     resolvable, .venv/bin first
+#   "mutmut==3.7.0"                  TOOL     resolvable AND version must match
+#   "FINANCE_DB_PATH"                VARIABLE must be present in the child env
+#   "PLAYWRIGHT_PROJECT=chromium"    VARIABLE present AND equal to the value
+#   "FINANCE_DB_PATH=@workspace/x"   VARIABLE value resolved from provenance
+#
+# The resolver is deliberately not a template engine. Exactly six placeholders
+# are substitutable, they come from :class:`ExecutionContext`, and an unknown
+# ``@token`` is a hard error rather than a literal -- a silently unexpanded
+# ``@workspace`` in a CI leg would be indistinguishable from a correct value.
+# ---------------------------------------------------------------------------
+
+#: The complete, closed set of substitutable placeholders.
+PLACEHOLDER_TOKENS: tuple[str, ...] = (
+    "workspace",
+    "leg",
+    "shard",
+    "shard_count",
+    "plan_id",
+    "execution_id",
+)
+
+_REQUIREMENT_FORM_PATH = "path"
+_REQUIREMENT_FORM_TOOL = "tool"
+_REQUIREMENT_FORM_TOOL_VERSION = "tool_version"
+_REQUIREMENT_FORM_VARIABLE = "variable"
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionContext:
+    """The provenance an environment requirement may be resolved against.
+
+    This is what makes one declaration yield the correct value in a CI shard leg,
+    in a local reproduction, and on a laptop: the *requirement* is declared once
+    and the *value* is supplied by whoever is executing. It is also the reason
+    local and CI execution can be byte-identical rather than merely similar.
+    """
+
+    workspace: str = str(REPO_ROOT)
+    leg: str = ""
+    shard: int | None = None
+    shard_count: int | None = None
+    plan_id: str = ""
+    execution_id: str = ""
+
+    def placeholder_value(self, token: str) -> str:
+        """Return the value for *token*, or raise ``KeyError`` if unknown."""
+        match token:
+            case "workspace":
+                return self.workspace
+            case "leg":
+                return self.leg
+            case "shard":
+                return "" if self.shard is None else str(self.shard)
+            case "shard_count":
+                return "" if self.shard_count is None else str(self.shard_count)
+            case "plan_id":
+                return self.plan_id
+            case "execution_id":
+                return self.execution_id
+            case _:
+                raise KeyError(token)
+
+
+@dataclass(frozen=True, slots=True)
+class RequirementFailure:
+    """One unmet environment requirement, named precisely enough to act on."""
+
+    task_id: str
+    form: str
+    requirement: str
+    detail: str
+
+    def render(self) -> str:
+        return f"{self.task_id}: [{self.form}] {self.requirement} — {self.detail}"
+
+
+class RequirementSyntaxError(ValueError):
+    """A requirement string could not be parsed. Raised, never ignored."""
+
+
+def _resolve_placeholders(value: str, ctx: ExecutionContext) -> str:
+    """Substitute ``@token`` from *ctx*. Unknown tokens raise.
+
+    Only ``@``-prefixed whole tokens are substituted. ``user@host`` and a path
+    containing ``@`` are therefore left alone, which is why the substitution
+    requires the ``@`` to introduce a known token.
+    """
+    out: list[str] = []
+    idx = 0
+    while idx < len(value):
+        at = value.find("@", idx)
+        if at == -1:
+            out.append(value[idx:])
+            break
+        out.append(value[idx:at])
+        tail = value[at + 1 :]
+        matched = next((t for t in PLACEHOLDER_TOKENS if tail.startswith(t)), None)
+        if matched is None:
+            raise RequirementSyntaxError(
+                f"unknown placeholder in {value!r}: '@{tail[:24]}' is not one of "
+                + ", ".join(f"@{t}" for t in PLACEHOLDER_TOKENS)
+            )
+        # Reject a partial-token match such as ``@shard_count`` matching ``@shard``.
+        after = tail[len(matched) :]
+        if after and (after[0].isalnum() or after[0] == "_"):
+            raise RequirementSyntaxError(
+                f"unknown placeholder in {value!r}: '@{matched}' must be followed by "
+                "a non-identifier character"
+            )
+        out.append(ctx.placeholder_value(matched))
+        idx = at + 1 + len(matched)
+    return "".join(out)
+
+
+def _find_tool(name: str) -> Path | None:
+    """Resolve *name* to an executable, preferring the canonical ``.venv``.
+
+    ``.venv`` first is not a preference: ``AGENTS.md`` makes the repository-root
+    virtualenv the single sanctioned environment, and a bare ``pytest`` resolved
+    off ``PATH`` can be a different interpreter's.
+    """
+    candidate = REPO_ROOT / ".venv" / "bin" / name
+    if candidate.exists():
+        return candidate
+    import shutil
+
+    found = shutil.which(name)
+    return Path(found) if found else None
+
+
+def _tool_version_of(path: Path) -> str:
+    """Best-effort version read for an executable.
+
+    Installed-distribution metadata is tried first, and ``--version`` second.
+    That order is not cosmetic: ``mutmut --version`` raises in this repository
+    (its ``__main__`` imports ``mutmut.utils.safe_setproctitle``, which fails to
+    import), so a ``--version``-only probe reports *any* pinned tool as a version
+    mismatch — turning a working environment into a false prerequisite failure.
+    The subprocess remains as the fallback for tools that are not installed
+    distributions (shell scripts, system binaries).
+    """
+    import importlib.metadata as _md
+
+    name = path.name
+    for candidate in (name, name.removesuffix(".exe")):
+        try:
+            return _md.version(candidate)
+        except (_md.PackageNotFoundError, ValueError):
+            continue
+
+    import subprocess as _sp
+
+    try:
+        proc = _sp.run(
+            [str(path), "--version"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, _sp.SubprocessError):
+        return ""
+    output = (proc.stdout or proc.stderr or "").strip()
+    return output.splitlines()[0] if output else ""
+
+
+_FORM_PREFIX_TOOL = "tool"
+_FORM_PREFIX_PATH = "path"
+_FORM_PREFIX_VARIABLE = "env"
+
+
+def _classify_bare(subject: str) -> str:
+    """Infer a requirement's form from a bare (unprefixed) subject.
+
+    The inference is deliberately narrow and total, because a bare name is the
+    only genuinely ambiguous form and an ambiguous requirement is an unenforceable
+    one. Any author who does not agree with the inference can write the explicit
+    prefix instead — ``tool:``, ``path:`` or ``env:`` — and the prefix always
+    wins.
+
+    * contains ``/``              → PATH   (``.venv``, ``backend/pyproject.toml``)
+    * starts with ``.``           → PATH   (``.venv``, ``.git``)
+    * SHOUTING_SNAKE              → VARIABLE (``FINANCE_DB_PATH``)
+    * anything else               → TOOL   (``pytest``, ``coverage``, ``git``)
+    """
+    if "/" in subject or subject.startswith("."):
+        return _REQUIREMENT_FORM_PATH
+    if subject.replace("_", "").isupper() and subject.upper() == subject:
+        return _REQUIREMENT_FORM_VARIABLE
+    return _REQUIREMENT_FORM_TOOL
+
+
+def _parse_requirement(raw: str) -> tuple[str, str, str]:
+    """Parse one requirement into ``(form, subject, expected_value)``.
+
+    Accepted spellings::
+
+        ".venv"                       PATH       inferred
+        "backend/pyproject.toml"      PATH       inferred
+        "pytest"                      TOOL       inferred
+        "mutmut==3.7.0"               TOOL       inferred (version pinned)
+        "FINANCE_DB_PATH"             VARIABLE   inferred (must be set)
+        "PLAYWRIGHT_PROJECT=chromium" VARIABLE   inferred (must equal)
+        "tool:mutmut==3.7.0"          TOOL       explicit
+        "path:.github/scripts/x.sh"   PATH       explicit
+        "env:FINANCE_DB_PATH"         VARIABLE   explicit
+        "env:FOO=@workspace/bar"      VARIABLE   explicit, ``@token`` value
+
+    Note ``==`` is tested *before* ``=``: ``mutmut==3.7.0`` is a pinned tool, not
+    a variable named ``mutmut`` whose value is ``=3.7.0``.
+    """
+    if not raw or not raw.strip():
+        raise RequirementSyntaxError("empty requirement")
+    text = raw.strip()
+
+    forced: str | None = None
+    for prefix, form in (
+        (f"{_FORM_PREFIX_TOOL}:", _REQUIREMENT_FORM_TOOL),
+        (f"{_FORM_PREFIX_PATH}:", _REQUIREMENT_FORM_PATH),
+        (f"{_FORM_PREFIX_VARIABLE}:", _REQUIREMENT_FORM_VARIABLE),
+    ):
+        if text.startswith(prefix):
+            forced = form
+            text = text[len(prefix) :].strip()
+            break
+    if not text:
+        raise RequirementSyntaxError(f"requirement {raw!r} has an empty subject")
+
+    if "==" in text:
+        name, _, version = text.partition("==")
+        name, version = name.strip(), version.strip()
+        if not name:
+            raise RequirementSyntaxError(f"requirement {raw!r} has an empty tool name")
+        form = (
+            _REQUIREMENT_FORM_TOOL_VERSION
+            if forced in (None, _REQUIREMENT_FORM_TOOL)
+            else forced
+        )
+        return form, name, version
+
+    if "=" in text:
+        name, _, value = text.partition("=")
+        name, value = name.strip(), value.strip()
+        if not name:
+            raise RequirementSyntaxError(
+                f"requirement {raw!r} has an empty variable name"
+            )
+        if not name.replace("_", "").isalnum():
+            raise RequirementSyntaxError(
+                f"requirement {raw!r}: {name!r} is not a valid variable name"
+            )
+        form = (
+            _REQUIREMENT_FORM_VARIABLE
+            if forced in (None, _REQUIREMENT_FORM_VARIABLE)
+            else forced
+        )
+        return form, name, value
+
+    if forced is not None:
+        return forced, text, ""
+    return _classify_bare(text), text, ""
+
+
+def verify_environment_requirement(
+    raw: str,
+    ctx: ExecutionContext,
+    env: dict[str, str] | None,
+    task_id: str = "",
+) -> RequirementFailure | None:
+    """Check one requirement. Returns ``None`` when satisfied.
+
+    This is the single place an environment requirement is decided. Every
+    enforcement path calls it, so a requirement cannot be enforced on one path
+    and ignored on another.
+    """
+    try:
+        form, subject, expected = _parse_requirement(raw)
+    except RequirementSyntaxError as exc:
+        return RequirementFailure(task_id, "syntax", raw, str(exc))
+
+    if form == _REQUIREMENT_FORM_PATH:
+        target = REPO_ROOT / subject.lstrip("/")
+        if not target.exists():
+            return RequirementFailure(
+                task_id, form, raw, f"path does not exist: {subject}"
+            )
+        return None
+
+    if form in (_REQUIREMENT_FORM_TOOL, _REQUIREMENT_FORM_TOOL_VERSION):
+        located = _find_tool(subject)
+        if located is None:
+            return RequirementFailure(
+                task_id,
+                form,
+                raw,
+                f"executable {subject!r} not found in .venv/bin or on PATH",
+            )
+        if form == _REQUIREMENT_FORM_TOOL_VERSION:
+            found = _tool_version_of(located)
+            if expected and expected not in found:
+                return RequirementFailure(
+                    task_id,
+                    form,
+                    raw,
+                    f"{subject} version mismatch: required {expected}, "
+                    f"found {found or '<unreported>'} at {located}",
+                )
+        return None
+
+    # VARIABLE
+    assert env is not None, "variable requirements need a child environment"
+    if subject not in env:
+        return RequirementFailure(
+            task_id, form, raw, f"environment variable {subject} is not set"
+        )
+    if expected:
+        try:
+            resolved = _resolve_placeholders(expected, ctx)
+        except RequirementSyntaxError as exc:
+            return RequirementFailure(task_id, "syntax", raw, str(exc))
+        if env[subject] != resolved:
+            return RequirementFailure(
+                task_id,
+                form,
+                raw,
+                f"{subject}={env[subject]!r} but the obligation requires "
+                f"{resolved!r}",
+            )
+    return None
+
+
+def verify_task_environment(
+    task_id: str,
+    requirements: tuple[str, ...] | list[str],
+    ctx: ExecutionContext,
+    env: dict[str, str] | None,
+) -> list[RequirementFailure]:
+    """Check every requirement of one task. Returns the failures, in order."""
+    failures: list[RequirementFailure] = []
+    for raw in requirements:
+        failure = verify_environment_requirement(raw, ctx, env, task_id)
+        if failure is not None:
+            failures.append(failure)
+    return failures
+
+
+# ---------------------------------------------------------------------------
 # Capability → mutation target (capability vocabulary → ENGINE_SELECTION)
 # ---------------------------------------------------------------------------
 
@@ -460,7 +755,28 @@ class ExecutionTaskSpec:
     is_escalation: bool
     reason: str
     origin: str  # TaskOrigin
-    prerequisites: tuple[str, ...] = field(default_factory=tuple)
+    required_environment: tuple[str, ...] = field(default_factory=tuple)
+    """The single declaration of what this task needs in order to exist.
+
+    Three forms, all validated by :func:`verify_environment_requirement` before
+    any spawn:
+
+    * PATH   ``".venv"`` — repo-relative path must exist.
+    * TOOL   ``"pytest"`` / ``"mutmut==3.7.0"`` — resolvable (``.venv/bin``
+      first, per ``AGENTS.md``), and the version must match when pinned.
+    * VARIABLE ``"FINANCE_DB_PATH"`` / ``"PLAYWRIGHT_PROJECT=chromium"`` — must be
+      present in the child environment, and equal to the value when one is given.
+      A value may contain ``@token`` placeholders resolved from an
+      :class:`ExecutionContext`, which is what lets one declaration be correct in
+      a CI shard leg, a local reproduction, and on a laptop.
+
+    This field *replaces* ``prerequisites`` (repository paths only, and it
+    silently skipped five of its own values) and the never-read
+    ``required_environment`` on the dead ``ExecutableVerificationTask``. A
+    pre-M10-R3 ``plan.json`` carrying ``prerequisites`` still loads:
+    :meth:`from_dict` folds it in. There is no second field to drift.
+    """
+
     depends_on: tuple[str, ...] = field(default_factory=tuple)
     expected_evidence: tuple[str, ...] = field(default_factory=tuple)
     measurement_required: tuple[str, ...] = field(default_factory=tuple)
@@ -471,6 +787,19 @@ class ExecutionTaskSpec:
     evidence_reused: tuple[str, ...] = field(default_factory=tuple)
     evidence_invalidated: tuple[str, ...] = field(default_factory=tuple)
     estimated_duration_seconds: int = 0
+    cpu_demand: int | str | None = None
+    """How many CPUs this task will occupy, M10-R3 (D). ``None`` means *derive it*.
+
+    ``None`` is the default **on purpose**. An earlier revision defaulted to ``1``, which
+    silently suppressed derivation for every task and made the CPU budget inert in the
+    one place it was introduced to fix something real: the measured shard-6
+    oversubscription. Derivation is strictly better than a hand-maintained number
+    because it cannot drift from the command, so the declaration exists only for the
+    cases derivation cannot see (an indirection two levels deep, or a task that only
+    sometimes fans out).
+
+    ``"auto"`` (or any int) to declare explicitly.
+    """
     mutation_target: str = ""  # set when verification_kind == "mutation"
 
     def to_dict(self) -> dict:
@@ -487,7 +816,7 @@ class ExecutionTaskSpec:
             "is_escalation": self.is_escalation,
             "reason": self.reason,
             "origin": self.origin,
-            "prerequisites": list(self.prerequisites),
+            "required_environment": list(self.required_environment),
             "depends_on": list(self.depends_on),
             "expected_evidence": list(self.expected_evidence),
             "measurement_required": list(self.measurement_required),
@@ -498,8 +827,66 @@ class ExecutionTaskSpec:
             "evidence_reused": list(self.evidence_reused),
             "evidence_invalidated": list(self.evidence_invalidated),
             "estimated_duration_seconds": self.estimated_duration_seconds,
+            "cpu_demand": self.cpu_demand,
             "mutation_target": self.mutation_target,
         }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> ExecutionTaskSpec:
+        """Rebuild a spec from its ``to_dict`` form.
+
+        M10-R2 (D3/C1). This is what makes a plan file *authoritative* rather than
+        advisory, and therefore what makes ``check --shard`` able to execute exactly
+        the tasks it was handed.
+
+        Two properties matter and are tested:
+
+        * **Total over the declared fields, tolerant of unknown keys.** A key the
+          serialiser does not know about (a newer producer writing to an older
+          consumer) is ignored rather than raising, so the plan can be rolled back
+          without a coordinated upgrade of every reader. A key the serialiser
+          *does* declare but omits from the payload falls back to the dataclass
+          default, which keeps ``_add_dependency_edges``'s
+          ``ExecutionTaskSpec(**{**spec.to_dict(), ...})`` rebuild total.
+        * **Tuple fields stay tuples.** ``to_dict`` emits lists for the eight
+          ``tuple[str, ...]`` fields; without the coercion a rebuilt spec would
+          compare unequal to its original. Four call sites already rebuilt a spec
+          from ``to_dict()`` — the dedup merge in ``_expand_control_plane_tasks``,
+          the task-id reassignment after sorting, and ``_add_dependency_edges`` —
+          so before M10-R2 those tuples were silently becoming lists in the live
+          plan. Every such rebuild now routes through this classmethod, which is
+          what makes the declared types honest and the round-trip exact.
+        * **``prerequisites`` is a legacy input, not a second field.** M10-R3
+          merged it into ``required_environment``. A plan written before that
+          still deserialises, and its declarations survive — they are folded in
+          rather than silently dropped, because dropping them would turn a
+          satisfied requirement into an unenforced one, which is the exact defect
+          this consolidation exists to remove.
+        """
+        tuple_fields = {
+            "capabilities",
+            "required_environment",
+            "depends_on",
+            "expected_evidence",
+            "measurement_required",
+            "escalation_conditions",
+            "evidence_reused",
+            "evidence_invalidated",
+        }
+        payload = dict(d)
+        legacy = payload.pop("prerequisites", None)
+        known = {f.name for f in fields(cls)}
+        kwargs = {k: v for k, v in payload.items() if k in known}
+        if legacy:
+            merged = list(kwargs.get("required_environment") or ())
+            for item in legacy:
+                if item not in merged:
+                    merged.append(item)
+            kwargs["required_environment"] = merged
+        for name in tuple_fields & known:
+            if name in kwargs and kwargs[name] is not None:
+                kwargs[name] = tuple(kwargs[name])
+        return cls(**kwargs)
 
 
 @dataclass
@@ -531,9 +918,16 @@ class ExecutionPlan:
     #: from a warning in a log. See runtime.foundation.verification.boundary_policy.
     boundary_evidence: object | None = None
 
+    #: M10-R2 (C1). Schema identifier for the serialized plan. ``to_dict`` writes
+    #: it and ``from_dict`` asserts it, so a producer/consumer mismatch fails loudly
+    #: instead of silently producing an under-specified plan. A payload with no
+    #: ``schema`` key is accepted (tolerating a hand-written plan) but an
+    #: unrecognised one is rejected.
+    SCHEMA = "m9-c49-execution-plan/v1"
+
     def to_dict(self) -> dict:
         return {
-            "schema": "m9-c49-execution-plan/v1",
+            "schema": self.SCHEMA,
             "plan_id": self.plan_id,
             "source_plan_id": self.source_plan_id,
             "repository_fingerprint": self.repository_fingerprint.to_dict(),
@@ -554,20 +948,47 @@ class ExecutionPlan:
         }
 
     def to_json(self) -> str:
+        """Serialise to a JSON **document**.
+
+        Returns a string, not a dict. Callers producing machine-readable output must
+        print this directly: wrapping it in ``json.dumps`` (M10-R2) yields a JSON
+        string *literal* containing escaped JSON, which a parser reads back as one
+        string rather than as an object. That bug made ``run --json`` unreadable to
+        the reconcile aggregate job, which consumes shard reports.
+        """
         return json.dumps(self.to_dict(), indent=2, default=str)
 
     def validate(self) -> list[str]:
-        """Integrity checks on the plan. Empty list = OK."""
+        """Integrity checks on the plan. Empty list = OK.
+
+        M10-R3 (L2): the budget and CPU fields are now validated on load.
+
+        ``timeout_seconds`` was recorded but never checked. A plan carrying a negative
+        or zero budget would be executed as written and classified ``TIMED_OUT``
+        instantly — and because the matrix's wall-clock estimate is derived from
+        ``estimated_duration_seconds`` while the budget is derived separately, a
+        mismatched pair would produce an estimate and a ceiling that disagree with no
+        error anywhere. This was the one §16 defect the adversarial suite could not
+        catch, recorded there as ``xfail(strict=True)``; this closes it.
+
+        Validation rather than a raising ``__post_init__`` is deliberate:
+        ``from_dict`` must stay tolerant of older payloads, and the load path
+        (``control_plane_facade``) already rejects a plan whose ``validate()`` is
+        non-empty, so a bad budget becomes a named refusal at load instead of an
+        exception at construction.
+        """
         errors: list[str] = []
         seen_ids: set[str] = set()
         for t in self.tasks:
             if t.task_id in seen_ids:
                 errors.append(f"duplicate task_id={t.task_id}")
             seen_ids.add(t.task_id)
-            if not t.command:
+            if not t.command and t.verification_kind not in INTERNALLY_EXECUTED_KINDS:
                 errors.append(f"task {t.task_id} has empty command")
             if not t.capabilities:
                 errors.append(f"task {t.task_id} has no capabilities")
+            errors.extend(_validate_task_budget(t))
+            errors.extend(_validate_estimate(t))
         for t in self.tasks:
             if t.is_escalation:
                 for dep in t.depends_on:
@@ -578,6 +999,56 @@ class ExecutionPlan:
         if not self.tasks:
             errors.append("plan has no tasks")
         return errors
+
+    @classmethod
+    def from_dict(cls, d: dict) -> ExecutionPlan:
+        """Rebuild a plan from its ``to_dict`` form (M10-R2 C1).
+
+        ``ControlPlane.run()`` previously loaded a plan file and then *discarded*
+        it — ``ControlPlanePlan`` had no ``from_dict``, so the ``hasattr`` guard at
+        ``control_plane_facade.py:372`` always fell through to regenerating a plan
+        from the changed files, and ``:385`` rebuilt the execution plan regardless.
+        That made every plan file advisory, which is precisely what would have made
+        ``check --shard`` silently execute the whole plan in every shard.
+
+        The schema is asserted, not assumed: a payload carrying a ``schema`` this
+        build does not recognise is rejected rather than partially reconstructed,
+        because a plan reconstructed under the wrong schema is a plan that reports a
+        task set nobody intended to execute.
+
+        ``boundary_evidence`` is carried through as an opaque object. It is
+        presentation-only (it is rendered into the log and carries no execution
+        semantics), so it is not reconstructed into a typed value; a consumer that
+        needs it should re-derive it from ``rationale``.
+        """
+        schema = d.get("schema")
+        if schema is not None and schema != cls.SCHEMA:
+            raise ValueError(
+                f"unsupported execution plan schema {schema!r}; "
+                f"this build reads {cls.SCHEMA!r}"
+            )
+        return cls(
+            plan_id=d.get("plan_id", ""),
+            source_plan_id=d.get("source_plan_id", ""),
+            repository_fingerprint=RepositoryFingerprint.from_dict(
+                d.get("repository_fingerprint") or {}
+            ),
+            changed_files=list(d.get("changed_files") or []),
+            affected_capabilities=list(d.get("affected_capabilities") or []),
+            affected_components=list(d.get("affected_components") or []),
+            invalidated_evidence=list(d.get("invalidated_evidence") or []),
+            reusable_evidence=list(d.get("reusable_evidence") or []),
+            tasks=[ExecutionTaskSpec.from_dict(t) for t in (d.get("tasks") or [])],
+            escalation_conditions=list(d.get("escalation_conditions") or []),
+            measurement_requirements=list(d.get("measurement_requirements") or []),
+            certification_requirements=list(d.get("certification_requirements") or []),
+            rationale=d.get("rationale", ""),
+            plan_fingerprint=d.get("plan_fingerprint", ""),
+            generated_at=d.get("generated_at", ""),
+            revalidation_sources=list(d.get("revalidation_sources") or []),
+            reusable_measurements=list(d.get("reusable_measurements") or []),
+            boundary_evidence=d.get("boundary_evidence"),
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -621,6 +1092,651 @@ class TaskExecutionRecord:
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+# ---------------------------------------------------------------------------
+# The certification authority (M10-R3 / B2)
+#
+# ONE classifier, SIX producers.
+#
+# The defect this removes was measured, not inferred. Of the six ways this
+# repository executes a verification obligation, exactly one (``verify check`` /
+# ``verify run``) produced a ``FinalDecision`` and bracketed execution with a
+# repository fingerprint. The other five — profile aliases, obligation legs,
+# runtime shards, Playwright legs, mutation — used the *same* subprocess worker
+# but formed their verdict as "first non-zero exit code in plan order" and wrote
+# a literal ``final_decision="certified"`` into the event log without ever
+# capturing a fingerprint.
+#
+# The consequence: a green ``verify backend`` was not evidence that the
+# repository was unchanged during the run. It was evidence that no shell exited
+# non-zero. Those are different claims and only one of them is a certification.
+#
+# So the decision is extracted from ``ExecutionOrchestrator._finalize`` — where
+# it already existed and was already correct — into a module-level classifier
+# over a minimal outcome type that *every* topology can produce without a plan,
+# and the fingerprint bracket is lifted into a context manager that wraps the
+# whole execution. The orchestrator becomes the first consumer rather than the
+# only one.
+#
+# Deliberately NOT a new framework: no new engine, no new spawn path, no new
+# vocabulary. ``CompletionState`` and ``FinalDecision`` already existed and are
+# reused verbatim.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class ObligationOutcome:
+    """The minimum an execution path must report to be certifiable.
+
+    Five topologies never build a :class:`TaskExecutionRecord` — they have no plan,
+    no capabilities list and no artifact inventory. Rather than force a plan onto
+    them (which would be the "envelope" approach, and would give them a richer
+    record without giving them a real decision), they report this.
+    """
+
+    task_id: str
+    state: CompletionState
+    is_mandatory: bool = True
+    detail: str = ""
+
+    @classmethod
+    def from_record(cls, record: TaskExecutionRecord) -> ObligationOutcome:
+        """Adapt a full record. The orchestrator's own path."""
+        state = record.completion_state
+        if not isinstance(state, CompletionState):
+            state = _coerce_completion_state(state)
+        detail = ""
+        if record.diagnostic:
+            detail = str(record.diagnostic.get("message", ""))[:400]
+        return cls(
+            task_id=record.task_id,
+            state=state,
+            is_mandatory=record.is_mandatory,
+            detail=detail,
+        )
+
+
+def _coerce_completion_state(value: Any) -> CompletionState:
+    """Tolerate a state that arrived as a string.
+
+    ``CompletionState`` is a ``str`` enum, but records round-trip through JSON, so
+    a value can arrive as the enum itself, as its lowercase value (``"scope"``),
+    as its member name (``"SCOPE"``), or as a qualified repr
+    (``"CompletionState.SCOPE"``) — the last of which is what an
+    ``f"{state}"``-style serialiser produces. All four must resolve to the same
+    member.
+
+    An unrecognised value falls back to ``FAILED``, never to ``PASS``: a state the
+    classifier cannot understand must not be able to certify.
+    """
+    if isinstance(value, CompletionState):
+        return value
+    text = str(value).strip()
+    if "." in text:
+        text = text.rsplit(".", 1)[1]
+    for candidate in (text, text.lower(), text.upper()):
+        try:
+            return CompletionState(candidate)
+        except ValueError:
+            continue
+    return CompletionState.FAILED
+
+
+def decide_final_outcome(
+    outcomes: Sequence[ObligationOutcome],
+    *,
+    fingerprint_stable: bool = True,
+    fingerprint_note: str = "",
+    certification_requirements: Sequence[dict] = (),
+    measurement_lookup: Callable[[str, str], Any] | None = None,
+    current_sha: str = "",
+) -> tuple[FinalDecision, str]:
+    """Classify a set of obligation outcomes. The single decision function.
+
+    Precedence is deliberate and is the same precedence ``_finalize`` used:
+
+    1. ``INFRASTRUCTURE``  — the run could not be measured at all.
+    2. ``TIMEOUT``        — never converts to PASS.
+    3. fingerprint drift  — the repository changed under us.
+    4. ``CONFIGURATION`` on a mandatory task.
+    5. ``FAILED`` on a mandatory task.
+    6. ``AUTHORIZATION_REQUIRED``.
+    7. certification gate — measurement thresholds.
+    8. ``CERTIFIED``.
+
+    Ordering matters and is not cosmetic. Drift is checked *after* timeout so a
+    timed-out run reports ``TIMEOUT_BLOCKED`` (the actionable cause) rather than
+    a fingerprint mismatch (a symptom). Drift is checked *before* a mandatory
+    failure so a run whose tree moved cannot be diagnosed as an ordinary test
+    failure — the test result is not trustworthy once the tree has moved under it.
+    """
+    states = [o.state for o in outcomes]
+
+    if any(s == CompletionState.INFRASTRUCTURE for s in states):
+        ids = [o.task_id for o in outcomes if o.state == CompletionState.INFRASTRUCTURE]
+        return (
+            FinalDecision.INFRASTRUCTURE_BLOCKED,
+            f"obligation(s) {', '.join(ids)} reported infrastructure failure — "
+            "cannot certify",
+        )
+    if any(s == CompletionState.TIMEOUT for s in states):
+        ids = [o.task_id for o in outcomes if o.state == CompletionState.TIMEOUT]
+        return (
+            FinalDecision.TIMEOUT_BLOCKED,
+            f"obligation(s) {', '.join(ids)} timed out — cannot certify "
+            "(a timeout never converts to PASS)",
+        )
+    # SCOPE and fingerprint drift are the same phenomenon observed two ways: the
+    # repository state moved, so the run's own results cannot be attributed to the
+    # commit under test. The orchestrator reports it as a SCOPE record; the
+    # plan-less topologies report it as an unstable bracket. Both must land here.
+    scoped = [o for o in outcomes if o.state == CompletionState.SCOPE]
+    if scoped or not fingerprint_stable:
+        detail = fingerprint_note if fingerprint_note else ""
+        if scoped:
+            named = ", ".join(
+                f"{o.task_id}" + (f" ({o.detail})" if o.detail else "") for o in scoped
+            )
+            which = f"invalid scope on {named}"
+        else:
+            which = "repository drift"
+        return (
+            FinalDecision.VALIDATION_BLOCKED,
+            f"{which} detected — cannot certify" + (f" ({detail})" if detail else ""),
+        )
+    mandatory_config = [
+        o.task_id
+        for o in outcomes
+        if o.state == CompletionState.CONFIGURATION and o.is_mandatory
+    ]
+    if mandatory_config:
+        return (
+            FinalDecision.VALIDATION_BLOCKED,
+            f"configuration failure on mandatory obligation(s) "
+            f"{', '.join(mandatory_config)} — cannot certify",
+        )
+    mandatory_registry_gaps = [
+        o
+        for o in outcomes
+        if o.state == CompletionState.REGISTRY_GAP and o.is_mandatory
+    ]
+    if mandatory_registry_gaps:
+        # NOT_CERTIFIABLE, not DIAGNOSTIC. A registry gap is not a diagnostic problem:
+        # no assertion failed, and "run the diagnostic path" is advice that cannot
+        # resolve a missing mapping. It fails closed either way — the mandatory gate is
+        # unchanged — but it now names the actual remedy.
+        named = ", ".join(
+            f"{o.task_id}" + (f" ({o.detail})" if o.detail else "")
+            for o in mandatory_registry_gaps
+        )
+        return (
+            FinalDecision.NOT_CERTIFIABLE,
+            "verification-registry mapping(s) missing for changed capabilities: "
+            f"{named}. This is a review obligation, not a test failure — map the "
+            "capability to a verification contract (or record an explicit exemption) "
+            "rather than re-running the diagnostic path.",
+        )
+    mandatory_failed = [
+        o.task_id
+        for o in outcomes
+        if o.state == CompletionState.FAILED and o.is_mandatory
+    ]
+    if mandatory_failed:
+        return (
+            FinalDecision.DIAGNOSTIC,
+            f"mandatory obligation(s) failed: {', '.join(mandatory_failed)} — "
+            "run the diagnostic path",
+        )
+    if any(s == CompletionState.AUTHORIZATION_REQUIRED for s in states):
+        return (
+            FinalDecision.AWAITING_AUTHORIZATION,
+            "one or more obligations require explicit human authorization; "
+            "production changes were not attempted",
+        )
+
+    missing = _certification_gate_gaps(
+        certification_requirements, measurement_lookup, current_sha
+    )
+    if missing:
+        return (
+            FinalDecision.NOT_CERTIFIABLE,
+            "certification conditions not satisfied: " + "; ".join(missing),
+        )
+    return (
+        FinalDecision.CERTIFIED,
+        "all mandatory obligations satisfied and certification conditions met",
+    )
+
+
+def _certification_gate_gaps(
+    certification_requirements: Sequence[dict],
+    measurement_lookup: Callable[[str, str], Any] | None,
+    current_sha: str,
+) -> list[str]:
+    """Evaluate declared certification thresholds. Extracted, not reimplemented."""
+    if measurement_lookup is None:
+        return []
+    gaps: list[str] = []
+    for cr in certification_requirements:
+        cap = cr.get("capability", "")
+        minimum = cr.get("minimum_mutation_score")
+        if minimum is None:
+            continue
+        found = measurement_lookup(cap, "mutation")
+        record = found[0] if isinstance(found, tuple) else found
+        if record is None or not _certification_gate(record):
+            gaps.append(f"{cap} mutation measurement authoritative+current")
+            continue
+        record_sha = str(getattr(record, "repository_sha", ""))
+        if current_sha and record_sha != current_sha:
+            gaps.append(f"{cap} mutation record sha={record_sha[:8]} != current")
+            continue
+        score = getattr(record, "mutation_score", None) or 0
+        if score < minimum:
+            gaps.append(f"{cap} mutation score {score} < {minimum}")
+    return gaps
+
+
+def _certification_gate(record: Any) -> bool:
+    from runtime.foundation.verification.measurement_truth import certification_gate
+
+    return bool(certification_gate(record))
+
+
+class FingerprintDrift(RuntimeError):
+    """The repository changed while verification was executing.
+
+    Raised only where the caller asked for fail-fast (``strict=True``). The
+    default is to *record* the drift and let :meth:`CertificationRun.decide`
+    return ``VALIDATION_BLOCKED``, because a drift discovered mid-run usually has
+    useful partial evidence attached to it and throwing that away helps nobody.
+    """
+
+    def __init__(self, before: RepositoryFingerprint, after: RepositoryFingerprint):
+        self.before = before
+        self.after = after
+        super().__init__(
+            f"repository fingerprint changed during verification: "
+            f"{before.fingerprint[:12]} -> {after.fingerprint[:12]}"
+        )
+
+
+#: Longest budget any single task may declare, in seconds (24 h).
+#:
+#: An upper bound, not a policy. Without one, a plan carrying ``timeout_seconds`` of
+#: ``10**12`` would satisfy every check below, be faithfully executed, and then be
+#: indistinguishable at the CI-job level from "no timeout was ever set" — the exact
+#: ambiguity the mission's timeout requirement exists to remove.
+MAX_TASK_TIMEOUT_SECONDS = 86_400
+
+
+def _validate_estimate(task: ExecutionTaskSpec) -> list[str]:
+    """Validate a task's *estimate* — an execution gate, unlike the budget advisory.
+
+    A negative or non-integer estimate is a defect in the producer, and because
+    ``estimate_wall_seconds`` sums these to derive the shard matrix figure, a corrupt
+    value would silently distort every reported schedule.
+    """
+    estimate = task.estimated_duration_seconds
+    if isinstance(estimate, bool) or not isinstance(estimate, int) or estimate < 0:
+        return [
+            f"task {task.task_id} has an invalid estimated_duration_seconds "
+            f"({estimate!r}); the wall-clock estimate is derived from it"
+        ]
+    return []
+
+
+def budget_warnings(plan: ExecutionPlan) -> list[str]:
+    """Advisory budget findings. Reported; never a reason to refuse execution.
+
+    Kept strictly separate from :meth:`ExecutionPlan.validate`, which is an
+    **execution gate** -- ``execute()`` refuses a plan that does not validate.
+
+    The distinction matters. An estimate above its budget is legitimate and common: a
+    short budget over a long estimate is exactly how a bounded probe is constructed
+    (``test_m9_c49::ScenarioITimeout`` sets ``timeout_seconds=1`` over a normal
+    estimate to force a TIMED_OUT outcome). Folding that into ``validate()`` made the
+    runtime refuse correct plans in order to report a curiosity.
+
+    A *large* gap is still worth surfacing: it means the budget and the estimate were
+    derived from different numbers, which is the mutation declared-vs-enforced
+    divergence (L3) in miniature.
+    """
+    warnings: list[str] = []
+    for t in plan.tasks:
+        timeout = t.timeout_seconds
+        estimate = t.estimated_duration_seconds
+        if (
+            isinstance(timeout, int)
+            and not isinstance(timeout, bool)
+            and timeout > 0
+            and isinstance(estimate, int)
+            and not isinstance(estimate, bool)
+            and estimate > timeout
+        ):
+            warnings.append(
+                f"task {t.task_id}: estimated_duration_seconds={estimate} exceeds "
+                f"timeout_seconds={timeout}; the budget may have been derived from a "
+                f"different number than the one recorded"
+            )
+    return warnings
+
+
+def _validate_task_budget(task: ExecutionTaskSpec) -> list[str]:
+    """Validate one task's execution budget. Returns problems; empty means valid."""
+    errors: list[str] = []
+    timeout = task.timeout_seconds
+
+    # bool is an int subclass; True as a budget is a type confusion, not a timeout.
+    if isinstance(timeout, bool) or not isinstance(timeout, int):
+        errors.append(
+            f"task {task.task_id} has a non-integer timeout_seconds "
+            f"({type(timeout).__name__})"
+        )
+    elif timeout <= 0:
+        errors.append(
+            f"task {task.task_id} has a non-positive timeout_seconds ({timeout}); "
+            "a budget of zero or less means 'never run', not 'run immediately'"
+        )
+    elif timeout > MAX_TASK_TIMEOUT_SECONDS:
+        errors.append(
+            f"task {task.task_id} declares timeout_seconds={timeout}, above the "
+            f"{MAX_TASK_TIMEOUT_SECONDS}s (24h) maximum"
+        )
+
+    demand = task.cpu_demand
+    if demand is not None:
+        if isinstance(demand, bool):
+            errors.append(f"task {task.task_id} has a boolean cpu_demand ({demand!r})")
+        elif isinstance(demand, int):
+            if demand < 1:
+                errors.append(
+                    f"task {task.task_id} declares cpu_demand={demand}; the minimum is 1"
+                )
+        elif not isinstance(demand, str):
+            errors.append(
+                f"task {task.task_id} has an invalid cpu_demand "
+                f"({type(demand).__name__}); expected an int or 'auto'"
+            )
+    return errors
+
+
+#: The verification kind for a registry-mapping review obligation (M10-R3 L6).
+REGISTRY_MAPPING_KIND = "registry_mapping"
+
+#: Kinds the runtime decides itself, so a task of this kind needs no command string.
+#:
+#: An empty command is otherwise a plan defect worth rejecting. It is legitimate here
+#: precisely because the condition was *moved out of the shell* (L6): the executor
+#: consults the registry and reports the outcome, so there is nothing to spawn. Keeping
+#: the exception explicit means a genuinely empty command on any other kind still fails.
+INTERNALLY_EXECUTED_KINDS: frozenset[str] = frozenset({REGISTRY_MAPPING_KIND})
+
+
+def _unmapped_capabilities_now(capabilities: tuple[str, ...]) -> list[str]:
+    """Which of *capabilities* are still unmapped in the live registry.
+
+    Re-checked at execution time rather than trusted from the plan, so a plan authored
+    while a gap existed cannot certify after the gap was closed. An unknown capability is
+    reported, because "not in the registry" and "mapped to no contract" are the same
+    operational problem.
+    """
+    try:
+        from runtime.foundation.verification.capability_registry import (
+            capability_contract_registry,
+        )
+
+        registry = capability_contract_registry()
+        return [
+            cap for cap in capabilities if not cap or not registry.contract_for(cap)
+        ]
+    except Exception:
+        # A registry that cannot be consulted must not silently certify: report all, so
+        # the verdict fails closed and the reason is honest rather than vacuous.
+        return list(capabilities)
+
+
+def evidence_roots() -> list[str]:
+    """Every directory the runtime writes evidence into, workspace-relative.
+
+    M10-R3 (L1d). Eight `upload-artifact` sites across the workflows declare **multiple**
+    paths, and `verification-reconcile.yml` uploads `runtime/**` together with
+    `backend/**`.
+
+    Two problems with that, both of which the workflow cannot see:
+
+    * **The artifact's internal shape changes with the path list.** `upload-artifact`
+      preserves each path's position under the least common ancestor of the declared
+      paths, so adding or removing one re-shapes the whole artifact. A downstream
+      consumer pinned to the current layout breaks on a change that moved no evidence.
+    * **`backend/**` is source code presented as evidence.** It is there because mutation
+      evidence lands in `backend/tests/generated/mutation` — a runtime-owned location the
+      workflow had to know about. That is precisely the reconstruction the mission
+      forbids: the runtime knows its own evidence roots; the workflow was guessing.
+
+    So the runtime publishes them. Only directories that actually exist are returned, so a
+    workflow never uploads an empty path it would have to special-case.
+    """
+    roots = [
+        "runtime/generated/certification",
+        "runtime/generated/m9-c49",
+        "runtime/generated/execution",
+        "runtime/generated/profile-logs",
+        "runtime/generated/local-harness",
+        "runtime/generated/legs",
+        "runtime/tests/generated/mutation",
+    ]
+    return [r for r in roots if (REPO_ROOT / r).exists()]
+
+
+class CertificationRun:
+    """Brackets one execution with a fingerprint and produces its verdict.
+
+    This is the object the five plan-less topologies were missing. Used as a
+    context manager it guarantees the *final* fingerprint is captured even when the
+    body raises, which is what makes the invariant hold on the interrupted and
+    timed-out paths as well as the clean one — a bracket that only closes on the
+    happy path is not an invariant.
+
+    ::
+
+        with CertificationRun(plan_id=plan.plan_id) as run:
+            for task in tasks:
+                run.record(task.id, CompletionState.PASS)
+            ... execute ...
+        print(run.decision, run.reason, run.exit_code)
+
+    Three properties are load-bearing:
+
+    * **One classifier.** :meth:`decide` delegates to :func:`decide_final_outcome`.
+      There is no second precedence table to drift from the orchestrator's.
+    * **Drift is always reported.** :attr:`fingerprint_stable` is computed from the
+      bracket, never asserted by the caller.
+    * **A partial run is not a pass.** With no recorded obligations the decision is
+      ``NOT_CERTIFIABLE``, not ``CERTIFIED``. An execution that recorded nothing
+      has certified nothing, and the difference must not be expressible as green.
+    """
+
+    __slots__ = (
+        "_outcomes",
+        "_started_at",
+        "fingerprint_after",
+        "fingerprint_before",
+        "fingerprint_note",
+        "plan_id",
+        "strict",
+        "_certification_requirements",
+        "_measurement_lookup",
+    )
+
+    def __init__(
+        self,
+        plan_id: str = "",
+        *,
+        certification_requirements: Sequence[dict] = (),
+        measurement_lookup: Callable[[str, str], Any] | None = None,
+        strict: bool = False,
+    ) -> None:
+        self.plan_id = plan_id
+        self._outcomes: list[ObligationOutcome] = []
+        self.fingerprint_before: RepositoryFingerprint | None = None
+        self.fingerprint_after: RepositoryFingerprint | None = None
+        self.fingerprint_note = ""
+        self.strict = strict
+        self._certification_requirements = list(certification_requirements)
+        self._measurement_lookup = measurement_lookup
+        self._started_at = 0.0
+
+    # -- context manager ---------------------------------------------------
+
+    def __enter__(self) -> CertificationRun:
+        self._started_at = time.monotonic()
+        self.fingerprint_before = RepositoryFingerprint.capture()
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> bool:
+        # Captured in a finally-equivalent: if the body raised, we still close the
+        # bracket, because "the tree changed AND the run blew up" is the diagnosis
+        # an operator needs, and losing the 'after' fingerprint loses half of it.
+        self.fingerprint_after = RepositoryFingerprint.capture()
+        if self.strict and not self.fingerprint_stable:
+            assert self.fingerprint_before is not None
+            raise FingerprintDrift(self.fingerprint_before, self.fingerprint_after)
+        return False  # never swallow
+
+    # -- recording ---------------------------------------------------------
+
+    def record(
+        self,
+        task_id: str,
+        state: CompletionState | str,
+        *,
+        is_mandatory: bool = True,
+        detail: str = "",
+    ) -> ObligationOutcome:
+        """Record one obligation's outcome. Order-preserving and repeatable."""
+        outcome = ObligationOutcome(
+            task_id=task_id,
+            state=_coerce_completion_state(state),
+            is_mandatory=is_mandatory,
+            detail=detail,
+        )
+        self._outcomes.append(outcome)
+        return outcome
+
+    def adopt(self, records: Sequence[TaskExecutionRecord]) -> None:
+        """Adopt a full set of orchestrator records."""
+        for record in records:
+            self._outcomes.append(ObligationOutcome.from_record(record))
+
+    @property
+    def outcomes(self) -> tuple[ObligationOutcome, ...]:
+        return tuple(self._outcomes)
+
+    # -- verdict -----------------------------------------------------------
+
+    @property
+    def fingerprint_stable(self) -> bool:
+        """True unless both captures exist and differ."""
+        if self.fingerprint_before is None or self.fingerprint_after is None:
+            # An unclosed bracket cannot assert stability. Reporting True here would
+            # let a crash before __exit__ certify silently.
+            return False
+        return self.fingerprint_before.matches(self.fingerprint_after)
+
+    @property
+    def duration_seconds(self) -> float:
+        return time.monotonic() - self._started_at if self._started_at else 0.0
+
+    def decide(self) -> tuple[FinalDecision, str]:
+        """Classify. The one call every topology makes."""
+        if not self._outcomes:
+            return (
+                FinalDecision.NOT_CERTIFIABLE,
+                "no obligation reported an outcome — nothing was certified",
+            )
+        stable = self.fingerprint_stable
+        note = self.fingerprint_note
+        if not stable and self.fingerprint_before and self.fingerprint_after:
+            note = (
+                f"before={self.fingerprint_before.fingerprint[:12]} "
+                f"after={self.fingerprint_after.fingerprint[:12]}"
+            )
+        return decide_final_outcome(
+            self._outcomes,
+            fingerprint_stable=stable,
+            fingerprint_note=note,
+            certification_requirements=self._certification_requirements,
+            measurement_lookup=self._measurement_lookup,
+            current_sha=(
+                self.fingerprint_before.repository_sha
+                if self.fingerprint_before
+                else ""
+            ),
+        )
+
+    @property
+    def decision(self) -> FinalDecision:
+        return self.decide()[0]
+
+    @property
+    def reason(self) -> str:
+        return self.decide()[1]
+
+    def exit_code(self) -> int:
+        """Map the decision onto a process exit code.
+
+        ``CERTIFIED`` is 0 and nothing else is. Every blocked decision gets a
+        distinct non-zero code so a CI log distinguishes "the tree moved" from
+        "something timed out" from "a test asserted" without parsing prose.
+        """
+        return _DECISION_EXIT_CODES.get(self.decision, 1)
+
+    def to_dict(self) -> dict:
+        decision, reason = self.decide()
+        return {
+            "schema": "m10r3-certification-run/v1",
+            "plan_id": self.plan_id,
+            "decision": decision.value,
+            "reason": reason,
+            "exit_code": self.exit_code(),
+            "duration_seconds": round(self.duration_seconds, 3),
+            "fingerprint_before": (
+                self.fingerprint_before.to_dict() if self.fingerprint_before else None
+            ),
+            "fingerprint_after": (
+                self.fingerprint_after.to_dict() if self.fingerprint_after else None
+            ),
+            "fingerprint_stable": self.fingerprint_stable,
+            "obligations": [
+                {
+                    "task_id": o.task_id,
+                    "state": o.state.value,
+                    "is_mandatory": o.is_mandatory,
+                    "detail": o.detail,
+                }
+                for o in self._outcomes
+            ],
+        }
+
+
+#: Distinct exit codes per blocked decision, so a CI leg can tell the failure modes
+#: apart from the exit status alone without parsing prose.
+#:
+#: Two of these are conventions worth preserving rather than renumbering:
+#: ``124`` is GNU ``timeout``'s "command timed out", and CI tooling, shell wrappers
+#: and humans all read it that way. ``2`` is argparse's usage-error code, so
+#: authorization deliberately does not take it.
+_DECISION_EXIT_CODES: dict[FinalDecision, int] = {
+    FinalDecision.CERTIFIED: 0,
+    FinalDecision.NOT_CERTIFIABLE: 1,
+    FinalDecision.DIAGNOSTIC: 1,
+    FinalDecision.AWAITING_AUTHORIZATION: 6,
+    FinalDecision.INFRASTRUCTURE_BLOCKED: 3,
+    FinalDecision.TIMEOUT_BLOCKED: 124,
+    FinalDecision.VALIDATION_BLOCKED: 5,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -718,7 +1834,19 @@ class ExecutionOrchestrator:
         measurement_search_dirs: list[str] | None = None,
         max_runtime_overrides: dict[str, int] | None = None,
         evidence_root: Path | None = None,
+        progress_prefix: str | None = None,
     ) -> None:
+        """*progress_prefix* enables live per-task lifecycle logging (M10-R2 closeout).
+
+        When set, every task executed through this orchestrator emits
+        ``[<prefix>/<task_id>] start|running|exit=...`` to stderr. This is the only
+        orchestrator-side change live observability needs: the per-task line is composed
+        here and executed by ``run_streaming_command``, which every verification
+        subprocess in the repository already routes through.
+
+        ``None`` (the default) restores byte-identical behaviour, so local runs and the
+        existing suite are unaffected.
+        """
         from runtime.foundation.verification.capability_contract import (
             get_capability_contract_registry,
         )
@@ -739,6 +1867,83 @@ class ExecutionOrchestrator:
         self._max_runtime_overrides = dict(max_runtime_overrides or {})
         self._measurement_search_dirs = list(measurement_search_dirs or [])
         self._evidence_root = evidence_root or GENERATED_ROOT
+        #: M10-R2 (C1b). scope -> capabilities sharing one coverage execution, as
+        #: decided by the most recent `_inject_revalidations`. Read by
+        #: `fan_out_shared_measurement_records`.
+        self._last_coverage_groups: dict[str, list[str]] = {}
+        self._progress_prefix = progress_prefix
+
+    def fan_out_shared_measurement_records(
+        self,
+        measurement_dir: Path | None = None,
+    ) -> list[str]:
+        """Materialise one coverage record per requesting capability.
+
+        M10-R2 (C1b). The dedup executes each distinct coverage scope once, but the
+        evidence contract is unchanged: `_find_measurement_record` resolves a record
+        *per capability*, and `_finalize`'s certification gate reads those. So after
+        the shared execution has written its record, this copies it to
+        ``measurement-truth-{cap}-coverage.json`` for every other capability that
+        shared the scope, preserving the measured scope, score, repository sha and
+        evidence fingerprint verbatim.
+
+        The copy is marked with ``measurement_provenance`` recording which capability
+        the execution actually ran for. Nothing is asserted that the measurement does
+        not support: the record still reports the scope that was *measured*, so
+        `_component_for_mapping`'s scope check in `_find_measurement_record` continues
+        to accept it on exactly the same terms it accepted the original.
+
+        Existing files are never overwritten — if a real per-capability record is
+        already present it is authoritative and is left alone.
+
+        Returns the paths written.
+        """
+        from runtime.foundation.verification.measurement_truth import (
+            load_measurement_truth,
+        )
+
+        if not self._last_coverage_groups:
+            return []
+
+        target_dir = measurement_dir or (
+            REPO_ROOT / "runtime" / "generated" / "m9-c49" / "measurements"
+        )
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        written: list[str] = []
+        for scope, capabilities in sorted(self._last_coverage_groups.items()):
+            for lead in capabilities:
+                source_path = target_dir / f"measurement-truth-{lead}-coverage.json"
+                if not source_path.exists():
+                    continue
+                try:
+                    record = load_measurement_truth(source_path)
+                except Exception:
+                    continue
+                payload = (
+                    record.to_dict() if hasattr(record, "to_dict") else dict(record)
+                )
+                for cap in capabilities:
+                    if cap == lead:
+                        continue
+                    dest = target_dir / f"measurement-truth-{cap}-coverage.json"
+                    if dest.exists():
+                        continue
+                    payload["measurement_provenance"] = {
+                        "shared_from": lead,
+                        "measured_scope": scope,
+                        "note": (
+                            "One execution of this scope serves every capability "
+                            "mapped to it; this record is a per-capability view of "
+                            "that single measurement, not a separate run."
+                        ),
+                    }
+                    dest.write_text(
+                        json.dumps(payload, indent=2, default=str),
+                        encoding="utf-8",
+                    )
+                    written.append(str(dest))
+        return written
 
     # ------------------------------------------------------------- planning
 
@@ -828,7 +2033,7 @@ class ExecutionOrchestrator:
             )
             auth_required = is_mutation
             expected_evidence = list(inv_entry.evidence_produced) if inv_entry else []
-            prereqs = list(inv_entry.prerequisites) if inv_entry else [".venv"]
+            prereqs = list(inv_entry.required_environment) if inv_entry else [".venv"]
             dedup_key = (cp_task.command.strip(),)
             bucket = dedup.get(dedup_key)
             if bucket is None:
@@ -836,7 +2041,12 @@ class ExecutionOrchestrator:
                     task_id=f"exec-{len(order) + 1:04d}",
                     source_task_id=f"{cp_task.capability_id}::{cp_task.task_id}",
                     primary_capability=cp_task.capability_id,
-                    capabilities=(cp_task.capability_id,),
+                    # M10-R3: a task may declare its concrete capabilities; the
+                    # registry-mapping obligation does, because its capability_id is a
+                    # count rather than a name. See VerificationTask.capabilities.
+                    capabilities=tuple(
+                        cp_task.capabilities or (cp_task.capability_id,)
+                    ),
                     verification_kind=cp_task.verification_kind,
                     command=cp_task.command.strip(),
                     profile=cp_task.profile,
@@ -845,7 +2055,7 @@ class ExecutionOrchestrator:
                     is_escalation=cp_task.is_escalation,
                     reason=cp_task.reason,
                     origin=TaskOrigin.CONTROL_PLANE.value,
-                    prerequisites=tuple(prereqs),
+                    required_environment=tuple(prereqs),
                     expected_evidence=tuple(expected_evidence),
                     measurement_required=tuple(
                         m.value for m in cp_task.measurement_required
@@ -857,11 +2067,34 @@ class ExecutionOrchestrator:
                     evidence_invalidated=tuple(cp_task.evidence_invalidated),
                     estimated_duration_seconds=cp_task.estimated_duration_seconds,
                 )
-                bucket = {"spec": spec, "capabilities": {cp_task.capability_id}}
+                # M11-R4. TWO accumulators, because they answer different questions.
+                #
+                # `capability_ids` is the set of CONTROL-PLANE task ids this bucket
+                # serves; it names the obligation and picks `primary_capability`.
+                # `capabilities` is the set of CONCRETE capabilities those tasks
+                # cover (`VerificationTask.capabilities`), and it is what the
+                # execution record and the registry-mapping obligation report.
+                #
+                # They are the same set for every ordinary task — its
+                # `capabilities` is `(capability_id,)` — and they differ for exactly
+                # one: the registry-mapping obligation, whose `capability_id` is a
+                # COUNT (`unmapped:UNMAPPED[3]`) rather than a name. Seeding both from
+                # `capability_id` is what made `spec.capabilities` ship the count
+                # label, so the shard reported "no verification-registry mapping
+                # for: unmapped:UNMAPPED[3]" and the three actual names were known
+                # to the planner and lost on the way to the record.
+                bucket = {
+                    "spec": spec,
+                    "capability_ids": {cp_task.capability_id},
+                    "capabilities": set(spec.capabilities),
+                }
                 dedup[dedup_key] = bucket
                 order.append(dedup_key)
             else:
-                bucket["capabilities"].add(cp_task.capability_id)
+                bucket["capability_ids"].add(cp_task.capability_id)
+                bucket["capabilities"].update(
+                    cp_task.capabilities or (cp_task.capability_id,)
+                )
                 # Merge deduped spec: upgrade mandatory / authorization
                 # if any contributing task needs them.
                 new_dict = bucket["spec"].to_dict()
@@ -874,19 +2107,19 @@ class ExecutionOrchestrator:
                 # Track the earliest source task id for provenance
                 if cp_task.task_id < new_dict["source_task_id"]:
                     new_dict["source_task_id"] = cp_task.task_id
-                bucket["spec"] = ExecutionTaskSpec(**new_dict)
+                bucket["spec"] = ExecutionTaskSpec.from_dict(new_dict)
         # Finalize per-bucket capabilities into the spec.
         tasks: list[ExecutionTaskSpec] = []
         for key in order:
             bucket = dedup[key]
             spec_dict = bucket["spec"].to_dict()
-            caps = sorted(bucket["capabilities"])
-            spec_dict["primary_capability"] = caps[0]
-            spec_dict["capabilities"] = caps
+            cap_ids = sorted(bucket["capability_ids"])
+            spec_dict["primary_capability"] = cap_ids[0]
+            spec_dict["capabilities"] = sorted(bucket["capabilities"])
             spec_dict["reason"] = (
-                spec_dict["reason"] + f" (serves: {', '.join(caps)})"
+                spec_dict["reason"] + f" (serves: {', '.join(cap_ids)})"
             ).strip()
-            tasks.append(ExecutionTaskSpec(**spec_dict))
+            tasks.append(ExecutionTaskSpec.from_dict(spec_dict))
         # Apply deterministic ordering: mandatory first by (primary_cap, command).
         tasks.sort(
             key=lambda t: (
@@ -897,7 +2130,7 @@ class ExecutionOrchestrator:
         )
         # Reassign stable task IDs after sort.
         tasks = [
-            ExecutionTaskSpec(**{**t.to_dict(), "task_id": f"exec-{i + 1:04d}"})
+            ExecutionTaskSpec.from_dict({**t.to_dict(), "task_id": f"exec-{i + 1:04d}"})
             for i, t in enumerate(tasks)
         ]
         return tasks, order
@@ -914,6 +2147,25 @@ class ExecutionOrchestrator:
         reusable: list[dict] = []
         new_tasks: list[ExecutionTaskSpec] = []
         next_id = len(tasks) + 1
+
+        # M10-R2 (C1b). Coverage revalidation used to emit one task per
+        # (capability, measurement-mapping) pair. Because the ``--out`` path embeds
+        # the capability name, N capabilities whose coverage mapping resolves to the
+        # *same* scope produced N byte-different command strings running the *same*
+        # measurement. On a 40-file boundary that is 4 executions of
+        # ``measurement coverage tests/unit/engines`` (measured; see
+        # docs/audits/m10-r2-baseline.md) where one suffices.
+        #
+        # Keying on the command string cannot fix it, which is why the dedup added
+        # in `_expand_control_plane_tasks` (keyed on the command) does not apply
+        # here. The key must be the *resolved scope* — computed below, after the
+        # api-contracts/``backend`` rewrites below have been applied.
+        #
+        # Grouping is sound because `_find_measurement_record` already enforces, via
+        # `_component_for_mapping`, that a record speaks only for the scope it
+        # actually measured. Two capabilities declaring the same scope legitimately
+        # share one measurement; two different scopes never merge.
+        coverage_groups: dict[str, dict] = {}
 
         for cap_id in sorted(
             set(cp.capability_resolution.directly_affected_capabilities)
@@ -1001,12 +2253,26 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(".venv", "mutmut==3.7.0", "git"),
-                                expected_evidence=("mutation_score", "survivor_intel"),
+                                required_environment=(
+                                    ".venv",
+                                    "mutmut==3.7.0",
+                                    "git",
+                                ),
+                                expected_evidence=(
+                                    "mutation_score",
+                                    "survivor_intel",
+                                ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                timeout_seconds=1200,
-                                estimated_duration_seconds=1200,
+                                # M10-R3 L3: the declared budget IS the enforced
+                                # budget. Both come from
+                                # mutation_runner.DEFAULT_RUNTIME, so a campaign can
+                                # no longer be declared with a ceiling 3.5x smaller
+                                # than the one it is actually given.
+                                timeout_seconds=declared_mutation_timeout("target"),
+                                estimated_duration_seconds=declared_mutation_timeout(
+                                    "target"
+                                ),
                                 mutation_target=component,
                             )
                         )
@@ -1032,12 +2298,26 @@ class ExecutionOrchestrator:
                                     f"certification"
                                 ),
                                 origin=TaskOrigin.REVALIDATION.value,
-                                prerequisites=(".venv", "mutmut==3.7.0", "git"),
-                                expected_evidence=("mutation_score", "survivor_intel"),
+                                required_environment=(
+                                    ".venv",
+                                    "mutmut==3.7.0",
+                                    "git",
+                                ),
+                                expected_evidence=(
+                                    "mutation_score",
+                                    "survivor_intel",
+                                ),
                                 measurement_required=("mutation",),
                                 authorization_required=True,
-                                timeout_seconds=1200,
-                                estimated_duration_seconds=1200,
+                                # M10-R3 L3: the declared budget IS the enforced
+                                # budget. Both come from
+                                # mutation_runner.DEFAULT_RUNTIME, so a campaign can
+                                # no longer be declared with a ceiling 3.5x smaller
+                                # than the one it is actually given.
+                                timeout_seconds=declared_mutation_timeout("target"),
+                                estimated_duration_seconds=declared_mutation_timeout(
+                                    "target"
+                                ),
                                 mutation_target=target,
                             )
                         )
@@ -1049,36 +2329,75 @@ class ExecutionOrchestrator:
                         or scope in {"backend", "backend/src", "."}
                     ):
                         scope = "."
-                    new_tasks.append(
-                        ExecutionTaskSpec(
-                            task_id=f"exec-{next_id:04d}",
-                            source_task_id=f"revalidate::{cap}::coverage",
-                            primary_capability=cap,
-                            capabilities=(cap,),
-                            verification_kind="coverage",
-                            command=(
-                                f".venv/bin/python -m runtime.verify measurement "
-                                f"coverage {scope} --out "
-                                f"{REPO_ROOT / 'runtime' / 'generated' / 'm9-c49' / 'measurements' / f'measurement-truth-{cap}-coverage.json'}"
-                            ),
-                            profile="coverage",
-                            scope="coverage",
-                            is_mandatory=mm.required_for_certification,
-                            is_escalation=False,
-                            reason=(
-                                f"revalidation: {cap} coverage evidence is "
-                                f"{'stale' if record else 'missing'}"
-                            ),
-                            origin=TaskOrigin.REVALIDATION.value,
-                            prerequisites=(".venv", "coverage"),
-                            expected_evidence=("measurement_truth",),
-                            measurement_required=("coverage",),
-                            authorization_required=False,
-                            timeout_seconds=1800,
-                            estimated_duration_seconds=1800,
-                        )
-                    )
+                    # Defer emission: group by resolved scope, emit one task per
+                    # scope once every capability has been visited. `next_id` is
+                    # consumed here so the ids stay dense, but the id is only
+                    # provisional — the task is built at the end of the function.
+                    group = coverage_groups.get(scope)
+                    if group is None:
+                        group = {
+                            "scope": scope,
+                            "capabilities": [],
+                            "reasons": [],
+                            "mandatory": False,
+                            "task_id": f"exec-{next_id:04d}",
+                        }
+                        coverage_groups[scope] = group
+                    group["capabilities"].append(cap)
+                    group["reasons"].append(f"{cap} {'stale' if record else 'missing'}")
+                    # A measurement required for certification makes the whole
+                    # scope's single execution mandatory.
+                    if mm.required_for_certification:
+                        group["mandatory"] = True
+                    next_id += 1
+                    continue
                 next_id += 1
+
+        # Emit one coverage revalidation task per distinct resolved scope. The
+        # per-capability narrative is untouched: `revalidation_sources` above still
+        # carries one entry per capability, and the per-capability record files are
+        # materialised from this single measurement by
+        # `fan_out_shared_measurement_records`.
+        for scope in sorted(coverage_groups):
+            group = coverage_groups[scope]
+            caps = sorted(group["capabilities"])
+            lead = caps[0]
+            new_tasks.append(
+                ExecutionTaskSpec(
+                    task_id=group["task_id"],
+                    source_task_id="revalidate::" + ",".join(caps) + "::coverage",
+                    primary_capability=lead,
+                    capabilities=tuple(caps),
+                    verification_kind="coverage",
+                    command=(
+                        f".venv/bin/python -m runtime.verify measurement "
+                        f"coverage {scope} --out "
+                        f"{REPO_ROOT / 'runtime' / 'generated' / 'm9-c49' / 'measurements' / f'measurement-truth-{lead}-coverage.json'}"
+                    ),
+                    profile="coverage",
+                    scope="coverage",
+                    is_mandatory=bool(group["mandatory"]),
+                    is_escalation=False,
+                    reason=(
+                        "revalidation: shared coverage measurement for scope "
+                        f"{scope!r} serving {len(caps)} capabilit"
+                        f"{'y' if len(caps) == 1 else 'ies'} — "
+                        + "; ".join(group["reasons"])
+                        + f" (single execution; records fanned out to {', '.join(caps)})"
+                    ),
+                    origin=TaskOrigin.REVALIDATION.value,
+                    required_environment=(".venv", "coverage"),
+                    expected_evidence=("measurement_truth",),
+                    measurement_required=("coverage",),
+                    authorization_required=False,
+                    timeout_seconds=1800,
+                    estimated_duration_seconds=1800,
+                )
+            )
+        self._last_coverage_groups = {
+            scope: sorted(group["capabilities"])
+            for scope, group in coverage_groups.items()
+        }
 
         # Re-sort: revalidation tasks are mandatory, ordered after control-plane
         # mandatory tasks but before escalation tasks. Keep deterministic order
@@ -1222,8 +2541,8 @@ class ExecutionOrchestrator:
         mandatory_ids = {t.task_id for t in tasks if t.is_mandatory}
         for i, t in enumerate(tasks):
             if t.is_escalation and not t.depends_on:
-                tasks[i] = ExecutionTaskSpec(
-                    **{**t.to_dict(), "depends_on": tuple(sorted(mandatory_ids))}
+                tasks[i] = ExecutionTaskSpec.from_dict(
+                    {**t.to_dict(), "depends_on": tuple(sorted(mandatory_ids))}
                 )
 
     def _compute_plan_fingerprint(
@@ -1333,29 +2652,86 @@ class ExecutionOrchestrator:
             )
         return errors, live_fp
 
-    def verify_prerequisites(self, plan: ExecutionPlan) -> tuple[bool, list[str]]:
-        """Verify prerequisites for all tasks. Returns (ok, missing list)."""
-        missing: list[str] = []
-        # Global prerequisites
+    def verify_prerequisites(
+        self,
+        plan: ExecutionPlan,
+        ctx: ExecutionContext | None = None,
+        env: dict[str, str] | None = None,
+    ) -> tuple[bool, list[str]]:
+        """Verify every declared environment requirement, before any spawn.
+
+        M10-R3 (B1). This used to verify repository *paths only*, and to skip five
+        of its own declared values outright (``.venv``, ``git``,
+        ``mutmut==3.7.0``, ``pytest``, ``coverage``) — so it never once checked a
+        tool, a version, or an environment variable. The ``required_environment``
+        field that was supposed to carry those was read by nothing outside its own
+        serialiser.
+
+        It now resolves all three forms through
+        :func:`verify_environment_requirement`, which is the single place an
+        environment requirement is decided. Every failure names the task, the
+        form, the requirement and what was actually found — so a missing
+        prerequisite is a *named prerequisite failure at second zero* instead of a
+        non-zero exit several minutes later with the real cause in a log nobody
+        was watching.
+
+        Returns ``(ok, rendered_failures)``. ``rendered_failures`` is a list of
+        human-readable strings for backward compatibility with the existing
+        ``missing prerequisites: ...`` report line; the structured failures are
+        available via :meth:`collect_requirement_failures`.
+        """
+        failures = self.collect_requirement_failures(plan, ctx=ctx, env=env)
+        return (not failures), [f.render() for f in failures]
+
+    def collect_requirement_failures(
+        self,
+        plan: ExecutionPlan,
+        ctx: ExecutionContext | None = None,
+        env: dict[str, str] | None = None,
+    ) -> list[RequirementFailure]:
+        """Structured form of :meth:`verify_prerequisites`.
+
+        Kept separate because the call sites that *report* want strings and the
+        call sites that *classify* want the form and the detail.
+        """
+        if ctx is None:
+            ctx = ExecutionContext(workspace=str(REPO_ROOT), plan_id=plan.plan_id)
+        if env is None:
+            from runtime.foundation.verification.env import child_process_env
+
+            env = dict(child_process_env())
+
+        failures: list[RequirementFailure] = []
+
+        # Global requirements. These are the repository-level preconditions every
+        # obligation inherits; they are reported against the plan itself because
+        # they are not any one task's declaration.
         if not (REPO_ROOT / ".venv" / "bin" / "python").exists():
-            missing.append(".venv/bin/python")
+            failures.append(
+                RequirementFailure(
+                    "<plan>",
+                    _REQUIREMENT_FORM_PATH,
+                    ".venv/bin/python",
+                    "the canonical virtualenv interpreter is missing; run "
+                    "scripts/bootstrap.sh",
+                )
+            )
         for path in (".git", "backend", "pyproject.toml"):
             if not (REPO_ROOT / path).exists():
-                missing.append(path)
-        # Per-task prerequisite paths
-        seen: set[str] = set()
+                failures.append(
+                    RequirementFailure(
+                        "<plan>",
+                        _REQUIREMENT_FORM_PATH,
+                        path,
+                        "required repository path is missing",
+                    )
+                )
+
         for t in plan.tasks:
-            for p in t.prerequisites:
-                if p in seen:
-                    continue
-                seen.add(p)
-                if p in (".venv", "git", "mutmut==3.7.0", "pytest", "coverage"):
-                    continue
-                # explicit script path
-                pth = REPO_ROOT / p.lstrip("/")
-                if not pth.exists():
-                    missing.append(f"{t.task_id}: {p}")
-        return (not missing), missing
+            failures.extend(
+                verify_task_environment(t.task_id, t.required_environment, ctx, env)
+            )
+        return failures
 
     # ------------------------------------------------------------- execution
 
@@ -1413,33 +2789,165 @@ class ExecutionOrchestrator:
         # Section 6 stop-on-sufficiency state
         any_mandatory_fail = False
 
-        for spec in plan.tasks:
-            # Re-evaluation: live fingerprint may have changed mid-run
-            current_fp = RepositoryFingerprint.capture()
-            if current_fp.fingerprint != live_fp.fingerprint:
-                _push_record(
+        # M10-R2 (C3d): the anti-tamper invariant is now checked once around the
+        # fan-out instead of once per task. See `_fingerprint_integrity_record` for
+        # why this is strictly stronger, not weaker.
+        #
+        # M10-R2 (C3b): independent tasks run concurrently. Escalation tasks are a
+        # barrier, not a fan-out unit — `_add_dependency_edges` gives every one of
+        # them `depends_on = <all mandatory task ids>`, and stop-on-sufficiency is
+        # only decidable once the mandatory set has a complete result. They run
+        # after, in plan order, exactly as before.
+        independent = [s for s in plan.tasks if not s.is_escalation]
+        barrier = [s for s in plan.tasks if s.is_escalation]
+
+        def _execute_independent(
+            spec: ExecutionTaskSpec,
+        ) -> TaskExecutionRecord:
+            """Reuse/re-authorization gates, then execute. Pure per-task work."""
+            # Evidence reuse: for measurement tasks, check the persistent record
+            # before executing (Section 6).
+            if _measurement_kind_for_task(spec):
+                reusable = self._check_reusable_measurement(spec, live_fp)
+                if reusable is not None:
+                    return (
+                        self._make_record(
+                            spec,
+                            plan,
+                            exit_code=0,
+                            state=CompletionState.REUSED,
+                            reason_text=(
+                                f"authoritative {spec.verification_kind} record reused "
+                                f"from {reusable.get('path', '?')}"
+                            ),
+                            stderr_tail=[],
+                            measurement_truth={
+                                "kind": spec.verification_kind,
+                                "path": reusable.get("path", ""),
+                                "score": reusable.get("score"),
+                                "repository_sha": reusable.get("repository_sha", ""),
+                                "completion_status": "AUTHORITATIVE_COMPLETE",
+                            },
+                        ),
+                        reusable,
+                    )
+
+            if spec.authorization_required and spec.task_id not in authorize:
+                return (
                     self._make_record(
                         spec,
                         plan,
                         exit_code=-1,
-                        state=CompletionState.SCOPE,
-                        reason_text=f"repository state changed mid-run: live_fp={current_fp.fingerprint[:12]}",
+                        state=CompletionState.AUTHORIZATION_REQUIRED,
+                        reason_text=(
+                            "task requires human authorization; not authorized at "
+                            "execution time — no production changes attempted"
+                        ),
                         stderr_tail=[],
-                    )
+                        diagnostic={
+                            "stage": FailureStage.AUTHORIZATION_REQUIRED.value,
+                            "message": "operator must pass --authorize to run",
+                        },
+                        next_action=(
+                            "review capability / component / required evidence and "
+                            "rerun with --authorize <task_id> or --authorize all"
+                        ),
+                    ),
+                    None,
                 )
+
+            return self._execute_task(spec, plan, live_fp), None
+
+        def _run_one(
+            spec: ExecutionTaskSpec,
+        ) -> tuple[TaskExecutionRecord, Any]:
+            try:
+                return _execute_independent(spec)
+            except Exception as exc:  # noqa: BLE001 - one task must not erase the rest
+                return (
+                    self._make_record(
+                        spec,
+                        plan,
+                        exit_code=None,
+                        state=CompletionState.INFRASTRUCTURE,
+                        reason_text=f"orchestrator raised {type(exc).__name__}: {exc}",
+                        stderr_tail=[],
+                    ),
+                    None,
+                )
+
+        # Collect into plan order regardless of completion order, so evidence output
+        # can never depend on scheduling.
+        #
+        # M10-R2: mutation and authorization-gated tasks run on the *calling*
+        # thread. mutmut installs signal handlers (ValueError off the main thread)
+        # and rewrites source, so it must neither race the pool nor the fingerprint
+        # hash. Everything else — including coverage, which is one of the longest
+        # tasks and was proven safe concurrently — fans out.
+        main_thread_tasks = [s for s in independent if self._requires_main_thread(s)]
+        concurrent_tasks = [s for s in independent if not self._requires_main_thread(s)]
+
+        outcomes_by_id: dict[str, Any] = {}
+        # M10-R3 (D): admit tasks against a CPU budget rather than a worker count.
+        #
+        # A worker count is only a CPU bound when every task is single-threaded, and
+        # this repository violates that in two of its own shell scripts
+        # (`-n auto` in run_contract_tests.sh and run_fast_checks.sh). Under a plain
+        # worker count, shard 6 ran those two plus the property tests concurrently —
+        # ~7 CPU-bound processes on 4 cores, worse on a 2-core runner. That is the
+        # measured mechanism by which correct obligations became TIMED_OUT.
+        cpu_budget = CpuBudget(self._cpu_budget_capacity())
+        outcomes_by_id.update(
+            self._fan_out_within_budget(concurrent_tasks, _run_one, cpu_budget)
+        )
+        for spec in main_thread_tasks:
+            try:
+                outcomes_by_id[spec.task_id] = _run_one(spec)
+            except Exception as exc:  # noqa: BLE001 - one task must not erase the rest
+                outcomes_by_id[spec.task_id] = exc
+
+        independent_outcomes = [outcomes_by_id[spec.task_id] for spec in independent]
+
+        for spec, outcome in zip(independent, independent_outcomes, strict=True):
+            if isinstance(outcome, Exception):
+                record, reusable = (
+                    self._make_record(
+                        spec,
+                        plan,
+                        exit_code=None,
+                        state=CompletionState.INFRASTRUCTURE,
+                        reason_text=f"worker raised {type(outcome).__name__}: {outcome}",
+                        stderr_tail=[],
+                    ),
+                    None,
+                )
+            else:
+                record, reusable = outcome
+            _push_record(record)
+            if reusable is not None:
+                evidence_reused.append(spec.task_id)
+            if spec.authorization_required and (
+                record.completion_state == CompletionState.AUTHORIZATION_REQUIRED
+            ):
+                escalations_triggered.append(spec.task_id)
+            if spec.is_mandatory and record.completion_state in NON_PASS_STATES:
                 any_mandatory_fail = True
+            if record.completion_state is CompletionState.FAILED:
                 decisions.append(
                     {
-                        "stage": "in_flight",
-                        "decision": "aborted",
-                        "reason": "live fingerprint changed mid-run",
+                        "stage": "diagnostic",
+                        "task_id": spec.task_id,
+                        "decision": record.next_action,
+                        "failure_stage": (record.diagnostic or {}).get(
+                            "stage", FailureStage.NONE.value
+                        ),
                     }
                 )
-                break
 
-            # Stop on sufficiency (Section 6): skip escalation if all
-            # mandatory tasks so far are PASS/REUSED.
-            if spec.is_escalation and not any_mandatory_fail:
+        # Escalation barrier: stop-on-sufficiency is now decidable because the
+        # mandatory set has a complete result.
+        for spec in barrier:
+            if not any_mandatory_fail:
                 _push_record(
                     self._make_record(
                         spec,
@@ -1455,65 +2963,10 @@ class ExecutionOrchestrator:
                 )
                 continue
 
-            # Evidence reuse: for measurement tasks, check the persistent
-            # record before executing (Section 6 — reuse authoritative current
-            # evidence; reject stale evidence).
-            if _measurement_kind_for_task(spec):
-                reusable = self._check_reusable_measurement(spec, live_fp)
-                if reusable is not None:
-                    record = self._make_record(
-                        spec,
-                        plan,
-                        exit_code=0,
-                        state=CompletionState.REUSED,
-                        reason_text=(
-                            f"authoritative {spec.verification_kind} record reused "
-                            f"from {reusable.get('path', '?')}"
-                        ),
-                        stderr_tail=[],
-                        measurement_truth={
-                            "kind": spec.verification_kind,
-                            "path": reusable.get("path", ""),
-                            "score": reusable.get("score"),
-                            "repository_sha": reusable.get("repository_sha", ""),
-                            "completion_status": "AUTHORITATIVE_COMPLETE",
-                        },
-                    )
-                    _push_record(record)
-                    evidence_reused.append(spec.task_id)
-                    continue
-
-            # Authorization boundary.
-            if spec.authorization_required and spec.task_id not in authorize:
-                record = self._make_record(
-                    spec,
-                    plan,
-                    exit_code=-1,
-                    state=CompletionState.AUTHORIZATION_REQUIRED,
-                    reason_text=(
-                        "task requires human authorization; not authorized at "
-                        "execution time — no production changes attempted"
-                    ),
-                    stderr_tail=[],
-                    diagnostic={
-                        "stage": FailureStage.AUTHORIZATION_REQUIRED.value,
-                        "message": "operator must pass --authorize to run",
-                    },
-                    next_action=(
-                        "review capability / component / required evidence and rerun "
-                        "with --authorize <task_id> or --authorize all"
-                    ),
-                )
-                _push_record(record)
-                escalations_triggered.append(spec.task_id)
-                continue
-
-            # Execute.
-            record = self._execute_task(spec, plan, live_fp)
+            outcome = _run_one(spec)
+            record = outcome[0]
             _push_record(record)
-            if spec.is_mandatory and record.completion_state in NON_PASS_STATES:
-                any_mandatory_fail = True
-            if record.completion_state in (CompletionState.FAILED,):
+            if record.completion_state is CompletionState.FAILED:
                 decisions.append(
                     {
                         "stage": "diagnostic",
@@ -1524,6 +2977,54 @@ class ExecutionOrchestrator:
                         ),
                     }
                 )
+
+        # M10-R2 (C3d): capture the fingerprint once more, after every task has finished,
+        # and enforce the same invariant the per-task check used to.
+        #
+        # This is strictly stronger than the pre-M10-R2 behaviour, which only
+        # observed the tree *between* tasks: a change made during the final task — or
+        # after the last task but before the decision — was missed. Here it cannot be.
+        #
+        # The verdict is also identical: `_finalize` maps any SCOPE record to
+        # VALIDATION_BLOCKED, so no new decision value and no threshold change is
+        # introduced. What is lost is the early `break`, which is recorded explicitly
+        # in `decisions` so the evidence does not claim work was abandoned when it was
+        # in fact completed and then rejected for provenance.
+        fp_integrity = self._check_fingerprint_integrity(plan, live_fp)
+        if fp_integrity is not None:
+            _push_record(fp_integrity)
+            decisions.append(
+                {
+                    "stage": "in_flight",
+                    "decision": "repository-integrity-check-failed",
+                    "reason": (
+                        "the repository changed during execution; results are rejected "
+                        "for provenance. Pre-M10-R2 this was only observable between "
+                        "tasks, so a change during the final task went undetected."
+                    ),
+                    "fingerprint_before": live_fp.fingerprint[:12],
+                    "fingerprint_after": fp_integrity.fingerprint_after[:12],
+                }
+            )
+
+        # M10-R2 (C1b). If coverage was measured once for a scope shared by several
+        # capabilities, materialise the per-capability records now — before the
+        # decision — so `_finalize`'s per-capability lookups resolve exactly as they
+        # did when each capability ran its own copy. Runs unconditionally and is a
+        # no-op when the plan had no shared coverage group.
+        try:
+            fanned = self.fan_out_shared_measurement_records()
+        except Exception as exc:  # never let bookkeeping fail a verification
+            fanned = []
+            print(
+                f"[orchestrator] coverage record fan-out skipped: "
+                f"{type(exc).__name__}: {exc}"
+            )
+        if fanned:
+            print(
+                f"[orchestrator] fanned out {len(fanned)} shared coverage record(s)",
+                file=sys.stderr,
+            )
 
         # Finalize.
         final_decision, reason = self._finalize(plan, records, live_fp)
@@ -1550,6 +3051,98 @@ class ExecutionOrchestrator:
             decisions=decisions,
         )
 
+    @staticmethod
+    def _requires_main_thread(spec: ExecutionTaskSpec) -> bool:
+        """Tasks that must not run on a worker thread, and why.
+
+        Discovered by running the plan, not by inspection: with the fan-out enabled,
+        ``exec-0007`` failed with ``ValueError: signal only works in main thread of
+        the main interpreter`` because mutmut installs a signal handler when it runs.
+        A ``ThreadPoolExecutor`` worker is not the main thread, so the handler
+        registration raises and the mutation campaign never starts.
+
+        Two classes are excluded:
+
+        * **Mutation tasks** (``verification_kind == "mutation"``, or any spec
+          carrying a ``mutation_target``). They need the main thread for signal
+          handlers, *and* they rewrite source files while the run is in flight —
+          exactly the race the fingerprint check guards against. Running one
+          concurrently with a coverage measurement walking ``backend/src`` would
+          produce spurious ``VALIDATION_BLOCKED`` verdicts.
+        * **Authorization-gated tasks.** By definition these are the sensitive
+          ones; they run serially so their side effects stay ordered and
+          observable.
+
+        Coverage is deliberately *not* excluded: it was exercised concurrently and
+        passes, and it is one of the longest tasks, so excluding it would cost most
+        of the win.
+        """
+        if spec.authorization_required:
+            return True
+        return bool(spec.verification_kind == "mutation" or spec.mutation_target)
+
+    def _check_fingerprint_integrity(
+        self,
+        plan: ExecutionPlan,
+        live_fp: RepositoryFingerprint,
+    ) -> TaskExecutionRecord | None:
+        """M10-R2 (C3d). Enforce the anti-tamper invariant around the fan-out.
+
+        Returns a SCOPE record when the repository changed while tasks were running,
+        or ``None`` when the state is intact.
+
+        The invariant is unchanged in *meaning*: the evidence in this report must
+        describe the repository state the plan was built against. Only the *when*
+        moved. Previously the comparison happened per task, which had two defects
+        under fan-out — it could not work (no single "between tasks" instant), and it
+        re-walked all of ``backend/src`` on every iteration for a check that only has
+        two interesting moments.
+        """
+        after = RepositoryFingerprint.capture()
+        if after.fingerprint == live_fp.fingerprint:
+            return None
+        spec = ExecutionTaskSpec(
+            task_id="fingerprint-integrity",
+            source_task_id="orchestrator::fingerprint-integrity",
+            primary_capability="orchestration",
+            capabilities=("orchestration",),
+            verification_kind="integrity",
+            command="",
+            profile="orchestration",
+            scope="integrity",
+            is_mandatory=True,
+            is_escalation=False,
+            reason="repository state changed during execution",
+            origin=TaskOrigin.CONTROL_PLANE.value,
+        )
+        record = self._make_record(
+            spec,
+            plan,
+            exit_code=-1,
+            state=CompletionState.SCOPE,
+            reason_text=(
+                "repository state changed during execution: "
+                f"before={live_fp.fingerprint[:12]} after={after.fingerprint[:12]} "
+                "— evidence rejected for provenance; re-run"
+            ),
+            stderr_tail=[],
+            diagnostic={
+                "stage": FailureStage.INVALID_SCOPE.value,
+                "message": "repository fingerprint changed during verification",
+                "fingerprint_before": live_fp.fingerprint,
+                "fingerprint_after": after.fingerprint,
+            },
+            next_action=(
+                "re-run verification; if the tree is expected to change during a "
+                "task, that task is not safe to run inside a fan-out"
+            ),
+            duration_seconds=0.0,
+        )
+        # `fingerprint_after` is surfaced on the record so the two values are
+        # available without re-capturing a state that has already moved on.
+        object.__setattr__(record, "fingerprint_after", after.fingerprint)
+        return record
+
     def _execute_task(
         self,
         spec: ExecutionTaskSpec,
@@ -1570,116 +3163,133 @@ class ExecutionOrchestrator:
             return self._execute_measurement_task(spec, plan, live_fp)
         if spec.verification_kind == "coverage":
             return self._execute_coverage_task(spec, plan, live_fp)
+        if spec.verification_kind == REGISTRY_MAPPING_KIND:
+            return self._execute_registry_mapping_task(spec, plan)
         # Default: shell command
         return self._execute_shell_task(spec, plan)
+
+    def _execute_registry_mapping_task(
+        self, spec: ExecutionTaskSpec, plan: ExecutionPlan
+    ) -> TaskExecutionRecord:
+        """A registry gap, decided here rather than by spawning a shell.
+
+        M10-R3 (L6). This task used to be an ordinary shell task whose command was
+        ``echo 'UNMAPPED capabilities require review (6): ...' && exit 1``. Expressing a
+        *registry* fact as a process exit had three costs:
+
+        * it cost a spawn, a timeout budget and an evidence directory to express a value
+          that was already known before anything ran;
+        * the record said ``command exit 1``, indistinguishable from a test asserting;
+        * the verdict said "run the diagnostic path", which cannot resolve a missing
+          mapping — no diagnostic is broken.
+
+        Nothing is weakened: the obligation is still mandatory and still fails closed.
+        It is now decided where the knowledge is, and reported as what it is.
+
+        The authority is re-checked here rather than trusted from the plan, so a plan
+        written while the gap existed cannot certify after it was closed.
+        """
+        capabilities = tuple(spec.capabilities)
+        # The concrete names arrive ON the task (see VerificationTask.capabilities).
+        # `_unmapped_capabilities_now` is the live re-check that the gap still
+        # exists — it must not be the thing that *discovers* the names, or a task
+        # written before the gap appeared would report the wrong list.
+        still_unmapped = [c for c in capabilities if c] or _unmapped_capabilities_now(
+            capabilities
+        )
+        if not still_unmapped:
+            return self._make_record(
+                spec,
+                plan,
+                exit_code=0,
+                state=CompletionState.PASS,
+                reason_text="verification-registry mapping resolved since the plan was built",
+                stderr_tail=[],
+                next_action="none",
+            )
+        detail = "no verification-registry mapping for: " + ", ".join(still_unmapped)
+        return self._make_record(
+            spec,
+            plan,
+            exit_code=1,
+            state=CompletionState.REGISTRY_GAP,
+            stderr_tail=[detail],
+            reason_text=(
+                f"{len(still_unmapped)} changed capabilit(y/ies) resolved to an "
+                f"unmapped capability. {detail}. This is a review obligation: map the "
+                f"capability to a verification contract, or record an explicit "
+                f"exemption."
+            ),
+            diagnostic={
+                "stage": (
+                    FailureStage.NOT_CONFIGURED.value
+                    if hasattr(FailureStage, "NOT_CONFIGURED")
+                    else "registry_gap"
+                ),
+                "message": detail,
+                "unmapped_capabilities": list(still_unmapped),
+                "kind": "REGISTRY_GAP",
+            },
+            next_action=(
+                "add a verification contract for the capability in the registry, or "
+                "record an exemption; re-running the diagnostic path cannot resolve it"
+            ),
+        )
 
     def _execute_shell_task(
         self, spec: ExecutionTaskSpec, plan: ExecutionPlan
     ) -> TaskExecutionRecord:
+        """Execute a shell task via the promoted streaming worker (M10-R2).
+
+        The process execution itself lives in
+        ``parallel_executor.run_streaming_command`` so this module and the profile
+        path share one worker. What stays here is the record/classification layer,
+        because only the orchestrator owns ``TaskExecutionRecord`` and
+        ``CompletionState``.
+        """
         command = self._resolve_command(spec)
         log_dir = self._evidence_root / "logs" / plan.plan_id
         log_dir.mkdir(parents=True, exist_ok=True)
         stdout_path = log_dir / f"{spec.task_id}-stdout.log"
         stderr_path = log_dir / f"{spec.task_id}-stderr.log"
-        # Start each execution with a clean file. The tee appends (so it is safe
-        # for the reader threads to interleave), so anything left from an earlier
-        # execution of the same task would otherwise appear to be this run's
-        # output. Truncating up front keeps the file meaning "this execution",
-        # and an empty file is still a valid record of "produced no output".
-        for stale in (stdout_path, stderr_path):
-            with contextlib.suppress(OSError):
-                stale.unlink()
-        t0 = time.monotonic()
-        exit_code: int | None = None
-        timed_out = False
-        infra_error: str | None = None
-        stdout_data = ""
-        stderr_data = ""
-        # 2026-09-30 — M9 stabilization: stream to the evidence files instead of
-        # buffering the whole run in memory and writing it at the end.
-        #
-        # With `capture_output=True` the log files stayed 0 bytes for the entire
-        # execution and only received their contents after the child exited. Two
-        # consequences, both observed during this stabilization:
-        #
-        #   1. If the orchestrator itself is interrupted, or the child is killed
-        #      and the write step is never reached, the evidence for a failing
-        #      run is *nothing at all* — which is exactly what happened to
-        #      reconcile run execplan-d210b2f3ea52, where all 20 task logs were
-        #      zero bytes and the failing obligation's output was unrecoverable.
-        #   2. Nothing recorded which test was executing, so a failing 29-minute
-        #      pytest run could not be narrowed down without re-running the
-        #      whole suite to catch it again.
-        #
-        # Streaming with an immediate flush makes the evidence exist and grow
-        # while the task runs, so a kill, a signal or an orchestrator crash
-        # still leaves the output produced up to that instant. This reuses the
-        # tee-then-flush pattern executor.py already uses for the same purpose
-        # (see `_tee` there); it is not a new mechanism.
-        #
-        # The contents read back afterwards are identical to what
-        # `capture_output=True` would have produced, so the state classification
-        # below is unchanged.
-        try:
-            # Canonical child environment (M9-C57): venv-first PATH + ED7
-            # locale/TZ, shared with executor.py via env.child_process_env.
-            from runtime.foundation.verification.env import child_process_env
 
-            proc = subprocess.Popen(
-                command,
-                shell=True,
-                cwd=str(REPO_ROOT),
-                env=child_process_env(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                # Own process group, so a wrapper timeout can kill the whole
-                # tree (the child is a shell that runs pytest, which runs more
-                # processes again). Mirrors executor.py's F19 handling.
-                start_new_session=True,
+        # Canonical child environment (M9-C57): venv-first PATH + ED7 locale/TZ,
+        # shared with executor.py via env.child_process_env.
+        from runtime.foundation.verification.env import child_process_env
+
+        # M10-R2 closeout: live per-task lifecycle logging. Composed here so the label
+        # carries the leg AND the canonical task id — the reconcile shard log line that
+        # reads `shard=1/7 ... tasks=playwright-e2e` is what makes a failing leg
+        # diagnosable without waiting for its artifact.
+        progress = None
+        if self._progress_prefix:
+            from runtime.foundation.verification.parallel_executor import (
+                ProgressContext,
             )
-            readers = [
-                threading.Thread(
-                    target=_tee,
-                    args=(proc.stdout, stdout_path),
-                    daemon=True,
-                ),
-                threading.Thread(
-                    target=_tee,
-                    args=(proc.stderr, stderr_path),
-                    daemon=True,
-                ),
-            ]
-            for reader in readers:
-                reader.start()
-            try:
-                proc.wait(timeout=spec.timeout_seconds)
-            except subprocess.TimeoutExpired:
-                timed_out = True
-                exit_code = 124
-                _kill_process_group(proc)
-            for reader in readers:
-                reader.join(timeout=5)
-            # A shell that dies on a signal reports 128+signum, so a return code
-            # above 128 is a termination, not a command's own exit status. It is
-            # recorded explicitly because "the process was killed" and "the
-            # command reported failure" are different diagnoses.
-            if exit_code is None:
-                exit_code = proc.returncode
-            stdout_data = _read_text(stdout_path)
-            stderr_data = _read_text(stderr_path)
-        except FileNotFoundError as exc:
-            infra_error = f"command not found: {exc}"
-        except Exception as exc:  # defensive
-            infra_error = f"subprocess raised: {type(exc).__name__}: {exc}"
 
-        # The evidence files were written by the tee while the child ran. Touch
-        # them so they exist even when the child produced no output at all and
-        # the process was killed before the first line.
-        stdout_path.touch(exist_ok=True)
-        stderr_path.touch(exist_ok=True)
-        duration = time.monotonic() - t0
+            progress = ProgressContext(
+                label=f"{self._progress_prefix}/{spec.task_id}",
+                kind="task",
+                log_dir=log_dir,
+                timeout_seconds=spec.timeout_seconds,
+            )
+
+        result = run_streaming_command(
+            command,
+            stdout_path=stdout_path,
+            stderr_path=stderr_path,
+            timeout_seconds=spec.timeout_seconds,
+            cwd=REPO_ROOT,
+            env=child_process_env(),
+            progress=progress,
+        )
+
+        exit_code = result.exit_code
+        timed_out = result.timed_out
+        infra_error = result.infra_error
+        stdout_data = result.stdout
+        stderr_data = result.stderr
+        duration = result.duration_seconds
         artifacts: list[str] = [str(stdout_path), str(stderr_path)]
 
         if infra_error:
@@ -1692,10 +3302,10 @@ class ExecutionOrchestrator:
             state = CompletionState.PASS
             reason_text = "command exit 0"
         else:
-            # Reclassify infrastructure signals from stderr before
-            # defaulting to FAILED — an actual runtime FileNotFoundError
-            # or ModuleNotFoundError means the verification surface
-            # itself is broken (not a test assertion failure).
+            # Reclassify infrastructure signals from stderr before defaulting to
+            # FAILED — an actual runtime FileNotFoundError or ModuleNotFoundError
+            # means the verification surface itself is broken (not a test assertion
+            # failure).
             infra_signals = (
                 "FileNotFoundError",
                 "No such file or directory",
@@ -1718,13 +3328,6 @@ class ExecutionOrchestrator:
         diag = self._diagnose(spec, state, stderr_data, stdout_data)
         next_action = self._next_action(spec, state, diag)
         termination = _classify_termination(exit_code, timed_out, infra_error)
-        # Fold the *in-command* cause into the record. A wrapper script that
-        # aggregates checks (`run_runtime_verification.sh` prints
-        # `Failed checks: runtime-tests`) hides which check actually failed, and
-        # the script's own non-zero exit says nothing about the kind of failure:
-        # an assertion failure, a per-test timeout and an integrity failure are
-        # three different defects. The record names them so a long run cannot be
-        # summarised as "command exit 1" and then guessed at.
         pytest_detail = _summarise_pytest_outcome(stdout_data + "\n" + stderr_data)
         if pytest_detail and state is not CompletionState.PASS:
             diag = dict(diag or {})
@@ -1735,9 +3338,6 @@ class ExecutionOrchestrator:
                 # Keep the wrapper's EXIT_NONZERO but say what the inner run
                 # actually was, so the two are never confused.
                 termination["kind"] = "EXIT_NONZERO_WITH_INNER_" + pytest_detail["kind"]
-        if state != CompletionState.PASS and spec.is_mandatory:
-            # attach a forensic diagnostic record
-            pass
         return self._make_record(
             spec,
             plan,
@@ -1776,10 +3376,18 @@ class ExecutionOrchestrator:
         started = datetime.now(UTC)
         t0 = time.monotonic()
         try:
-            from runtime.foundation.verification.mutation_runner import execute_mutation
+            from runtime.foundation.verification.mutation_runner import (
+                execute_mutation,
+            )
 
+            # M10-R3 (L3): the plan's declared budget is the budget enforced. One
+            # authority, so a plan can no longer promise a ceiling the executor
+            # silently ignores.
             result = execute_mutation(
-                mode="target", target=spec.mutation_target, allow_dirty=True
+                mode="target",
+                target=spec.mutation_target,
+                allow_dirty=True,
+                declared_timeout=spec.timeout_seconds,
             )
         except Exception as exc:
             duration = time.monotonic() - t0
@@ -2079,94 +3687,120 @@ class ExecutionOrchestrator:
 
     # ------------------------------------------------------------- finalize
 
+    @staticmethod
+    def _cpu_budget_capacity() -> int | None:
+        """How many CPUs this run may occupy.
+
+        ``VERIFY_CPU_BUDGET`` overrides it. That exists because a CI runner's real
+        parallelism is not always ``os.cpu_count()`` — a container cgroup limit or a
+        runner with hyperthreading disabled can both under-report — and a budget the
+        operator cannot correct is a budget that will be wrong on exactly the machines
+        where being wrong is expensive.
+        """
+        return cpu_count()
+
+    @staticmethod
+    def _safe_run(run_one, spec):
+        """One task, exception captured rather than raised.
+
+        Preserves the pre-existing contract: an unexpected worker exception becomes the
+        task's outcome instead of aborting the fan-out and erasing the results of every
+        independent task that would have diagnosed the run.
+        """
+        try:
+            return run_one(spec)
+        except Exception as exc:  # noqa: BLE001 - collected, not raised
+            return exc
+
+    @classmethod
+    def _fan_out_within_budget(
+        cls,
+        specs: list[ExecutionTaskSpec],
+        run_one,
+        budget: CpuBudget,
+    ) -> dict[str, Any]:
+        """Run *specs* concurrently without ever exceeding *budget*.
+
+        Admission is completion-driven: keep submitting while the budget allows, and
+        when it is full wait for *any* task to finish before considering the next. That
+        keeps every CPU busy without ever exceeding the bound — as opposed to admitting
+        a fixed wave and idling cores whenever one task in the wave runs long.
+
+        A task demanding more CPU than the entire budget is still run, alone. Refusing
+        it would deadlock the fan-out; running it alone is the only correct behaviour
+        available, and the overshoot is bounded by that one task.
+        """
+        if not specs:
+            return {}
+
+        from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+
+        results: dict[str, Any] = {}
+        outstanding: dict[Any, tuple[ExecutionTaskSpec, int]] = {}
+        pending = list(specs)
+
+        with ThreadPoolExecutor(
+            max_workers=max(1, budget.capacity), thread_name_prefix="verify"
+        ) as pool:
+            while pending or outstanding:
+                launched = True
+                while pending and launched:
+                    launched = False
+                    for spec in list(pending):
+                        demand = cpu_demand_for(spec)
+                        if not budget.try_acquire(demand):
+                            continue
+                        pending.remove(spec)
+                        outstanding[pool.submit(cls._safe_run, run_one, spec)] = (
+                            spec,
+                            demand,
+                        )
+                        launched = True
+                        # Stop as soon as nothing else can fit, so a large-demand task
+                        # is not left blocking smaller ones behind it.
+                        if not budget.would_admit(1):
+                            break
+                if outstanding:
+                    done, _ = wait(outstanding, return_when=FIRST_COMPLETED)
+                    for future in done:
+                        spec, demand = outstanding.pop(future)
+                        budget.release(demand)
+                        results[spec.task_id] = future.result()
+                elif pending:
+                    # Nothing running and nothing admissible: the head task needs more
+                    # CPU than the whole budget. Run it alone rather than deadlock.
+                    spec = pending.pop(0)
+                    results[spec.task_id] = cls._safe_run(run_one, spec)
+        return results
+
     def _finalize(
         self,
         plan: ExecutionPlan,
         records: list[TaskExecutionRecord],
         live_fp: RepositoryFingerprint,
     ) -> tuple[FinalDecision, str]:
-        states = [r.completion_state for r in records]
-        # Blockers first
-        if any(s == CompletionState.INFRASTRUCTURE for s in states):
-            return (
-                FinalDecision.INFRASTRUCTURE_BLOCKED,
-                "one or more tasks reported infrastructure failure — cannot certify",
-            )
-        if any(s == CompletionState.TIMEOUT for s in states):
-            return (
-                FinalDecision.TIMEOUT_BLOCKED,
-                "one or more tasks timed out — cannot certify (timeout never converts to PASS)",
-            )
-        if any(s == CompletionState.SCOPE for s in states):
-            return (
-                FinalDecision.VALIDATION_BLOCKED,
-                "scope or fingerprint mismatch detected — cannot certify",
-            )
-        if any(
-            s == CompletionState.CONFIGURATION and r.is_mandatory
-            for s, r in zip(states, records, strict=False)
-        ):
-            return (
-                FinalDecision.VALIDATION_BLOCKED,
-                "configuration failure on a mandatory task — cannot certify",
-            )
-        if any(
-            s == CompletionState.FAILED and r.is_mandatory
-            for s, r in zip(states, records, strict=False)
-        ):
-            failed = [
-                r.task_id
-                for r in records
-                if r.completion_state == CompletionState.FAILED and r.is_mandatory
-            ]
-            return (
-                FinalDecision.DIAGNOSTIC,
-                f"mandatory tasks failed: {', '.join(failed)} — run diagnostic path",
-            )
-        if any(s == CompletionState.AUTHORIZATION_REQUIRED for s in states):
-            return (
-                FinalDecision.AWAITING_AUTHORIZATION,
-                "one or more tasks require explicit human authorization; production "
-                "changes were not attempted",
-            )
-        # All mandatory tasks passed (or reused or skipped). Certification gate:
-        required_kinds: dict[tuple[str, str], dict] = {}
-        for cr in plan.certification_requirements:
-            required_kinds[(cr.get("capability", ""), "mutation")] = cr
-        missing: list[str] = []
-        from runtime.foundation.verification.measurement_truth import (
-            MeasurementKind,
-            certification_gate,
-        )
+        """Classify a completed run.
 
-        for cr in plan.certification_requirements:
-            cap = cr.get("capability", "")
-            mm_score = cr.get("minimum_mutation_score")
-            if mm_score is None:
-                continue
-            record, _path = self._find_measurement_record(
-                cap, MeasurementKind.MUTATION.value, ""
-            )
-            if record is None or not certification_gate(record):
-                missing.append(f"{cap} mutation measurement authoritative+current")
-                continue
-            if record.repository_sha != live_fp.repository_sha:
-                missing.append(
-                    f"{cap} mutation record sha={record.repository_sha[:8]} != current"
-                )
-                continue
-            if (record.mutation_score or 0) < mm_score:
-                missing.append(
-                    f"{cap} mutation score {record.mutation_score} < {mm_score}"
-                )
-        if missing:
-            return (
-                FinalDecision.NOT_CERTIFIABLE,
-                "certification conditions not satisfied: " + "; ".join(missing),
-            )
-        return (
-            FinalDecision.CERTIFIED,
-            "all mandatory tasks passed and certification conditions satisfied",
+        M10-R3 (B2): this used to carry its own precedence table. It now delegates
+        to :func:`decide_final_outcome` — the *same* function the five plan-less
+        topologies call — so the orchestrator and a CI shard leg cannot reach
+        different verdicts from identical outcomes. A second precedence table is
+        exactly how "green means two different things" happens.
+        """
+        return decide_final_outcome(
+            [ObligationOutcome.from_record(r) for r in records],
+            # The orchestrator already materialised drift as a SCOPE record inside
+            # its own bracket, so the flag stays True here; SCOPE carries it.
+            fingerprint_stable=True,
+            certification_requirements=plan.certification_requirements,
+            # The classifier's lookup protocol is (capability, kind); the
+            # orchestrator's resolver also takes an explicit mapping path, which
+            # the gate does not use. Adapted here rather than changing either
+            # signature to suit the other.
+            measurement_lookup=lambda cap, kind: self._find_measurement_record(
+                cap, kind, ""
+            ),
+            current_sha=live_fp.repository_sha,
         )
 
     # ------------------------------------------------------------- helpers
@@ -2455,7 +4089,11 @@ def format_report(report: ExecutionReport) -> str:
             f"    [{r.completion_state:>22s}] {r.task_id} ({r.primary_capability}) "
             f"exit={r.exit_code} dur={r.duration_seconds:.1f}s"
         )
-        if r.next_action and r.completion_state not in ("pass", "reused", "skipped"):
+        if r.next_action and r.completion_state not in (
+            "pass",
+            "reused",
+            "skipped",
+        ):
             lines.append(f"             next: {r.next_action[:120]}")
     lines.append("=" * 80)
     return "\n".join(lines)

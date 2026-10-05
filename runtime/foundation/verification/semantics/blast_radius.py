@@ -65,7 +65,7 @@ class _FinancialBlastRadius:
         initial_concepts: list[str],
     ) -> list[str]:
         """Expand to all downstream concepts that depend on the initial set."""
-        all_ids = set(FINANCIAL_CONCEPTS.keys())
+        set(FINANCIAL_CONCEPTS.keys())
         queue = list(initial_concepts)
         visited = set(initial_concepts)
         while queue:

@@ -6,6 +6,10 @@
  */
 
 import type { TimeGranularity } from '@/lib/runtime/runtime-types';
+// M10-R3 (L7): period labels are derived from the runtime clock, not the wall clock.
+// See lib/runtime/clock.ts for why a component whose labels depend on when it rendered
+// is a defect rather than a cosmetic issue.
+import { nowDate } from '@/lib/runtime/clock';
 
 // ===== Segment Types =====
 export interface RailSegment {
@@ -21,7 +25,7 @@ export interface RailSegment {
  * Segments are evenly spaced across the 0–100% track.
  */
 export function generateSegments(granularity: TimeGranularity, count: number = 24): RailSegment[] {
-  const now = new Date();
+  const now = nowDate();
   const segments: RailSegment[] = [];
   const segWidth = 100 / count;
 

@@ -62,6 +62,7 @@ class Executor:
         # Process-group tracking for F19
         self._current_pgid: int | None = None
         self._proc: subprocess.Popen | None = None
+        self._attempt_index = 0
         self._proc_lock = threading.Lock()
 
     def _build_exec_env(self) -> dict[str, str]:
@@ -151,6 +152,7 @@ class Executor:
                     stderr_path="",
                     error="Command cancelled",
                 )
+            self._attempt_index = attempt
             last_result = self._execute_once(command, task_id)
             if (
                 last_result.status == VerificationStatus.PASSED
@@ -161,153 +163,104 @@ class Executor:
         return last_result
 
     def _execute_once(self, command: str, task_id: str = "") -> ExecutionResult:
-        """Execute a command once without retry logic.
+        """Execute a command once, by delegating to the canonical worker.
 
-        C5.2: uses ``Popen`` with line-buffered pipe readers so output is written
-        to durable evidence files and surfaced via ``_log_callback`` as soon as
-        each line is produced — the CI log is no longer silent for hours.
+        M10-R3 (L8d). This used to be a second, hand-rolled process engine: its own
+        ``subprocess.Popen(shell=True, start_new_session=True)``, its own line-buffered
+        tee, its own ``_kill_process_group``, its own result directory. Between them the
+        repository had two spawn paths for the same work, and only the canonical one had
+        heartbeat, ``classify_termination`` and missing-binary detection — so anything
+        routed through here reported a failed assertion for a command that never ran.
 
-        F19: Command runs in its own process group (start_new_session=True).
-        Timeout/cancellation kills the entire process group via os.killpg().
+        It now calls :func:`parallel_executor.run_streaming_command` and maps the result.
+        The engine is deleted rather than kept alongside, because "two workers, pick one"
+        is the condition this milestone set out to remove.
+
+        One behaviour changes, deliberately: **each attempt gets its own evidence file.**
+
+        The old code appended every attempt into ``<task>-stdout.txt``, so after a retry
+        the file held attempt 1's output followed by attempt 2's with nothing to
+        distinguish them. The canonical worker truncates up front — *"a file means this
+        execution"*, because leftover content masquerading as current output is precisely
+        the stale-evidence hazard this milestone targets. Per-attempt files preserve
+        every attempt's evidence and make each one attributable, which append could not.
         """
+        from runtime.foundation.verification.parallel_executor import (
+            classify_termination,
+            run_streaming_command,
+        )
+
         start_time = datetime.now(UTC)
         task_label = task_id or "step"
+        attempt = getattr(self, "_attempt_index", 0)
 
-        stdout_persistent = self._results_dir / f"{task_label}-stdout.txt"
-        stderr_persistent = self._results_dir / f"{task_label}-stderr.txt"
+        stdout_persistent = self._results_dir / f"{task_label}-a{attempt}-stdout.txt"
+        stderr_persistent = self._results_dir / f"{task_label}-a{attempt}-stderr.txt"
         stdout_persistent.parent.mkdir(parents=True, exist_ok=True)
-        stderr_persistent.parent.mkdir(parents=True, exist_ok=True)
 
-        lock = threading.Lock()
+        def _emit(line: str) -> None:
+            """Per-line live output, the capability that kept this engine alive."""
+            if self._log_callback:
+                self._log_callback(line.rstrip("\n"))
 
-        def _tee(pipe, persistent: Path, tag: str) -> None:
-            """Read lines from *pipe*, write to *persistent* and invoke the
-            log callback.  ``tag`` is used to prefix callback invocations so
-            stdout/stderr mixing in the callback is disambiguated."""
-            with persistent.open("a", encoding="utf-8") as fh:
-                for raw in pipe:
-                    line = (
-                        raw
-                        if isinstance(raw, str)
-                        else raw.decode("utf-8", errors="replace")
-                    )
-                    with lock:
-                        fh.write(line)
-                        fh.flush()
-                    if self._log_callback:
-                        self._log_callback(f"[{tag}] {line}")
+        result = run_streaming_command(
+            command,
+            stdout_path=stdout_persistent,
+            stderr_path=stderr_persistent,
+            timeout_seconds=self._per_step_timeout,
+            cwd=self._repo_root,
+            env=self._exec_env,
+            on_line=_emit,
+            # Cancellation is the caller's right, and the child now belongs to the
+            # canonical worker, so the right is passed down with it.
+            cancel_event=(
+                self._cancel_flag if self._cancel_flag.is_set() or True else None
+            ),
+        )
 
-        try:
-            # F19: start_new_session=True creates a new process group (setsid).
-            # The process group ID equals the PID of the session leader.
-            # This ensures we can kill the entire tree on timeout/cancellation.
-            proc = subprocess.Popen(
-                command,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                cwd=str(self._repo_root),
-                env=self._exec_env,
-                start_new_session=True,  # F19: creates new session + process group
+        duration = (datetime.now(UTC) - start_time).total_seconds()
+        termination = classify_termination(
+            result.exit_code, result.timed_out, result.infra_error
+        )
+
+        if result.infra_error:
+            status = VerificationStatus.FAILED
+            error = result.infra_error
+            classification = FailureClassification.ENVIRONMENT_FAILURE
+        elif result.timed_out:
+            status = VerificationStatus.FAILED
+            error = (
+                f"per-step timeout of {self._per_step_timeout}s exceeded "
+                f"({termination['detail']})"
             )
+            classification = FailureClassification.TIMEOUT
+        elif result.exit_code == 0:
+            status = VerificationStatus.PASSED
+            error = None
+            classification = FailureClassification.UNKNOWN_FAILURE
+        else:
+            status = VerificationStatus.FAILED
+            # Preserve the three-way distinction the result contract encodes:
+            #   error is None  -> no error, the command passed
+            #   error is ""    -> the command failed and produced no stderr
+            #   error is text  -> the command failed and stderr holds the reason
+            #
+            # Substituting "exit N" for the empty case would collapse the second and
+            # third into one, and the exit code is already carried in its own field.
+            error = result.stderr
+            classification = FailureClassification.UNKNOWN_FAILURE
 
-            # Track process group for cleanup on timeout/cancellation
-            with self._proc_lock:
-                self._proc = proc
-                self._current_pgid = os.getpgid(proc.pid)
-
-            stdout_thread = threading.Thread(
-                target=_tee, args=(proc.stdout, stdout_persistent, "OUT"), daemon=True
-            )
-            stderr_thread = threading.Thread(
-                target=_tee, args=(proc.stderr, stderr_persistent, "ERR"), daemon=True
-            )
-            stdout_thread.start()
-            stderr_thread.start()
-
-            try:
-                rc = proc.wait(timeout=self._per_step_timeout)
-            except subprocess.TimeoutExpired:
-                # F19: Kill entire process group, not just the shell
-                self._kill_process_group()
-                rc = -1
-
-            stdout_thread.join(timeout=3)
-            stderr_thread.join(timeout=3)
-
-            duration = (datetime.now(UTC) - start_time).total_seconds()
-
-            stderr_content = (
-                stderr_persistent.read_text(encoding="utf-8")
-                if stderr_persistent.exists()
-                else ""
-            )
-
-            status = VerificationStatus.PASSED if rc == 0 else VerificationStatus.FAILED
-
-            if rc == 0:
-                error = None
-                classification = FailureClassification.UNKNOWN_FAILURE
-            else:
-                error = stderr_content if stderr_content else ""
-                classification = (
-                    FailureClassification.TIMEOUT
-                    if rc < 0
-                    else FailureClassification.UNKNOWN_FAILURE
-                )
-
-            return ExecutionResult(
-                task_id=task_id,
-                command=command,
-                status=status,
-                exit_code=rc,
-                duration_seconds=duration,
-                stdout_path=str(stdout_persistent),
-                stderr_path=str(stderr_persistent),
-                error=error,
-                classification=classification,
-            )
-        except subprocess.TimeoutExpired:
-            # Fallback: ensure process group is killed
-            self._kill_process_group()
-            duration = (datetime.now(UTC) - start_time).total_seconds()
-            return ExecutionResult(
-                task_id=task_id,
-                command=command,
-                status=VerificationStatus.FAILED,
-                exit_code=-1,
-                duration_seconds=duration,
-                stdout_path=(
-                    str(stdout_persistent) if stdout_persistent.exists() else ""
-                ),
-                stderr_path=(
-                    str(stderr_persistent) if stderr_persistent.exists() else ""
-                ),
-                error=f"Command timed out after {self._per_step_timeout} seconds",
-                classification=FailureClassification.TIMEOUT,
-            )
-        except Exception as exc:
-            # Fallback: ensure process group is killed
-            self._kill_process_group()
-            duration = (datetime.now(UTC) - start_time).total_seconds()
-            return ExecutionResult(
-                task_id=task_id,
-                command=command,
-                status=VerificationStatus.FAILED,
-                exit_code=-1,
-                duration_seconds=duration,
-                stdout_path="",
-                stderr_path="",
-                error=str(exc),
-                classification=FailureClassification.ENVIRONMENT_FAILURE,
-            )
-        finally:
-            # Clear process group tracking
-            with self._proc_lock:
-                self._proc = None
-                self._current_pgid = None
+        return ExecutionResult(
+            task_id=task_id,
+            command=command,
+            status=status,
+            exit_code=result.exit_code if result.exit_code is not None else -1,
+            duration_seconds=duration,
+            stdout_path=str(stdout_persistent),
+            stderr_path=str(stderr_persistent),
+            error=error,
+            classification=classification,
+        )
 
     def cancel(self) -> None:
         """Cancel any currently running commands by killing the process group."""

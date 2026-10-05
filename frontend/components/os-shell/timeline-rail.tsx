@@ -25,15 +25,47 @@ export function TimeRail({ className, onPositionChange }: TimeRailProps) {
   const granularity = timelineRuntime.state.granularity;
   const segments = useMemo(() => generateSegments(granularity, 24), [granularity]);
 
-  // Current position as percentage (based on current date)
+  // Current position as percentage.
+  //
+  // M10-R3 (L7). This used to be `(now - yearStart) / (yearEnd - yearStart)` from
+  // `new Date()` — a wall-clock fraction on a track whose segments are generated from
+  // the runtime clock, rendered on every financial route. It moved ~600-900 pixels of
+  // baseline per day against `MAX_DIFF_PIXELS = 500`, so every visual-regression
+  // baseline for every page carrying this rail was guaranteed to rot.
+  //
+  // The playhead is *product state* — where the user is in the timeline — so it is read
+  // from the timeline runtime, which is also what the segments come from. The two are
+  // now consistent by construction rather than by coincidence.
   const currentPosition = useMemo(() => {
-    const now = new Date();
-    const yearStart = new Date(now.getFullYear(), 0, 1);
-    const yearEnd = new Date(now.getFullYear(), 11, 31);
-    const total = yearEnd.getTime() - yearStart.getTime();
-    const elapsed = now.getTime() - yearStart.getTime();
-    return total > 0 ? (elapsed / total) * 100 : 50;
-  }, []);
+    const { playbackPosition, date } = timelineRuntime.state;
+
+    if (typeof playbackPosition === 'number' && Number.isFinite(playbackPosition)) {
+      return Math.max(0, Math.min(100, playbackPosition));
+    }
+
+    if (date) {
+      // Position of the selected date within the generated segments. Falls back to the
+      // track start when the date falls outside the window rather than clamping to a
+      // wall-clock fraction.
+      const target = Date.parse(date);
+      if (!Number.isNaN(target)) {
+        const containing = segments.find(
+          s => target >= Date.parse(s.dateStart) && target <= Date.parse(s.dateEnd),
+        );
+        if (containing) return containing.start;
+      }
+      return 0;
+    }
+
+    // No selection: the playhead has no defined position. Parked at the start rather
+    // than tracking the wall clock, so an idle rail renders identically every day.
+    return 0;
+    // `segments` alone. `granularity` was in the dependency array when this read the
+    // wall clock and needed it; the body no longer does, and eslint
+    // (react-hooks/exhaustive-deps) correctly flagged it as an unnecessary dependency —
+    // which is how this was caught in CI. `granularity` still drives `segments`
+    // upstream, so a granularity change still re-derives the position through it.
+  }, [segments]);
 
   const handleRailClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

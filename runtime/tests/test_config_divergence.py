@@ -14,7 +14,6 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from runtime.foundation.verification.configuration_authority import (
-    ToolAuthority,
     get_configuration_authority,
     validate_authority,
 )

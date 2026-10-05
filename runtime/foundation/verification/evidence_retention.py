@@ -17,6 +17,7 @@ Retention categories (days):
 
 from __future__ import annotations
 
+import contextlib
 import json
 import re
 import shutil
@@ -137,10 +138,8 @@ class EvidenceRetention:
             for dirpath, _, filenames in path.walk(top_down=False):
                 for f in filenames:
                     fp = dirpath / f
-                    try:
+                    with contextlib.suppress(OSError):
                         total += fp.stat().st_size
-                    except OSError:
-                        pass
         except OSError:
             pass
         return total

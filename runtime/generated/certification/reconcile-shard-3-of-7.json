@@ -1,0 +1,15 @@
+{
+  "schema": "m10r3-certification-run/v1",
+  "plan_id": "execplan-ea2eac0e5ca2",
+  "decision": "validation_blocked",
+  "reason": "repository state changed since plan was built (plan_fp=32038268725b vs live_fp=dcc020691289)",
+  "exit_code": 1,
+  "duration_seconds": 0.0,
+  "fingerprint_before": null,
+  "fingerprint_after": null,
+  "fingerprint_stable": false,
+  "obligations": [],
+  "topology": "reconcile-shard-3-of-7",
+  "plan_fingerprint": "ea2eac0e5ca272a78f93a22973453f6b54ebc9bba71e34f967476226ff3f693a",
+  "tasks_executed": []
+}

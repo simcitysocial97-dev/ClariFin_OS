@@ -1,0 +1,49 @@
+{
+  "schema": "m10r3-certification-run/v1",
+  "plan_id": "profile:contracts",
+  "decision": "certified",
+  "reason": "all mandatory obligations satisfied and certification conditions met",
+  "exit_code": 0,
+  "duration_seconds": 122.537,
+  "fingerprint_before": {
+    "repository_sha": "a624857ab3ff90d86e5ace8bac194a573b5df116",
+    "working_tree_hash": "4407d27ce67a12af13bb08df289713d07a8411676ded70ec661df076302c1f49",
+    "config_hash": "e695067819fc176dd8ec5d3fd5a09318db04b14fcfad3549cdc9c83e9934987f",
+    "toolchain_hash": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+    "fingerprint": "9d3e55f2b97fa6256f9ac761e95c399d90256f0ad241c0312d845362eb73dd05"
+  },
+  "fingerprint_after": {
+    "repository_sha": "a624857ab3ff90d86e5ace8bac194a573b5df116",
+    "working_tree_hash": "4407d27ce67a12af13bb08df289713d07a8411676ded70ec661df076302c1f49",
+    "config_hash": "e695067819fc176dd8ec5d3fd5a09318db04b14fcfad3549cdc9c83e9934987f",
+    "toolchain_hash": "ee413b0b32ea5eb98ed0e9931550cd4254045079467407863471360714777ba6",
+    "fingerprint": "9d3e55f2b97fa6256f9ac761e95c399d90256f0ad241c0312d845362eb73dd05"
+  },
+  "fingerprint_stable": true,
+  "obligations": [
+    {
+      "task_id": "contracts-schemathesis",
+      "state": "pass",
+      "is_mandatory": true,
+      "detail": ""
+    },
+    {
+      "task_id": "contracts-aggregate",
+      "state": "pass",
+      "is_mandatory": true,
+      "detail": ""
+    }
+  ],
+  "topology": "contracts",
+  "evidence_roots": [
+    "runtime/generated/certification",
+    "runtime/generated/m9-c49",
+    "runtime/generated/execution",
+    "runtime/generated/profile-logs",
+    "runtime/generated/local-harness"
+  ],
+  "tasks_executed": [
+    "contracts-schemathesis",
+    "contracts-aggregate"
+  ]
+}

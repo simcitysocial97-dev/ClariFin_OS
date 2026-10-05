@@ -1,0 +1,20 @@
+{
+  "schema": "m10r2-leg-result/v1",
+  "leg_id": "run",
+  "shard_id": "reconcile-shard-0",
+  "outcome": "terminal",
+  "status": "failed",
+  "final_decision": "diagnostic",
+  "exit_code": 1,
+  "duration_seconds": 1.51,
+  "tasks": [
+    "exec-0009"
+  ],
+  "records": [
+    {
+      "task_id": "exec-0009",
+      "completion_state": "failed",
+      "reason": "command exit 1"
+    }
+  ]
+}

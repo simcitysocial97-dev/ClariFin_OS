@@ -7,9 +7,6 @@ through JSON without data loss.
 from __future__ import annotations
 
 import json
-from pathlib import Path
-
-import pytest
 
 from runtime.foundation.verification.evidence_schema import (
     CoverageEvidence,
@@ -74,7 +71,11 @@ class TestEvidenceIntegrity:
         """Old import paths must still resolve via re-exports."""
         from runtime.system.evidence.models.evidence import (
             CoverageEvidence as OldCoverage,
+        )
+        from runtime.system.evidence.models.evidence import (
             MutationEvidence as OldMutation,
+        )
+        from runtime.system.evidence.models.evidence import (
             VerificationEvidence as OldVerification,
         )
 

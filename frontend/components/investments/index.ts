@@ -22,4 +22,6 @@ export {
 } from './loading-skeleton';
 export { InvestmentsErrorState } from './error-state';
 export { InvestmentsEmptyState } from './empty-state';
+export { AddInvestmentForm } from './add-investment-form';
+export type { AddInvestmentInput } from './add-investment-form';
 export { CrossNavigation } from './cross-navigation';

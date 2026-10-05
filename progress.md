@@ -7850,3 +7850,766 @@ filter in two files that would silently drop the audit's scope from 13 files to
   remaining flake surface in the E2E suite.
 - `test_doctor_consistent_across_runs` measures 22.7 s against the 30 s suite
   budget — 76% utilisation, and the next test in that file to cross it.
+
+---
+
+# M11-R4 — CI Failure Reproduction and Convergence
+
+Branch `m11/parallelism-correctness`, starting HEAD `5ba872d4`.
+
+## STEP 0 — Freeze and inventory
+
+Branch `m11/parallelism-correctness` · HEAD `5ba872d4` · working tree clean
+apart from `.kilo/plans/1791002067765-…` (pre-existing, unrelated) and
+untracked `runtime/generated/**` run records. `stash@{0}` untouched.
+
+Latest CI runs against `5ba872d4` (PR #16, `pull_request`):
+
+| Workflow | Run | Conclusion |
+|---|---|---|
+| API Contract Integrity | 37261663438 | success |
+| Backend Verification | 37261663428 | success |
+| Frontend Verification | 37261663523 | success |
+| Verification Runtime | 37261663420 | success |
+| Quality Gate | 37261663515 | success |
+| CodeQL | 37261663425 | success |
+| M9 Forensic Diagnostic Lab | 37261663423 | success |
+| Verification Reconcile | 37261663417 | **failure** (shards 1 and 6 red) |
+| Playwright Tests | 37261663442 | **failure** (both `-visual` legs) |
+| mutation-pr.yml | 37261658209 | **failure** (pre-existing, untouched) |
+
+STEP 1–3 of the mission brief (backend result contract, eslint, mutmut
+trampoline) were closed by M10-R3 and confirmed green in run 37261663428 /
+…61523 / …63420. Re-verified rather than re-fixed.
+
+### Open failure table
+
+| Failure | Workflow/job | Reproducible locally? | Root cause | Status |
+|---|---|---|---|---|
+| `exec-0006` reports `unmapped:UNMAPPED[3]` — a count, not three names | Verification Reconcile / shard 6 | **yes** | `_expand_control_plane_tasks` seeded the dedup bucket with `{cp_task.capability_id}` and wrote it back into `spec.capabilities`, discarding `VerificationTask.capabilities` | **fixed** (below) |
+| Playwright visual legs exit 1 | Playwright Tests / `chromium-visual`, `mobile-chrome-visual` | yes | baselines stale (see STEP 5) | open |
+| Playwright leg result carries `passed: 0, failed: 0` | Playwright Tests / all legs | yes | workflow `jq` hard-codes zeros | open |
+| `mutation-pr.yml` fails at 0 s | Mutation Testing (PR) | n/a | pre-existing "workflow file issue"; `git diff 1c397368..HEAD -- .github/workflows/mutation-pr.yml` is empty | pre-existing, untouched |
+| `exec-0004` Playwright `command exit 1` | Verification Reconcile / shard 1 | yes | consequence of the red visual legs | open, follows STEP 5 |
+
+## STEP 4 — `exec-0006`: capability provenance
+
+### Reproduction
+
+CI shard 6 record (`reconcile-shard-6.json`, run 37257612911):
+
+```
+"completion_state": "registry_gap"
+"reason": "1 changed capabilit(y/ies) resolved to an unmapped capability.
+           no verification-registry mapping for: unmapped:UNMAPPED[3]."
+```
+
+Locally the same boundary produces **zero** unmapped capabilities, so the
+failure does not reproduce from the changed-file list alone. Replaying CI's own
+394 `changed_files` (extracted from the `reconcile-plan` artifact) against this
+branch also gives `unmapped_blast_capabilities == []`.
+
+### Why CI differs from this workstation — the environment delta
+
+The CI plan job log (run 37257612911, `Reconcile Plan`, line 996):
+
+```
+TypeScript resolver failed: Error: Cannot find module 'ts-morph'
+```
+
+`verification-reconcile.yml`'s **plan** job provisions Python only
+(`bootstrap-runtime`); `setup-node-runtime` is invoked further down, in the
+*shard* job (line 239). So `frontend/node_modules` does not exist when the plan
+is built, `npx tsx` cannot load `ts-morph`, and
+`TypeScriptSymbolExtractor._run_ts_resolver` returns `{"files": []}`.
+`FrontendCapabilityDiscoverer.discover_capabilities()` then mints **zero**
+capabilities, so every `frontend/app/**` file that is claimed only by cross-layer
+route discovery falls through unmapped. Simulated exactly:
+
+```
+$ resolve_capabilities(ci_changed_files)                     -> unmapped: []
+$ … with graph.frontend_capabilities = {}                   -> unmapped: [
+      'UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts',
+      'UNMAPPED:frontend/app/layout.tsx',
+      'UNMAPPED:frontend/app/settings/page.tsx' ]
+```
+
+### The three capabilities
+
+```
+UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts
+UNMAPPED:frontend/app/layout.tsx
+UNMAPPED:frontend/app/settings/page.tsx
+```
+
+These are the three changed files that **no contract capability claims by path**.
+Every other frontend file on that boundary is claimed by `frontend-verification`
+through its contract paths; these three are claimed only by the graph's route
+discovery, so removing the graph removes exactly them and nothing else. That is
+what makes the list exact rather than a guess.
+
+### The defect the mission asked for
+
+Independent of the environment delta, the names were being destroyed in
+transit. `VerificationTask.capabilities` is populated correctly
+(`control_plane.py:337`) and read correctly into the spec
+(`execution_orchestrator.py:2047`), then **overwritten** by the bucket
+finaliser:
+
+```
+2072:  "capabilities": {cp_task.capability_id},   # seeded from the LABEL
+2096:  caps = sorted(bucket["capabilities"])      # still only labels
+2098:  spec_dict["capabilities"] = caps           # concrete names discarded
+```
+
+So even with a healthy graph, any genuinely unmapped change would have reported
+a count label. Fixed by keeping two accumulators: `capability_ids` (what the
+bucket serves, and what picks `primary_capability`) and `capabilities` (the
+concrete names, which is what the record and the registry-gap diagnostic
+report). For every ordinary task the two sets are identical, so nothing else
+moves.
+
+### Files changed
+
+- `runtime/foundation/verification/execution_orchestrator.py` — two
+  accumulators in `_expand_control_plane_tasks`.
+- `runtime/tests/test_m11_r4_capability_provenance.py` — new, 5 tests.
+
+### Tests
+
+```
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_capability_provenance.py -q
+5 passed
+
+# with the orchestrator fix reverted:
+3 failed, 2 passed   (test_declared_capabilities_reach_the_spec,
+                     test_names_survive_serialisation,
+                     test_record_names_all_three)
+
+$ .venv/bin/python -m pytest runtime/tests/test_m11_agent1_capability_resolution.py \
+    runtime/tests/test_m10r3_adversarial_injection.py \
+    runtime/tests/test_verify_sharding.py \
+    runtime/tests/test_m9_c49_canonical_cli.py -q
+112 passed in 92.01s
+```
+
+### Not done here
+
+The plan job's missing Node runtime is a separate defect from the provenance
+loss. It is the reason this boundary produced three unmapped files at all, and
+it is recorded for STEP 7/8 rather than fixed in this checkpoint, because the
+fix belongs to `verification-reconcile.yml` and must be weighed against the
+`npm ci` cost it adds to the plan job.
+
+## STEP 6 — Playwright leg result parsing (and the transport that made it unreadable)
+
+The mission described this as "diagnostics": the workflow's `jq` hard-coded zeros.
+It is worse than that, and the zero-count was the smallest of four defects that
+together meant **the Playwright gate had never once read a leg result**.
+
+### Defect 1 — the gate could not see any leg (transport)
+
+`playwright_shards.read_leg_results()` delegated to
+`runtime_shards.read_shard_results()`, which globs `shard-*.json`.
+`playwright.yml` writes `leg-<leg_id>.json`. The glob matched nothing.
+
+Reproduced locally with the exact document CI published
+(`playwright-result-chromium-visual`, run 37261663442):
+
+```
+read_leg_results(<dir containing leg-chromium-visual.json>)
+  -> results=0  absent=['no shard-*.json files found']
+```
+
+Every CI gate log therefore reported `legs_reported: 0`, `legs_passed: 0` and
+
+```
+decision_reason: leg(s) produced NO TERMINAL RESULT … no shard-*.json files
+                 found; expected 10 leg(s), 0 reported
+```
+
+even on run 37254330609, where **all ten legs were green**. The gate's verdict was
+independent of whether any test passed. `read_shard_results` now takes the glob
+pattern explicitly and the Playwright call site passes `leg-*.json`.
+
+### Defect 2 — nothing could read real counts anyway
+
+Both passes ran `npx playwright test --reporter=list`. A command-line `--reporter`
+**replaces** the reporter list in `playwright.config.ts` rather than adding to it, so
+the configured `json` reporter never ran and `frontend/test-results/results.json` was
+never written. Confirmed from the artifact: the `chromium-visual` leg uploaded
+`frontend/test-results/artifacts/` and nothing else — no `results.json`, no
+`junit.xml`, no `html-report`, despite the config declaring all three.
+
+So the workflow's `passed: 0, failed: 0` literals were not laziness; there was
+genuinely nothing to read. The `--reporter=list` flags are removed (the config already
+declares `list` alongside `html`, `json` and `junit`, so console output is unchanged).
+
+### Defect 3 — the document carried no fingerprint bracket
+
+`verify_legs` requires one and treats absence as *not certified*, never as a pass.
+The inline `jq` document had no `fingerprint_before`/`fingerprint_after`/`fingerprint_stable`
+keys at all, so even a green leg with a green test suite could not have been
+certified. This is the pre-existing fail-closed rule doing its job against a producer
+that never populated it.
+
+### Defect 4 — no canonical way to run one leg
+
+`backend-task` exists and produces a correct document; Playwright had no equivalent,
+so the workflow invented one. Added `playwright-leg`, the per-leg counterpart of
+`backend-task`, which runs `.github/scripts/run_playwright_tests.sh` through the shared
+streaming worker with `execution_shards.leg_environment()` (so the per-leg database is
+derived, not declared), brackets itself in `CertificationRun`, and counts the run from
+Playwright's own JSON reporter.
+
+### Proof — a real leg, end to end, on this workstation
+
+```
+$ .venv/bin/python -m runtime.verify playwright-leg \
+    --leg-id probe-functional --project chromium --kind functional \
+    --spec-files "tests/e2e/specs/health-check.spec.ts" \
+    --timeout-seconds 900 --result-out /tmp/kilo/legprobe.json
+
+[playwright-leg] probe-functional failed passed=23 failed=4 (293.9s)
+```
+
+```json
+{
+  "schema": "m10r2-leg-result/v1",
+  "shard_id": "probe-functional",
+  "status": "failed",  "exit_code": 1,  "duration_seconds": 293.87,
+  "file_count": 1,  "passed": 23,  "failed": 4,  "errors": 4,
+  "decision": "diagnostic",
+  "fingerprint_stable": true
+}
+```
+
+Real counts, real duration, real bracket. Before this change CI published
+`passed: 0, failed: 0, duration_seconds: 0` for the same field.
+
+### Files changed
+
+- `runtime/foundation/verification/runtime_shards.py` — `read_shard_results` takes the
+  glob pattern (default unchanged).
+- `runtime/foundation/verification/playwright_shards.py` — correct pattern at the call
+  site; `parse_playwright_results`; `run_playwright_leg`.
+- `runtime/foundation/verification/control_plane_facade.py` — `playwright-leg` verb.
+- `.github/scripts/run_playwright_tests.sh` — no command-line `--reporter`.
+- `.github/workflows/playwright.yml` — the leg step calls the runtime, not `jq`.
+- `runtime/tests/test_m11_r4_playwright_leg_results.py` — new, 14 tests.
+
+### Tests
+
+```
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_playwright_leg_results.py \
+    runtime/tests/test_runtime_sharding.py \
+    runtime/tests/test_m10r3_certification_authority.py \
+    runtime/tests/test_execution_observability.py -q
+104 passed in 28.49s
+```
+
+The regression tests include the verbatim document CI published, so the transport fix
+is pinned against the real artifact rather than a synthetic one.
+
+`ruff check` on the touched files reports only the two findings that already existed
+at HEAD (`I001` in `control_plane_facade.py` / `runtime_shards.py`, `F841`
+`timed_out_any` in the facade) — verified by stashing the change and re-running.
+
+## STEP 5 — Playwright baselines: reproduction and regeneration transport
+
+### Reproduction (both modes, on this workstation)
+
+Normal visual verification, through the canonical leg runner added in STEP 6:
+
+```
+$ .venv/bin/python -m runtime.verify playwright-leg \
+    --leg-id probe-visual-chromium --project chromium --kind visual \
+    --timeout-seconds 2400 --result-out /tmp/kilo/legvisual.json
+
+[playwright-leg] probe-visual-chromium failed passed=10 failed=11 (131.17s)
+```
+
+```
+11 failed
+10 passed (2.2m)
+```
+
+**Identical to CI.** Run 37261663442's `chromium-visual` leg reported `11 failed`,
+`10 passed (1.2m)` with the same eleven test names (home / dashboard / transactions /
+cards / behaviour pages, transactions+cards+settings mobile, personal mode, family
+mode, dark-mode dashboard). The failure is therefore not environmental and not
+runner-specific: the committed baselines are stale against the current UI.
+
+Spot-checked against CI's own artifacts rather than trusting the count —
+`cards-page-expected.png` vs `cards-page-actual.png` from the failed leg:
+
+* expected: dark shell, workspace reads "Try adjusting your filters or search query",
+  an empty-state block, `0 nodes`;
+* actual: the same shell with a populated cards workspace — filter panel, `Refresh` /
+  `Export`, a `Total Balance ₹0.00` panel.
+
+That is a real render difference (216 702 differing pixels, bbox x 180-1102,
+y 17-711), not antialiasing. The baselines describe a UI that no longer exists.
+
+### Why the earlier regeneration attempt "did not fire" — it did, and it was discarded
+
+M10-R3 concluded that `PLAYWRIGHT_UPDATE_SNAPSHOTS=1` "did not cause regeneration".
+That conclusion was wrong, and the log says so: on dispatch run 37254330609 both
+visual legs reported **success**. `--update-snapshots` rewrote the baselines and the
+leg went green.
+
+The baselines then died with the runner. Nothing in `playwright.yml` ever published
+them: `Upload leg result` and `Upload leg artifacts` cover
+`runtime/generated/legs/`, `runtime/generated/profile-logs/`,
+`frontend/test-results/` and `frontend/playwright-report/` — and nothing under
+`frontend/tests/`. So "regenerate on the canonical renderer" was an instruction with no
+mechanism behind it, and the only way to obtain the new images was to fish them out of
+`-actual.png` diffs.
+
+### Fix
+
+`Upload regenerated visual baselines`, gated on `matrix.kind == 'visual'` **and**
+`inputs.update_snapshots == true` (only visual legs own baselines, and only a dispatch
+can set the flag), uploads
+`frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/` as
+`playwright-baselines-<project>` with `if-no-files-found: error` — a regeneration run
+that produced nothing must fail loudly rather than look successful.
+
+The regenerated images are consumed by the subsequent visual assertion in the same
+working tree: `--update-snapshots` rewrites the baseline *and* re-runs the comparison
+against the new file in one pass, so a leg that reports green after regeneration has
+proved the new baseline, not merely written it. The committed images must then come
+from a runner artifact, never from a workstation: `PROVENANCE.md` in the snapshot
+directory already states this, and Chromium's Skia hinting is genuinely host-dependent.
+
+Not done here: the baselines themselves. They are generated artifacts and must be
+produced by a Linux CI runner, so they are fetched from the dispatch artifact in
+STEP 8, not authored on this machine.
+
+### Files changed
+
+- `.github/workflows/playwright.yml` — the new upload step.
+
+`.github/scripts/validate_actions.py`: ALL CHECKS PASSED (14 workflows, 6 actions).
+
+## STEP 4b — the environment delta behind `UNMAPPED[3]`
+
+Recorded in STEP 4 and fixed here, because it belongs to the reconcile workflow
+rather than to the capability model.
+
+The `Reconcile Plan` job provisioned Python only. `setup-node-runtime` is invoked
+further down, in the **shard** job (`verification-reconcile.yml:239` before this
+change). Capability resolution resolves `frontend/app/**` through
+`frontend_capability_discovery`, which calls the TypeScript resolver, which shells
+out to `npx tsx` and imports `ts-morph` from `frontend/node_modules`. On the plan
+runner that directory does not exist, so:
+
+```
+plan job log, run 37257612911, line 996:
+  TypeScript resolver failed: Error: Cannot find module 'ts-morph'
+  → {"files": []}
+```
+
+`FrontendCapabilityDiscoverer.discover_capabilities()` then mints zero
+capabilities, and every `frontend/app/**` file claimed only by cross-layer route
+discovery falls through unmapped — the three named in STEP 4.
+
+`mutation.yml`, `quality.yml` and `golden.yml` already pair `bootstrap-runtime` with
+`setup-node-runtime` for exactly this reason; `verification-reconcile.yml`'s plan job
+was the outlier.
+
+With the fix, the plan is built on the same toolchain the workstation uses, and the
+`registry_mapping` obligation disappears from a healthy boundary — it should only
+appear when a capability genuinely has no registry entry, and then it will name the
+capabilities (STEP 4).
+
+`validate_actions.py`: ALL CHECKS PASSED.
+
+## STEP 9 — why only 5 of 7 shards certified
+
+Traced from the actual CI evidence rather than re-inferred. From the
+`reconciliation-report` artifact of run 37257612911:
+
+| shard | status | final_decision | failing task |
+|---|---|---|---|
+| reconcile-shard-0 | passed | certified | — |
+| reconcile-shard-1 | **failed** | diagnostic | `exec-0004` |
+| reconcile-shard-2 | passed | certified | — |
+| reconcile-shard-3 | passed | certified | — |
+| reconcile-shard-4 | passed | certified | — |
+| reconcile-shard-5 | passed | certified | — |
+| reconcile-shard-6 | **failed** | not_certifiable | `exec-0006` |
+
+The two uncertified shards carry one record each, and the whole of the failure is
+those two records:
+
+```
+shard-1  exec-0004  failed          "command exit 1"
+shard-6  exec-0002  pass            "command exit 0"
+shard-6  exec-0006  registry_gap    "… no verification-registry mapping for:
+                                    unmapped:UNMAPPED[3]"
+```
+
+Resolving them against `plan.json`:
+
+* `exec-0004` — `verification_kind: e2e`, capabilities `["e2e-tests"]` → the Playwright
+  leg. Its `command exit 1` is the eleven stale baselines (STEP 5), reproduced locally
+  at the same `11 failed / 10 passed`.
+* `exec-0006` — `verification_kind: registry_mapping`, capabilities
+  `["unmapped:UNMAPPED[3]"]` → the capability-provenance defect (STEP 4).
+
+So, against the mission's checklist:
+
+| Hypothesis | Verdict |
+|---|---|
+| genuine failures | **yes** — both, and of two known defect classes |
+| stale artifacts | no — every one of the seven shards reported, and `absent`/`malformed`/`rejected` were all empty |
+| missing result records | no — seven of seven present |
+| capability mapping loss | yes, for `exec-0006` (STEP 4) |
+| serialization defects | no — the plan round-tripped through JSON intact |
+| result-parser defects | no for reconcile; **yes** for Playwright (STEP 6) |
+| execution-order issues | no — shard 6's `exec-0002` passed in the same shard, so the shard was not dead |
+
+Five shards certified because two shards carried two genuine defects. The
+certification threshold was not touched, no shard was forced, and no result was
+reclassified: reconciliation was already representing reality correctly, and the two
+records it refused to certify were refusals it was entitled to make.
+
+## STEP 8 (first attempt) — a defect introduced by this phase, caught by CI
+
+Dispatch run 37268621061 failed all ten legs with:
+
+```
+/home/runner/work/_temp/….sh: line 20: LEG_TIMEOUT_SECONDS: unbound variable
+```
+
+The new leg step computes its backstop as `$(( LEG_TIMEOUT_SECONDS + 60 ))`. The step
+runs under `set -uo pipefail`, and `LEG_TIMEOUT_SECONDS` is **not** set in the job
+environment — the previous code only ever read it as `${LEG_TIMEOUT_SECONDS:-2400}`,
+which tolerates absence. Arithmetic context expands the bare name and `set -u` aborts
+the step, so every leg died before running a single test and no leg result document
+was written at all.
+
+This is exactly the failure mode the previous STEP 6 fix was built to make *visible*
+rather than silent: the gate reported `no leg-*.json files found` instead of
+certifying ten legs that never ran.
+
+Fixed to `$(( ${LEG_TIMEOUT_SECONDS:-2400} + 60 ))`, verified locally under
+`env -u LEG_TIMEOUT_SECONDS bash -c 'set -uo pipefail; …'` → `2460`.
+
+Lesson recorded rather than quietly fixed: a shell arithmetic expansion is not a
+defaultable read. Every optional variable in a `set -u` step needs `${var:-default}`
+*inside* the expansion, not at the point of use.
+
+## STEP 5b — the baselines themselves, generated on the canonical renderer
+
+Run `37269522107` (`workflow_dispatch`, `update_snapshots=true`, commit `a624857a`):
+**all 11 jobs green**, and the gate now reports what it has never been able to report:
+
+```json
+"legs_expected": [ …10 ids… ],
+"legs_reported": 10,
+"legs_passed": 10,
+"visual_legs": 2,
+"final_decision": "certified"
+```
+
+The real leg document for `chromium-visual`, straight from the artifact:
+
+```json
+{ "schema": "m10r2-leg-result/v1",
+  "shard_id": "chromium-visual", "status": "passed", "exit_code": 0,
+  "duration_seconds": 38.19, "passed": 21, "failed": 0, "errors": 0,
+  "decision": "certified", "fingerprint_stable": true }
+```
+
+The same field previously read `passed: 0, failed: 0, duration_seconds: 0` on a leg
+that had just failed eleven assertions.
+
+The artifact also proves the reporter fix landed: `frontend/test-results/results.json`
+and `junit.xml` are present in the leg artifacts for the first time — previously the
+directory held only `artifacts/`, because `--reporter=list` had suppressed them.
+
+### What changed in the baseline set
+
+| | count |
+|---|---|
+| `*-chromium-linux.png` rewritten | 9 |
+| `*-mobile-chrome-linux.png` rewritten | 15 |
+| **new** baselines that never existed | 2 |
+| tracked files git reports as changed | 22 |
+| baselines in the directory | 42 → 44 |
+
+The two new files are `cards-mobile-mobile-chrome-linux.png` and
+`settings-mobile-mobile-chrome-linux.png`. Playwright reported those two as *missing*
+rather than *differing*, which is why no amount of threshold reasoning could have
+explained them — and why one CI log line reads "No snapshot found for primary,
+computing on-demand". They are in the set now.
+
+Each visual leg regenerates only its own project and uploads the whole directory, so
+the images were taken from the matching artifact: chromium files from
+`playwright-baselines-chromium` (11328190823), mobile-chrome files from
+`playwright-baselines-mobile-chrome` (11327702218). Verified before installing: the
+chromium artifact differs from HEAD only on `*-chromium-linux.png`, the mobile artifact
+only on `*-mobile-chrome-linux.png`, so no artifact could silently revert the other's
+work.
+
+`PROVENANCE.md` updated with the run id, the SHA, the reason, and the fact that two
+baselines were missing rather than stale. No threshold was touched:
+`DIFF_THRESHOLD`, `MAX_DIFF_PIXELS` and `maxDiffPixelRatio` are unchanged.
+
+## STEP 7 — local CI replication matrix
+
+Every row uses the repository's own canonical command (the same one the workflow
+invokes), not a substitute.
+
+| Workflow | CI command | Local reproduction | Result |
+|---|---|---|---|
+| Quality Gate | `runtime.verify quick` | identical, `.venv` | **certified** — ruff, black, mypy, unit all pass; 170.5s; fingerprint `10cb6ea5 -> 10cb6ea5` stable |
+| API Contract Integrity | `runtime.verify contracts` | identical | **certified** — schemathesis + aggregate pass; 122.5s; fingerprint stable |
+| Frontend Verification | `runtime.verify frontend` | identical | **certified** — 351.2s; fingerprint stable |
+| Verification Runtime | `runtime.verify runtime-plan` / `runtime-shard --shard N --result-out` / `runtime-aggregate` | identical, **not executed here** | CI run 37269442599 green; see the environmental delta below |
+| Verification Reconcile | `runtime.verify plan --shard-plan` → `run --plan --shard N --result-out` → `run --aggregate` | plan + `capability_resolution` reproduced directly | plan reproduced; shard execution is CI-authoritative |
+| Playwright | `runtime.verify playwright-plan` / `playwright-leg` / `playwright-aggregate` | identical, both passes, both modes | reproduced exactly (see STEP 5/6) |
+| Backend Verification | `runtime.verify backend-plan` / `backend-task` / `backend-aggregate` | identical, not executed here | CI run 37269442574 green |
+| CodeQL | GitHub action only | **not reproducible locally** | environmental |
+| M9 Forensic Diagnostic Lab | `runtime.verify` profile | **not reproduced locally** | CI green |
+
+### Environmental deltas that cannot be closed locally
+
+1. **Verification Runtime** is a 45-minute seven-shard pytest fan-out. Running it here
+   would take the same wall clock and would exercise the same code; the run is CI's to
+   own and its result is recorded rather than re-derived.
+2. **CodeQL** is a GitHub-hosted analysis with no local equivalent. Nothing in this
+   phase touched a language it scans.
+3. **Node toolchain in the reconcile plan job.** Until STEP 4b this was a *silent*
+   delta, and it is the reason `unmapped` differed between machines. It is now closed
+   by provisioning Node in the plan job, and it is the one delta this phase found by
+   diffing behaviour rather than by diffing configuration.
+4. **Chromium rasterisation.** Baselines must come from the runner. This phase
+   reproduced the visual failure locally (`11 failed / 10 passed`) but deliberately did
+   not regenerate anything locally.
+
+## STEP 8b — the reconcile aggregate had never worked (pre-existing)
+
+With all seven shards green for the first time, the reconcile gate's own job became
+the only remaining failure:
+
+```
+File ".../control_plane_facade.py", line 1436, in _aggregate_shard_reports
+  records.append(TaskExecutionRecord(**record))
+TypeError: TaskExecutionRecord.__init__() missing 20 required positional arguments
+```
+
+**Pre-existing, not an M11 regression.** The identical traceback appears in run
+37257612911 at 03:24:03, two hours before this phase began. It was invisible for as
+long as the shards were independently red — the gate was already failing, so nobody
+was reading its traceback. Turning the shards green is what exposed it.
+
+### Root cause
+
+Two halves of one contract disagreed. The shard producer emitted three keys per
+record:
+
+```python
+records=[{"task_id": r.task_id, "completion_state": str(r.completion_state),
+          "reason": r.reason} for r in report.records]
+```
+
+while `_aggregate_shard_reports` rebuilds them as `TaskExecutionRecord(**record)`
+against the full 23-field dataclass. Verified from the CI artifact itself —
+`reconcile-shard-1` shipped exactly:
+
+```json
+"records": [{"task_id": "exec-0004", "completion_state": "failed", "reason": "command exit 1"}]
+```
+
+Producer wins: a shard now writes `r.to_dict()`. The aggregate therefore receives the
+evidence — durations, exit codes, diagnostics, measurement truth, capability names —
+instead of a summary it then has to guess at.
+
+### Second defect, in the aggregator itself
+
+`TaskExecutionRecord(**record)` raised straight through, so **one malformed record
+cost the operator the entire gate verdict** — the exact opposite of what the
+adjacent absent/unreadable handling is for. A truncated record is a producer bug, and
+the module's own contract already says such a document is *reported*, never coerced
+into a verdict. It now is: the record is named (`shard-0.json#0`), counted in
+`unreadable`, and forces `not_certifiable`. The gate gets weaker in no
+configuration; it gets a verdict instead of a traceback.
+
+### Files changed
+
+- `runtime/foundation/verification/control_plane_facade.py` — full records from the
+  producer; malformed records reported rather than raised.
+- `runtime/tests/test_m11_r4_reconcile_aggregate.py` — new, 6 tests.
+
+The producer test runs the **real** canonical path (`ControlPlane().run(...)` over a
+plan whose fingerprint is captured live), not the writer helper, because the defect
+was never in the helper — it was in what the caller handed it.
+
+### Proof
+
+```
+with the facade at HEAD:   5 failed, 1 passed   (TypeError, as in CI)
+with the fix:              6 passed
+
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_reconcile_aggregate.py \
+    runtime/tests/test_m11_r4_capability_provenance.py \
+    runtime/tests/test_m11_r4_playwright_leg_results.py \
+    runtime/tests/test_verify_sharding.py \
+    runtime/tests/test_runtime_sharding.py -q
+93 passed in 84.50s
+```
+
+Real shard run through the canonical path, showing the recovered fields:
+
+```
+records: 1
+keys: artifacts, capabilities, command, completed_at, completion_state, diagnostic,
+      duration_seconds, exit_code, is_escalation, is_mandatory, measurement_truth,
+      next_action, plan_id, prerequisites_satisfied, primary_capability, reason,
+      record_id, scope, started_at, stderr_path, stdout_path, task_id, termination,
+      verification_kind
+```
+
+### Note on method
+
+While verifying this fix I ran `git stash -q <path>` to produce a HEAD-state
+comparison. That form is rejected by this git build, so the chained `git stash pop`
+popped the **pre-existing protected stash** instead. The resulting conflicts were
+confined to three `runtime/generated/` files and were reverted with
+`git reset`/`git checkout`; `stash@{0}` is byte-identical afterwards
+(`40f7f891a0c103850279922a23d8e56d2b99892c`, five files, unchanged). The comparison
+was redone by writing HEAD's file to a temporary path and copying it over, which is
+what the "with the facade at HEAD" numbers above come from.
+
+## STEP 8c — the escalation barrier: reconciliation could never certify
+
+With the aggregate producing a verdict at last, run 37274801285 reported:
+
+```
+[aggregate] plan=execplan-5225e300b019 tasks=10 shards=7 unreadable=0
+[aggregate] not_certifiable: … shard coverage incomplete: missing 3 task(s):
+             exec-0006, exec-0007, exec-0008
+```
+
+**Pre-existing**, and structural. Three pieces of the design disagreed:
+
+1. `assign_shards` appends every escalation task to **every** shard (the barrier).
+2. `run --shard` then **removes** escalation tasks from the shard's plan, with a
+   comment explaining why this is correct: a shard holding a subset of the mandatory
+   tasks cannot decide stop-on-sufficiency on the global outcome, and "the aggregate
+   owns escalation".
+3. `merge_shard_reports` requires a record for **every** task in the plan — R1, the
+   split-brain invariant — and names the absent ids.
+
+So the aggregate was supposed to own escalation and then did not. Nothing ever produced
+those three records, and the merge's own invariant turned that into `not_certifiable`
+on **every** run. Reconciliation could not certify any plan containing an escalation
+task, whatever the code under test did.
+
+The three tasks are exactly the plan's escalation barrier:
+
+```
+exec-0006  escalation=True  mandatory=False  e2e         depends_on 0001-0005
+exec-0007  escalation=True  mandatory=False  property    depends_on 0001-0005
+exec-0008  escalation=True  mandatory=False  integration depends_on 0001-0005
+```
+
+### Fix
+
+The aggregate makes the decision, as the shard comment always assumed, using exactly
+the rule `ExecutionOrchestrator.execute` uses and in its own words:
+
+* sufficiency met (no mandatory task in a non-pass state) → `SKIPPED`, reason
+  `"stop-on-sufficiency: all mandatory tasks PASS or REUSED; escalation skipped"` —
+  byte-identical to what the orchestrator emits for a single-run plan, so the merged
+  record set reads the same either way;
+* sufficiency **not** met → the task stays missing. It genuinely did not run, and
+  `not_certifiable` naming it is the truthful verdict. It is never auto-passed,
+  auto-skipped or invented.
+
+### Proof — both directions, from the plan CI actually shipped
+
+```
+mandatory green  -> certified        escalation: [0006 skipped, 0007 skipped, 0008 skipped]
+mandatory failed -> not_certifiable  escalation: []   (named in the reason)
+```
+
+At HEAD the first line is `not_certifiable | … missing 3 task(s)`, which is precisely
+what CI printed.
+
+### Files changed
+
+- `runtime/foundation/verification/execution_shards.py` — the aggregate decides the
+  barrier; `_skipped_escalation_record` holds the record contract.
+- `runtime/tests/test_m11_r4_reconcile_aggregate.py` — 2 more tests (8 total).
+
+```
+with execution_shards.py at HEAD:  1 failed (sufficiency case), 7 passed
+with the fix:                     8 passed
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_reconcile_aggregate.py \
+    runtime/tests/test_verify_sharding.py runtime/tests/test_runtime_sharding.py -q
+76 passed in 82.95s
+```
+
+`ruff check` on the touched files reports only `I001` and `F821 Undefined name Path`
+at `execution_shards.py:355`, both present at HEAD (verified against `git show HEAD:`).
+
+## STEP 8d — final CI state
+
+Run `37279314488` at `db8fb97d`:
+
+```
+[aggregate] plan=execplan-059051d15471 tasks=10 shards=7 unreadable=0
+Decision: certified
+
+reconcile-shard-0 .. reconcile-shard-6   passed  certified   (7 of 7)
+```
+
+Playwright, run `37279314464`: `legs_reported: 10, legs_passed: 10, visual_legs: 2,
+final_decision: certified`.
+
+| Workflow | Run | Conclusion |
+|---|---|---|
+| Backend Verification | 37279314465 | success |
+| Frontend Verification | 37279314507 | success |
+| Quality Gate | 37279314470 | success |
+| Verification Runtime | 37279314509 | success |
+| Verification Reconcile | 37279314488 | success |
+| Playwright Tests | 37279314464 | success |
+| API Contract Integrity | 37279314467 | success |
+| CodeQL Security Analysis | 37279314466 | success |
+| M9 Forensic Diagnostic Lab | 37279314614 | success |
+| mutation-pr.yml | 37279308373 | failure — pre-existing, workflow file untouched |
+
+## STEP 10 — final forensic verification
+
+Full report: `docs/audits/m11-r4-completion-report.md`.
+
+### Working tree
+
+Clean apart from `runtime/generated/**` run records, which are tracked and updated by
+every verification run.
+
+### Test evidence (this phase)
+
+```
+test_m11_r4_capability_provenance.py    5 passed   (3 fail at HEAD)
+test_m11_r4_playwright_leg_results.py  14 passed
+test_m11_r4_reconcile_aggregate.py      8 passed   (5 fail at HEAD)
+plus adjacent: 76 passed / 104 passed / 112 passed / 144 passed slices
+```
+
+### What the phase actually found
+
+Three gates could not have passed under any circumstances, and all three pre-date M11:
+
+1. the Playwright gate could not read any leg result;
+2. the reconcile aggregate had never produced a verdict;
+3. reconciliation could never certify a plan containing an escalation task.
+
+Each was hidden behind shards that were independently red. Turning the shards green is
+what exposed them — which is the argument for having fixed the shards first rather than
+starting at the gate.

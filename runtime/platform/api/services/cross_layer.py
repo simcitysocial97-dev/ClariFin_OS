@@ -13,8 +13,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from runtime.platform.api.contracts._primitives import Timestamp
-from runtime.platform.api.services._helpers import envelope, now_iso
+from runtime.platform.api.services._helpers import envelope
 
 __all__ = [
     "build_cross_layer_graph",
@@ -98,7 +97,7 @@ def build_cross_layer_capability(capability_id: str) -> dict[str, Any] | None:
             "blast_radius": {
                 "affected_tests": [e.get("target_id", "") for e in related_edges],
                 "affected_capabilities": list(
-                    set(e.get("target_id", "") for e in related_edges)
+                    {e.get("target_id", "") for e in related_edges}
                 ),
             },
             "verification_obligations": [],

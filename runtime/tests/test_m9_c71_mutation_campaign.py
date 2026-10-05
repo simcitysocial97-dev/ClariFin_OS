@@ -780,15 +780,25 @@ class TestShardedWorkflowTopology:
         shaped = re.search(r"MATRIX_JSON=\"\$\(jq -c '(?P<filter>[^']+)'", script)
         assert shaped, "the plan step must shape its matrix output explicitly"
 
-        # The document being narrowed genuinely carries the values a matrix cell
-        # can hold and the two shapes a matrix cannot: scalar metadata keys at
-        # the top level, and a LIST inside each entry. Publishing it verbatim is
-        # a live failure mode rather than a stale one.
+        # The document being narrowed genuinely carries a shape a matrix cannot
+        # hold: scalar metadata keys at the TOP level (`shard_count`, `diff_safe`,
+        # `recommended_timeout_minutes`). GitHub reads every top-level key other than
+        # `include`/`exclude` as a dimension whose value must be a list, so publishing
+        # the document verbatim is a live failure mode rather than a stale one.
+        #
+        # M10-R3 (L8): it used ALSO to carry a list *inside* each include entry
+        # (`reasons`), which is why the projection needed a field list to strip it.
+        # That was a runtime defect, and the hand-written projection was hiding it.
+        # The runtime now emits scalars, so the narrowing no longer has to name fields
+        # and can be `{include: .include}` — which cannot silently drop a new field.
         payload = ms.plan_payload()
         assert set(payload) > {"include"}, "the plan reports metadata beside `include`"
-        assert any(
-            isinstance(v, list) for v in payload["include"][0].values()
-        ), "an include entry carries a LIST, which a matrix cell never is"
+        assert not any(
+            isinstance(v, (list, dict)) for v in payload["include"][0].values()
+        ), (
+            "an include entry carries a non-scalar cell; the runtime must render it as "
+            "a scalar so the workflow never needs a field list to strip it"
+        )
 
         # Every key the shard job reads must be a scalar in the published
         # matrix, and no key outside `include` may be a dimension.

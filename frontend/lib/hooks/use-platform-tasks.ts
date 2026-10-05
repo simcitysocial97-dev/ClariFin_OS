@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface TaskItem {
   id: string;
@@ -37,7 +37,7 @@ export function useTaskList() {
     queryKey: ['platform', 'tasks'],
     queryFn: () => apiFetchJson('/platform/v1/tasks') as Promise<TaskListResponse>,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

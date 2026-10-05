@@ -8,8 +8,6 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from runtime.foundation.verification.blast_radius import BlastRadiusEngine
 
 

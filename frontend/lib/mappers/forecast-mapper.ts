@@ -11,6 +11,7 @@ import type {
   ForecastViewModel,
   NetWorthProjectionViewModel,
   CashflowProjectionViewModel,
+  CashflowForecastBasisViewModel,
   ForecastScenarioViewModel,
   ConfidenceIntervalViewModel,
   ForecastSummaryViewModel,
@@ -44,7 +45,7 @@ interface ForecastScenarioDTO {
   cashflow_projections: CashflowProjectionDTO[];
 }
 
-type ConfidenceLevel = 90 | 95 | 99;
+type ConfidenceLevel = number;
 
 interface ConfidenceIntervalDTO {
   level: ConfidenceLevel;
@@ -92,10 +93,21 @@ interface ForecastEvidenceChainDTO {
   confidence_score: number;
 }
 
+interface CashflowForecastBasisDTO {
+  status: 'available' | 'unavailable';
+  reason?: string | null;
+  model?: string | null;
+  confidence_bps?: number | null;
+  history_months?: number;
+  projected_months?: number;
+  requested_horizon_months?: number;
+}
+
 interface ForecastDTO {
   summary: ForecastSummaryDTO;
   net_worth_projections: NetWorthProjectionDTO[];
   cashflow_projections: CashflowProjectionDTO[];
+  cashflow_forecast_basis?: CashflowForecastBasisDTO;
   scenarios: ForecastScenarioDTO[];
   confidence_intervals: ConfidenceIntervalDTO[];
   insights: ForecastInsightDTO[];
@@ -121,6 +133,14 @@ export interface IForecastMapper {
    * Map cashflow projections DTOs to ViewModels
    */
   mapCashflowProjections(dtos: CashflowProjectionDTO[]): CashflowProjectionViewModel[];
+
+  /**
+   * Map cashflow forecast provenance to a ViewModel
+   */
+  mapCashflowForecastBasis(
+    dto: CashflowForecastBasisDTO | null | undefined,
+    projectionCount: number
+  ): CashflowForecastBasisViewModel;
 
   /**
    * Map forecast scenarios DTOs to ViewModels
@@ -165,6 +185,10 @@ export class ForecastMapper implements IForecastMapper {
       summary: this.mapSummary(dto.summary),
       net_worth_projections: this.mapNetWorthProjections(dto.net_worth_projections),
       cashflow_projections: this.mapCashflowProjections(dto.cashflow_projections),
+      cashflow_forecast_basis: this.mapCashflowForecastBasis(
+        dto.cashflow_forecast_basis,
+        dto.cashflow_projections?.length ?? 0
+      ),
       scenarios: this.mapScenarios(dto.scenarios),
       confidence_intervals: this.mapConfidenceIntervals(dto.confidence_intervals),
       insights: this.mapInsights(dto.insights),
@@ -204,8 +228,46 @@ export class ForecastMapper implements IForecastMapper {
     }));
   }
 
+/**
+   * Map cashflow forecast provenance to a ViewModel.
+   *
+   * A basis claiming `available` while carrying no projections is downgraded to
+   * `unavailable`: the two statements contradict each other, and rendering
+   * either one alone would show the user something the payload does not
+   * support. The backend performs the same check, and this repeats it because
+   * the mapper is the layer that must not pass a contradiction through.
+   */
+  mapCashflowForecastBasis(
+    dto: CashflowForecastBasisDTO | null | undefined,
+    projectionCount: number
+  ): CashflowForecastBasisViewModel {
+    if (!dto || (dto.status === 'available' && projectionCount === 0)) {
+      return {
+        status: 'unavailable',
+        reason:
+          dto?.status === 'available'
+            ? 'The response declared a cashflow forecast available but carried no projection months.'
+            : 'The response carried no cashflow forecast provenance.',
+        model: null,
+        confidence_bps: null,
+        history_months: dto?.history_months ?? 0,
+        projected_months: 0,
+        requested_horizon_months: dto?.requested_horizon_months ?? 0,
+      };
+    }
+    return {
+      status: dto.status,
+      reason: dto.reason ?? null,
+      model: dto.model ?? null,
+      confidence_bps: dto.confidence_bps ?? null,
+      history_months: dto.history_months ?? 0,
+      projected_months: dto.projected_months ?? 0,
+      requested_horizon_months: dto.requested_horizon_months ?? 0,
+    };
+  }
+
   /**
-   * Map forecast scenarios DTOs to ViewModels
+   * Map scenarios DTOs to ViewModels
    */
   mapScenarios(dtos: ForecastScenarioDTO[]): ForecastScenarioViewModel[] {
     if (!dtos || dtos.length === 0) {

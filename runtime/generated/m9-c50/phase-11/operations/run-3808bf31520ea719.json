@@ -1,0 +1,21 @@
+{
+  "run_id": "3808bf31520ea719",
+  "timestamp": "2026-10-03T14:59:21.589299+00:00",
+  "repository_sha": "90e8e6dec016dfdbeba2bd683d288e4fd5304c65",
+  "scenario": "unmapped_change",
+  "changed_files": [
+    "/tmp/tmp8fkmkyb6.py"
+  ],
+  "resolved_capabilities": [],
+  "obligations": [
+    "unmapped-review"
+  ],
+  "plan_identity": null,
+  "execution_identity": null,
+  "evidence_identities": [],
+  "reconciliation": {},
+  "final_decision": "blocked_unmapped",
+  "failures": [],
+  "reused_evidence": [],
+  "invalidated_evidence": []
+}

@@ -7,6 +7,24 @@
 #
 # The playwright profile (run_playwright_tests.sh) owns build + browser tests.
 # Browsers are provisioned by the setup-playwright action (environment only).
+#
+# M10-R2 — expanded from a 2-leg matrix (one per browser project, all ~300 tests each) to
+# plan -> matrix -> aggregate:
+#
+#   playwright-plan    partitions the functional specs deterministically
+#   playwright-leg     one runner per (project x shard), plus one visual leg per project
+#   playwright-gate    aggregates every leg and is the sole verdict
+#
+# Functional specs shard safely because each leg is a SEPARATE runner with its own
+# checkout and therefore its own freshly-seeded database — stronger isolation than the
+# single-runner case. The visual-regression pass is deliberately NOT sharded and never
+# narrowed: run_playwright_tests.sh documents at length that every spec shares one SQLite
+# file and the suite writes to it, so the visual pass stays a single serial sweep against
+# a re-seeded, read-only database. Narrowing it would silently drop screenshot assertions.
+#
+# Every leg pays the same fixed cost (browser install, frontend build, webServer, DB
+# seed), so `max-parallel` is a cap rather than a target; over-sharding costs more than it
+# saves.
 
 name: Playwright Tests
 
@@ -30,6 +48,14 @@ on:
       - "e2e/**"
       - "runtime/**"
   workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: >-
+          Regenerate the visual-regression baselines on this runner and upload
+          them as an artifact. Baselines are rasterisation-specific, so they must
+          be produced by a GitHub runner, never by a workstation.
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -42,19 +68,99 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: E2E Tests (${{ matrix.project }})
+  # ---------------------------------------------------------------------
+  # 1. Plan. Partitions the functional specs deterministically.
+  # ---------------------------------------------------------------------
+  playwright-plan:
+    name: Playwright Plan
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        project:
-          - chromium
-          - mobile-chrome
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      leg_count: ${{ steps.plan.outputs.leg_count }}
+      functional_shards: ${{ steps.plan.outputs.functional_shards }}
+      spec_file_count: ${{ steps.plan.outputs.spec_file_count }}
+      estimated_speedup: ${{ steps.plan.outputs.estimated_speedup }}
+    env:
+      VERIFICATION_OFFLINE: "1"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Emit deterministic leg matrix
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          MATRIX="$(.venv/bin/python -m runtime.verify playwright-plan --shard-count "${SHARD_COUNT:-4}")"
+          # The heredoc terminator must be inside the redirected block, or the matrix is
+          # never published and every leg is skipped with "Matching delimiter not found".
+          # M10-R3 (L1): this projection selects the MATRIX SHAPE, not the payload.
+          # It used to name the six fields it wanted, which meant every field the
+          # runtime added was silently dropped unless five YAML files were edited in the
+          # same commit. `estimated_seconds_serial` and `cpu_peak` (Checkpoint D) were
+          # dropped by all five workflows. Selecting `.include` whole makes that class
+          # of drift impossible: the matrix is whatever the runtime said it is.
+          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
+          {
+            echo "matrix<<MUTMATRIX_EOF"
+            echo "$MATRIX_JSON"
+            echo "MUTMATRIX_EOF"
+            for key in leg_count functional_shards spec_file_count estimated_speedup; do
+              echo "${key}=$(jq -r ".${key}" <<< "$MATRIX")"
+            done
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Playwright legs"
+            echo ""
+            echo "| Leg | Kind | Specs | Est. seconds |"
+            echo "|---|---|---|---|"
+            jq -r '.include[] | "| \(.leg_id) | \(.kind) | \(.file_count) | \(.estimated_seconds) |"' <<< "$MATRIX"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 2. Legs: one runner per (project x functional shard), plus one visual leg per project.
+  # ---------------------------------------------------------------------
+  playwright-leg:
+    name: Playwright ${{ matrix.leg_id }}
+    needs: [playwright-plan]
+    if: needs.playwright-plan.result == 'success' && needs.playwright-plan.outputs.leg_count != '0'
+    runs-on: ubuntu-latest
+    # LITERAL: a matrix job whose own `timeout-minutes` reads `needs.<job>.outputs` is
+    # never created (see mutation.yml). The real budget is enforced with GNU `timeout`.
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      # Each leg forks a browser, a webServer and a seeded database, so this caps
+      # concurrency rather than maximising it.
+      max-parallel: 6
+      matrix: ${{ fromJson(needs.playwright-plan.outputs.matrix) }}
+    env:
+      VERIFICATION_OFFLINE: "1"
+      PLAYWRIGHT_PROJECT: ${{ matrix.project }}
+      CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
+      PLAYWRIGHT_UPDATE_SNAPSHOTS: ${{ inputs.update_snapshots && '1' || '' }}
+      # M10-R3 (L1c): this one CANNOT be removed, and the reason is worth recording.
+      #
+      # The runtime derives a per-leg FINANCE_DB_PATH for itself (execution_shards.
+      # leg_environment), but the seeding step below runs OUTSIDE the runtime —
+      # `tools/e2e_seed.py --reset` plus `rm -f "$FINANCE_DB_PATH"` — so something must
+      # name the file before any runtime code executes. Keeping it here is a real
+      # requirement, not the duplication reconcile.yml just deleted.
+      #
+      # The runtime's `setdefault` semantics mean the value below wins, which is what
+      # makes this consistent rather than a conflict: seed and verify then agree.
+      FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-${{ matrix.leg_id }}.db
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -75,58 +181,194 @@ jobs:
           working-directory: "frontend"
           browsers: chromium
 
-      - name: Run playwright verification (canonical check)
-        env:
-          PLAYWRIGHT_PROJECT: ${{ matrix.project }}
-          CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python
-        run: .venv/bin/python -m runtime.verify playwright
+      - name: Seed deterministic E2E dataset
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "$(dirname "$FINANCE_DB_PATH")"
+          rm -f "$FINANCE_DB_PATH" "$FINANCE_DB_PATH"-wal "$FINANCE_DB_PATH"-shm
+          # A per-leg database file. Two legs sharing one file would be exactly the
+          # cross-spec mutation run_playwright_tests.sh documents as the cause of drifting
+          # screenshots.
+          PYTHONPATH=backend .venv/bin/python tools/e2e_seed.py --reset
 
-      - name: Upload shared artifact — cross-layer-map
+      - name: Run this leg
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p runtime/generated/legs
+          if [ "${{ matrix.kind }}" = "visual" ]; then
+            PASS=visual
+            SPECS=""
+          else
+            PASS=functional
+            SPECS="${{ matrix.spec_files }}"
+          fi
+          set +e
+          # M11-R4. The leg result document used to be assembled inline below with a
+          # `jq -n` that hard-coded `duration_seconds: 0, passed: 0, failed: 0,
+          # errors: 0` — every leg reported zero of everything, whatever it ran — and
+          # carried no fingerprint bracket, which `verify_legs` requires before it may
+          # certify anything. The runtime already knows how to run one leg, count it
+          # from Playwright's own JSON reporter and bracket it, so the workflow now
+          # asks the runtime instead of asserting the outcome in YAML. The document is
+          # still published even when the leg fails: a missing result is
+          # indistinguishable from a leg that never started.
+          timeout --signal=TERM --kill-after=60s "$(( ${LEG_TIMEOUT_SECONDS:-2400} + 60 ))" \
+            .venv/bin/python -m runtime.verify playwright-leg \
+              --leg-id "${{ matrix.leg_id }}" \
+              --project "${{ matrix.project }}" \
+              --kind "$PASS" \
+              --spec-files "$SPECS" \
+              --timeout-seconds "${LEG_TIMEOUT_SECONDS:-2400}" \
+              --result-out "runtime/generated/legs/leg-${{ matrix.leg_id }}.json" \
+              > "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" 2>&1
+          RC=$?
+          set -e
+          # The runtime's own summary line is the leg outcome; the log is the evidence.
+          grep -E "^\[playwright-leg\]" \
+            "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" || true
+          echo "${{ matrix.leg_id }} exit=${RC}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$RC" -ne 0 ]; then
+            echo "::group::${{ matrix.leg_id }} failure detail"
+            grep -E "✗|failed|Error:|Timeout" "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" 2>/dev/null | tail -25 || echo "(no failure lines captured)"
+            tail -20 "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" 2>/dev/null
+            echo "::endgroup::"
+          fi
+          exit "$RC"
+
+      - name: Upload leg result
+        # SINGLE-PATH ROOT — see verification-reconcile.yml for why. With one path the
+        # artifact root IS the directory, so a flat merge lands `leg-<id>.json` exactly
+        # where the gate looks for it.
+        if: always()
         uses: ./.github/actions/upload-runtime
         with:
-          name: cross-layer-map-${{ matrix.project }}
-          path: runtime/generated/cross-layer-map.json
+          name: playwright-result-${{ matrix.leg_id }}
+          path: runtime/generated/legs/leg-${{ matrix.leg_id }}.json
           retention-days: 14
+          if-no-files-found: warn
 
-      - name: Upload shared artifact — knowledge-index
+      - name: Upload leg artifacts
+        if: always()
         uses: ./.github/actions/upload-runtime
         with:
-          name: knowledge-index-${{ matrix.project }}
-          path: runtime/generated/knowledge-index.json
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: playwright-leg-${{ matrix.leg_id }}
+          path: |
+            runtime/generated/legs/
+            # M10-R2 closeout. `_run_profile_alias` streams task output here (the C3
+            # evidence-streaming stabilization), so WITHOUT this the visual-leg failure is
+            # unreadable: the leg's own log holds only the facade's one-line summary.
+            runtime/generated/profile-logs/
+            frontend/test-results/
+            frontend/playwright-report/
           retention-days: 14
+          if-no-files-found: warn
 
-      - name: Upload shared artifact — verification-cache
+      # M11-R4 — a regeneration run must TRANSPORT its output.
+      #
+      # `--update-snapshots` rewrites the baselines in the runner's working tree and
+      # the leg then passes, so a dispatch run reports green — and the rewritten
+      # images die with the runner. Nothing in the workflow ever published them, so
+      # "regenerate on the canonical renderer" was an instruction with no mechanism:
+      # the only way to obtain the new baselines was to read them out of a `-actual.png`
+      # diff, which is exactly what must not happen.
+      #
+      # Only the visual legs carry baselines, and only a dispatch can set the flag, so
+      # this step is gated on both. A functional leg uploads nothing.
+      - name: Upload regenerated visual baselines
+        if: >-
+          always() && matrix.kind == 'visual'
+          && inputs.update_snapshots == true
         uses: ./.github/actions/upload-runtime
         with:
-          name: verification-cache-${{ matrix.project }}
-          path: runtime/generated/verification-cache.json
-          retention-days: 14
-
-      - name: Upload shared artifact — engineering-history
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: engineering-history-${{ matrix.project }}
-          path: runtime/generated/engineering-history.json
-          retention-days: 14
-
-      - name: Upload playwright report
-        uses: ./.github/actions/upload-runtime
-        with:
-          name: playwright-report-${{ matrix.project }}
-          path: frontend/playwright-report/
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: playwright-baselines-${{ matrix.project }}
+          path: frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/
           retention-days: 30
+          if-no-files-found: error
 
-      - name: Upload playwright evidence
+  # ---------------------------------------------------------------------
+  # 3. Gate. Aggregates every leg; the sole verdict.
+  # ---------------------------------------------------------------------
+  playwright-gate:
+    name: Playwright Tests
+    needs: [playwright-plan, playwright-leg]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERIFICATION_OFFLINE: "1"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      # mutation.yml's transport: leg filenames carry the leg id, so flattening every
+      # artifact into ONE directory cannot collide.
+      - name: Download all leg results
+        uses: ./.github/actions/download-runtime
+        with:
+          pattern: "playwright-*"
+          path: runtime/generated/legs
+          merge-multiple: "true"
+
+      # Pure diagnostics, never a verdict. Named so G12 does not read `if: always()` as
+      # failure masking: a transport fault must be distinguishable from a test failure.
+      - name: Job Summary (leg evidence transport)
+        if: always()
+        shell: bash
+        run: |
+          DIR=runtime/generated/legs
+          echo "### Playwright leg evidence transport" >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "$DIR" ]; then
+            echo "**No leg directory at $DIR.** TRANSPORT fault, not a test fault." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- leg results: **$(find "$DIR" -name 'leg-*.json' | wc -l | tr -d ' ')**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Aggregate legs (canonical gate)
+        shell: bash
+        run: |
+          set -uo pipefail
+          AGG=runtime/generated/legs
+          COUNT="${{ needs.playwright-plan.outputs.leg_count }}"
+          if [ -z "$COUNT" ]; then
+            echo "::error::The playwright plan job published no leg count, so the fan-out cannot be verified. Refusing to certify an unverified plan."
+            exit 2
+          fi
+          set +e
+          .venv/bin/python -m runtime.verify playwright-aggregate \
+            --legs "$AGG" \
+            --shard-count "${{ needs.playwright-plan.outputs.functional_shards }}" \
+            --json | tee "$AGG/gate.json"
+          GATE_RC=${PIPESTATUS[0]}
+          set -e
+          if [ "$GATE_RC" -ne 0 ]; then
+            echo "::error::Playwright did not certify. Every declared leg must report and pass, including one visual leg per project."
+          fi
+          exit "$GATE_RC"
+
+      - name: Upload gate report
+        if: always()
         uses: ./.github/actions/upload-runtime
         with:
-          name: playwright-evidence-${{ matrix.project }}
-          path: frontend/test-results/
-          retention-days: 30
+          name: playwright-report
+          path: runtime/generated/legs/
+          retention-days: 14
+          if-no-files-found: warn
 
       - name: Job Summary
         if: always()
-        run: |
-          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
         shell: bash
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY

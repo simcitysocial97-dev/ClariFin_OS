@@ -40,6 +40,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+from runtime.foundation.verification.canonical_control_plane import (
+    _CLASSIFICATION as _CANONICAL_CLASSIFICATION,
+)
+
 
 class CanonicalOperation(str, Enum):
     """The single canonical operator-facing operation vocabulary."""
@@ -134,117 +138,18 @@ def canonical_tree() -> dict[str, Any]:
 #   DUPLICATE — historically existed but collapsed into canonical; rejected
 #   UNREACHABLE — never reachable; preserved only as evidence
 #   TEST-ONLY — used only in tests; never exposed
-_CLASSIFICATION: dict[str, str] = {
-    # compatibility / legacy / deprecated
-    "status": "COMPATIBILITY",
-    "metrics": "COMPATIBILITY",
-    "history": "COMPATIBILITY",
-    "deps": "COMPATIBILITY",
-    "verify-status": "COMPATIBILITY",
-    "analytics": "COMPATIBILITY",
-    "health": "DUPLICATE",  # canonical: doctor
-    "doctor": "CANONICAL",
-    "ci-doctor": "COMPATIBILITY",
-    "diagnose": "DUPLICATE",  # canonical: diagnose
-    "diagnose-failures": "DEPRECATED",
-    "plan": "DUPLICATE",  # canonical: plan (legacy alias)
-    "reconcile": "DEPRECATED",  # canonical: ci
-    "exec-evidence": "DEPRECATED",  # canonical: ci
-    "deep-contract": "DEPRECATED",  # canonical: inspect plan
-    "local-gate": "DEPRECATED",  # canonical: plan
-    "affected": "DEPRECATED",  # canonical: plan
-    "repair": "DEPRECATED",  # canonical: plan
-    "risk": "DEPRECATED",  # canonical: plan
-    "integrity": "DEPRECATED",  # canonical: doctor
-    "knowledge": "DEPRECATED",  # canonical: inspect capabilities
-    "dashboard": "DEPRECATED",
-    "intelligence": "DEPRECATED",
-    "certify-v4": "COMPATIBILITY",
-    "certify-v5": "COMPATIBILITY",
-    "intelligence-audit": "DEPRECATED",
-    "audit": "DEPRECATED",
-    "api-contracts": "CANONICAL_ALIAS",  # canonical: contracts profile
-    "contract-governance": "DEPRECATED",
-    "mutation": "DEPRECATED",  # canonical: strengthen
-    "measurement-truth": "DEPRECATED",
-    "measurement": "DEPRECATED",
-    "evidence-plan": "DEPRECATED",  # canonical: plan
-    "verification-contract": "DEPRECATED",
-    "evidence-execute": "DEPRECATED",  # canonical: run
-    "evidence-reconcile": "DEPRECATED",  # canonical: ci
-    "evidence-certify": "DEPRECATED",  # canonical: certify
-    "enforce": "DEPRECATED",
-    "mutation-inventory": "DEPRECATED",
-    "mutation-intel": "DEPRECATED",
-    "forensic-diagnose": "DEPRECATED",  # canonical: diagnose
-    "forensic-report": "DEPRECATED",
-    "strengthen-analyze": "DEPRECATED",  # canonical: strengthen
-    "strengthen-discover": "DEPRECATED",
-    "strengthen-propose": "DEPRECATED",
-    "strengthen-validate": "DEPRECATED",
-    "strengthen-survivor-forensic": "DEPRECATED",
-    "strengthen-report": "DEPRECATED",
-    "env-check": "COMPATIBILITY",
-    "env-contract": "DEPRECATED",
-    "what-should-i-run": "DEPRECATED",  # canonical: plan
-    "capability-inventory": "DEPRECATED",  # canonical: inspect capabilities
-    "control-plane-plan": "DEPRECATED",
-    "resolve-capabilities": "DEPRECATED",
-    "strengthen-capability": "DEPRECATED",  # canonical: strengthen
-    "strengthen-survivor": "DEPRECATED",
-    "measurement-truth-report": "DEPRECATED",
-    "blast-radius": "DEPRECATED",
-    "execution-plan": "DEPRECATED",  # canonical: plan
-    "execute": "DEPRECATED",  # canonical: run
-    "execution-status": "DEPRECATED",  # canonical: inspect evidence
-    "execution-report": "DEPRECATED",
-    "capabilities": "DEPRECATED",  # canonical: inspect capabilities
-    "capability-for": "DEPRECATED",
-    "capability-graph": "DEPRECATED",
-    "bypass-audit": "DEPRECATED",
-    "bypass-enforcement": "DEPRECATED",
-    "pipeline-enforcement": "DEPRECATED",
-    "scenarios": "DEPRECATED",
-    "evidence-integrity": "DEPRECATED",
-    "strengthening-integration": "DEPRECATED",
-    "cross-capability-impact": "DEPRECATED",
-    "config-authority-verify": "DEPRECATED",
-    "efficiency": "DEPRECATED",
-    "regression": "DEPRECATED",  # canonical: check
-    "certify": "CANONICAL",
-    "latent-audit": "DEPRECATED",
-    "config-authority": "DEPRECATED",
-    "generate-test": "DEPRECATED",  # canonical: strengthen
-    "c53-scenarios": "DEPRECATED",
-    "c53-certify": "DEPRECATED",
-    "convergence-status": "DEPRECATED",
-    "coverage-analysis": "DEPRECATED",
-    "mutation-analysis": "DEPRECATED",
-    "gap-analysis": "DEPRECATED",
-    "convergence-plan": "DEPRECATED",
-    "threshold-assessment": "DEPRECATED",
-    "converge": "DEPRECATED",
-    "help-resolve": "DEPRECATED",
-    # profiles — top-level alias for check (legacy: profile invocation)
-    "quick": "CANONICAL_ALIAS",  # canonical: check
-    "backend": "CANONICAL_ALIAS",
-    "frontend": "CANONICAL_ALIAS",
-    "contracts": "CANONICAL_ALIAS",
-    "graph": "CANONICAL_ALIAS",
-    "full": "CANONICAL_ALIAS",
-    "runtime": "CANONICAL_ALIAS",
-    "golden": "CANONICAL_ALIAS",
-    "playwright": "CANONICAL_ALIAS",
-    # C71: sharded mutation campaign aggregate gate. First-class (not a legacy
-    # token) because the sharded campaign is the authoritative mutation gate;
-    # the single-process `mutation` command is only the per-shard executor.
-    "mutation-aggregate": "CANONICAL",
-    "mutation-plan": "CANONICAL",
-    # C71: mutation measurement trust + survivor forensics. First-class because
-    # the sharded campaign's scores are meaningless unless the measurement
-    # itself is certified; this is the command that can refuse certification.
-    "mutation-trust": "CANONICAL",
-}
+# M10-R3 (L8): this module used to carry its OWN `_CLASSIFICATION` table.
+#
+# That was a second authority for a decision the canonical registry already made, and
+# the two disagreed on **12 entries** — including three commands (`mutation-plan`,
+# `mutation-aggregate`, `mutation-trust`) that the facade routes but the canonical table
+# did not contain, and two that were DUPLICATE here but CANONICAL canonically.
+#
+# `classification_for()` is called from tests only, so the drift was invisible: nothing
+# in production read either table, and the disagreement could not surface as a failure.
+#
+# It is now a re-export. One answer, one place.
+_CLASSIFICATION = _CANONICAL_CLASSIFICATION
 
 
 def classification_for(token: str) -> str:

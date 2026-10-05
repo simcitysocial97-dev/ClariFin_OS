@@ -1,10 +1,19 @@
+import subprocess
+import sys
+
+# `sys.executable` (the repository-root .venv interpreter) is used rather than a
+# bare "python": a bare name resolves through PATH to the SYSTEM interpreter,
+# which runs this same CLI ~3x slower (measured 23.41s vs 7.73s for
+# `runtime.verify plan --scope backend`) and is outside the environment
+# AGENTS.md declares canonical. Full measurement and rationale in
+# runtime/tests/test_concurrent_stress.py.
+
+
 def test_incremental_mutation_with_no_coverage():
     """Incremental mutation must handle engines with no test coverage."""
-    import subprocess
-
     result = subprocess.run(
         [
-            "python",
+            sys.executable,
             "-m",
             "runtime.verify",
             "strengthen",
@@ -22,11 +31,9 @@ def test_incremental_mutation_with_no_coverage():
 
 def test_mutation_with_nonexistent_engine():
     """Mutation must handle requests for engines that don't exist."""
-    import subprocess
-
     result = subprocess.run(
         [
-            "python",
+            sys.executable,
             "-m",
             "runtime.verify",
             "strengthen",

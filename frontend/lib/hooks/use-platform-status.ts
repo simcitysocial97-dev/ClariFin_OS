@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 
 export interface PlatformStatusData {
   repository: string;
@@ -39,7 +39,7 @@ export function usePlatformStatus() {
     queryKey: ['platform', 'status'],
     queryFn: () => apiFetchJson('/platform/v1/status') as Promise<PlatformStatusResponse>,
     staleTime: STALE_TIME_MS,
-    retry: transientRetryPolicy,
+    retry: platformReadRetry,
   });
 }
 

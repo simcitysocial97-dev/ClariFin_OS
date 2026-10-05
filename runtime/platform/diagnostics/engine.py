@@ -18,6 +18,7 @@ history · change · recommended verification.
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import logging
@@ -25,7 +26,6 @@ from pathlib import Path
 from typing import Any
 
 from runtime.platform.api.services._helpers import envelope, now_iso
-import functools
 
 logger = logging.getLogger(__name__)
 

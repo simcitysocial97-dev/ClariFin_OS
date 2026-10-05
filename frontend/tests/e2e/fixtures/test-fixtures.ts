@@ -243,6 +243,19 @@ export const test = base.extend<TestFixtures>({
         const root = document.getElementById('__next') || document.body;
         return root && root.children.length > 0;
       }, { timeout: 10000 });
+
+      // M10-R3 (L7): await web fonts before the caller may screenshot or assert.
+      //
+      // Without this, `document.fonts.ready` resolving *after* the capture means the
+      // pixels recorded are the fallback face, and the baseline silently encodes a font
+      // that was never used. Symptom: a visual suite that passes locally (fonts warm in
+      // the OS cache) and fails on a cold CI runner. `document.fonts.ready` resolves
+      // immediately when no web fonts are pending, so this cannot slow the common path.
+      await page.evaluate(async () => {
+        if (document.fonts && 'ready' in document.fonts) {
+          await document.fonts.ready;
+        }
+      });
     };
 
     await use(waitForPageReady);

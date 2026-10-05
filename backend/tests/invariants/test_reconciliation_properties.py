@@ -296,8 +296,11 @@ def test_bipartite_matching_property(
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_edge_cases_property(transactions, reconciliation_db: str):
+def test_edge_cases_property(
+    transactions, reconciliation_db: str, _pristine_db_template: Path
+):
     """Property: Handle edge cases (zero or single transaction)."""
+    reconciliation_db = _fresh_reconciliation_db(_pristine_db_template)
     conn = sqlite3.connect(reconciliation_db)
     try:
         for txn in transactions:

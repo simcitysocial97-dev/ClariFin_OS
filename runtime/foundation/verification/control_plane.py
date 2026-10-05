@@ -36,6 +36,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal, cast
 
+from runtime.foundation.verification.execution_orchestrator import (
+    REGISTRY_MAPPING_KIND,
+)
 from runtime.foundation.verification.capability_contract import (
     CapabilityContractRegistry,
     CapabilityMissing,
@@ -95,6 +98,11 @@ class VerificationTask:
     is_mandatory: bool
     is_escalation: bool
     reason: str
+    # M10-R3 (L6): the concrete capabilities this task covers, when they differ from
+    # `capability_id`. Used by the registry-mapping obligation, whose `capability_id`
+    # is a COUNT (`unmapped:UNMAPPED[3]`) and therefore not actionable on its own —
+    # the first CI run reported "three unmapped" without naming any of them.
+    capabilities: list[str] = field(default_factory=list)
     evidence_reused: list[str] = field(default_factory=list)
     evidence_invalidated: list[str] = field(default_factory=list)
     measurement_required: list[MeasurementKind] = field(default_factory=list)
@@ -297,23 +305,45 @@ class ControlPlanePlanner:
         # names every unmapped path is the same control with a usable signal.
         if resolution.unmapped_blast_capabilities:
             unmapped = sorted(resolution.unmapped_blast_capabilities)
-            listed = "\n".join(f"    - {item}" for item in unmapped)
             tasks.append(
                 VerificationTask(
                     task_id="task-unmapped-review",
                     capability_id=f"unmapped:UNMAPPED[{len(unmapped)}]",
-                    verification_kind="capability",
-                    command=(
-                        "echo 'UNMAPPED capabilities require review "
-                        f"({len(unmapped)}):\n{listed}' && exit 1"
-                    ),
+                    # M10-R3 (L6): this obligation is no longer a shell command.
+                    #
+                    # It was `echo 'UNMAPPED capabilities ...' && exit 1`, which made a
+                    # registry fact indistinguishable from a failing test: it cost a
+                    # spawn, a timeout budget and an evidence directory to express
+                    # something already known before anything ran; the record said
+                    # "command exit 1"; and the verdict said "run the diagnostic path",
+                    # which cannot resolve a missing mapping.
+                    #
+                    # Nothing is weakened — still mandatory, still fails closed. The
+                    # condition is now named, decided by the runtime where the knowledge
+                    # is, and reported as a review obligation.
+                    verification_kind=REGISTRY_MAPPING_KIND,
+                    # M10-R3: the ACTUAL names travel with the obligation.
+                    #
+                    # The label above is a count — `unmapped:UNMAPPED[3]` — and a
+                    # count is not actionable. The first CI run of this reported
+                    #
+                    #   exec-0006 [registry_gap] no verification-registry mapping for:
+                    #   unmapped:UNMAPPED[3]
+                    #
+                    # which tells an operator that three capabilities are unmapped and
+                    # not which three. The resolver already knows; the names were being
+                    # dropped between it and the report. They now ride on the task, so
+                    # the executor's existing diagnostic lists them.
+                    capabilities=tuple(unmapped),
+                    command="",
                     profile="unmapped-review",
                     is_mandatory=True,
                     is_escalation=False,
                     reason=(
                         f"{len(unmapped)} change(s) resolved to a capability with no "
                         "verification-registry mapping; blocked pending a single "
-                        "review obligation. The full list is in the task command."
+                        "review obligation. The runtime reports the list in the task "
+                        "record and the certification document."
                     ),
                 )
             )

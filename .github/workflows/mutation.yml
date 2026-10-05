@@ -3,7 +3,9 @@
 # PURPOSE: Mutation testing — measures test effectiveness and gates quality.
 # RESPONSIBILITY: delegate to the canonical verification runtime. Rule 1: no
 # engineering logic in YAML. Rule 2: single responsibility. Rule 8: delegate to
-# `runtime.verify`. Rule 9: append `runtime.verify doctor` summary.
+# `runtime.verify`. Rule 9: append `runtime.verify status` summary.
+# (`runtime.verify doctor` is retained below only as the pre-campaign
+# environment preflight, not as the Rule 9 summary.)
 #
 # M9-C71 — SHARDED AUTHORITATIVE CAMPAIGN
 # --------------------------------------
@@ -100,7 +102,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -136,7 +138,7 @@ jobs:
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — smoke" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
         shell: bash
 
   mutation-plan:
@@ -160,7 +162,7 @@ jobs:
       mode: ${{ steps.plan.outputs.mode }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -223,7 +225,13 @@ jobs:
           # reads: `shard`, `component`, `tier`, `file_count`, `byte_size`,
           # `source_paths`. `reasons` and the metadata stay in `$MATRIX`, which
           # the run summary below still reads.
-          MATRIX_JSON="$(jq -c '{include: [.include[] | {shard, component, tier, file_count, byte_size, source_paths}]}' <<< "$MATRIX")"
+          # M10-R3 (L1): this projection selects the MATRIX SHAPE, not the payload.
+          # It used to name the six fields it wanted, which meant every field the
+          # runtime added was silently dropped unless five YAML files were edited in the
+          # same commit. `estimated_seconds_serial` and `cpu_peak` (Checkpoint D) were
+          # dropped by all five workflows. Selecting `.include` whole makes that class
+          # of drift impossible: the matrix is whatever the runtime said it is.
+          MATRIX_JSON="$(jq -c '{include: .include}' <<< "$MATRIX")"
           echo "Matrix published: $(jq -r '.include | length' <<< "$MATRIX_JSON") shard(s), ${#MATRIX_JSON} bytes" >> $GITHUB_STEP_SUMMARY
           {
             echo "matrix<<MUTMATRIX_EOF"
@@ -250,7 +258,7 @@ jobs:
             echo ""
             echo "| Shard | Component | Selected because |"
             echo "|-------|-----------|------------------|"
-            jq -r '.include[] | "| \(.shard) | \(.component) | \(.reasons | join(", ") // "full campaign") |"' <<< "$MATRIX" >> $GITHUB_STEP_SUMMARY
+            jq -r '.include[] | "| \(.shard) | \(.component) | \(.reasons // "full campaign") |"' <<< "$MATRIX" >> $GITHUB_STEP_SUMMARY
             echo ""
           } >> $GITHUB_STEP_SUMMARY
 
@@ -302,7 +310,7 @@ jobs:
       matrix: ${{ fromJson(needs.mutation-plan.outputs.matrix) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -399,7 +407,7 @@ jobs:
             echo "⚠️ No shard summary was produced — the aggregate gate will fail this shard." >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
 
   mutation-replay:
     name: Mutation Replay (no measurement)
@@ -419,7 +427,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -463,7 +471,7 @@ jobs:
           echo "Reconciling evidence from run $RUN_ID." >> $GITHUB_STEP_SUMMARY
 
       - name: Download shard evidence from the prior run
-        uses: actions/download-artifact@v7.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: "mutation-shard-*"
           path: runtime/generated/mutation-shards
@@ -564,7 +572,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -688,7 +696,7 @@ jobs:
             fi
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          .venv/bin/python -m runtime.verify doctor >> $GITHUB_STEP_SUMMARY
+          .venv/bin/python -m runtime.verify status >> $GITHUB_STEP_SUMMARY
 
       - name: Enforce campaign gate
         if: always()

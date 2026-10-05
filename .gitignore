@@ -31,7 +31,14 @@ clarinfin_verification.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-memory-bank/
+# memory-bank/ and .kilo/plans/ hold deliberate, long-lived records — the
+# project brief, architecture notes, and the plan documents that are the audit
+# trail for past recovery work. They are version-controlled on purpose. Both
+# were previously matched by blanket ignore rules that contradicted 27 already
+# tracked files; those rules are removed rather than negated, because git does
+# not descend into an excluded directory and a `!` exception there is
+# unreachable for any new file. .kilo/node_modules/ and .kilo/worktrees/ stay
+# ignored — those really are machine-local.
 test-results/
 dependency-reports/
 
@@ -68,7 +75,6 @@ Thumbs.db
 .idea/
 .sublime-*
 .cursor/
-.kilo/plans/
 .kilo/worktrees/
 
 # ═══════════════════════════════════════════════════════════
@@ -189,6 +195,18 @@ runtime/generated/**/symbol-test-map.json
 # is a per-run execution log: one line appended per run, read by nothing, and
 # rewritten in place, so a tracked copy is a fixed point of a moving target.
 runtime/generated/git-fetch-events.jsonl
+# engineering-events.jsonl / engineering-history.json are the same class of
+# append-only run telemetry: every verification run appends a
+# VerificationCompleted event and rewrites the derived history document. The
+# canonical contracts gate alone dirties both, so a tracked copy is a fixed
+# point of a moving target and makes an otherwise clean worktree dirty after
+# every run. Same rationale as git-fetch-events.jsonl above.
+runtime/generated/engineering-events.jsonl
+runtime/generated/engineering-history.json
+# backend/.coverage is coverage.py's binary data file, rewritten by every
+# coverage run. It is machine-local state, not source.
+backend/.coverage
+.coverage
 
 # ── Regenerable bulk: machine-local mtime caches ──
 # frontend-backend-map.json is a cache keyed by absolute path and mtime
@@ -223,6 +241,13 @@ runtime/generated/mutation-shards/
 # runtime/generated/ai-runs/ is the AI orchestrator's per-run state, one
 # JSON document per run, rewritten by every orchestrated run.
 runtime/generated/ai-runs/
+# runtime/generated/launcher/ is the canonical startup launcher's transient
+# state: state/*.pid (process ids of the components it started) and
+# logs/*.log. These belong to one running machine, not to the repository —
+# committing one machine's pids makes every other checkout's launcher believe
+# a foreign process is its own, which is exactly the machine-wide teardown
+# hazard the launcher already guards against.
+runtime/generated/launcher/
 
 # ── Contract / reference artifacts ──
 # frontend/generated/openapi-current.json is the committed API contract
@@ -262,3 +287,8 @@ backend/tests/mutation_trust/canary/*-sentinel-sink.jsonl
 backend/tests/mutation_trust/canary/mutants/
 backend/tests/mutation_trust/canary/.mutmut-cache/
 backend/tests/mutation_trust/canary/__pycache__/
+
+# M10-R3 C: crash-safe mutation toolchain backup (restored+consumed by the runtime).
+# Tracked never; a leftover copy means a campaign died mid-flight.
+backend/.pyproject.toml.m10r3-backup
+backend/.pyproject.toml.m10r3-tmp

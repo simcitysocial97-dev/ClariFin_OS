@@ -23,6 +23,25 @@ interface CashflowChartProps {
   months?: number;
 }
 
+const MONTH_TICK_FORMATTER = new Intl.DateTimeFormat('en-IN', {
+  month: 'short',
+  year: '2-digit',
+  timeZone: 'UTC',
+});
+
+/**
+ * M10-A3: the X axis was bound to `month_label`, a key the API does not emit —
+ * `GET /api/v1/cashflow/monthly` returns `{ month: "2026-01", income_paise,
+ * expenses_paise, net_paise, transaction_count }` (the field name is asserted by
+ * `__tests__/use-cashflow.test.ts`). The axis therefore rendered with no labels
+ * at all. The tick is derived from the real `month` key.
+ */
+function formatMonthTick(month: string): string {
+  const [year, monthNumber] = month.split('-').map(Number);
+  if (!year || !monthNumber) return month;
+  return MONTH_TICK_FORMATTER.format(new Date(Date.UTC(year, monthNumber - 1, 1)));
+}
+
 export function CashflowChart({ months = 6 }: CashflowChartProps) {
   const { data, isLoading, isError, refetch } = useCashflow(months);
 
@@ -54,7 +73,6 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
         isError={isError}
         isEmpty={isEmpty}
         onRetry={refetch}
-        title="Cashflow Trend"
       >
         {data && data.months && data.months.length > 0 && (
           <div className="h-[300px]">
@@ -79,10 +97,12 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
                   vertical={false}
                 />
                 <XAxis
-                  dataKey="month_label"
+                  dataKey="month"
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
+                  tickFormatter={formatMonthTick}
+                  minTickGap={16}
                 />
                 <YAxis
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
@@ -99,7 +119,8 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
                     color: 'hsl(var(--popover-foreground))',
                     fontSize: '12px',
                   }}
-                  formatter={(value) => [formatINR(Number(value)), '']}
+                  labelFormatter={(label) => `Month: ${formatMonthTick(String(label))}`}
+                  formatter={(value, name) => [formatINR(Number(value)), String(name)]}
                 />
                 <Legend
                   wrapperStyle={{ fontSize: '12px' }}
@@ -113,7 +134,7 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
                   barSize={20}
                 />
                 <Bar
-                  dataKey="expense_paise"
+                  dataKey="expenses_paise"
                   name="Expense"
                   fill="url(#expenseBar)"
                   radius={[4, 4, 0, 0]}

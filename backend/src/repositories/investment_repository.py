@@ -1,5 +1,6 @@
 """Investment domain repository."""
 
+from datetime import date
 from typing import Any
 
 from src.models.investment import Investment
@@ -51,34 +52,53 @@ class InvestmentRepository(BaseRepository):
         investment_type: str,
         invested_paise: int,
         current_value_paise: int,
-        platform: str | None = None,
+        as_of_date: str | None = None,
         units: float | None = None,
-        purchase_date: str | None = None,
-        maturity_date: str | None = None,
-        linked_account_id: int | None = None,
+        buy_price_paise: int | None = None,
+        current_price_paise: int | None = None,
         notes: str | None = None,
     ) -> int:
-        """Create a new investment record."""
+        """Create a new investment record.
+
+        The parameters and the INSERT column list are derived from the same
+        ``investments`` DDL (``backend/src/core/db/schema.py``). Columns absent
+        from that DDL (``platform``, ``purchase_date``, ``maturity_date``,
+        ``linked_account_id``) were previously named here; they do not exist on
+        the table, so every create failed. ``as_of_date`` is NOT NULL in the
+        DDL and therefore always supplied.
+        """
+        columns = (
+            "name",
+            "investment_type",
+            "invested_paise",
+            "current_value_paise",
+            "as_of_date",
+            "units",
+            "buy_price_paise",
+            "current_price_paise",
+            "notes",
+        )
+        values: tuple[Any, ...] = (
+            name,
+            investment_type,
+            invested_paise,
+            current_value_paise,
+            as_of_date if as_of_date else date.today().isoformat(),
+            units,
+            buy_price_paise,
+            current_price_paise,
+            notes,
+        )
+        assert len(columns) == len(values), (
+            f"investment INSERT column/value count mismatch: "
+            f"{len(columns)} columns vs {len(values)} values"
+        )
+        placeholders = ", ".join("?" for _ in columns)
         with self._get_conn() as conn:
             cur = conn.execute(
-                """
-                INSERT INTO investments (name, investment_type, invested_paise,
-                                       current_value_paise, units, purchase_date,
-                                       maturity_date, linked_account_id, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    name,
-                    investment_type,
-                    platform,
-                    invested_paise,
-                    current_value_paise,
-                    units,
-                    purchase_date,
-                    maturity_date,
-                    linked_account_id,
-                    notes,
-                ),
+                f"INSERT INTO investments ({', '.join(columns)}) "
+                f"VALUES ({placeholders})",
+                values,
             )
             conn.commit()
         return cur.lastrowid or 0

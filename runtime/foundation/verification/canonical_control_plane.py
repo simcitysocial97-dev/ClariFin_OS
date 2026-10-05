@@ -146,6 +146,24 @@ _CLASSIFICATION: dict[str, str] = {
     "certify": "CANONICAL",
     "ci": "CANONICAL",
     "doctor": "CANONICAL",
+    # M10-R3 (D2): the local reference harness.
+    #
+    # Classified CANONICAL_ALIAS rather than CANONICAL because it introduces no new
+    # execution semantics — it is a front-end over `plan` + `run --shard`, and it must
+    # stay that way. If it were a distinct operation it would grow its own planner or
+    # verdict, and local execution would then drift from CI by construction, which is
+    # the failure this milestone exists to prevent.
+    "local": "CANONICAL_ALIAS",
+    # M10-R3 (L8): the mutation campaign's planning, aggregation and trust commands.
+    #
+    # These were recorded as CANONICAL in cli_surface.py and routed by the facade, but
+    # were **missing from this table** — so the canonical registry did not know three
+    # commands it actually serves. A second classification authority disagreed with the
+    # canonical one on 12 entries in total. cli_surface now delegates here, so this is
+    # the only place the answer lives.
+    "mutation-plan": "CANONICAL",
+    "mutation-aggregate": "CANONICAL",
+    "mutation-trust": "CANONICAL",
     # compatibility / legacy / deprecated
     "status": "COMPATIBILITY",
     "metrics": "COMPATIBILITY",

@@ -1,0 +1,52 @@
+{
+  "schema": "m10r3-certification-run/v1",
+  "plan_id": "execplan-ea2eac0e5ca2",
+  "decision": "diagnostic",
+  "reason": "mandatory obligation(s) failed: exec-0003, exec-0009 \u2014 run the diagnostic path",
+  "exit_code": 5,
+  "duration_seconds": 1183.4527042289992,
+  "fingerprint_before": null,
+  "fingerprint_after": null,
+  "fingerprint_stable": false,
+  "obligations": [
+    {
+      "task_id": "exec-0002",
+      "state": "pass",
+      "is_mandatory": true,
+      "detail": "ok"
+    },
+    {
+      "task_id": "exec-0003",
+      "state": "failed",
+      "is_mandatory": true,
+      "detail": "would reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/integration/cross_layer/test_journey_investment_mutation.py\nwould reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_forecast_provenance.py\nwould reformat /home/vasantha/AI-Projects/ClariFin_OS/backend/tests/unit/services/test_m11_behaviour_workspace_provenance.py\nwould reformat /home/vasantha/AI-"
+    },
+    {
+      "task_id": "exec-0004",
+      "state": "pass",
+      "is_mandatory": true,
+      "detail": "ok"
+    },
+    {
+      "task_id": "exec-0009",
+      "state": "failed",
+      "is_mandatory": true,
+      "detail": "UNMAPPED capabilities require review (6):\n    - UNMAPPED:frontend/playwright.config.ts\n    - frontend:component:frontend-graph:investments\n    - frontend:frontend_dto_type:frontend-shared:forecast-view-model\n    - frontend:frontend_utility:frontend-shared:global-setup\n    - useForecastCapability\n    - useInvestmentsCapability"
+    },
+    {
+      "task_id": "exec-0011",
+      "state": "pass",
+      "is_mandatory": false,
+      "detail": "ok"
+    }
+  ],
+  "topology": "reconcile-shard-6-of-7",
+  "plan_fingerprint": "ea2eac0e5ca272a78f93a22973453f6b54ebc9bba71e34f967476226ff3f693a",
+  "tasks_executed": [
+    "exec-0002",
+    "exec-0003",
+    "exec-0004",
+    "exec-0009",
+    "exec-0011"
+  ]
+}

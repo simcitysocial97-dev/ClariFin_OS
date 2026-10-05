@@ -25,34 +25,39 @@ export const queryKeys = {
   categories: ['categories'] as const,
   upload: ['upload'] as const,
   export: (params?: any) => ['export', params] as const,
-  overview: (params?: any) => ['overview', params] as const,
+  overview: ['overview'] as const,
 };
 
 // ============================================================================
 // useOverview
 // ============================================================================
 
-export async function fetchOverview(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): Promise<OverviewData> {
-  const query = new URLSearchParams();
-  if (params?.exclude_transfers) query.set('exclude_transfers', 'true');
-  if (params?.member) query.set('member', params.member);
-  
-  const res = await apiFetch(`/api/overview?${query}`);
+/**
+ * Overview totals, for cache invalidation after a statement upload.
+ *
+ * M10-A3: this requested `/api/overview`. The backend exposes overview only at
+ * `/api/v1/overview` (`backend/src/routers/transactions.py`), so every call
+ * returned HTTP 404 — verified against the running API. Its only consumer is
+ * `components/upload/upload-modal.tsx`, which calls it purely to invalidate
+ * cached totals after an upload, so the failure was silent: the upload
+ * reported success while the overview cache was never refreshed and the
+ * dashboard kept showing pre-upload totals.
+ *
+ * The sibling `useOverview` in `lib/hooks/use-overview.ts` already targets the
+ * correct path and validates the response against `OverviewSchema`; the path
+ * here is corrected to match, and a failure is surfaced rather than swallowed.
+ * `exclude_transfers` / `member` are dropped: the registered backend route
+ * takes no such parameters, so sending them would imply filtering that is not
+ * applied.
+ */
+export async function fetchOverview(): Promise<OverviewData> {
+  const res = await apiFetch(`/api/v1/overview`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
-export function useOverviewQuery(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): HookState<OverviewData> {
-  return useAsyncQuery(
-    queryKeys.overview(params),
-    () => fetchOverview(params)
-  );
+export function useOverviewQuery(): HookState<OverviewData> {
+  return useAsyncQuery(queryKeys.overview, () => fetchOverview());
 }
 
 // ============================================================================

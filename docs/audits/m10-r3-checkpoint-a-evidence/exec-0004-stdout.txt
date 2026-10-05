@@ -1,0 +1,35 @@
+>> pytest tests/properties
+........................................................................ [ 19%]
+........................................................................ [ 38%]
+........................................................................ [ 58%]
+.............x.......................................................... [ 77%]
+........................................................................ [ 97%]
+...........                                                              [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+370 passed, 1 xfailed, 1 warning in 78.47s (0:01:18)
+>> pytest tests/unit/engines/loan
+........................................................................ [ 37%]
+........................................................................ [ 74%]
+..................................................                       [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+194 passed, 1 warning in 5.12s
+>> pytest tests/unit/engines/reconciliation
+........................................................................ [ 96%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+../.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487
+  /home/vasantha/AI-Projects/ClariFin_OS/.venv/lib/python3.12/site-packages/_hypothesis_pytestplugin.py:487: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+75 passed, 1 warning in 22.81s

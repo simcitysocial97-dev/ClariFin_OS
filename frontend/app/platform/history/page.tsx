@@ -11,7 +11,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetchJson } from '@/lib/api/gateway';
+import { apiFetchJson, platformReadRetry } from '@/lib/api/gateway';
 import { HealthBadge } from '@/components/platform/health-badge';
 import {
   Clock,
@@ -54,12 +54,14 @@ export default function HistoryPage() {
     queryKey: ['platform', 'history', 'runs'],
     queryFn: () => apiFetchJson('/platform/v1/history/runs') as Promise<HistoryResponse>,
     staleTime: 60_000,
+    retry: platformReadRetry,
   });
 
   const { data: baselineData } = useQuery<BaselineResponse, Error>({
     queryKey: ['platform', 'history', 'baselines'],
     queryFn: () => apiFetchJson('/platform/v1/history/baselines') as Promise<BaselineResponse>,
     staleTime: 120_000,
+    retry: platformReadRetry,
   });
 
   const runs = historyData?.data?.items ?? [];

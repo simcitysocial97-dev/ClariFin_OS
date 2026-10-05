@@ -1048,7 +1048,18 @@ def plan_payload(
                 "byte_size": s.byte_size,
                 "file_count": len(s.files),
                 "source_paths": " ".join(s.files),
-                "reasons": reasons.get(s.shard_id, []),
+                # M10-R3 (L8): a SCALAR, joined for the same reason `source_paths`
+                # is. A GitHub Actions matrix cell must be a scalar — a list here is
+                # rejected or silently stringified depending on the runner path, and
+                # which one you got is not something to discover in production.
+                #
+                # This was a live runtime defect, invisible until the hand-written
+                # workflow projection was removed: the projection happened to drop
+                # `reasons`, so no matrix ever carried it. `test_m9_c71_mutation_
+                # campaign::test_the_published_matrix_carries_nothing_but_include`
+                # asserts the scalar invariant and caught it the moment the duplication
+                # stopped masking it.
+                "reasons": ", ".join(reasons.get(s.shard_id, [])),
             }
             for s in shards
         ],

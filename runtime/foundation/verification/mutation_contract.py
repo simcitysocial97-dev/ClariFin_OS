@@ -127,6 +127,42 @@ class MutationResult:
     # implementation executed, so the two are recorded separately and joined by
     # the mutation trust analysis.
     execution_sentinel_path: str = ""
+    # ── M10-R3 C: budget authority + toolchain restoration provenance ───────
+    # The budget the *plan* declared for this obligation, and the budget the
+    # executor actually enforced.
+    #
+    # These were silently different and nothing recorded either. A `target` campaign
+    # task declares `timeout_seconds=1200` (execution_orchestrator._timeout_for) while
+    # `DEFAULT_RUNTIME["target"] = 4200` is what mutation_runner enforces — the
+    # declared budget is 3.5x smaller than the real one. Consequences: the runtime
+    # could not tell whether a killed campaign had hit its own timeout or been
+    # terminated externally, and a workflow sizing its job `timeout-minutes` from the
+    # declared value would be sizing it from a number that does not exist.
+    #
+    # Recorded on every result so the divergence is visible in the evidence rather
+    # than inferred from two modules.
+    declared_timeout_seconds: int = 0
+    enforced_timeout_seconds: int = 0
+    # Whether the mutation toolchain config (`backend/pyproject.toml`) was restored
+    # to its exact original content by the end of the run.
+    #
+    # This is load-bearing for more than this campaign: that file is in the
+    # repository fingerprint's `config_hash`, so an unrestored config makes the *next*
+    # run report VALIDATION_BLOCKED for a reason that has nothing to do with the next
+    # run's code.
+    toolchain_restored: bool = True
+    # True when this run repaired a config backup left behind by a previously killed
+    # run. A non-zero count is evidence that a SIGKILL happened at some point.
+    recovered_stale_backup: bool = False
+    # The fingerprint bracket this campaign executed inside (M10-R3 B2). Mutation
+    # rewrites repository files *by design*, so a naive drift check would always
+    # report drift; the bracket is what distinguishes "restored exactly" from
+    # "left mutated", and is recorded rather than asserted.
+    fingerprint_before: dict | None = None
+    fingerprint_after: dict | None = None
+    fingerprint_stable: bool = True
+    # The shared authority's verdict for this campaign.
+    certification_decision: str = ""
 
     @property
     def mutants_generated(self) -> int:
@@ -140,7 +176,15 @@ class MutationResult:
         )
 
     def to_dict(self) -> dict:
-        return {
+        """Serialise, including the M10-R3 budget/toolchain provenance.
+
+        Hand-written rather than ``asdict`` (this dataclass predates that choice and
+        has a nested shape). The M10-R3 fields are included explicitly because a
+        hand-written serialiser silently omits any newly added field — which is how
+        the declared-vs-enforced budget divergence stayed invisible: the fields did
+        not exist, and had they, omitting them would have been the same outcome.
+        """
+        base = {
             "run_id": self.run_id,
             "repository_sha": self.repository_sha,
             "tree_sha": self.tree_sha,
@@ -175,7 +219,17 @@ class MutationResult:
             "execution_log_path": self.execution_log_path,
             "execution_sentinel_path": self.execution_sentinel_path,
             "shard_id": self.shard_id,
+            # M10-R3 C: budget authority + toolchain restoration provenance.
+            "declared_timeout_seconds": self.declared_timeout_seconds,
+            "enforced_timeout_seconds": self.enforced_timeout_seconds,
+            "toolchain_restored": self.toolchain_restored,
+            "recovered_stale_backup": self.recovered_stale_backup,
+            "fingerprint_before": self.fingerprint_before,
+            "fingerprint_after": self.fingerprint_after,
+            "fingerprint_stable": self.fingerprint_stable,
+            "certification_decision": self.certification_decision,
         }
+        return base
 
 
 def parse_mutmut_results(text: str) -> MutationCounts:
