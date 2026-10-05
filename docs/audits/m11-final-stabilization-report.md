@@ -23,6 +23,10 @@ post-merge validation. No further optimization or architectural phase was starte
 The merge was a fast-forward of the local `main` (0 ahead, 122 behind), not a
 rewrite. `main` was not force-pushed and no history was squashed.
 
+This report itself is delivered to `main` by a second, documentation-only merge —
+PR #18, `c44f676d`, merged as its own commit. `1820fd8a` is therefore the tip at
+which M11's code landed; every `main` tip at or after it contains M11 in full.
+
 ---
 
 ## 2. The mutation-PR investigation (STEP 1)
