@@ -8114,3 +8114,80 @@ is pinned against the real artifact rather than a synthetic one.
 `ruff check` on the touched files reports only the two findings that already existed
 at HEAD (`I001` in `control_plane_facade.py` / `runtime_shards.py`, `F841`
 `timed_out_any` in the facade) — verified by stashing the change and re-running.
+
+## STEP 5 — Playwright baselines: reproduction and regeneration transport
+
+### Reproduction (both modes, on this workstation)
+
+Normal visual verification, through the canonical leg runner added in STEP 6:
+
+```
+$ .venv/bin/python -m runtime.verify playwright-leg \
+    --leg-id probe-visual-chromium --project chromium --kind visual \
+    --timeout-seconds 2400 --result-out /tmp/kilo/legvisual.json
+
+[playwright-leg] probe-visual-chromium failed passed=10 failed=11 (131.17s)
+```
+
+```
+11 failed
+10 passed (2.2m)
+```
+
+**Identical to CI.** Run 37261663442's `chromium-visual` leg reported `11 failed`,
+`10 passed (1.2m)` with the same eleven test names (home / dashboard / transactions /
+cards / behaviour pages, transactions+cards+settings mobile, personal mode, family
+mode, dark-mode dashboard). The failure is therefore not environmental and not
+runner-specific: the committed baselines are stale against the current UI.
+
+Spot-checked against CI's own artifacts rather than trusting the count —
+`cards-page-expected.png` vs `cards-page-actual.png` from the failed leg:
+
+* expected: dark shell, workspace reads "Try adjusting your filters or search query",
+  an empty-state block, `0 nodes`;
+* actual: the same shell with a populated cards workspace — filter panel, `Refresh` /
+  `Export`, a `Total Balance ₹0.00` panel.
+
+That is a real render difference (216 702 differing pixels, bbox x 180-1102,
+y 17-711), not antialiasing. The baselines describe a UI that no longer exists.
+
+### Why the earlier regeneration attempt "did not fire" — it did, and it was discarded
+
+M10-R3 concluded that `PLAYWRIGHT_UPDATE_SNAPSHOTS=1` "did not cause regeneration".
+That conclusion was wrong, and the log says so: on dispatch run 37254330609 both
+visual legs reported **success**. `--update-snapshots` rewrote the baselines and the
+leg went green.
+
+The baselines then died with the runner. Nothing in `playwright.yml` ever published
+them: `Upload leg result` and `Upload leg artifacts` cover
+`runtime/generated/legs/`, `runtime/generated/profile-logs/`,
+`frontend/test-results/` and `frontend/playwright-report/` — and nothing under
+`frontend/tests/`. So "regenerate on the canonical renderer" was an instruction with no
+mechanism behind it, and the only way to obtain the new images was to fish them out of
+`-actual.png` diffs.
+
+### Fix
+
+`Upload regenerated visual baselines`, gated on `matrix.kind == 'visual'` **and**
+`inputs.update_snapshots == true` (only visual legs own baselines, and only a dispatch
+can set the flag), uploads
+`frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/` as
+`playwright-baselines-<project>` with `if-no-files-found: error` — a regeneration run
+that produced nothing must fail loudly rather than look successful.
+
+The regenerated images are consumed by the subsequent visual assertion in the same
+working tree: `--update-snapshots` rewrites the baseline *and* re-runs the comparison
+against the new file in one pass, so a leg that reports green after regeneration has
+proved the new baseline, not merely written it. The committed images must then come
+from a runner artifact, never from a workstation: `PROVENANCE.md` in the snapshot
+directory already states this, and Chromium's Skia hinting is genuinely host-dependent.
+
+Not done here: the baselines themselves. They are generated artifacts and must be
+produced by a Linux CI runner, so they are fetched from the dispatch artifact in
+STEP 8, not authored on this machine.
+
+### Files changed
+
+- `.github/workflows/playwright.yml` — the new upload step.
+
+`.github/scripts/validate_actions.py`: ALL CHECKS PASSED (14 workflows, 6 actions).

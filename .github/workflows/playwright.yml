@@ -266,6 +266,29 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
+      # M11-R4 — a regeneration run must TRANSPORT its output.
+      #
+      # `--update-snapshots` rewrites the baselines in the runner's working tree and
+      # the leg then passes, so a dispatch run reports green — and the rewritten
+      # images die with the runner. Nothing in the workflow ever published them, so
+      # "regenerate on the canonical renderer" was an instruction with no mechanism:
+      # the only way to obtain the new baselines was to read them out of a `-actual.png`
+      # diff, which is exactly what must not happen.
+      #
+      # Only the visual legs carry baselines, and only a dispatch can set the flag, so
+      # this step is gated on both. A functional leg uploads nothing.
+      - name: Upload regenerated visual baselines
+        if: >-
+          always() && matrix.kind == 'visual'
+          && inputs.update_snapshots == true
+        uses: ./.github/actions/upload-runtime
+        with:
+          # Interpolates `matrix.` — required by validate_actions.py rule 12.
+          name: playwright-baselines-${{ matrix.project }}
+          path: frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/
+          retention-days: 30
+          if-no-files-found: error
+
   # ---------------------------------------------------------------------
   # 3. Gate. Aggregates every leg; the sole verdict.
   # ---------------------------------------------------------------------
