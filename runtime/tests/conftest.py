@@ -137,6 +137,54 @@ if _pytest_progress is not None:
         _pytest_progress.pytest_runtest_logreport(report)
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _ensure_mutmut_trampoline_contract():
+    """Apply the mutmut trampoline contract before any test asserts on it.
+
+    M10-R3. `test_installed_toolchain_satisfies_the_contract` asserts that the
+    INSTALLED mutmut trampoline satisfies `c71-1-src-module-name-normalisation`.
+    The contract is satisfied by *patching the installed file*, and that patch was
+    applied lazily by `mutation_runner.ensure_mutmut_contract` — i.e. as a side effect
+    of running a mutation campaign.
+
+    So the assertion only held on a machine where a campaign had already run. On a
+    clean CI runner the test ran before any campaign, the trampoline was still
+    unpatched, and it failed:
+
+        FAILED test_m9_c71_mutation_campaign.py::TestMutmutToolchainContract::
+          test_installed_toolchain_satisfies_the_contract
+          AssertionError: the canonical environment's mutmut trampoline is out of
+          contract: 1 clause(s) not applied: c71-1-src-module-name-normalisation
+
+    This is the same defect class as the order-dependent `TOOL_REGISTRY_INSTANCE`
+    fixed in this milestone: a global whose contents depend on what ran earlier.
+    Ensuring it at session start makes the invariant hold on every machine, in any
+    order, instead of on whichever one happened to run a mutation first.
+
+    Failures are reported, not raised: a missing or unpatchable trampoline must not
+    stop the other 2,000-odd tests from running.
+    """
+    try:
+        from runtime.foundation.verification.mutmut_contract import (
+            ensure_mutmut_contract,
+        )
+        import importlib.metadata as md
+
+        try:
+            version = md.version("mutmut")
+        except md.PackageNotFoundError:
+            return
+        contract = ensure_mutmut_contract(version)
+        if not contract.satisfied:
+            print(
+                "\n[conftest] WARNING: mutmut trampoline contract not satisfied: "
+                f"{contract.unsatisfied_clauses}. A mutation-toolchain test may fail; "
+                "this does not affect the rest of the suite."
+            )
+    except Exception as exc:  # noqa: BLE001 - never block the suite
+        print(f"\n[conftest] WARNING: could not ensure the mutmut contract: {exc}")
+
+
 @pytest.fixture
 def repo_root(tmp_path: Path) -> Path:
     """Provide an isolated synthetic repo root."""
