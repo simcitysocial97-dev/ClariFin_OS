@@ -2285,6 +2285,7 @@ PROFILE_SUBCOMMANDS: frozenset[str] = frozenset(
         "backend-aggregate",
         # playwright
         "playwright-plan",
+        "playwright-leg",
         "playwright-aggregate",
     }
 )
@@ -2525,6 +2526,62 @@ def _dispatch_profile_subcommand(profile: str, verb: str, args: list[str]) -> in
         return cp.run_profile_fanout(
             profile, task=task, result_out=result_out, json_out=json_out
         )
+
+    if verb == "leg":
+        # M11-R4. `playwright-leg` is the per-matrix-leg counterpart of
+        # `backend-task`, and it exists because the workflow was assembling its own
+        # result document inline (see run_playwright_leg). It runs the canonical
+        # runner script, so a leg IS the obligation rather than a re-implementation.
+        if profile != "playwright":
+            print(
+                f"{profile}-leg is not a defined subcommand; playwright legs are the "
+                "only leg primitive",
+                file=sys.stderr,
+            )
+            return 2
+        options = {
+            "leg_id": _find_arg("--leg-id", args),
+            "project": _find_arg("--project", args),
+            "kind": _find_arg("--kind", args),
+            "spec-files": _find_arg("--spec-files", args, default=""),
+            "result-out": _find_arg("--result-out", args),
+        }
+        missing = [
+            flag
+            for flag, value in options.items()
+            if flag != "spec-files" and not value
+        ]
+        if missing:
+            print(
+                "playwright-leg requires " + ", ".join(sorted(missing)),
+                file=sys.stderr,
+            )
+            return 2
+
+        from runtime.foundation.verification.playwright_shards import run_playwright_leg
+
+        leg_timeout = _find_arg("--timeout-seconds", args, default="")
+        try:
+            leg = run_playwright_leg(
+                str(options["leg_id"]),
+                project=str(options["project"]),
+                kind=str(options["kind"]),
+                spec_files=str(options["spec-files"]),
+                result_out=Path(str(options["result-out"])),
+                timeout_seconds=(
+                    int(leg_timeout) if leg_timeout else _profile_task_timeout_seconds()
+                ),
+            )
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(
+            f"[playwright-leg] {leg.shard_id} {leg.status} "
+            f"passed={leg.passed} failed={leg.failed} "
+            f"({leg.duration_seconds:.1f}s)",
+            file=sys.stderr,
+        )
+        return 0 if leg.ok else 1
 
     print(
         f"unknown subcommand {verb!r} for profile {profile!r}",

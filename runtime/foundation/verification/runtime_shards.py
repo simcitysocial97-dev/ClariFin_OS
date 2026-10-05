@@ -273,8 +273,10 @@ LEG_RESULT_SCHEMAS: frozenset[str] = frozenset({"m10r2-leg-result/v1"})
 
 def read_shard_results(
     directory: Path,
+    *,
+    pattern: str = "shard-*.json",
 ) -> tuple[list[ShardResult], list[str], list[str], list[str]]:
-    """Read every ``shard-*.json``, classifying each leg's outcome.
+    """Read every result document matching *pattern*, classifying each outcome.
 
     Returns ``(results, absent, malformed, rejected)``. The three failure buckets are
     kept apart because they have different owners and must never be conflated:
@@ -297,11 +299,11 @@ def read_shard_results(
     rejected: list[str] = []
 
     directory = Path(directory)
-    paths = sorted(directory.glob("shard-*.json"))
+    paths = sorted(directory.glob(pattern))
     if not paths:
         # No files at all is not "all legs absent" — it is a transport fault, and the
         # caller must be able to say so rather than reporting every task as missing.
-        absent.append("no shard-*.json files found")
+        absent.append(f"no {pattern} files found")
 
     for path in paths:
         try:

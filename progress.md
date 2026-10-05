@@ -8000,3 +8000,117 @@ loss. It is the reason this boundary produced three unmapped files at all, and
 it is recorded for STEP 7/8 rather than fixed in this checkpoint, because the
 fix belongs to `verification-reconcile.yml` and must be weighed against the
 `npm ci` cost it adds to the plan job.
+
+## STEP 6 — Playwright leg result parsing (and the transport that made it unreadable)
+
+The mission described this as "diagnostics": the workflow's `jq` hard-coded zeros.
+It is worse than that, and the zero-count was the smallest of four defects that
+together meant **the Playwright gate had never once read a leg result**.
+
+### Defect 1 — the gate could not see any leg (transport)
+
+`playwright_shards.read_leg_results()` delegated to
+`runtime_shards.read_shard_results()`, which globs `shard-*.json`.
+`playwright.yml` writes `leg-<leg_id>.json`. The glob matched nothing.
+
+Reproduced locally with the exact document CI published
+(`playwright-result-chromium-visual`, run 37261663442):
+
+```
+read_leg_results(<dir containing leg-chromium-visual.json>)
+  -> results=0  absent=['no shard-*.json files found']
+```
+
+Every CI gate log therefore reported `legs_reported: 0`, `legs_passed: 0` and
+
+```
+decision_reason: leg(s) produced NO TERMINAL RESULT … no shard-*.json files
+                 found; expected 10 leg(s), 0 reported
+```
+
+even on run 37254330609, where **all ten legs were green**. The gate's verdict was
+independent of whether any test passed. `read_shard_results` now takes the glob
+pattern explicitly and the Playwright call site passes `leg-*.json`.
+
+### Defect 2 — nothing could read real counts anyway
+
+Both passes ran `npx playwright test --reporter=list`. A command-line `--reporter`
+**replaces** the reporter list in `playwright.config.ts` rather than adding to it, so
+the configured `json` reporter never ran and `frontend/test-results/results.json` was
+never written. Confirmed from the artifact: the `chromium-visual` leg uploaded
+`frontend/test-results/artifacts/` and nothing else — no `results.json`, no
+`junit.xml`, no `html-report`, despite the config declaring all three.
+
+So the workflow's `passed: 0, failed: 0` literals were not laziness; there was
+genuinely nothing to read. The `--reporter=list` flags are removed (the config already
+declares `list` alongside `html`, `json` and `junit`, so console output is unchanged).
+
+### Defect 3 — the document carried no fingerprint bracket
+
+`verify_legs` requires one and treats absence as *not certified*, never as a pass.
+The inline `jq` document had no `fingerprint_before`/`fingerprint_after`/`fingerprint_stable`
+keys at all, so even a green leg with a green test suite could not have been
+certified. This is the pre-existing fail-closed rule doing its job against a producer
+that never populated it.
+
+### Defect 4 — no canonical way to run one leg
+
+`backend-task` exists and produces a correct document; Playwright had no equivalent,
+so the workflow invented one. Added `playwright-leg`, the per-leg counterpart of
+`backend-task`, which runs `.github/scripts/run_playwright_tests.sh` through the shared
+streaming worker with `execution_shards.leg_environment()` (so the per-leg database is
+derived, not declared), brackets itself in `CertificationRun`, and counts the run from
+Playwright's own JSON reporter.
+
+### Proof — a real leg, end to end, on this workstation
+
+```
+$ .venv/bin/python -m runtime.verify playwright-leg \
+    --leg-id probe-functional --project chromium --kind functional \
+    --spec-files "tests/e2e/specs/health-check.spec.ts" \
+    --timeout-seconds 900 --result-out /tmp/kilo/legprobe.json
+
+[playwright-leg] probe-functional failed passed=23 failed=4 (293.9s)
+```
+
+```json
+{
+  "schema": "m10r2-leg-result/v1",
+  "shard_id": "probe-functional",
+  "status": "failed",  "exit_code": 1,  "duration_seconds": 293.87,
+  "file_count": 1,  "passed": 23,  "failed": 4,  "errors": 4,
+  "decision": "diagnostic",
+  "fingerprint_stable": true
+}
+```
+
+Real counts, real duration, real bracket. Before this change CI published
+`passed: 0, failed: 0, duration_seconds: 0` for the same field.
+
+### Files changed
+
+- `runtime/foundation/verification/runtime_shards.py` — `read_shard_results` takes the
+  glob pattern (default unchanged).
+- `runtime/foundation/verification/playwright_shards.py` — correct pattern at the call
+  site; `parse_playwright_results`; `run_playwright_leg`.
+- `runtime/foundation/verification/control_plane_facade.py` — `playwright-leg` verb.
+- `.github/scripts/run_playwright_tests.sh` — no command-line `--reporter`.
+- `.github/workflows/playwright.yml` — the leg step calls the runtime, not `jq`.
+- `runtime/tests/test_m11_r4_playwright_leg_results.py` — new, 14 tests.
+
+### Tests
+
+```
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_playwright_leg_results.py \
+    runtime/tests/test_runtime_sharding.py \
+    runtime/tests/test_m10r3_certification_authority.py \
+    runtime/tests/test_execution_observability.py -q
+104 passed in 28.49s
+```
+
+The regression tests include the verbatim document CI published, so the transport fix
+is pinned against the real artifact rather than a synthetic one.
+
+`ruff check` on the touched files reports only the two findings that already existed
+at HEAD (`I001` in `control_plane_facade.py` / `runtime_shards.py`, `F841`
+`timed_out_any` in the facade) — verified by stashing the change and re-running.

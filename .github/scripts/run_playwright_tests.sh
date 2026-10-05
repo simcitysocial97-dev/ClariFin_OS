@@ -155,12 +155,24 @@ esac
 
 OVERALL_RC=0
 
+# M11-R4 — reporter selection.
+#
+# Both passes used to pass `--reporter=list` on the command line. A command-line
+# `--reporter` REPLACES the reporter list in `playwright.config.ts` rather than adding
+# to it, so the configured `json` reporter — which is the only place Playwright's own
+# pass/fail/skip counts exist — never ran. `frontend/test-results/results.json` was
+# never written on CI, which is why `playwright.yml` had to invent the counts its leg
+# result document claimed (`passed: 0, failed: 0`): there was nothing there to read.
+#
+# The config already declares `list` alongside `html`, `json` and `junit`, so dropping
+# the flag yields identical console output plus a machine-readable report. No reporter
+# is added or removed, and no assertion changes.
 if [ "$PLAYWRIGHT_PASS" != "visual" ]; then
   echo -e "${YELLOW}Pass 1/2 — functional suite (visual regression excluded)${NC}"
   # `set +e` so a failing suite is REPORTED and its exit code propagated, rather than
   # aborting the script before the reason is printed.
   set +e
-  npx playwright test "${project_flag[@]}" ${spec_filter[@]+"${spec_filter[@]}"} --reporter=list \
+  npx playwright test "${project_flag[@]}" ${spec_filter[@]+"${spec_filter[@]}"} \
     --grep-invert "Visual Regression"
   PASS1_RC=$?
   set -e
@@ -187,7 +199,7 @@ if [ "$PLAYWRIGHT_PASS" != "functional" ]; then
   # would silently drop screenshot assertions. The WHY block above explains why it must
   # not be sharded.
   set +e
-  npx playwright test "${project_flag[@]}" --reporter=list \
+  npx playwright test "${project_flag[@]}" \
     --grep "Visual Regression" --workers=1 ${update_flag[@]+"${update_flag[@]}"}
   PASS2_RC=$?
   set -e

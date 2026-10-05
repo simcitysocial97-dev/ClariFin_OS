@@ -205,19 +205,29 @@ jobs:
             SPECS="${{ matrix.spec_files }}"
           fi
           set +e
-          timeout --signal=TERM --kill-after=60s "${LEG_TIMEOUT_SECONDS:-2400}" \
-            env PLAYWRIGHT_PASS="$PASS" PLAYWRIGHT_SPEC_FILES="$SPECS" \
-            .venv/bin/python -m runtime.verify playwright \
+          # M11-R4. The leg result document used to be assembled inline below with a
+          # `jq -n` that hard-coded `duration_seconds: 0, passed: 0, failed: 0,
+          # errors: 0` — every leg reported zero of everything, whatever it ran — and
+          # carried no fingerprint bracket, which `verify_legs` requires before it may
+          # certify anything. The runtime already knows how to run one leg, count it
+          # from Playwright's own JSON reporter and bracket it, so the workflow now
+          # asks the runtime instead of asserting the outcome in YAML. The document is
+          # still published even when the leg fails: a missing result is
+          # indistinguishable from a leg that never started.
+          timeout --signal=TERM --kill-after=60s "$(( LEG_TIMEOUT_SECONDS + 60 ))" \
+            .venv/bin/python -m runtime.verify playwright-leg \
+              --leg-id "${{ matrix.leg_id }}" \
+              --project "${{ matrix.project }}" \
+              --kind "$PASS" \
+              --spec-files "$SPECS" \
+              --timeout-seconds "${LEG_TIMEOUT_SECONDS:-2400}" \
+              --result-out "runtime/generated/legs/leg-${{ matrix.leg_id }}.json" \
               > "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" 2>&1
           RC=$?
           set -e
-          # Publish the outcome even on failure: the gate must know this leg ran, and a
-          # missing result is indistinguishable from a leg that never started.
-          jq -n --arg id "${{ matrix.leg_id }}" \
-                --argjson rc "$RC" \
-                '{shard_id: $id, status: (if $rc == 0 then "passed" elif $rc == 124 then "timed_out" else "failed" end),
-                  exit_code: $rc, duration_seconds: 0, file_count: 0, passed: 0, failed: 0, errors: 0}' \
-            > "runtime/generated/legs/leg-${{ matrix.leg_id }}.json"
+          # The runtime's own summary line is the leg outcome; the log is the evidence.
+          grep -E "^\[playwright-leg\]" \
+            "runtime/generated/legs/leg-${{ matrix.leg_id }}.log" || true
           echo "${{ matrix.leg_id }} exit=${RC}" >> "$GITHUB_STEP_SUMMARY"
           if [ "$RC" -ne 0 ]; then
             echo "::group::${{ matrix.leg_id }} failure detail"
