@@ -577,6 +577,10 @@ class TestFanOutGatesConsumeTheBracket:
         from runtime.foundation.verification.profile_tasks import read_leg_results
 
         (tmp_path / "leg-a.json").write_text(json.dumps({"status": "passed"}))
-        results, unreadable = read_leg_results(tmp_path)
+        # M10-R3: four-way since read_leg_results was aligned with read_shard_results.
+        # Unpacking two here is exactly the mismatch that broke the Backend
+        # Verification gate, and this test is how it reaches CI rather than a
+        # workflow log.
+        results, absent, malformed, rejected = read_leg_results(tmp_path)
         assert results == []
-        assert unreadable and "KeyError" in unreadable[0]
+        assert malformed and "KeyError" in malformed[0]
