@@ -8191,3 +8191,36 @@ STEP 8, not authored on this machine.
 - `.github/workflows/playwright.yml` — the new upload step.
 
 `.github/scripts/validate_actions.py`: ALL CHECKS PASSED (14 workflows, 6 actions).
+
+## STEP 4b — the environment delta behind `UNMAPPED[3]`
+
+Recorded in STEP 4 and fixed here, because it belongs to the reconcile workflow
+rather than to the capability model.
+
+The `Reconcile Plan` job provisioned Python only. `setup-node-runtime` is invoked
+further down, in the **shard** job (`verification-reconcile.yml:239` before this
+change). Capability resolution resolves `frontend/app/**` through
+`frontend_capability_discovery`, which calls the TypeScript resolver, which shells
+out to `npx tsx` and imports `ts-morph` from `frontend/node_modules`. On the plan
+runner that directory does not exist, so:
+
+```
+plan job log, run 37257612911, line 996:
+  TypeScript resolver failed: Error: Cannot find module 'ts-morph'
+  → {"files": []}
+```
+
+`FrontendCapabilityDiscoverer.discover_capabilities()` then mints zero
+capabilities, and every `frontend/app/**` file claimed only by cross-layer route
+discovery falls through unmapped — the three named in STEP 4.
+
+`mutation.yml`, `quality.yml` and `golden.yml` already pair `bootstrap-runtime` with
+`setup-node-runtime` for exactly this reason; `verification-reconcile.yml`'s plan job
+was the outlier.
+
+With the fix, the plan is built on the same toolchain the workstation uses, and the
+`registry_mapping` obligation disappears from a healthy boundary — it should only
+appear when a capability genuinely has no registry entry, and then it will name the
+capabilities (STEP 4).
+
+`validate_actions.py`: ALL CHECKS PASSED.

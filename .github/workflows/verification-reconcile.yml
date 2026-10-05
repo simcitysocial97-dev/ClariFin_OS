@@ -84,6 +84,31 @@ jobs:
         with:
           python-version: "3.12"
 
+      # M11-R4 — the plan job needs the frontend toolchain, and this was the reason
+      # CI reported `unmapped:UNMAPPED[3]` where this workstation reported nothing.
+      #
+      # Capability resolution resolves `frontend/app/**` through
+      # `frontend_capability_discovery`, which needs the TypeScript resolver, which
+      # shells out to `npx tsx` and imports `ts-morph` from `frontend/node_modules`.
+      # This job provisioned Python only — `setup-node-runtime` appeared further
+      # down, in the *shard* job — so on a runner the resolver logged
+      #     "TypeScript resolver failed: Error: Cannot find module 'ts-morph'"
+      # returned no files, and discovery minted ZERO frontend capabilities. Every
+      # `frontend/app/**` file that is claimed only by cross-layer route discovery
+      # then fell through unmapped. On this workstation the same boundary resolves
+      # cleanly, because node_modules happens to be present.
+      #
+      # `mutation.yml`, `quality.yml` and `golden.yml` already pair
+      # `bootstrap-runtime` with `setup-node-runtime` for the same reason. Three files
+      # are affected in total; see progress.md STEP 4 for the exact list.
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          working-directory: "frontend"
+          npm-cache: "frontend/.npm-cache"
+          cache-dependency-path: "frontend/package-lock.json"
+          install-args: "--no-audit --no-fund"
+
       - name: Emit shard matrix
         id: plan
         shell: bash
