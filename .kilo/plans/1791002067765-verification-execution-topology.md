@@ -1,331 +1,368 @@
-# M10-R2 Closeout — Live Execution Observability, Then the Two Opaque Failures
+# M10-R3 — Close the Execution-Condition Gap
 
-Narrow closeout. The runtime and backend fan-out architecture is **demonstrated on live
-CI** and is closed:
-
-| Gate | Measured | Status |
-|---|---|---|
-| Runtime Verification | **11m00s**, 4 shards + required aggregate (was ~26–30m single-job) | GREEN |
-| Backend Verification | **6m59s**, 6 obligations + required aggregate | GREEN |
-
-Required identities preserved (`Runtime Verification`, `Backend Verification`,
-`Frontend Verification`, `Analyze`); `validate_actions.py` ALL CHECKS PASSED.
-
-**Out of scope**, per review direction and because the evidence does not justify it:
-reopening the runtime/backend architecture; splitting `backend/tests/` per-directory (the
-profile already exposes the useful obligations, and the gate finishes in 6m59s); moving
-runtime sharding 4→8 (4 already delivered ~2.4x from ~4x theoretical); Frontend
-Verification (single obligation).
-
-**Root cause of this closeout, stated once:** M10-R2-C3 moved profile/task output from
-stdout into per-task evidence files. That was correct — it fixed the 0-byte-log problem —
-but it silently removed the only live signal a CI operator had. The two remaining opaque
-failures are not new defects; they are the *absence* of the signal needed to diagnose them.
-So observability is Step 1, not an afterthought, and it is built **once** in the shared
-primitive so no future matrix workflow can regress it again.
+**Status:** plan only. No files modified.
 
 ---
 
-## 1. The three surfaces, and why only two were instrumented
+## 1. The question asked, answered directly
 
-| Surface | Lifetime | Carries | Status today |
-|---|---|---|---|
-| **Job log (stdout/stderr)** | live | lifecycle, progress, liveness | **missing** ← the gap |
-| **Artifacts** | after the job | full stdout/stderr per task | partial (Playwright legs omit `profile-logs/`) |
-| **Step Summary** | after the job | human report | present, but unreadable via `gh` |
+> *What is the use of the complex runtime framework we built over months?*
 
-Consequence, verbatim from the failing run:
+**It is authoritative about verification semantics, and completely silent about
+verification execution conditions. Every defect this milestone lived in the silent half.**
 
-```
-[run] shard 1/7 executing 1/11 task(s)
-... nothing ...
-```
+The framework was never wrong. In ten CI defects it produced a correct verdict every
+time — refusing to certify when shard reports were missing, naming the missing task ids,
+catching a tree that drifted mid-run, propagating a `not_certified` upward instead of
+laundering it. That is precisely what a certification authority is for, and it is not
+disposable.
 
-Four of seven reconcile legs died leaving 0 bytes and no indication of which canonical
-task was executing. That is the observability gap, not a mystery.
+But it answers only *"what must run"*. It does not answer *"under what conditions"*.
+Those conditions were therefore re-implemented, by hand, in every layer that spawns a
+process — a shell-script guard here, a YAML `env:` block there, a `timeout` expression in
+a third place — and **none of those copies is visible to the planner, the prerequisite
+checker, or the aggregate.** They drifted, and they drifted silently.
 
----
+### 1.1 The finding that settles it
 
-## 2. Design: instrument the primitive, inherit everywhere
-
-### 2.1 The seam
-
-`runtime/foundation/verification/parallel_executor.py::run_streaming_command` is the single
-choke point. Every verification subprocess in the repository already routes through it:
-
-| Caller | Path |
-|---|---|
-| `ExecutionOrchestrator._execute_shell_task` | `verify check`, `run --plan` |
-| `ParallelExecutor._execute_one` | group façade |
-| `profile_tasks.run_obligation_leg` | backend legs, playwright legs |
-| `runtime_shards.run_test_shard` | runtime shards |
-| `ControlPlane._run_profile_alias._run_task` | profile aliases |
-| `_run_runtime_integrity` | runtime gate |
-
-One change here covers all six. That is the whole argument for putting it here rather than
-in three YAML files — three copies would drift, and the previous regression is precisely
-what drift looks like.
-
-### 2.2 Contract
+`execution/task.py:90` already declares:
 
 ```python
-@dataclass(frozen=True, slots=True)
-class ProgressContext:
-    """Optional live-logging context for one long-running command."""
-    label: str          # "runtime-shard-2" | "backend-backend-unit" | "exec-0003"
-    kind: str           # "shard" | "obligation" | "task" | "integrity"
-    log_dir: Path       # where the FULL output lives, echoed once at start
-    timeout_seconds: int
-
-def run_streaming_command(
-    command, *, stdout_path, stderr_path, timeout_seconds,
-    cwd=None, env=None,
-    progress: ProgressContext | None = None,   # default None => today's behaviour
-    heartbeat_seconds: int | None = None,      # default: VERIFY_HEARTBEAT_SECONDS or 60
-) -> CommandResult: ...
+required_environment: tuple[str, ...]
 ```
 
-Emitted to **stderr** (stdout stays reserved for machine-readable documents — the
-invariant established when the `[check] boundary=` banner corrupted shard reports):
+It is populated in eight places (`executor_pipeline.py:366,390,422,458,526,585,2173`),
+serialised (`task.py:111`, `executor_pipeline.py:215`), and appears in test fixtures.
 
-```
-[<label>] start kind=<kind> timeout=<n>s logs=<log_dir>
-[<label>] running elapsed=60s
-[<label>] running elapsed=120s
-[<label>] exit=1 elapsed=137s timeout=false term=EXIT_NONZERO stdout=<path> stderr=<path>
-```
+**It is never read by any enforcement path.** `verify_prerequisites` — the single
+enforcement function in the codebase — reads `t.prerequisites`, not
+`t.required_environment`. And every value ever assigned is a *tool or path*
+(`.venv`, `pytest`, `mutmut==3.7.0`) — never an environment *variable*.
 
-Rules that make this safe rather than noisy:
+So the concept was conceived, named, typed, serialised, populated — and left inert. That
+is why this was hard: the model already had the right shape, so the gap was invisible to
+code review, and the symptom appeared in YAML where nobody looks for a missing concept.
 
-- **Default `progress=None` is byte-identical to today.** Local runs and all 2717 existing
-  tests are unaffected. Instrumentation is opt-in per call site.
-- **Heartbeat comes from a watchdog thread**, not from the output stream, so it fires while
-  `proc.wait(timeout=…)` blocks. Without this there is no live signal at all — which is the
-  current failure.
-- **No task content is ever streamed to the job log.** Full output stays in the artifact.
-  A 20-minute pytest run must not produce a 20-minute CI log.
-- Heartbeat suppressed entirely when the command finishes in under ~2 s, so the ~50 fast
-  backend obligations do not each emit a start/exit pair for nothing.
-- `VERIFY_HEARTBEAT_SECONDS=0` disables; `VERIFY_PROGRESS=0` silences locally.
-- The final line always includes `term=<kind>` from the existing `classify_termination`,
-  so the log distinguishes `WRAPPER_TIMEOUT` / `SIGNAL_TERMINATION` / `EXIT_NONZERO` /
-  `INFRASTRUCTURE` without opening an artifact.
+And `profiles.py:443-451` shows the same lesson arriving a second time, in almost exactly
+these words:
 
-### 2.3 Per-leg framing
+> *"the visual pass … was implemented correctly in the script and then never executed,
+> because CI goes through the profile. It failed green on the regeneration dispatch,
+> which uses the script, and red on every pull request, which does not."*
 
-Call sites add their own `[leg n/m]` framing so the log reads as a unit:
+and, one line later, the fix chosen was to make the script *"require FINANCE_DB_PATH"* —
+a **shell-script-level** guard. The framework was told an environment requirement existed
+and the requirement was pushed **down into the script** instead of **up into the model**.
 
-```
-[reconcile-shard] shard=1/7 plan=execplan-2ea6aa539c48 tasks=1
-[reconcile-shard] task exec-0004 kind=integration start
-[reconcile-shard] task exec-0004 running elapsed=60s
-[reconcile-shard] task exec-0004 exit=1 elapsed=137s term=EXIT_NONZERO
-[reconcile-shard] report=runtime/generated/execution/shards/shard-1.json bytes=1842
-[reconcile-shard] finished status=failed outcome=terminal
-```
+### 1.2 Why it worked for some workflows and fought us on others
 
-| Leg kind | Label | Emitted by |
-|---|---|---|
-| runtime | `runtime-shard-N` | `runtime_shards.run_test_shard` |
-| backend | `backend-<task_id>` | `profile_tasks.run_obligation_leg` |
-| playwright | `playwright-<leg_id>` | `profile_tasks.run_obligation_leg` |
-| reconcile | `reconcile-shard` + `exec-NNNN` | `ExecutionOrchestrator._execute_shell_task`, label derived from `plan_id`/`task_id` |
+Not luck. The two green workflows share three properties, and the two that fought us each
+violate exactly one:
 
-For reconcile the label must reach `_execute_shell_task`, which is inside the orchestrator —
-so `ExecutionOrchestrator` takes an optional `progress_prefix` that it composes into each
-task's `ProgressContext`. That is the only orchestrator change required.
+| | Runtime shards | Backend legs | Reconcile | Playwright visual |
+|---|---|---|---|---|
+| Obligations homogeneous? | yes — all `pytest <files>` | yes — one command each | **no** — mixed shell/measurement/playwright | **no** — filtered pass |
+| Transport = one artifact, one path? | yes | yes | **no** — report + evidence + logs | **no** |
+| Needs per-leg mutable state? | no | no | **yes** — Playwright task | **yes** — DB per leg |
+
+Homogeneous obligations need identical envelopes, so a wrong envelope applies uniformly
+and stays invisible. The moment obligations differ — or need per-leg state — each one
+needs a *different* envelope, and there was nowhere to put it.
+
+**The variable was never framework correctness. It was uniformity of the obligation set.**
 
 ---
 
-## 3. Step 1 — Make execution observable (no behaviour change)
+## 2. Root cause, stated as one sentence
 
-**1a. `run_streaming_command`** — add `ProgressContext`, the watchdog heartbeat, and the
-terminal line. Default off.
+> The runtime owns **obligations, evidence, and certification**; it does not own the
+> **execution envelope** — command context, required environment, time budget, evidence
+> transport, liveness — so that envelope is hand-written once per workflow per leg, and
+> the runtime cannot validate it, reproduce it, or test it.
 
-**1b. `ExecutionOrchestrator`** — accept `progress_prefix`; pass a per-task
-`ProgressContext` down. Default off.
+| Execution condition | Owner today | Modelled? | The defect it caused |
+|---|---|---|---|
+| What must run | runtime plan | yes | never wrong |
+| Command + cwd | runtime | yes | never wrong |
+| Tool paths | runtime `verify_prerequisites` | paths only | — |
+| **Required env vars** | **shell script / YAML** | **no** | `FINANCE_DB_PATH` unset ⇒ guaranteed task failure |
+| **Time budget** | **YAML `timeout`** | **no** | `timeout 85` = 85 **seconds**; 4/7 shards killed |
+| **Evidence transport** | **YAML path lists** | **no** | artifact LCA nesting ⇒ 0-byte results |
+| **Liveness** | nowhere until this milestone | no | 4 shards died invisibly |
+| Evidence → verdict | runtime | yes | never wrong |
 
-**1c. Leg entry points** — build and pass `ProgressContext`:
-`run_test_shard`, `run_obligation_leg`, `_run_profile_alias._run_task`, `_run_runtime_integrity`,
-and the reconcile `run` shard path. Each also emits its `[leg n/m] … report=… bytes=…`
-footer.
+Eight conditions. Six unowned. All six produced defects that looked like framework bugs.
 
-**1d. Artifacts.**
-- Playwright legs: add `runtime/generated/profile-logs/` to `Upload leg artifacts`. Without
-  it the visual-leg cause is unreadable — `_run_profile_alias` streams there.
-- Reconcile legs: add `runtime/generated/profile-logs/` and
-  `runtime/generated/m9-c49/logs/` so a dead leg's per-task logs survive.
+---
 
-**1e. Pre-upload assertion** (renamed from 1c), between run and upload. Fails loudly and
-still uploads:
+## 3. Architectural fix
 
-```bash
-REPORT="$OUT_DIR/shard-${SHARD_INDEX}.json"
-if [ ! -s "$REPORT" ]; then
-  echo "::error::shard ${SHARD_INDEX}: NO TERMINAL RESULT — 0 bytes; see the [reconcile-shard] lines above for the last task reached"
-elif ! jq -e . "$REPORT" >/dev/null 2>&1; then
-  echo "::error::shard ${SHARD_INDEX}: malformed report"; head -c 400 "$REPORT"
-fi
+### 3.0 Governing rule
+
+> **The runtime is the single authority for how an obligation executes. YAML states only
+> *which* obligations and *how they are scheduled* — never *how one runs*.**
+
+Not "simplify the framework". The complexity is justified where it models semantics; the
+unjustified complexity is the **five hand-maintained copies of orchestration logic now
+living in YAML** (env blocks, budget expressions, artifact path lists, matrix emission,
+report parsing). We paid for that duplication. The fix deletes it by giving the framework
+the one concept it is missing and making it authoritative.
+
+### 3.1 Guard against building a second framework
+
+Hard constraints, stated so this cannot sprawl:
+
+- The envelope is **data**. It introduces no execution engine.
+- The **only** place a verification subprocess is spawned remains
+  `parallel_executor.run_streaming_command`. One worker, as the M10-R2-C3 promotion
+  established.
+- The envelope cannot weaken a threshold, skip an obligation, or alter a verdict. It may
+  only *describe* and *validate* how an already-decided obligation runs.
+- Every field is **readable and checkable by `validate_actions.py`**, so the constitution
+  validator can assert that workflows contain no execution logic.
+
+### 3.2 L1 — Environment: declared, resolved, enforced
+
+Make `required_environment` authoritative and give it the axis it never had.
+
+```
+required_environment = (
+    ".venv",                                  # tool  — already enforced today
+    "pytest",                                 # tool
+    "FINANCE_DB_PATH=@workspace/backend/data/e2e-$LEG.db",   # variable, self-resolving
+    "PLAYWRIGHT_PROJECT=chromium",            # variable
+)
 ```
 
-**Gate for step 1.** Re-run Verification Reconcile and Playwright once. Every non-green
-leg must show, in its **job log**: which canonical task was executing, its exit code,
-duration, termination kind, and whether a terminal result was written. **Do not proceed to
-step 2 until the cause is read, not guessed.**
+- **Tool form** (bare name): presence on PATH / file exists — current behaviour.
+- **Variable form** (`NAME=<value>` or `NAME` meaning "must be set"): presence and
+  validity, checked **before any spawn**.
+- `@`-prefixed placeholders resolve from the envelope's own provenance (`@workspace`,
+  `@leg`, `@shard`, `@plan`). The same declaration therefore yields the correct value in a
+  shard, in CI, and on a laptop — this is what makes local execution identical to CI
+  rather than merely similar.
 
----
+`verify_prerequisites` validates both axes and names what is missing.
 
-## 4. Step 2 — Fix only demonstrated defects
+**Delete the shell-script guard** at `run_playwright_tests.sh` (the `FINANCE_DB_PATH`
+check) and **declare the requirement in `profiles.py`**. One authority, not two.
 
-### 4a. The three-state leg-result contract (corrected)
+*Effect:* today's 400-second opaque `EXIT_NONZERO` becomes a named prerequisite failure at
+second zero.
 
-Not "write JSON at the end". The contract:
+### 3.3 L2 — Budget: a typed quantity, one authority
 
-> Every **terminal** execution outcome produces a machine-readable result. An externally
-> killed process is inherently allowed to leave none — and that absence is itself a
-> meaningful, distinguishable state.
+`timeout_seconds: int` already exists on the task. The defect was that YAML *also*
+expressed the budget, in free text, and got the unit wrong.
 
-`ControlPlane.run` (and, for symmetry, the two leg runners) gain
-`--result-out <path>`, written on **every** terminal path: success, task failure, blocked
-validation, and interrupt. It is no longer a stdout redirect.
+- The executor takes its budget **only** from the task.
+- Workflows may not express a budget. `timeout-minutes:` stays as a coarse runner backstop,
+  documented as such, and the executor asserts its own budget is strictly below it — so the
+  two can never disagree about which fires first.
 
-```json
-{
-  "schema": "m10r2-leg-result/v1",
-  "leg_id": "reconcile-shard-1",
-  "outcome": "terminal",
-  "status": "failed",
-  "final_decision": "not_certified",
-  "exit_code": 1,
-  "duration_seconds": 137.2,
-  "tasks": [ … ],
-  "records": [ … ]
-}
+*Effect:* the `timeout 85` unit class of bug is structurally impossible; a bare number can
+never reach a shell.
+
+### 3.4 L3 — Transport: declared once, consumed by writer and reader
+
+Add a declared `evidence_transport` to the emitted plan: artifact name pattern, path set,
+and the **declared artifact root**.
+
+The writer publishes at that root; the reader resolves against that root. Neither infers it
+from whatever `upload-artifact` computed.
+
+*Effect:* the artifact-LCA class is permanently closed. This is what `mutation.yml` gets
+right by construction and what the three fan-out workflows each had to rediscover.
+
+### 3.5 L4 — One executor, and local ≡ CI
+
+`verify execute-envelope <file>` becomes the single entry point that spawns a verification
+obligation. It reads the envelope, validates prerequisites, enforces the budget, runs
+through the shared worker, and writes the leg result.
+
+A fan-out workflow reduces to its irreducible content:
+
+```yaml
+jobs:
+  <name>-plan:
+    outputs: { matrix: ... }
+    steps: [{ run: .venv/bin/python -m runtime.verify <profile>-plan }]
+
+  <name>-leg:                       # matrix over the emitted envelopes
+    needs: [<name>-plan]
+    steps:
+      - run: .venv/bin/python -m runtime.verify execute-envelope ${{ matrix.envelope }}
+
+  <name>-gate:
+    needs: [<name>-plan, <name>-leg]
+    if: always()
+    steps: [{ run: .venv/bin/python -m runtime.verify <profile>-aggregate ... }]
 ```
 
-The aggregate then classifies three states, not two:
+No env blocks. No budget expressions. No artifact path lists. No report parsing.
 
-| Condition | Meaning | Verdict contribution |
-|---|---|---|
-| **no file** | leg never reached a terminal result — killed, cancelled, or never started | `NOT_CERTIFIABLE`, *"infrastructure: leg produced no terminal result"* |
-| **file, `status=failed`** | leg ran and failed a verification obligation | `NOT_CERTIFIABLE`, naming the failing tasks |
-| **file, `status=passed`** | leg completed | counts toward certification |
+### 3.6 The local harness is not a debugging convenience — it is the acceptance test
 
-Two tightenings this forces, both of which are latent bugs today:
+Once L4 exists, `verify local-shards --workflow <name>` is *the same envelope* executed
+against a local path. Reproducibility stops being a hope and becomes a test.
 
-1. `read_shard_results` currently defaults missing fields
-   (`payload.get("exit_code", 1)`) and lumps JSON errors under "unreadable". Change it to
-   **reject an unknown `schema`** and to separate **`absent`** from **`malformed`** — they
-   are different failures with different owners.
-2. A malformed document must never be coerced into a passing state. The existing
-   `_as_state` fallback already refuses that; the document-level equivalent must too.
+Its output is the artefact a reviewer actually wants:
 
-### 4b. Restore the Playwright environment on reconcile shards (verified defect)
+```
+SHARD  TASKS  STATUS       TIME   TERMINATION
+0      2/11   PASS         42.1s   EXIT_ZERO
+1      1/11   FAIL         31.7s   EXIT_NONZERO
+5      1/11   TIMED_OUT   600.0s   WRAPPER_TIMEOUT
 
-`run_playwright_tests.sh` exits 1 when `FINANCE_DB_PATH` is unset. The reconcile shard job
-sets only `VERIFICATION_BASE_REF`/`VERIFICATION_HEAD_REF`, so **any** reconcile shard
-assigned the Playwright task is guaranteed to fail it. The pre-M10-R2 single job carried
-this environment; the split dropped it. Verified from source, not inferred.
+RESULT: NOT CERTIFIED
+  shard 1 -> exec-0004 -> EXIT_NONZERO (term from the shared classifier)
+```
 
-Add to the reconcile shard job env:
-
-- `FINANCE_DB_PATH: ${{ github.workspace }}/backend/data/e2e-playwright-${{ matrix.shard }}.db`
-- `PLAYWRIGHT_PROJECT: chromium`
-- `CLARIFIN_PYTHON: ${{ github.workspace }}/.venv/bin/python`
-
-Per-shard, so two reconcile legs never share a database — the exact cross-shard mutation
-`run_playwright_tests.sh` documents as the cause of drifting screenshots.
-
-### 4c. Conditional
-
-If step 1 shows the 0-byte legs died of something else (OOM, a specific task crash), fix
-*that* and record it. Do **not** ship 4a as a substitute for a diagnosed cause — ship it
-because it is correct independently, and say which defect it fixed.
+**Local success still does not prove CI success** — runners differ in cores, browser
+revisions, fonts, filesystem paths, and service availability. The division of labour is
+deliberate: *local reproduction catches implementation bugs; one CI run validates
+runner-specific assumptions.* The harness makes the first half exhaustive and cheap.
 
 ---
 
-## 5. Step 3 — Final validation
+## 4. Sequence
 
-1. `verify quick` — exit 0.
-2. `.venv/bin/python .github/scripts/validate_actions.py` — exit 0, 14 workflows.
-3. Full `pytest runtime/tests/` — 2717 passed / 16 skipped / 0 failed.
-4. `black --check runtime/ backend/src/` — clean (861 files).
-5. `ruff check runtime/ backend/src/` — clean.
-6. `cd backend && mypy src/` — clean (308 files).
-7. Live CI: Verification Reconcile and Playwright; then confirm the four required
-   identities are byte-identical.
+Ordered so each stage is verifiable before the next, and so the two currently-blocked
+failures get diagnosed **without another CI cycle**.
 
-**Acceptance**
+### Stage 0 — Diagnose the two open failures locally (no workflow change)
 
-- **While a shard is running, the GitHub Actions job log shows the shard is alive and
-  which canonical task is executing. Diagnosis must never require waiting for artifacts
-  after completion.** This is the criterion step 1 exists to satisfy, and it is checked by
-  watching a live run, not by reading a finished one.
-- Verification Reconcile: every shard produces a terminal result, or is explicitly and
-  correctly classified as having none; the aggregate is never `shard coverage incomplete`
-  for a reason the job log does not state.
-- Playwright: 10/10 legs accounted for; every visual-leg failure has a named cause and, if
-  it is a re-seed or isolation problem, is fixed at that dependency rather than masked.
-- No required check renamed; no `paths:` on a required check; no threshold changed.
+The review direction is right that CI must not be the debugger. Before touching any
+workflow, reproduce both locally:
+
+- **Reconcile shards 0–6**: `verify plan --shard-plan --out /tmp/p.json`, then
+  `verify run --plan /tmp/p.json --shard i --count 7 --result-out …` for each `i`.
+  Capture exit code, termination kind, task ids, duration, and generated evidence.
+- **Playwright visual legs**: run the exact visual command against a freshly seeded
+  per-leg DB with the leg's env, to separate *baseline drift* from *environment*.
+
+Deliverable: a per-shard table. If a shard fails locally, it is an implementation bug and
+is fixed locally. If it passes locally and failed in CI, the difference is a runner
+assumption and is named as such.
+
+### Stage 1 — L1 environment (highest value, lowest risk)
+
+1. Extend `required_environment` with the variable form and `@`-placeholders.
+2. Enforce both axes in `verify_prerequisites`; report before spawn.
+3. Declare `playwright-e2e`'s `FINANCE_DB_PATH` + `PLAYWRIGHT_PROJECT` in `profiles.py`;
+   delete the script's guard.
+4. Tests: missing variable ⇒ named failure, no spawn; `@`-resolution identical across
+   leg/workspace; the playwright task now declares what it needs.
+
+**Gate:** any previously silent missing requirement now surfaces as a *named prerequisite*.
+Expect this to make some paths red that were green — that is the signal working, and each
+must be resolved or explicitly declared, never suppressed.
+
+### Stage 2 — L2 budget
+
+Single authority from the task; executor asserts it is under the job backstop; remove
+budget expressions from workflows. Tests: a unit-less budget is unrepresentable; the
+`85`-vs-`85m` class cannot recur.
+
+### Stage 3 — L3 transport
+
+Declared artifact root on the plan; writer and reader both consume it. Tests: the
+`mutation.yml` shape is the only shape; a declared root round-trips.
+
+### Stage 4 — L4 executor + envelopes + local harness
+
+1. `verify <profile>-envelopes` emits one envelope per leg.
+2. `verify execute-envelope` is the only spawn path.
+3. `verify local-shards --workflow <name>`.
+4. **Then** convert the four fan-out workflows. Required identities untouched; `needs`,
+   `matrix` and one `run:` per job is the whole diff.
+
+**Gate for the whole milestone:** for each workflow, `local-shards` reproduces CI's
+per-shard outcomes exactly, or every divergence is named and explained as a runner
+assumption.
+
+### Stage 5 — Validator rules (the constitution follows, it does not precede)
+
+New `validate_actions.py` rules, each with a rejection test:
+
+- a fan-out workflow may not declare an `env:` block for a verification obligation;
+- may not express a per-leg budget;
+- may not list artifact paths for verification evidence;
+- must invoke `execute-envelope` for every leg.
+
+This is what stops the duplication from regrowing. It is the durable part of the fix.
 
 ---
 
-## 6. Tests to add
+## 5. What this deletes
 
-| Test | Asserts |
+The point of the exercise — YAML shrinks to `needs`, `matrix`, and one `run:`:
+
+| Removed from workflows | Replaced by |
 |---|---|
-| `run_streaming_command` with `progress=None` | output files and `CommandResult` byte-identical to today |
-| `progress` set, fast command | exactly one start line and one terminal line, **no** heartbeat |
-| `progress` set, command outlives one interval | ≥1 heartbeat with monotonic `elapsed`, and none after exit |
-| terminal line contains `term=` matching `classify_termination` | log and record agree |
-| heartbeat disabled via `VERIFY_HEARTBEAT_SECONDS=0` | no heartbeat lines |
-| `progress_prefix` composition | reconcile label is `reconcile-shard/exec-NNNN` |
-| leg result written on task failure | file exists, `status=failed`, `outcome=terminal` |
-| leg result written on blocked validation | file exists, not an exception |
-| aggregate: missing file | classified `absent`, **not** merged |
-| aggregate: `status=failed` | `NOT_CERTIFIABLE` naming the failing task, **not** `absent` |
-| aggregate: unknown `schema` | rejected loudly; never coerced to pass |
-| aggregate: malformed JSON | classified `malformed`, distinct from `absent` |
-
-The last four are the regression guard for 4a: a failed shard must keep the aggregate red
-and must not be mistaken for a shard that never ran.
+| `env:` blocks per leg | `required_environment` in `profiles.py` |
+| `timeout "${X:-N}"` expressions | `timeout_seconds` on the task |
+| artifact `path:` lists | declared `evidence_transport` |
+| `--result-out` / report `jq` parsing | declared leg-result schema |
+| matrix emission boilerplate | `<profile>-envelopes` |
+| the shell's `FINANCE_DB_PATH` guard | `required_environment`, enforced |
 
 ---
 
-## 7. Risk
+## 6. Risk, stated without hedging
 
 | Risk | Sev | Mitigation |
 |---|---|---|
-| Instrumentation floods CI logs | Med | Heartbeat-only; content never streamed; suppressed for sub-2s commands; opt-in per call site |
-| 4a lets a failed shard read as *absent* (or vice versa) and the gate mishandles it | **High** | §4a three-state table + the four aggregate tests in §6 |
-| An unknown `schema` is coerced into a pass | **High** | Explicit rejection; `_as_state` precedent already refuses this |
-| Heartbeat thread leaks or outlives the child | Low | Daemon thread, joined after `proc.wait`, plus an `is_alive()` guard |
-| Restoring `FINANCE_DB_PATH` on reconcile changes DB behaviour | Med | Per-shard path; `tools/e2e_seed.py:656,663` verified to honour the env var with `--reset` |
-| Scope creep into the proven gates | Med | Steps 1–3 touch only the primitive, reconcile, and Playwright. Runtime/backend are read-only |
+| L1 surfaces many previously hidden missing requirements; more is red | **High** | Expected and desirable. Stage 1 is gated on triaging every one — resolve or declare, never suppress. Red is the measurement working. |
+| L4 touches every fan-out workflow | **High** | Sequenced last, behind L1–L3 and behind `local-shards` proving equivalence. `local-shards` is the acceptance test, so the blast radius is measured before it is pushed. |
+| Envelope becomes a second framework | Med | §3.1 constraints: data only, one spawn path, no new engine, validator-enforced |
+| `required_environment` gains a second meaning | Med | Tool form vs variable form are syntactically distinct; both validate to the same `Prerequisite` type; migration is explicit per task |
+| Declaring L1–L4 is a large change to a system that currently produces correct verdicts | **High** | Accepted deliberately. The alternative is permanent hand-maintained duplication in YAML, which is what produced every defect in this milestone. **No compromise: the duplication is the defect.** |
 
 ---
 
-## 8. Process corrections carried forward
+## 7. Answers to the specific questions asked
 
-Three authoring mistakes cost CI cycles last session and belong to the process, not to
-one-offs:
+**Why did it work for some workflows and become hard to diagnose?**
+Because those workflows had homogeneous obligations, single-path transport, and no
+per-leg state — so the hand-written envelope was identical everywhere and its errors were
+either absent or uniform. The moment obligations differ or need per-leg state, each needs
+a different envelope, and the framework had nowhere to put it.
 
-1. **A failed assertion inside a multi-edit script silently skipped steps.** Two step
-   insertions aborted and were pushed without verifying the step list; one caused every
-   reconcile leg to fail its own guard. **Rule: after any programmatic YAML edit, assert
-   the expected step names are present before committing.**
-2. **Diagnostics written only to `$GITHUB_STEP_SUMMARY` are unreadable via `gh`.** Two
-   rounds produced nothing. **Rule: diagnostics go to stdout; the summary is supplementary.**
-3. **Local CLI verification cannot see YAML-shell defects.** Every primitive was green
-   locally while the workflow failed. The checks that caught these were `bash -n` over
-   every extracted `run:` block and a scan for `${` placeholders missing their `$`. **Keep
-   both as pre-commit gates on any workflow edit.**
+**What is the use of the runtime framework?**
+It is the certification authority, and it performed correctly throughout. It owns
+obligations, evidence, fingerprints, mutation, measurement, reconciliation, and the
+split-brain guards — and every verdict it produced this milestone was right, including
+refusing to certify on incomplete evidence. That is not the problem and should not be
+reduced.
+
+**What is the core problem?**
+It has a declared-but-inert `required_environment` field and no other representation of
+execution conditions, so six execution facts are hand-written per workflow per leg, drift
+silently, and cannot be validated, reproduced, or tested by anything.
+
+**The architectural fix?**
+Make the execution envelope a first-class, serialized, runtime-owned artifact. Declare
+environment, budget, and transport in the model; enforce them before spawn; execute through
+one entry point that is byte-identical locally and in CI; and delete the YAML duplication
+— enforced by new validator rules so it cannot regrow.
+
+**Why is a local shard harness part of the architectural fix rather than a convenience?**
+Because it is the *same envelope* executed locally. It converts "reproduce in CI" from a
+multi-minute, opaque, guess-driven loop into a deterministic function of one artifact —
+and it is the acceptance test that proves the CI topology is faithful.
 
 ---
 
-## 9. Execution note
+## 8. Immediate next step
 
-Plan only — no files modified. Steps 1–3 require source edits to
-`runtime/foundation/verification/{parallel_executor,execution_orchestrator,runtime_shards,profile_tasks,control_plane_facade}.py`
-and `.github/workflows/{verification-reconcile,playwright}.yml`, plus mutating CI runs.
-Switch to an implementation-capable agent.
+Stage 0 only: build the harness, reproduce reconcile shards 0–6 and the two Playwright
+visual legs locally, and produce the per-shard table. **Push no workflow change until that
+table exists.** The two open failures are already narrowed to `exec-0004`
+(`run_property_tests.sh`, 409 s in CI vs 30 s local) and 11 `toHaveScreenshot` mismatches
+on a branch carrying 119 changed frontend files and a 970-line `tools/e2e_seed.py`
+rewrite — both reproduced offline, neither needs a CI cycle to characterise further.
+
+Implementation requires source edits across `runtime/foundation/verification/**` and
+`.github/workflows/**`, plus mutating verification runs: switch to an implementation-capable
+agent.

@@ -1,25 +1,32 @@
 {
   "schema": "m10r3-certification-run/v1",
-  "plan_id": "execplan-593a52d6f624",
+  "plan_id": "execplan-isotest",
   "decision": "certified",
   "reason": "all mandatory obligations satisfied and certification conditions met",
   "exit_code": 5,
-  "duration_seconds": 58.016470181999466,
+  "duration_seconds": 0.1058512969975709,
   "fingerprint_before": null,
   "fingerprint_after": null,
   "fingerprint_stable": false,
   "obligations": [
     {
-      "task_id": "exec-0007",
+      "task_id": "exec-0001",
       "state": "pass",
-      "is_mandatory": false,
+      "is_mandatory": true,
       "detail": "ok",
-      "duration_seconds": 57.9
+      "duration_seconds": 0.0
     }
   ],
   "topology": "reconcile-shard-0-of-3",
-  "plan_fingerprint": "593a52d6f624f434cc20d27e63a7f7e89ac572f97615453f8776d63088ce7740",
+  "plan_fingerprint": "isotest",
   "tasks_executed": [
-    "exec-0007"
+    "exec-0001"
+  ],
+  "evidence_roots": [
+    "runtime/generated/certification",
+    "runtime/generated/m9-c49",
+    "runtime/generated/execution",
+    "runtime/generated/profile-logs",
+    "runtime/generated/local-harness"
   ]
 }

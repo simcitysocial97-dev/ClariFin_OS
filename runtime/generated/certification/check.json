@@ -4,7 +4,7 @@
   "decision": "certified",
   "reason": "all mandatory obligations satisfied and certification conditions met",
   "exit_code": 5,
-  "duration_seconds": 0.13838255800146726,
+  "duration_seconds": 0.20434132700029295,
   "fingerprint_before": null,
   "fingerprint_after": null,
   "fingerprint_stable": false,
@@ -21,5 +21,12 @@
   "plan_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "tasks_executed": [
     "exec-0002"
+  ],
+  "evidence_roots": [
+    "runtime/generated/certification",
+    "runtime/generated/m9-c49",
+    "runtime/generated/execution",
+    "runtime/generated/profile-logs",
+    "runtime/generated/local-harness"
   ]
 }
