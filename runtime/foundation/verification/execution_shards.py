@@ -49,6 +49,7 @@ from typing import Any
 from runtime.foundation.verification.execution_orchestrator import (
     NON_PASS_STATES,
     PASSING_STATES,
+    CompletionState,
     ExecutionPlan,
     ExecutionReport,
     ExecutionTaskSpec,
@@ -452,6 +453,45 @@ def plan_matrix(assignment: ShardAssignment, plan: ExecutionPlan) -> str:
     return json.dumps(document)
 
 
+def _skipped_escalation_record(
+    task: ExecutionTaskSpec, plan: ExecutionPlan
+) -> TaskExecutionRecord:
+    """The record an escalation task earns when sufficiency is met and it is skipped.
+
+    Field-for-field what ``ExecutionOrchestrator.execute`` emits for the same
+    condition, so a sharded run and a single-run plan produce the same record set and
+    the same verdict. Written here rather than inline in the merge because it is a
+    contract, not a convenience.
+    """
+    return TaskExecutionRecord(
+        record_id=f"aggregate-escalation-{task.task_id}",
+        plan_id=plan.plan_id,
+        task_id=task.task_id,
+        primary_capability=task.primary_capability,
+        capabilities=list(task.capabilities),
+        command=task.command,
+        scope=task.scope,
+        is_mandatory=task.is_mandatory,
+        is_escalation=True,
+        verification_kind=task.verification_kind,
+        started_at="",
+        completed_at="",
+        duration_seconds=0.0,
+        exit_code=0,
+        completion_state=CompletionState.SKIPPED.value,
+        stdout_path="",
+        stderr_path="",
+        artifacts=[],
+        measurement_truth=None,
+        diagnostic=None,
+        next_action="",
+        reason=(
+            "stop-on-sufficiency: all mandatory tasks PASS or REUSED; escalation skipped"
+        ),
+        prerequisites_satisfied=True,
+    )
+
+
 def _record_key(record: TaskExecutionRecord) -> str:
     return record.task_id
 
@@ -490,6 +530,43 @@ def merge_shard_reports(
 
     missing = [t.task_id for t in plan.tasks if t.task_id not in records]
     extra = sorted(k for k in records if k not in order)
+
+    # M11-R4 — the escalation barrier the shards deliberately do not run.
+    #
+    # `run --shard` strips escalation tasks out of a shard's plan (see
+    # control_plane_facade.run), because a shard holding a subset of the mandatory
+    # tasks cannot decide stop-on-sufficiency on the global outcome. That decision
+    # belongs here — but until now nothing actually made it, and the consequence was
+    # a permanent deadlock:
+    #
+    #   * every shard omits them  ->  no SKIPPED record is ever produced;
+    #   * this merge requires a record for every plan task  ->  `not_certifiable`
+    #     with "missing 3 task(s)" on every single run.
+    #
+    # Reconciliation could therefore never certify any plan that contained an
+    # escalation task, whatever the code under test did.
+    #
+    # So the aggregate owns the barrier, as the shard comment always assumed. It
+    # decides exactly what `ExecutionOrchestrator.execute` decides, on exactly the
+    # same evidence, and says so in the same words:
+    #
+    #   * sufficiency met (no mandatory task in a non-pass state) -> SKIPPED,
+    #     "stop-on-sufficiency: all mandatory tasks PASS or REUSED; escalation skipped".
+    #     This is the orchestrator's own outcome for that condition, so the merged
+    #     record set is identical to a single-run plan's.
+    #   * sufficiency NOT met -> the task is left missing. It genuinely did not run,
+    #     and `not_certifiable` naming it is the truthful verdict. It is never
+    #     auto-passed, auto-skipped or invented.
+    non_pass = [
+        r
+        for r in records.values()
+        if r.is_mandatory and r.completion_state not in PASSING_STATES
+    ]
+    if not non_pass:
+        for task in plan.tasks:
+            if task.is_escalation and task.task_id not in records:
+                records[task.task_id] = _skipped_escalation_record(task, plan)
+    missing = [t.task_id for t in plan.tasks if t.task_id not in records]
 
     ordered = [
         records[k] for k in sorted(records, key=lambda k: (order.get(k, 1 << 30), k))

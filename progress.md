@@ -8483,3 +8483,76 @@ confined to three `runtime/generated/` files and were reverted with
 (`40f7f891a0c103850279922a23d8e56d2b99892c`, five files, unchanged). The comparison
 was redone by writing HEAD's file to a temporary path and copying it over, which is
 what the "with the facade at HEAD" numbers above come from.
+
+## STEP 8c — the escalation barrier: reconciliation could never certify
+
+With the aggregate producing a verdict at last, run 37274801285 reported:
+
+```
+[aggregate] plan=execplan-5225e300b019 tasks=10 shards=7 unreadable=0
+[aggregate] not_certifiable: … shard coverage incomplete: missing 3 task(s):
+             exec-0006, exec-0007, exec-0008
+```
+
+**Pre-existing**, and structural. Three pieces of the design disagreed:
+
+1. `assign_shards` appends every escalation task to **every** shard (the barrier).
+2. `run --shard` then **removes** escalation tasks from the shard's plan, with a
+   comment explaining why this is correct: a shard holding a subset of the mandatory
+   tasks cannot decide stop-on-sufficiency on the global outcome, and "the aggregate
+   owns escalation".
+3. `merge_shard_reports` requires a record for **every** task in the plan — R1, the
+   split-brain invariant — and names the absent ids.
+
+So the aggregate was supposed to own escalation and then did not. Nothing ever produced
+those three records, and the merge's own invariant turned that into `not_certifiable`
+on **every** run. Reconciliation could not certify any plan containing an escalation
+task, whatever the code under test did.
+
+The three tasks are exactly the plan's escalation barrier:
+
+```
+exec-0006  escalation=True  mandatory=False  e2e         depends_on 0001-0005
+exec-0007  escalation=True  mandatory=False  property    depends_on 0001-0005
+exec-0008  escalation=True  mandatory=False  integration depends_on 0001-0005
+```
+
+### Fix
+
+The aggregate makes the decision, as the shard comment always assumed, using exactly
+the rule `ExecutionOrchestrator.execute` uses and in its own words:
+
+* sufficiency met (no mandatory task in a non-pass state) → `SKIPPED`, reason
+  `"stop-on-sufficiency: all mandatory tasks PASS or REUSED; escalation skipped"` —
+  byte-identical to what the orchestrator emits for a single-run plan, so the merged
+  record set reads the same either way;
+* sufficiency **not** met → the task stays missing. It genuinely did not run, and
+  `not_certifiable` naming it is the truthful verdict. It is never auto-passed,
+  auto-skipped or invented.
+
+### Proof — both directions, from the plan CI actually shipped
+
+```
+mandatory green  -> certified        escalation: [0006 skipped, 0007 skipped, 0008 skipped]
+mandatory failed -> not_certifiable  escalation: []   (named in the reason)
+```
+
+At HEAD the first line is `not_certifiable | … missing 3 task(s)`, which is precisely
+what CI printed.
+
+### Files changed
+
+- `runtime/foundation/verification/execution_shards.py` — the aggregate decides the
+  barrier; `_skipped_escalation_record` holds the record contract.
+- `runtime/tests/test_m11_r4_reconcile_aggregate.py` — 2 more tests (8 total).
+
+```
+with execution_shards.py at HEAD:  1 failed (sufficiency case), 7 passed
+with the fix:                     8 passed
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_reconcile_aggregate.py \
+    runtime/tests/test_verify_sharding.py runtime/tests/test_runtime_sharding.py -q
+76 passed in 82.95s
+```
+
+`ruff check` on the touched files reports only `I001` and `F821 Undefined name Path`
+at `execution_shards.py:355`, both present at HEAD (verified against `git show HEAD:`).

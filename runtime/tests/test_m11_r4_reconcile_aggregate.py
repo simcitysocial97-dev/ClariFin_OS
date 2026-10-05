@@ -224,3 +224,194 @@ class TestAggregatorSurvivesAMalformedRecord:
 
         directory = self._write_shard(tmp_path, [record])
         assert ControlPlane()._aggregate_shard_reports(str(directory)) != 0
+
+
+class TestTheEscalationBarrierIsDecidedOnce:
+    """The deadlock STEP 8c uncovered.
+
+    `run --shard` deliberately strips escalation tasks out of a shard's plan, because
+    a shard holding a subset of the mandatory tasks cannot decide stop-on-sufficiency
+    on the global outcome. The merge then requires a record for every plan task. Until
+    the aggregate made the decision itself, nothing produced those records and every
+    run ended:
+
+        not_certifiable: … shard coverage incomplete: missing 3 task(s):
+        exec-0006, exec-0007, exec-0008
+
+    Whatever the code under test did. Reconciliation could not certify a plan that
+    contained an escalation task at all.
+    """
+
+    @staticmethod
+    def _plan() -> object:
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionPlan,
+            ExecutionTaskSpec,
+            RepositoryFingerprint,
+        )
+
+        fingerprint = RepositoryFingerprint.capture()
+        mandatory = [
+            ExecutionTaskSpec(
+                task_id=f"exec-{n:04d}",
+                primary_capability="account-engine",
+                capabilities=["account-engine"],
+                verification_kind="unit",
+                command=f"echo mandatory-{n}",
+                profile="unit",
+                scope="unit",
+                is_mandatory=True,
+                is_escalation=False,
+                reason="probe",
+                source_task_id=f"cp-{n}",
+                origin="control_plane",
+            )
+            for n in range(1, 4)
+        ]
+        barrier = [
+            ExecutionTaskSpec(
+                task_id=f"exec-{n:04d}",
+                primary_capability="account-engine",
+                capabilities=["account-engine"],
+                verification_kind="e2e",
+                command=f"echo escalation-{n}",
+                profile="playwright",
+                scope="playwright",
+                is_mandatory=False,
+                is_escalation=True,
+                reason="escalation barrier",
+                source_task_id=f"cp-{n}",
+                origin="control_plane",
+                depends_on=(t.task_id for t in mandatory),
+            )
+            for n in range(4, 7)
+        ]
+        return ExecutionPlan(
+            plan_id="barrier-plan",
+            source_plan_id="cp",
+            repository_fingerprint=fingerprint,
+            changed_files=[],
+            affected_capabilities=[],
+            affected_components=[],
+            invalidated_evidence=[],
+            reusable_evidence=[],
+            tasks=mandatory + barrier,
+            escalation_conditions=[],
+            measurement_requirements=[],
+            certification_requirements=[],
+            rationale="probe",
+            plan_fingerprint=fingerprint.fingerprint,
+            generated_at="2026-10-05T00:00:00Z",
+        )
+
+    @staticmethod
+    def _record(task, state):
+        from runtime.foundation.verification.execution_orchestrator import (
+            TaskExecutionRecord,
+        )
+
+        return TaskExecutionRecord(
+            record_id="r",
+            plan_id="barrier-plan",
+            task_id=task.task_id,
+            primary_capability=task.primary_capability,
+            capabilities=list(task.capabilities),
+            command=task.command,
+            scope=task.scope,
+            is_mandatory=task.is_mandatory,
+            is_escalation=task.is_escalation,
+            verification_kind=task.verification_kind,
+            started_at="",
+            completed_at="",
+            duration_seconds=1.0,
+            exit_code=0,
+            completion_state=state,
+            stdout_path="",
+            stderr_path="",
+            artifacts=[],
+            measurement_truth=None,
+            diagnostic=None,
+            next_action="",
+            reason="",
+            prerequisites_satisfied=True,
+        )
+
+    @staticmethod
+    def _shard_report(records):
+        from runtime.foundation.verification.execution_orchestrator import (
+            ExecutionReport,
+        )
+
+        return ExecutionReport(
+            report_id="shard-0",
+            plan_id="barrier-plan",
+            plan_fingerprint="x",
+            started_at="",
+            completed_at="",
+            total_duration_seconds=1.0,
+            records=records,
+            efficiency={},
+            final_decision="certified",
+            decision_reason="",
+            evidence_reused=[],
+            escalations_triggered=[],
+        )
+
+    def test_sufficiency_met_certifies_and_records_the_skip(self):
+        from runtime.foundation.verification.execution_orchestrator import (
+            CompletionState,
+        )
+        from runtime.foundation.verification.execution_shards import merge_shard_reports
+
+        plan = self._plan()
+        # Exactly what a shard reports: its mandatory tasks, and nothing else.
+        records = [
+            self._record(t, CompletionState.PASS.value)
+            for t in plan.tasks
+            if not t.is_escalation
+        ]
+        merged = merge_shard_reports(
+            plan,
+            [self._shard_report(records)],
+            live_fp=plan.repository_fingerprint,
+        )
+
+        assert merged.final_decision == "certified", merged.decision_reason
+        skipped = {r.task_id: r for r in merged.records if r.is_escalation}
+        assert set(skipped) == {"exec-0004", "exec-0005", "exec-0006"}
+        for record in skipped.values():
+            assert record.completion_state == CompletionState.SKIPPED.value
+            # The orchestrator's own wording for this condition, so a sharded run and
+            # a single-run plan read identically.
+            assert "stop-on-sufficiency" in record.reason
+
+    def test_a_mandatory_failure_leaves_the_barrier_missing(self):
+        """Never auto-skipped into a pass, and never invented."""
+        from runtime.foundation.verification.execution_orchestrator import (
+            CompletionState,
+        )
+        from runtime.foundation.verification.execution_shards import merge_shard_reports
+
+        plan = self._plan()
+        records = [
+            self._record(
+                t,
+                (
+                    CompletionState.FAILED.value
+                    if t.task_id == "exec-0001"
+                    else CompletionState.PASS.value
+                ),
+            )
+            for t in plan.tasks
+            if not t.is_escalation
+        ]
+        merged = merge_shard_reports(
+            plan,
+            [self._shard_report(records)],
+            live_fp=plan.repository_fingerprint,
+        )
+
+        assert merged.final_decision == "not_certifiable"
+        assert not [r for r in merged.records if r.is_escalation]
+        for task_id in ("exec-0004", "exec-0005", "exec-0006"):
+            assert task_id in merged.decision_reason
