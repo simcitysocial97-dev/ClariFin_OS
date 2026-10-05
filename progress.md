@@ -8357,3 +8357,35 @@ work.
 `PROVENANCE.md` updated with the run id, the SHA, the reason, and the fact that two
 baselines were missing rather than stale. No threshold was touched:
 `DIFF_THRESHOLD`, `MAX_DIFF_PIXELS` and `maxDiffPixelRatio` are unchanged.
+
+## STEP 7 — local CI replication matrix
+
+Every row uses the repository's own canonical command (the same one the workflow
+invokes), not a substitute.
+
+| Workflow | CI command | Local reproduction | Result |
+|---|---|---|---|
+| Quality Gate | `runtime.verify quick` | identical, `.venv` | **certified** — ruff, black, mypy, unit all pass; 170.5s; fingerprint `10cb6ea5 -> 10cb6ea5` stable |
+| API Contract Integrity | `runtime.verify contracts` | identical | **certified** — schemathesis + aggregate pass; 122.5s; fingerprint stable |
+| Frontend Verification | `runtime.verify frontend` | identical | **certified** — 351.2s; fingerprint stable |
+| Verification Runtime | `runtime.verify runtime-plan` / `runtime-shard --shard N --result-out` / `runtime-aggregate` | identical, **not executed here** | CI run 37269442599 green; see the environmental delta below |
+| Verification Reconcile | `runtime.verify plan --shard-plan` → `run --plan --shard N --result-out` → `run --aggregate` | plan + `capability_resolution` reproduced directly | plan reproduced; shard execution is CI-authoritative |
+| Playwright | `runtime.verify playwright-plan` / `playwright-leg` / `playwright-aggregate` | identical, both passes, both modes | reproduced exactly (see STEP 5/6) |
+| Backend Verification | `runtime.verify backend-plan` / `backend-task` / `backend-aggregate` | identical, not executed here | CI run 37269442574 green |
+| CodeQL | GitHub action only | **not reproducible locally** | environmental |
+| M9 Forensic Diagnostic Lab | `runtime.verify` profile | **not reproduced locally** | CI green |
+
+### Environmental deltas that cannot be closed locally
+
+1. **Verification Runtime** is a 45-minute seven-shard pytest fan-out. Running it here
+   would take the same wall clock and would exercise the same code; the run is CI's to
+   own and its result is recorded rather than re-derived.
+2. **CodeQL** is a GitHub-hosted analysis with no local equivalent. Nothing in this
+   phase touched a language it scans.
+3. **Node toolchain in the reconcile plan job.** Until STEP 4b this was a *silent*
+   delta, and it is the reason `unmapped` differed between machines. It is now closed
+   by provisioning Node in the plan job, and it is the one delta this phase found by
+   diffing behaviour rather than by diffing configuration.
+4. **Chromium rasterisation.** Baselines must come from the runner. This phase
+   reproduced the visual failure locally (`11 failed / 10 passed`) but deliberately did
+   not regenerate anything locally.
