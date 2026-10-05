@@ -8224,3 +8224,53 @@ appear when a capability genuinely has no registry entry, and then it will name 
 capabilities (STEP 4).
 
 `validate_actions.py`: ALL CHECKS PASSED.
+
+## STEP 9 — why only 5 of 7 shards certified
+
+Traced from the actual CI evidence rather than re-inferred. From the
+`reconciliation-report` artifact of run 37257612911:
+
+| shard | status | final_decision | failing task |
+|---|---|---|---|
+| reconcile-shard-0 | passed | certified | — |
+| reconcile-shard-1 | **failed** | diagnostic | `exec-0004` |
+| reconcile-shard-2 | passed | certified | — |
+| reconcile-shard-3 | passed | certified | — |
+| reconcile-shard-4 | passed | certified | — |
+| reconcile-shard-5 | passed | certified | — |
+| reconcile-shard-6 | **failed** | not_certifiable | `exec-0006` |
+
+The two uncertified shards carry one record each, and the whole of the failure is
+those two records:
+
+```
+shard-1  exec-0004  failed          "command exit 1"
+shard-6  exec-0002  pass            "command exit 0"
+shard-6  exec-0006  registry_gap    "… no verification-registry mapping for:
+                                    unmapped:UNMAPPED[3]"
+```
+
+Resolving them against `plan.json`:
+
+* `exec-0004` — `verification_kind: e2e`, capabilities `["e2e-tests"]` → the Playwright
+  leg. Its `command exit 1` is the eleven stale baselines (STEP 5), reproduced locally
+  at the same `11 failed / 10 passed`.
+* `exec-0006` — `verification_kind: registry_mapping`, capabilities
+  `["unmapped:UNMAPPED[3]"]` → the capability-provenance defect (STEP 4).
+
+So, against the mission's checklist:
+
+| Hypothesis | Verdict |
+|---|---|
+| genuine failures | **yes** — both, and of two known defect classes |
+| stale artifacts | no — every one of the seven shards reported, and `absent`/`malformed`/`rejected` were all empty |
+| missing result records | no — seven of seven present |
+| capability mapping loss | yes, for `exec-0006` (STEP 4) |
+| serialization defects | no — the plan round-tripped through JSON intact |
+| result-parser defects | no for reconcile; **yes** for Playwright (STEP 6) |
+| execution-order issues | no — shard 6's `exec-0002` passed in the same shard, so the shard was not dead |
+
+Five shards certified because two shards carried two genuine defects. The
+certification threshold was not touched, no shard was forced, and no result was
+reclassified: reconciliation was already representing reality correctly, and the two
+records it refused to certify were refusals it was entitled to make.
