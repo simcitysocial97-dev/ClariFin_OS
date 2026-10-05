@@ -8300,3 +8300,60 @@ Fixed to `$(( ${LEG_TIMEOUT_SECONDS:-2400} + 60 ))`, verified locally under
 Lesson recorded rather than quietly fixed: a shell arithmetic expansion is not a
 defaultable read. Every optional variable in a `set -u` step needs `${var:-default}`
 *inside* the expansion, not at the point of use.
+
+## STEP 5b — the baselines themselves, generated on the canonical renderer
+
+Run `37269522107` (`workflow_dispatch`, `update_snapshots=true`, commit `a624857a`):
+**all 11 jobs green**, and the gate now reports what it has never been able to report:
+
+```json
+"legs_expected": [ …10 ids… ],
+"legs_reported": 10,
+"legs_passed": 10,
+"visual_legs": 2,
+"final_decision": "certified"
+```
+
+The real leg document for `chromium-visual`, straight from the artifact:
+
+```json
+{ "schema": "m10r2-leg-result/v1",
+  "shard_id": "chromium-visual", "status": "passed", "exit_code": 0,
+  "duration_seconds": 38.19, "passed": 21, "failed": 0, "errors": 0,
+  "decision": "certified", "fingerprint_stable": true }
+```
+
+The same field previously read `passed: 0, failed: 0, duration_seconds: 0` on a leg
+that had just failed eleven assertions.
+
+The artifact also proves the reporter fix landed: `frontend/test-results/results.json`
+and `junit.xml` are present in the leg artifacts for the first time — previously the
+directory held only `artifacts/`, because `--reporter=list` had suppressed them.
+
+### What changed in the baseline set
+
+| | count |
+|---|---|
+| `*-chromium-linux.png` rewritten | 9 |
+| `*-mobile-chrome-linux.png` rewritten | 15 |
+| **new** baselines that never existed | 2 |
+| tracked files git reports as changed | 22 |
+| baselines in the directory | 42 → 44 |
+
+The two new files are `cards-mobile-mobile-chrome-linux.png` and
+`settings-mobile-mobile-chrome-linux.png`. Playwright reported those two as *missing*
+rather than *differing*, which is why no amount of threshold reasoning could have
+explained them — and why one CI log line reads "No snapshot found for primary,
+computing on-demand". They are in the set now.
+
+Each visual leg regenerates only its own project and uploads the whole directory, so
+the images were taken from the matching artifact: chromium files from
+`playwright-baselines-chromium` (11328190823), mobile-chrome files from
+`playwright-baselines-mobile-chrome` (11327702218). Verified before installing: the
+chromium artifact differs from HEAD only on `*-chromium-linux.png`, the mobile artifact
+only on `*-mobile-chrome-linux.png`, so no artifact could silently revert the other's
+work.
+
+`PROVENANCE.md` updated with the run id, the SHA, the reason, and the fact that two
+baselines were missing rather than stale. No threshold was touched:
+`DIFF_THRESHOLD`, `MAX_DIFF_PIXELS` and `maxDiffPixelRatio` are unchanged.
