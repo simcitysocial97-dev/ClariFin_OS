@@ -1,8 +1,8 @@
 {
-  "summary_id": "run-20261002-035043",
-  "generated_at": "2026-10-02T03:50:43.850122+00:00",
-  "commit": "5f6d94dc91143dd55fa94028c9b75413cf0a62a4",
-  "branch": "m10/consolidation",
+  "summary_id": "run-20261005-055243",
+  "generated_at": "2026-10-05T05:52:43.656804+00:00",
+  "commit": "a624857ab3ff90d86e5ace8bac194a573b5df116",
+  "branch": "m11/parallelism-correctness",
   "verification_plan": "selective",
   "overall_status": "pass",
   "backend": {

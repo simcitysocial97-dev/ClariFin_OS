@@ -2,5 +2,5 @@
   "schema": "frontend-verification/v1",
   "overall_status": "pass",
   "unit_id": "",
-  "phases": [{"phase":"lint","status":"pass","exit_code":0,"duration_seconds":107,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/lint.log"},{"phase":"typecheck","status":"pass","exit_code":0,"duration_seconds":33,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/typecheck.log"}]
+  "phases": [{"phase":"lint","status":"pass","exit_code":0,"duration_seconds":82,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/lint.log"},{"phase":"typecheck","status":"pass","exit_code":0,"duration_seconds":34,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/typecheck.log"},{"phase":"build","status":"pass","exit_code":0,"duration_seconds":70,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/build.log"},{"phase":"test","status":"pass","exit_code":0,"duration_seconds":149,"log":"/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/evidence/frontend/test.log"}]
 }

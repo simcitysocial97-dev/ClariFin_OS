@@ -1,8 +1,8 @@
-## Verification Evidence — m10/consolidation — 5f6d94d
+## Verification Evidence — m11/parallelism-correctness — a624857
 
 **Status:** pass
 **Plan:** selective
-**Generated:** 2026-10-02T03:50:43.850122+00:00
+**Generated:** 2026-10-05T05:52:43.656804+00:00
 
 ### Test Results
 
