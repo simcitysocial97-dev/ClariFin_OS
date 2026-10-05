@@ -929,14 +929,21 @@ class ControlPlane:
             exit_code=0 if report.final_decision == "certified" else 1,
             duration_seconds=time.monotonic() - run_start,
             tasks=executed_task_ids,
-            records=[
-                {
-                    "task_id": r.task_id,
-                    "completion_state": str(r.completion_state),
-                    "reason": r.reason,
-                }
-                for r in report.records
-            ],
+            # M11-R4. This used to emit three keys per record — task_id,
+            # completion_state, reason — while `_aggregate_shard_reports` rebuilds
+            # them as `TaskExecutionRecord(**record)` against the full 23-field shape.
+            # The two halves of one contract disagreed, so every reconcile aggregate
+            # died with
+            #     TypeError: TaskExecutionRecord.__init__() missing 20 required
+            #                positional arguments
+            # and the gate produced no verdict at all. It was masked for a long time
+            # because the shards were independently red, so the crash was never the
+            # first thing anyone saw.
+            #
+            # The fix is on the producer: a shard writes what a record IS, so the
+            # aggregate gets the evidence — durations, exit codes, diagnostics,
+            # measurement truth — instead of a summary it then has to guess at.
+            records=[r.to_dict() for r in report.records],
         )
 
         from runtime.verify import record_execution_report
@@ -1431,9 +1438,28 @@ class ControlPlane:
                 )
                 return 2
             records = []
-            for record in payload.get("records") or []:
+            for index, record in enumerate(payload.get("records") or []):
                 record["completion_state"] = _as_state(record.get("completion_state"))
-                records.append(TaskExecutionRecord(**record))
+                try:
+                    records.append(TaskExecutionRecord(**record))
+                except TypeError as exc:
+                    # M11-R4. A record the producer truncated is a PRODUCER BUG, and
+                    # the aggregator's own contract says such a document is reported,
+                    # never coerced into a verdict and never allowed to abort the run.
+                    # This loop used to raise straight through, so one malformed record
+                    # cost the operator the entire gate verdict — the opposite of what
+                    # the absent/unreadable handling above is for.
+                    print(
+                        f"[aggregate] {path.name} record #{index} is MALFORMED "
+                        f"(producer bug): {exc}",
+                        file=sys.stderr,
+                    )
+                    unreadable.append(f"{path.name}#{index}")
+                    continue
+            if not records and payload.get("records"):
+                # Every record in this shard was unusable, so the shard contributed
+                # nothing. Its tasks must count as unreported, not as passing.
+                continue
             reports.append(
                 ExecutionReport(
                     report_id=payload.get("report_id", path.stem),

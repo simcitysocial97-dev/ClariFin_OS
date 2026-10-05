@@ -8389,3 +8389,97 @@ invokes), not a substitute.
 4. **Chromium rasterisation.** Baselines must come from the runner. This phase
    reproduced the visual failure locally (`11 failed / 10 passed`) but deliberately did
    not regenerate anything locally.
+
+## STEP 8b — the reconcile aggregate had never worked (pre-existing)
+
+With all seven shards green for the first time, the reconcile gate's own job became
+the only remaining failure:
+
+```
+File ".../control_plane_facade.py", line 1436, in _aggregate_shard_reports
+  records.append(TaskExecutionRecord(**record))
+TypeError: TaskExecutionRecord.__init__() missing 20 required positional arguments
+```
+
+**Pre-existing, not an M11 regression.** The identical traceback appears in run
+37257612911 at 03:24:03, two hours before this phase began. It was invisible for as
+long as the shards were independently red — the gate was already failing, so nobody
+was reading its traceback. Turning the shards green is what exposed it.
+
+### Root cause
+
+Two halves of one contract disagreed. The shard producer emitted three keys per
+record:
+
+```python
+records=[{"task_id": r.task_id, "completion_state": str(r.completion_state),
+          "reason": r.reason} for r in report.records]
+```
+
+while `_aggregate_shard_reports` rebuilds them as `TaskExecutionRecord(**record)`
+against the full 23-field dataclass. Verified from the CI artifact itself —
+`reconcile-shard-1` shipped exactly:
+
+```json
+"records": [{"task_id": "exec-0004", "completion_state": "failed", "reason": "command exit 1"}]
+```
+
+Producer wins: a shard now writes `r.to_dict()`. The aggregate therefore receives the
+evidence — durations, exit codes, diagnostics, measurement truth, capability names —
+instead of a summary it then has to guess at.
+
+### Second defect, in the aggregator itself
+
+`TaskExecutionRecord(**record)` raised straight through, so **one malformed record
+cost the operator the entire gate verdict** — the exact opposite of what the
+adjacent absent/unreadable handling is for. A truncated record is a producer bug, and
+the module's own contract already says such a document is *reported*, never coerced
+into a verdict. It now is: the record is named (`shard-0.json#0`), counted in
+`unreadable`, and forces `not_certifiable`. The gate gets weaker in no
+configuration; it gets a verdict instead of a traceback.
+
+### Files changed
+
+- `runtime/foundation/verification/control_plane_facade.py` — full records from the
+  producer; malformed records reported rather than raised.
+- `runtime/tests/test_m11_r4_reconcile_aggregate.py` — new, 6 tests.
+
+The producer test runs the **real** canonical path (`ControlPlane().run(...)` over a
+plan whose fingerprint is captured live), not the writer helper, because the defect
+was never in the helper — it was in what the caller handed it.
+
+### Proof
+
+```
+with the facade at HEAD:   5 failed, 1 passed   (TypeError, as in CI)
+with the fix:              6 passed
+
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_reconcile_aggregate.py \
+    runtime/tests/test_m11_r4_capability_provenance.py \
+    runtime/tests/test_m11_r4_playwright_leg_results.py \
+    runtime/tests/test_verify_sharding.py \
+    runtime/tests/test_runtime_sharding.py -q
+93 passed in 84.50s
+```
+
+Real shard run through the canonical path, showing the recovered fields:
+
+```
+records: 1
+keys: artifacts, capabilities, command, completed_at, completion_state, diagnostic,
+      duration_seconds, exit_code, is_escalation, is_mandatory, measurement_truth,
+      next_action, plan_id, prerequisites_satisfied, primary_capability, reason,
+      record_id, scope, started_at, stderr_path, stdout_path, task_id, termination,
+      verification_kind
+```
+
+### Note on method
+
+While verifying this fix I ran `git stash -q <path>` to produce a HEAD-state
+comparison. That form is rejected by this git build, so the chained `git stash pop`
+popped the **pre-existing protected stash** instead. The resulting conflicts were
+confined to three `runtime/generated/` files and were reverted with
+`git reset`/`git checkout`; `stash@{0}` is byte-identical afterwards
+(`40f7f891a0c103850279922a23d8e56d2b99892c`, five files, unchanged). The comparison
+was redone by writing HEAD's file to a temporary path and copying it over, which is
+what the "with the facade at HEAD" numbers above come from.
