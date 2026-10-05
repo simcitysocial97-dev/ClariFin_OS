@@ -2067,14 +2067,34 @@ class ExecutionOrchestrator:
                     evidence_invalidated=tuple(cp_task.evidence_invalidated),
                     estimated_duration_seconds=cp_task.estimated_duration_seconds,
                 )
+                # M11-R4. TWO accumulators, because they answer different questions.
+                #
+                # `capability_ids` is the set of CONTROL-PLANE task ids this bucket
+                # serves; it names the obligation and picks `primary_capability`.
+                # `capabilities` is the set of CONCRETE capabilities those tasks
+                # cover (`VerificationTask.capabilities`), and it is what the
+                # execution record and the registry-mapping obligation report.
+                #
+                # They are the same set for every ordinary task — its
+                # `capabilities` is `(capability_id,)` — and they differ for exactly
+                # one: the registry-mapping obligation, whose `capability_id` is a
+                # COUNT (`unmapped:UNMAPPED[3]`) rather than a name. Seeding both from
+                # `capability_id` is what made `spec.capabilities` ship the count
+                # label, so the shard reported "no verification-registry mapping
+                # for: unmapped:UNMAPPED[3]" and the three actual names were known
+                # to the planner and lost on the way to the record.
                 bucket = {
                     "spec": spec,
-                    "capabilities": {cp_task.capability_id},
+                    "capability_ids": {cp_task.capability_id},
+                    "capabilities": set(spec.capabilities),
                 }
                 dedup[dedup_key] = bucket
                 order.append(dedup_key)
             else:
-                bucket["capabilities"].add(cp_task.capability_id)
+                bucket["capability_ids"].add(cp_task.capability_id)
+                bucket["capabilities"].update(
+                    cp_task.capabilities or (cp_task.capability_id,)
+                )
                 # Merge deduped spec: upgrade mandatory / authorization
                 # if any contributing task needs them.
                 new_dict = bucket["spec"].to_dict()
@@ -2093,11 +2113,11 @@ class ExecutionOrchestrator:
         for key in order:
             bucket = dedup[key]
             spec_dict = bucket["spec"].to_dict()
-            caps = sorted(bucket["capabilities"])
-            spec_dict["primary_capability"] = caps[0]
-            spec_dict["capabilities"] = caps
+            cap_ids = sorted(bucket["capability_ids"])
+            spec_dict["primary_capability"] = cap_ids[0]
+            spec_dict["capabilities"] = sorted(bucket["capabilities"])
             spec_dict["reason"] = (
-                spec_dict["reason"] + f" (serves: {', '.join(caps)})"
+                spec_dict["reason"] + f" (serves: {', '.join(cap_ids)})"
             ).strip()
             tasks.append(ExecutionTaskSpec.from_dict(spec_dict))
         # Apply deterministic ordering: mandatory first by (primary_cap, command).

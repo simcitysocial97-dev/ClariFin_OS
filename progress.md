@@ -7850,3 +7850,153 @@ filter in two files that would silently drop the audit's scope from 13 files to
   remaining flake surface in the E2E suite.
 - `test_doctor_consistent_across_runs` measures 22.7 s against the 30 s suite
   budget — 76% utilisation, and the next test in that file to cross it.
+
+---
+
+# M11-R4 — CI Failure Reproduction and Convergence
+
+Branch `m11/parallelism-correctness`, starting HEAD `5ba872d4`.
+
+## STEP 0 — Freeze and inventory
+
+Branch `m11/parallelism-correctness` · HEAD `5ba872d4` · working tree clean
+apart from `.kilo/plans/1791002067765-…` (pre-existing, unrelated) and
+untracked `runtime/generated/**` run records. `stash@{0}` untouched.
+
+Latest CI runs against `5ba872d4` (PR #16, `pull_request`):
+
+| Workflow | Run | Conclusion |
+|---|---|---|
+| API Contract Integrity | 37261663438 | success |
+| Backend Verification | 37261663428 | success |
+| Frontend Verification | 37261663523 | success |
+| Verification Runtime | 37261663420 | success |
+| Quality Gate | 37261663515 | success |
+| CodeQL | 37261663425 | success |
+| M9 Forensic Diagnostic Lab | 37261663423 | success |
+| Verification Reconcile | 37261663417 | **failure** (shards 1 and 6 red) |
+| Playwright Tests | 37261663442 | **failure** (both `-visual` legs) |
+| mutation-pr.yml | 37261658209 | **failure** (pre-existing, untouched) |
+
+STEP 1–3 of the mission brief (backend result contract, eslint, mutmut
+trampoline) were closed by M10-R3 and confirmed green in run 37261663428 /
+…61523 / …63420. Re-verified rather than re-fixed.
+
+### Open failure table
+
+| Failure | Workflow/job | Reproducible locally? | Root cause | Status |
+|---|---|---|---|---|
+| `exec-0006` reports `unmapped:UNMAPPED[3]` — a count, not three names | Verification Reconcile / shard 6 | **yes** | `_expand_control_plane_tasks` seeded the dedup bucket with `{cp_task.capability_id}` and wrote it back into `spec.capabilities`, discarding `VerificationTask.capabilities` | **fixed** (below) |
+| Playwright visual legs exit 1 | Playwright Tests / `chromium-visual`, `mobile-chrome-visual` | yes | baselines stale (see STEP 5) | open |
+| Playwright leg result carries `passed: 0, failed: 0` | Playwright Tests / all legs | yes | workflow `jq` hard-codes zeros | open |
+| `mutation-pr.yml` fails at 0 s | Mutation Testing (PR) | n/a | pre-existing "workflow file issue"; `git diff 1c397368..HEAD -- .github/workflows/mutation-pr.yml` is empty | pre-existing, untouched |
+| `exec-0004` Playwright `command exit 1` | Verification Reconcile / shard 1 | yes | consequence of the red visual legs | open, follows STEP 5 |
+
+## STEP 4 — `exec-0006`: capability provenance
+
+### Reproduction
+
+CI shard 6 record (`reconcile-shard-6.json`, run 37257612911):
+
+```
+"completion_state": "registry_gap"
+"reason": "1 changed capabilit(y/ies) resolved to an unmapped capability.
+           no verification-registry mapping for: unmapped:UNMAPPED[3]."
+```
+
+Locally the same boundary produces **zero** unmapped capabilities, so the
+failure does not reproduce from the changed-file list alone. Replaying CI's own
+394 `changed_files` (extracted from the `reconcile-plan` artifact) against this
+branch also gives `unmapped_blast_capabilities == []`.
+
+### Why CI differs from this workstation — the environment delta
+
+The CI plan job log (run 37257612911, `Reconcile Plan`, line 996):
+
+```
+TypeScript resolver failed: Error: Cannot find module 'ts-morph'
+```
+
+`verification-reconcile.yml`'s **plan** job provisions Python only
+(`bootstrap-runtime`); `setup-node-runtime` is invoked further down, in the
+*shard* job (line 239). So `frontend/node_modules` does not exist when the plan
+is built, `npx tsx` cannot load `ts-morph`, and
+`TypeScriptSymbolExtractor._run_ts_resolver` returns `{"files": []}`.
+`FrontendCapabilityDiscoverer.discover_capabilities()` then mints **zero**
+capabilities, so every `frontend/app/**` file that is claimed only by cross-layer
+route discovery falls through unmapped. Simulated exactly:
+
+```
+$ resolve_capabilities(ci_changed_files)                     -> unmapped: []
+$ … with graph.frontend_capabilities = {}                   -> unmapped: [
+      'UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts',
+      'UNMAPPED:frontend/app/layout.tsx',
+      'UNMAPPED:frontend/app/settings/page.tsx' ]
+```
+
+### The three capabilities
+
+```
+UNMAPPED:frontend/app/api/diagnostic-signatures/route.ts
+UNMAPPED:frontend/app/layout.tsx
+UNMAPPED:frontend/app/settings/page.tsx
+```
+
+These are the three changed files that **no contract capability claims by path**.
+Every other frontend file on that boundary is claimed by `frontend-verification`
+through its contract paths; these three are claimed only by the graph's route
+discovery, so removing the graph removes exactly them and nothing else. That is
+what makes the list exact rather than a guess.
+
+### The defect the mission asked for
+
+Independent of the environment delta, the names were being destroyed in
+transit. `VerificationTask.capabilities` is populated correctly
+(`control_plane.py:337`) and read correctly into the spec
+(`execution_orchestrator.py:2047`), then **overwritten** by the bucket
+finaliser:
+
+```
+2072:  "capabilities": {cp_task.capability_id},   # seeded from the LABEL
+2096:  caps = sorted(bucket["capabilities"])      # still only labels
+2098:  spec_dict["capabilities"] = caps           # concrete names discarded
+```
+
+So even with a healthy graph, any genuinely unmapped change would have reported
+a count label. Fixed by keeping two accumulators: `capability_ids` (what the
+bucket serves, and what picks `primary_capability`) and `capabilities` (the
+concrete names, which is what the record and the registry-gap diagnostic
+report). For every ordinary task the two sets are identical, so nothing else
+moves.
+
+### Files changed
+
+- `runtime/foundation/verification/execution_orchestrator.py` — two
+  accumulators in `_expand_control_plane_tasks`.
+- `runtime/tests/test_m11_r4_capability_provenance.py` — new, 5 tests.
+
+### Tests
+
+```
+$ .venv/bin/python -m pytest runtime/tests/test_m11_r4_capability_provenance.py -q
+5 passed
+
+# with the orchestrator fix reverted:
+3 failed, 2 passed   (test_declared_capabilities_reach_the_spec,
+                     test_names_survive_serialisation,
+                     test_record_names_all_three)
+
+$ .venv/bin/python -m pytest runtime/tests/test_m11_agent1_capability_resolution.py \
+    runtime/tests/test_m10r3_adversarial_injection.py \
+    runtime/tests/test_verify_sharding.py \
+    runtime/tests/test_m9_c49_canonical_cli.py -q
+112 passed in 92.01s
+```
+
+### Not done here
+
+The plan job's missing Node runtime is a separate defect from the provenance
+loss. It is the reason this boundary produced three unmapped files at all, and
+it is recorded for STEP 7/8 rather than fixed in this checkpoint, because the
+fix belongs to `verification-reconcile.yml` and must be weighed against the
+`npm ci` cost it adds to the plan job.
