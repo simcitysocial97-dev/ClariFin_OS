@@ -214,7 +214,7 @@ jobs:
           # asks the runtime instead of asserting the outcome in YAML. The document is
           # still published even when the leg fails: a missing result is
           # indistinguishable from a leg that never started.
-          timeout --signal=TERM --kill-after=60s "$(( LEG_TIMEOUT_SECONDS + 60 ))" \
+          timeout --signal=TERM --kill-after=60s "$(( ${LEG_TIMEOUT_SECONDS:-2400} + 60 ))" \
             .venv/bin/python -m runtime.verify playwright-leg \
               --leg-id "${{ matrix.leg_id }}" \
               --project "${{ matrix.project }}" \

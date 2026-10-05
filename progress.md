@@ -8274,3 +8274,29 @@ Five shards certified because two shards carried two genuine defects. The
 certification threshold was not touched, no shard was forced, and no result was
 reclassified: reconciliation was already representing reality correctly, and the two
 records it refused to certify were refusals it was entitled to make.
+
+## STEP 8 (first attempt) — a defect introduced by this phase, caught by CI
+
+Dispatch run 37268621061 failed all ten legs with:
+
+```
+/home/runner/work/_temp/….sh: line 20: LEG_TIMEOUT_SECONDS: unbound variable
+```
+
+The new leg step computes its backstop as `$(( LEG_TIMEOUT_SECONDS + 60 ))`. The step
+runs under `set -uo pipefail`, and `LEG_TIMEOUT_SECONDS` is **not** set in the job
+environment — the previous code only ever read it as `${LEG_TIMEOUT_SECONDS:-2400}`,
+which tolerates absence. Arithmetic context expands the bare name and `set -u` aborts
+the step, so every leg died before running a single test and no leg result document
+was written at all.
+
+This is exactly the failure mode the previous STEP 6 fix was built to make *visible*
+rather than silent: the gate reported `no leg-*.json files found` instead of
+certifying ten legs that never ran.
+
+Fixed to `$(( ${LEG_TIMEOUT_SECONDS:-2400} + 60 ))`, verified locally under
+`env -u LEG_TIMEOUT_SECONDS bash -c 'set -uo pipefail; …'` → `2460`.
+
+Lesson recorded rather than quietly fixed: a shell arithmetic expansion is not a
+defaultable read. Every optional variable in a `set -u` step needs `${var:-default}`
+*inside* the expansion, not at the point of use.
