@@ -88,7 +88,6 @@ jobs:
         uses: ./.github/actions/upload-runtime
         with:
           name: mutation-pr-report
-          if-condition: ${{ always() && steps.changed.outputs.changed == 'true' }}
           path: |
             mutation_output.txt
             changed-files.txt
