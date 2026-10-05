@@ -8556,3 +8556,60 @@ $ .venv/bin/python -m pytest runtime/tests/test_m11_r4_reconcile_aggregate.py \
 
 `ruff check` on the touched files reports only `I001` and `F821 Undefined name Path`
 at `execution_shards.py:355`, both present at HEAD (verified against `git show HEAD:`).
+
+## STEP 8d — final CI state
+
+Run `37279314488` at `db8fb97d`:
+
+```
+[aggregate] plan=execplan-059051d15471 tasks=10 shards=7 unreadable=0
+Decision: certified
+
+reconcile-shard-0 .. reconcile-shard-6   passed  certified   (7 of 7)
+```
+
+Playwright, run `37279314464`: `legs_reported: 10, legs_passed: 10, visual_legs: 2,
+final_decision: certified`.
+
+| Workflow | Run | Conclusion |
+|---|---|---|
+| Backend Verification | 37279314465 | success |
+| Frontend Verification | 37279314507 | success |
+| Quality Gate | 37279314470 | success |
+| Verification Runtime | 37279314509 | success |
+| Verification Reconcile | 37279314488 | success |
+| Playwright Tests | 37279314464 | success |
+| API Contract Integrity | 37279314467 | success |
+| CodeQL Security Analysis | 37279314466 | success |
+| M9 Forensic Diagnostic Lab | 37279314614 | success |
+| mutation-pr.yml | 37279308373 | failure — pre-existing, workflow file untouched |
+
+## STEP 10 — final forensic verification
+
+Full report: `docs/audits/m11-r4-completion-report.md`.
+
+### Working tree
+
+Clean apart from `runtime/generated/**` run records, which are tracked and updated by
+every verification run.
+
+### Test evidence (this phase)
+
+```
+test_m11_r4_capability_provenance.py    5 passed   (3 fail at HEAD)
+test_m11_r4_playwright_leg_results.py  14 passed
+test_m11_r4_reconcile_aggregate.py      8 passed   (5 fail at HEAD)
+plus adjacent: 76 passed / 104 passed / 112 passed / 144 passed slices
+```
+
+### What the phase actually found
+
+Three gates could not have passed under any circumstances, and all three pre-date M11:
+
+1. the Playwright gate could not read any leg result;
+2. the reconcile aggregate had never produced a verdict;
+3. reconciliation could never certify a plan containing an escalation task.
+
+Each was hidden behind shards that were independently red. Turning the shards green is
+what exposed them — which is the argument for having fixed the shards first rather than
+starting at the gate.
