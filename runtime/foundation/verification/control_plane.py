@@ -98,6 +98,11 @@ class VerificationTask:
     is_mandatory: bool
     is_escalation: bool
     reason: str
+    # M10-R3 (L6): the concrete capabilities this task covers, when they differ from
+    # `capability_id`. Used by the registry-mapping obligation, whose `capability_id`
+    # is a COUNT (`unmapped:UNMAPPED[3]`) and therefore not actionable on its own —
+    # the first CI run reported "three unmapped" without naming any of them.
+    capabilities: list[str] = field(default_factory=list)
     evidence_reused: list[str] = field(default_factory=list)
     evidence_invalidated: list[str] = field(default_factory=list)
     measurement_required: list[MeasurementKind] = field(default_factory=list)
@@ -317,6 +322,19 @@ class ControlPlanePlanner:
                     # condition is now named, decided by the runtime where the knowledge
                     # is, and reported as a review obligation.
                     verification_kind=REGISTRY_MAPPING_KIND,
+                    # M10-R3: the ACTUAL names travel with the obligation.
+                    #
+                    # The label above is a count — `unmapped:UNMAPPED[3]` — and a
+                    # count is not actionable. The first CI run of this reported
+                    #
+                    #   exec-0006 [registry_gap] no verification-registry mapping for:
+                    #   unmapped:UNMAPPED[3]
+                    #
+                    # which tells an operator that three capabilities are unmapped and
+                    # not which three. The resolver already knows; the names were being
+                    # dropped between it and the report. They now ride on the task, so
+                    # the executor's existing diagnostic lists them.
+                    capabilities=tuple(unmapped),
                     command="",
                     profile="unmapped-review",
                     is_mandatory=True,

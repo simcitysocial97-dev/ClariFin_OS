@@ -2041,7 +2041,12 @@ class ExecutionOrchestrator:
                     task_id=f"exec-{len(order) + 1:04d}",
                     source_task_id=f"{cp_task.capability_id}::{cp_task.task_id}",
                     primary_capability=cp_task.capability_id,
-                    capabilities=(cp_task.capability_id,),
+                    # M10-R3: a task may declare its concrete capabilities; the
+                    # registry-mapping obligation does, because its capability_id is a
+                    # count rather than a name. See VerificationTask.capabilities.
+                    capabilities=tuple(
+                        cp_task.capabilities or (cp_task.capability_id,)
+                    ),
                     verification_kind=cp_task.verification_kind,
                     command=cp_task.command.strip(),
                     profile=cp_task.profile,
@@ -3165,7 +3170,13 @@ class ExecutionOrchestrator:
         written while the gap existed cannot certify after it was closed.
         """
         capabilities = tuple(spec.capabilities)
-        still_unmapped = _unmapped_capabilities_now(capabilities)
+        # The concrete names arrive ON the task (see VerificationTask.capabilities).
+        # `_unmapped_capabilities_now` is the live re-check that the gap still
+        # exists — it must not be the thing that *discovers* the names, or a task
+        # written before the gap appeared would report the wrong list.
+        still_unmapped = [c for c in capabilities if c] or _unmapped_capabilities_now(
+            capabilities
+        )
         if not still_unmapped:
             return self._make_record(
                 spec,
